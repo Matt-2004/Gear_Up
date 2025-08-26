@@ -3,7 +3,7 @@ import { Title } from "../register/page"
 
 const Login = () => {
     return (
-        <div>
+        <div className="w-full">
             <Title />
             <Form type="login" instruction="Login to Your Account" />
         </div>

@@ -22,6 +22,12 @@
     rgba(126, 217, 87, 1) 0%,
     rgba(158, 239, 72, 1) 100%
   );
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+}
+
+.main-color-gradient:hover {
+  background: linear-gradient(90deg, #7ed957, #7ed957);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 /* @media (prefers-color-scheme: dark) {
