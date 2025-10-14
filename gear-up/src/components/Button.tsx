@@ -1,9 +1,5 @@
-
-
-export default function Button({ type }: { type: 'register' | 'login' }) {
-
+export default function Button({ children }: { children: React.ReactNode }) {
     return (
-
-        <button type="submit" className="w-full main-color-gradient py-3 font-medium text-lg">{type.substring(0, 1).toUpperCase() + type.substring(1, type.length)}</button>
+        <button type="submit" className="w-[30rem] main-color-gradient py-3 rounded-md font-medium text-xl text-white mb-4">{children}</button>
     )
 }

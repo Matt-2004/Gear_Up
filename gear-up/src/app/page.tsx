@@ -1,12 +1,13 @@
+"use client";
+
 import { Fragment } from "react"
-import Register from "./auth/register/page"
+import Title from "@/components/Title"
 
 export default function HOME() {
   return (
     <Fragment>
-
-      <h1>Hello</h1>
+      <Title />
     </Fragment>
 
   )
-}
+} 
