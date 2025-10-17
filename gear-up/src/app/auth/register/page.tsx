@@ -4,12 +4,14 @@ import { useFormData } from "@/app/hooks/useFormData";
 import { useToast } from "@/app/hooks/useToast";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { FormEvent, FormEventHandler, FormHTMLAttributes, useEffect } from "react";
+import { API_URL } from "@/lib/config";
+
 
 interface IFormDate {
     username: string;
@@ -20,9 +22,6 @@ interface IFormDate {
     confirmPassword: string;
 }
 
-
-
-
 const Page = () => {
 
     const { formData, handleChange } = useFormData("register");
@@ -31,9 +30,8 @@ const Page = () => {
         console.log("Form Data:", formData);
     }, [formData]);
     const registerUser = async (formData: IFormDate) => {
-        // const { data } = await axios.post("https://e61882394d53.ngrok-free.app/api/v1/auth/register", formData, { withCredentials: true });
-
-        return true;
+        const { data } = await axios.post(`${API_URL}/api/v1/auth/register`, formData, { withCredentials: true });
+        return data;
     }
 
     const { refetch } = useQuery({
@@ -50,7 +48,7 @@ const Page = () => {
         enabled: false, // Disable automatic query on mount
     })
 
-    const { ToastUI, loading, show, handleToastContext } = useToast(refetch);
+    const { ToastUI, loading, show, handleToastContext } = useToast(refetch, "register");
 
     const onsubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();

@@ -1,3 +1,5 @@
+import { API_URL } from "@/lib/config";
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const token = searchParams.get("token");
@@ -12,7 +14,7 @@ export async function GET(request: Request) {
   // Call your backend API to verify the token
   try {
     const response = await fetch(
-      `https://e61882394d53.ngrok-free.app/api/v1/auth/verify?token=${token}`,
+      `${API_URL}/api/v1/auth/verify?token=${token}`,
       {
         method: "POST",
         headers: {

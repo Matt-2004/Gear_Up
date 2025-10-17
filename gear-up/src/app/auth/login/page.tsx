@@ -10,14 +10,16 @@ import Button from "@/components/Button";
 import { ILoginFormData, useFormData } from "@/app/hooks/useFormData";
 import { useToast } from "@/app/hooks/useToast";
 import { AnimatePresence } from "framer-motion";
+import { API_URL } from "@/lib/config";
+
 
 const Page = () => {
     const { formData, handleChange } = useFormData("login");
 
     // API call to login user with cookies
     const loginUser = async (formData: ILoginFormData) => {
-        // const { data } = await axios.post("https://e61882394d53.ngrok-free.app/api/v1/auth/login", formData, { withCredentials: true },);
-        return false;
+        const { data } = await axios.post(`${API_URL}/api/v1/auth/login`, formData, { withCredentials: true },);
+        return data;
     }
 
     const { refetch } = useQuery({
@@ -30,10 +32,7 @@ const Page = () => {
         enabled: false, // Disable automatic query on mount
     })
 
-    const { ToastUI, loading, show, handleToastContext } = useToast(refetch);
-
-
-
+    const { ToastUI, loading, show, handleToastContext } = useToast(refetch, "login");
 
     const onsubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();

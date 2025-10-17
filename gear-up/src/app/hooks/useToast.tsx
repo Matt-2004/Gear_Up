@@ -15,7 +15,30 @@ interface Toast {
     duration: number;
 }
 
-export function useToast(refetch: (options?: RefetchOptions | undefined) => Promise<QueryObserverResult<boolean, Error>>) {
+type MessageType = "login" | "register" | "emailVerify" | "newPassword";
+interface MessageRequireType {
+    login: string;
+    register: string;
+    emailVerify: string;
+    newPassword: string
+}
+
+export function useToast(refetch: (options?: RefetchOptions | undefined) => Promise<QueryObserverResult<boolean, Error>>, type: MessageType) {
+
+    const message: MessageRequireType = {
+        login: "Login successful. Redirecting...",
+        register: "Account created successful, Redirecting...",
+        emailVerify: "Verification email sent. Please check your inbox.",
+        newPassword: "Password updated successfully. Please login again!"
+    }
+
+    const errorMessage: MessageRequireType = {
+        login: "Incorrect username or password.",
+        register: "Registration failed. Please try again later.",
+        emailVerify: "No account found with this email.",
+        newPassword: "Failed to update password. Please try again."
+    }
+
     const [toast, setToast] = useState<Toast | null>(null);
     const [loading, setLoading] = useState(false);
     const [show, setShow] = useState(false);
@@ -39,17 +62,20 @@ export function useToast(refetch: (options?: RefetchOptions | undefined) => Prom
             // Start both the API call and minimum timer simultaneously
             const [result] = await Promise.all([
                 refetch(),
-                new Promise(resolve => setTimeout(resolve, 2000)) // Minimum 2 seconds
+                new Promise(resolve => setTimeout(resolve, 1200)) // Minimum 2 seconds
             ]);
 
             const { data, isError } = result;
             setLoading(false); // End loading after BOTH complete
 
             if (isError || !data) {
-                showToast("error", "Incorrect username or password.");
+                showToast(
+                    "error", errorMessage[type]
+
+                );
                 handleToast(false);
             } else if (data) {
-                showToast("success", "Login successful. Redirecting...");
+                showToast("success", message[type]);
                 handleToast(true);
             } else {
                 showToast("error", "Login failed.");
