@@ -1,45 +1,58 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import Link from "next/link";
-import { FormEvent } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import Image from "next/image";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
-
-interface ILoginFormData {
-    identifier: string;
-    password: string;
-}
+import { ILoginFormData, useFormData } from "@/app/hooks/useFormData";
+import { useToast } from "@/app/hooks/useToast";
+import { AnimatePresence } from "framer-motion";
 
 const Page = () => {
-    const registerUser = async (formData: ILoginFormData) => {
-        const { data } = await axios.post("https://localhost:7083/api/av1/auth/register", formData);
-        return data;
+    const { formData, handleChange } = useFormData("login");
+
+    // API call to login user with cookies
+    const loginUser = async (formData: ILoginFormData) => {
+        // const { data } = await axios.post("https://e61882394d53.ngrok-free.app/api/v1/auth/login", formData, { withCredentials: true },);
+        return false;
     }
 
-    const onsubmit = (e: FormEvent<HTMLFormElement>) => {
+    const { refetch } = useQuery({
+        queryKey: ['loginUser'],
+        queryFn: () => loginUser({
+            usernameOrEmail: formData.usernameOrEmail,
+            password: formData.password,
+        }),
+        staleTime: 5000,
+        enabled: false, // Disable automatic query on mount
+    })
+
+    const { ToastUI, loading, show, handleToastContext } = useToast(refetch);
+
+
+
+
+    const onsubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        // const { data } = useQuery({
-        //     queryKey: ['registerUser'],
-        //     queryFn: () => registerUser({
-        //         identifier: "test@gmail.com",
-        //         password: "test@1234"
-        //     })
-        // })
+        handleToastContext();
     }
 
     return (
-        <div className="h-screen w-screen flex justify-center items-center flex-col">
+        <div className="relative h-screen w-screen flex justify-center items-center flex-col">
+            <AnimatePresence>
+                {show && <ToastUI />}
+            </AnimatePresence>
             <form onSubmit={onsubmit} className="relative h-[70%] w-[60%] bg-white rounded-lg flex flex-col justify-center items-center gap-1 p-8">
                 <Image src={"/Gear.png"} alt="logo" width={180} height={120} className="absolute -top-8 left-0 " />
                 <Title name="Login to your account" />
                 <div id="body" className="flex flex-col justify-center items-center gap-4 mb-4">
 
-                    <Input type="email" placeholder="example@gmail.com or matthew">Email or User Name</Input>
+                    <Input name="usernameOrEmail" onChange={handleChange} type="email" placeholder="example@gmail.com or matthew">Email or User Name</Input>
 
-                    <Input type="password" placeholder="Password (mininum at least 8 characters)">Password</Input>
+                    <Input name="password" onChange={handleChange} type="password" placeholder="Password (mininum at least 8 characters)">Password</Input>
 
                 </div>
                 <div className="w-[30rem] flex justify-between items-center mb-4">
@@ -49,7 +62,8 @@ const Page = () => {
                     </div>
                     <Link href="/auth/forgotpassword/" className="text-sm text-blue-600 hover:underline">Forgot Password?</Link>
                 </div>
-                <Button>Login</Button>
+                <Button loading={loading}>Login</Button>
+
                 <h1>Don't have an account? <Link href={"/auth/register"} className="text-blue-600 font-medium hover:underline hover:underline-offset-4">Register Now</Link></h1>
             </form>
         </div>

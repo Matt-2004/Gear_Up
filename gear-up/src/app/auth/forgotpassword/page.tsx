@@ -1,12 +1,49 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { useRouter } from "next/router";
+import { FormEvent } from "react";
+
+
 
 const Page = () => {
+
+
+
+    // API call to login user with cookies
+    const resentEmail = async ({ email }: { email: string }) => {
+        const { data } = await axios.post(`https://e61882394d53.ngrok-free.app/api/v1/auth/resent?email=${email}`);
+        return data;
+    }
+
+    const { data, error, refetch } = useQuery({
+        queryKey: ['loginUser'],
+        queryFn: () => resentEmail({
+            email: "wai450013956@gmail.com"
+        })
+    })
+
+    console.log("Login data:", data);
+    console.log("Error data:", error);
+
+    const onsubmit = async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        console.log("clicking.. ")
+
+        await refetch();
+
+    }
+
+
+
     return (
         <div className="h-screen w-screen flex justify-center items-center flex-col">
-            <form className="relative h-[70%] w-[60%] bg-white rounded-lg flex flex-col justify-center items-center gap-1 p-8">
+            <form onSubmit={onsubmit} className="relative h-[70%] w-[60%] bg-white rounded-lg flex flex-col justify-center items-center gap-1 p-8">
                 <Image src={"/Gear.png"} alt="logo" width={180} height={120} className="absolute -top-8 left-0 " />
                 <div id="header" className="h-1/4 flex justify-center items-center text-4xl font-bold">
                     {/* Logo */}

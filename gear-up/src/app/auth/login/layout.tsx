@@ -1,10 +1,13 @@
 import { Metadata } from "next";
+import { cookies } from "next/headers";
 
-export default function LoginLayout({
+export default async function LoginLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
+
+
     return (
         <div>
             {children}
