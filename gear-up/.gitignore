@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/docker-compose.yml
 /.pnp
 .pnp.*
 .yarn/*

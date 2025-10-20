@@ -1,30 +1,23 @@
 "use client";
 
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 import Image from "next/image";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
-import { ILoginFormData, useFormData } from "@/app/hooks/useFormData";
+import { useFormData } from "@/app/hooks/useFormData";
 import { useToast } from "@/app/hooks/useToast";
 import { AnimatePresence } from "framer-motion";
-import { API_URL } from "@/lib/config";
-
+import { login } from "@/utils/FetchAPI";
 
 const Page = () => {
     const { formData, handleChange } = useFormData("login");
 
-    // API call to login user with cookies
-    const loginUser = async (formData: ILoginFormData) => {
-        const { data } = await axios.post(`${API_URL}/api/v1/auth/login`, formData, { withCredentials: true },);
-        return data;
-    }
-
     const { refetch } = useQuery({
         queryKey: ['loginUser'],
-        queryFn: () => loginUser({
+        queryFn: () => login({
             usernameOrEmail: formData.usernameOrEmail,
             password: formData.password,
         }),
@@ -49,14 +42,14 @@ const Page = () => {
                 <Title name="Login to your account" />
                 <div id="body" className="flex flex-col justify-center items-center gap-4 mb-4">
 
-                    <Input name="usernameOrEmail" onChange={handleChange} type="email" placeholder="example@gmail.com or matthew">Email or User Name</Input>
+                    <Input name="usernameOrEmail" required autoComplete="email" onChange={handleChange} type="email" placeholder="example@gmail.com or matthew">Email or User Name</Input>
 
-                    <Input name="password" onChange={handleChange} type="password" placeholder="Password (mininum at least 8 characters)">Password</Input>
+                    <Input name="password" required minLength={8} autoComplete="current-password" onChange={handleChange} type="password" placeholder="Password (mininum at least 8 characters)">Password</Input>
 
                 </div>
                 <div className="w-[30rem] flex justify-between items-center mb-4">
                     <div className="flex h-full gap-2 items-center">
-                        <input id="rememberMe" type="checkbox" />
+                        <input onChange={handleChange} id="rememberMe" type="checkbox" />
                         <label htmlFor="rememberMe" className="">Remember me</label>
                     </div>
                     <Link href="/auth/forgotpassword/" className="text-sm text-blue-600 hover:underline">Forgot Password?</Link>

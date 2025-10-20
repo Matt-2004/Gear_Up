@@ -5,6 +5,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { CircleCheck, CircleXMark, XIcon } from "@/components/SVGs";
 import clsx from "clsx";
 import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
+import { AxiosError } from "axios";
+import { useRouter } from "next/navigation";
+
 
 type ToastType = "success" | "error" | "info";
 
@@ -25,6 +28,8 @@ interface MessageRequireType {
 
 export function useToast(refetch: (options?: RefetchOptions | undefined) => Promise<QueryObserverResult<boolean, Error>>, type: MessageType) {
 
+    const router = useRouter();
+
     const message: MessageRequireType = {
         login: "Login successful. Redirecting...",
         register: "Account created successful, Redirecting...",
@@ -43,17 +48,19 @@ export function useToast(refetch: (options?: RefetchOptions | undefined) => Prom
     const [loading, setLoading] = useState(false);
     const [show, setShow] = useState(false);
 
-    const showToast = (type: ToastType, message: string, duration = 5000) => {
+
+    const showToast = (type: ToastType, message: string, duration = 4000) => {
         setToast({ id: Date.now(), type, message, duration });
         setTimeout(() => setToast(null), duration);
     };
 
-    function handleToast(redirect: boolean) {
+    function handleToast(redir: boolean) {
         setShow(true)
         setTimeout(() => {
             setShow(false)
-            // if (redirect) router.push("/");
-        }, 5000)
+            console.log("Redirecting...")
+            if (redir) router.push("/");
+        }, 4000)
     }
 
     const handleToastContext = async () => {
@@ -65,17 +72,23 @@ export function useToast(refetch: (options?: RefetchOptions | undefined) => Prom
                 new Promise(resolve => setTimeout(resolve, 1200)) // Minimum 2 seconds
             ]);
 
-            const { data, isError } = result;
+
+            const { data, isError, error } = result;
+
+            const errorMessages = (error as AxiosError | null) ?? null;
+
             setLoading(false); // End loading after BOTH complete
 
             if (isError || !data) {
-                showToast(
-                    "error", errorMessage[type]
 
+                const errMsg = (errorMessages?.response?.data as { message?: string })?.message ?? errorMessage[type];
+                showToast(
+                    "error", String(errMsg)
                 );
                 handleToast(false);
             } else if (data) {
-                showToast("success", message[type]);
+                const dataMsg = ((data as unknown as { message?: string })?.message ?? message[type]) + "Redirecting to home page...";
+                showToast("success", String(dataMsg));
                 handleToast(true);
             } else {
                 showToast("error", "Login failed.");

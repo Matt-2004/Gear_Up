@@ -20,26 +20,24 @@ export async function GET(request: Request) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ token }),
+        body: JSON.stringify(token),
       }
     );
 
     if (!response.ok) {
       const errorData = await response.json();
-      return new Response(
-        JSON.stringify({ message: errorData.message || "Verification failed" }),
-        { status: response.status }
-      );
+      return new Response(JSON.stringify({ message: errorData }), {
+        status: response.status,
+      });
     }
 
     const data = await response.json();
-    console.log("Verification successful:", data);
 
     return new Response(
       JSON.stringify({
         message: "Email verified successfully",
         data,
-        redirect: "/",
+        redirect: "http:localhost:3000/",
       }),
       { status: 200 }
     );

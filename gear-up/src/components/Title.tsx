@@ -11,7 +11,7 @@ export default function Title() {
             <div className="z-20 xl:w-[75%] w-[90%] items-center flex justify-between h-16 object-fill ">
                 <div className="w-40 h-16 items-center flex z-20">
 
-                    <Image src={"/Gear.png"} priority alt="Logo" width={150} height={200} className="object-contain " />
+                    <Image src={"/Gear.png"} priority alt="Logo" width={150} height={150} className="" />
                 </div>
                 <NavbarTabs />
                 <UtilityBar />

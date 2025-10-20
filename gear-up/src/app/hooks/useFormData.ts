@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-interface IFormData {
+export interface IRegisterFormData {
   username: string;
   firstName: string;
   lastName: string;
@@ -14,21 +14,21 @@ export interface ILoginFormData {
   password: string;
 }
 
-interface IEmailVerify {
+export interface IForgotPassword {
   email: string;
 }
 
 export interface INewPassword {
   newPassword: string;
-  comfirmPassword: string;
+  confirmedPassword: string;
 }
 
 type DynamicForm<T extends FormType> = T extends "login"
   ? ILoginFormData
   : T extends "register"
-  ? IFormData
+  ? IRegisterFormData
   : T extends "emailVerify"
-  ? IEmailVerify
+  ? IForgotPassword
   : T extends "newPassword"
   ? INewPassword
   : null;

@@ -11,21 +11,21 @@ import { useToast } from "@/app/hooks/useToast";
 import { useFormData } from "@/app/hooks/useFormData";
 import { AnimatePresence } from "framer-motion";
 import { API_URL } from "@/lib/config";
+import { getClientCookies } from "@/utils/getClientCookie";
+import { resentEmailForgetPassword } from "@/utils/FetchAPI";
 
 const Page = () => {
     const { formData, handleChange } = useFormData("emailVerify");
 
-    // API call to login user with cookies
-    const resentEmail = async ({ email }: { email: string }) => {
-        const { data } = await axios.post(`${API_URL}/api/v1/auth/resent?email=${email}`);
-        return data;
-    }
+    const token = getClientCookies() as { access_token?: string } | void;
 
     const { refetch } = useQuery({
-        queryKey: ['loginUser'],
-        queryFn: () => resentEmail({
+        queryKey: ['forgetPassword'],
+        queryFn: () => resentEmailForgetPassword({
             email: formData.email
-        })
+        }, formData.email, token?.access_token
+        ),
+        enabled: false
     })
 
     const { ToastUI, loading, show, handleToastContext } = useToast(refetch, "emailVerify");
@@ -34,10 +34,7 @@ const Page = () => {
     const onsubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         handleToastContext();
-
     }
-
-
 
     return (
         <div className="h-screen w-screen flex justify-center items-center flex-col">
@@ -54,7 +51,7 @@ const Page = () => {
                 <p className="w-2/4 mb-4 -ml-4">Enter the email address associated with your account and we’ll send an email with instructions to reset password</p>
                 <div className="mb-4">
 
-                    <Input type="email" placeholder="Enter your email address">Email</Input>
+                    <Input name="email" onChange={handleChange} type="email" placeholder="Enter your email address">Email</Input>
                 </div>
                 <Button loading={loading}>Send Reset Link</Button>
                 <h1>Remember your password? <Link href={"/auth/login"} className="font-medium text-blue-500 hover:underline hover:underline-offset-2">Login Now</Link></h1>

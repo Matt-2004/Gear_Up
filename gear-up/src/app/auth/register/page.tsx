@@ -9,8 +9,9 @@ import axios from "axios";
 import { AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { FormEvent, FormEventHandler, FormHTMLAttributes, useEffect } from "react";
+import { FormEvent, useEffect } from "react";
 import { API_URL } from "@/lib/config";
+import { register } from "@/utils/FetchAPI";
 
 
 interface IFormDate {
@@ -26,17 +27,9 @@ const Page = () => {
 
     const { formData, handleChange } = useFormData("register");
 
-    useEffect(() => {
-        console.log("Form Data:", formData);
-    }, [formData]);
-    const registerUser = async (formData: IFormDate) => {
-        const { data } = await axios.post(`${API_URL}/api/v1/auth/register`, formData, { withCredentials: true });
-        return data;
-    }
-
     const { refetch } = useQuery({
         queryKey: ['loginUser'],
-        queryFn: () => registerUser({
+        queryFn: () => register({
             username: formData.username,
             firstName: formData.firstName,
             lastName: formData.lastName,
