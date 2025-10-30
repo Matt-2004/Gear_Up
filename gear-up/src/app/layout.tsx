@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Roboto } from "next/font/google";
 import "./globals.css";
 import ReactQueryProvider from "@/provider/ReactQueryProvider";
+import NextAuthSessionProvider from "@/provider/NextAuthSessionProvider";
 
 const roboto = Roboto({
   weight: '400',
@@ -23,9 +24,12 @@ export default function RootLayout({
       <body
         className={` ${roboto.className} antialiased`}
       >
-        <ReactQueryProvider>
-          {children}
-        </ReactQueryProvider>
+        <NextAuthSessionProvider>
+
+          <ReactQueryProvider>
+            {children}
+          </ReactQueryProvider>
+        </NextAuthSessionProvider>
       </body>
     </html>
   );

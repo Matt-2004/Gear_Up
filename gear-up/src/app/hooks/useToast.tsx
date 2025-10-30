@@ -7,9 +7,15 @@ import clsx from "clsx";
 import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
+import { IForgotPassword, ILoginFormData, INewPassword, IRegisterFormData, useFormData } from "@/app/hooks/useFormData";
+
 
 
 type ToastType = "success" | "error" | "info";
+
+interface ToastInterface {
+    type: ILoginFormData | IRegisterFormData | INewPassword | IForgotPassword;
+}
 
 interface Toast {
     id: number;
@@ -26,7 +32,7 @@ interface MessageRequireType {
     newPassword: string
 }
 
-export function useToast(refetch: (options?: RefetchOptions | undefined) => Promise<QueryObserverResult<boolean, Error>>, type: MessageType) {
+export function useToast<T = ToastInterface>(refetch: (options?: RefetchOptions | undefined) => Promise<QueryObserverResult<T, Error>>, type: MessageType) {
 
     const router = useRouter();
 

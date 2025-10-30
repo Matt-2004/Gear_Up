@@ -7,10 +7,12 @@ import { FormEvent, useEffect, useState } from "react";
 import Image from "next/image";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
-import { useFormData } from "@/app/hooks/useFormData";
 import { useToast } from "@/app/hooks/useToast";
 import { AnimatePresence } from "framer-motion";
 import { login } from "@/utils/FetchAPI";
+import { useFormData } from "@/app/hooks/useFormData";
+
+
 
 const Page = () => {
     const { formData, handleChange } = useFormData("login");
@@ -24,6 +26,8 @@ const Page = () => {
         staleTime: 5000,
         enabled: false, // Disable automatic query on mount
     })
+
+
 
     const { ToastUI, loading, show, handleToastContext } = useToast(refetch, "login");
 
@@ -54,10 +58,11 @@ const Page = () => {
                     </div>
                     <Link href="/auth/forgotpassword/" className="text-sm text-blue-600 hover:underline">Forgot Password?</Link>
                 </div>
-                <Button loading={loading}>Login</Button>
+                <Button loading={loading} provider={"manual"}>Login</Button>
 
                 <h1>Don't have an account? <Link href={"/auth/register"} className="text-blue-600 font-medium hover:underline hover:underline-offset-4">Register Now</Link></h1>
             </form>
+            <Button provider="google">Login with Google</Button>
         </div>
     );
 };

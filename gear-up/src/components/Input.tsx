@@ -7,7 +7,7 @@ import { ChildProcess } from "child_process";
 
 
 interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "size"> {
-    type: "email" | "password" | "text" | "checkbox";
+    type: "email" | "password" | "text" | "checkbox" | "date";
     ref?: Ref<HTMLInputElement>;
     children: React.ReactNode;
     inputSize?: "half" | "full";

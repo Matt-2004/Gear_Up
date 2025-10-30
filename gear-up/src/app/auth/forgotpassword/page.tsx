@@ -10,20 +10,17 @@ import { FormEvent } from "react";
 import { useToast } from "@/app/hooks/useToast";
 import { useFormData } from "@/app/hooks/useFormData";
 import { AnimatePresence } from "framer-motion";
-import { API_URL } from "@/lib/config";
-import { getClientCookies } from "@/utils/getClientCookie";
+
 import { resentEmailForgetPassword } from "@/utils/FetchAPI";
 
 const Page = () => {
     const { formData, handleChange } = useFormData("emailVerify");
 
-    const token = getClientCookies() as { access_token?: string } | void;
-
     const { refetch } = useQuery({
         queryKey: ['forgetPassword'],
         queryFn: () => resentEmailForgetPassword({
             email: formData.email
-        }, formData.email, token?.access_token
+        }, formData.email
         ),
         enabled: false
     })

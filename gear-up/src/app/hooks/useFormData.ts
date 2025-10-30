@@ -23,6 +23,17 @@ export interface INewPassword {
   confirmedPassword: string;
 }
 
+export interface IProfileFormData {
+  newEmail: "string";
+  name: "string";
+  avatarUrl: "string";
+  dateOfBirth: "2025-10-27";
+  phoneNumber: "string";
+  currentPassword: "string";
+  newPassword: "string";
+  confirmedNewPassword: "string";
+}
+
 type DynamicForm<T extends FormType> = T extends "login"
   ? ILoginFormData
   : T extends "register"
@@ -31,9 +42,16 @@ type DynamicForm<T extends FormType> = T extends "login"
   ? IForgotPassword
   : T extends "newPassword"
   ? INewPassword
-  : null;
+  : T extends "profile"
+  ? IProfileFormData
+  : never;
 
-type FormType = "login" | "register" | "emailVerify" | "newPassword";
+type FormType =
+  | "login"
+  | "register"
+  | "emailVerify"
+  | "newPassword"
+  | "profile";
 
 export function useFormData<T extends FormType>(formType: T) {
   const [formData, setFormData] = useState<DynamicForm<T>>(
