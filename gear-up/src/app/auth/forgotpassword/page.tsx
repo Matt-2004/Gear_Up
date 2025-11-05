@@ -50,7 +50,7 @@ const Page = () => {
 
                     <Input name="email" onChange={handleChange} type="email" placeholder="Enter your email address">Email</Input>
                 </div>
-                <Button loading={loading}>Send Reset Link</Button>
+                <Button loading={loading} provider="manual">Send Reset Link</Button>
                 <h1>Remember your password? <Link href={"/auth/login"} className="font-medium text-blue-500 hover:underline hover:underline-offset-2">Login Now</Link></h1>
             </form>
         </div>

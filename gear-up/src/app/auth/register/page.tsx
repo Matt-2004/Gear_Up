@@ -76,7 +76,7 @@ const Page = () => {
                     <input id="policy" type="checkbox" className="" />
                     <label htmlFor="policy">I agree to the Terms of Service and Privacy Policy</label>
                 </div>
-                <Button loading={loading}>Register</Button>
+                <Button loading={loading} provider="manual">Register</Button>
                 <h1>Already have account? <Link href={"/auth/login"} className="text-blue-600 font-medium hover:underline hover:underline-offset-4">Login Now</Link></h1>
             </form>
         </div>
