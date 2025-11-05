@@ -1,15 +1,14 @@
 import Image from "next/image";
 import { ChatIcon, EyeIcon, MagnifyingGlass, MenuBar, XIcon } from "./SVGs";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import clsx from "clsx";
 import Link from "next/link";
 import { useSession, signIn, signOut } from "next-auth/react"
 import { TitleContentProvider, usePopup } from "@/provider/TitleContext";
 import { useFormData } from "@/app/hooks/useFormData";
 import Input from "./Input";
-import { getUserProfile } from "@/utils/FetchAPI";
-import { useQuery } from "@tanstack/react-query";
-import { getAccessToken } from "@/utils/getClientCookie";
+import { getUserProfile, updateUserProfile, UserProfileData } from "@/utils/FetchAPI";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function Title() {
     return (
@@ -24,6 +23,12 @@ export default function Title() {
     )
 }
 
+// Navbar 
+//  -> NavUtils 
+//      -> Profile 
+//          -> DropDownProfileMenu 
+//              -> ViewProfile / UpdateProfile / Settings
+
 function TitleContainer({ children }: { children: React.ReactNode }) {
     const { isOpen } = usePopup();
     return (
@@ -33,7 +38,7 @@ function TitleContainer({ children }: { children: React.ReactNode }) {
                     {children}
                 </div>
             </div>
-            {isOpen && <SettingPopup />}
+            {isOpen && <DropDownProfileMenu />}
         </>
     )
 }
@@ -48,41 +53,44 @@ function Logo() {
 
 function NavUtils() {
 
-
-    const access_token = getAccessToken();
-    console.log(
-        "access_token", access_token);
-    // Todo: Need to check if user is logged in or not
+    const { data, error, isLoading, isError } = useQuery({
+        queryKey: ['loginUser'],
+        queryFn: () => getUserProfile(),
+        staleTime: 5000,
+        enabled: true
+    })
 
     return (
         <div className="lg:flex h-full items-center xl:gap-8 lg:gap-6 hidden">
             <SearchBarIcon />
             <Chat />
-            <Login />
-            {/* {session ? <Profile /> : <Login />} */}
+            {data ? <User data={data} /> : <Login />}
         </div>
     )
 }
 
-// function Profile() {
+function User({ data }: { data: UserProfileData }) {
+    console.log("User component is rendered");
+    const [isUpdateProfileOpen, setIsUpdateProfileOpen] = useState<boolean>(false);
 
-//     const { data: session } = useSession();
-//     const [isUpdateProfileOpen, setIsUpdateProfileOpen] = useState<boolean>(false);
+    return (
 
-//     return (
-//         <>
-//             <div className="flex items-center gap-4 cursor-pointer relative" onClick={() => { setIsUpdateProfileOpen(!isUpdateProfileOpen) }}>
-//                 <Image src={session?.user?.image || "/default-profile.png"} alt="Profile Picture" width={40} height={40} className="rounded-full" />
-//                 <span className="text-white font-medium">{session?.user?.name || "User"}</span>
-//                 {isUpdateProfileOpen && <UpdateProfile />}
-//             </div>
-//         </>
-//     )
-// }
 
-function UpdateProfile() {
+        <div className="flex items-center gap-4 cursor-pointer relative" onClick={() => { setIsUpdateProfileOpen(!isUpdateProfileOpen) }}>
+            <Image src={data.data.avatarUrl} alt="Profile Picture" width={40} height={40} className="rounded-full" />
+            <span className="text-white font-medium">{data.data.name}</span>
+            {isUpdateProfileOpen && <Profile />}
+        </div>
+
+    )
+}
+
+function Profile() {
+    console.log("Profile component is rendered");
 
     const { openPopup, setTag } = usePopup();
+
+    // TODO: Logout function --> handle for manually and provider 
 
     return (
         <div className="absolute top-12  w-48 bg-white shadow-lg rounded-md p-4 z-30">
@@ -101,7 +109,8 @@ function UpdateProfile() {
     )
 }
 
-function SettingPopup() {
+function DropDownProfileMenu() {
+    console.log("DropDownProfileMenu component is rendered");
 
     const { closePopup, setTag, tag } = usePopup();
 
@@ -114,13 +123,17 @@ function SettingPopup() {
                 <div className="flex h-full">
                     <div className="w-1/4 border-r pt-2 pl-2">
                         <ul className="space-y-4">
-                            <li className={clsx(tag === "viewProfile" ? "text-[#7ED957]  border border-[#7ED957] bg-[#D6FFC4] " : "text-black", "hover:text-[#7ED957] hover:bg-[#D6FFC4] rounded-lg font-medium w-72 h-10 flex items-center pl-6 cursor-pointer")} onClick={() => setTag("viewProfile")}>View Profile</li>
+                            <li className={clsx(tag === "viewProfile" ? "text-[#7ED957]  border border-[#7ED957] bg-[#D6FFC4] " : "text-black", "hover:text-[#7ED957] hover:bg-[#D6FFC4] rounded-lg font-medium w-72 h-10 flex items-center pl-6 cursor-pointer")} onClick={() => setTag("viewProfile")}>Profile</li>
+                            <li className={clsx(tag === "updateProfile" ? "text-[#7ED957]  border border-[#7ED957] bg-[#D6FFC4] " : "text-black", "hover:text-[#7ED957] hover:bg-[#D6FFC4] rounded-lg font-medium w-72 h-10 flex items-center pl-6 cursor-pointer")} onClick={() => setTag("updateProfile")}>Update Profile</li>
                             <li className={clsx(tag === "settings" ? "text-[#7ED957]  border border-[#7ED957] bg-[#D6FFC4] " : "text-black", "hover:text-[#7ED957] hover:bg-[#D6FFC4] rounded-lg font-medium w-72 h-10 flex items-center pl-6 cursor-pointer")} onClick={() => setTag("settings")}>Settings</li>
                         </ul>
                     </div>
                     <div className="w-3/4 pl-4">
                         {/* Content area */}
-                        {tag === "settings" ? <Settings /> : <ViewProfile />}
+                        {tag === 'viewProfile' && <ViewProfile />}
+                        {tag === 'updateProfile' && <UpdateProfile />}
+                        {tag === "settings" && <Settings />}
+
                     </div>
                 </div>
             </div>
@@ -128,29 +141,132 @@ function SettingPopup() {
     )
 }
 
+function UpdateProfile() {
+
+    console.log("UpdateProfile component is rendered");
+    // Get the data to pre-fill the form
+    // Allow user to update the data
+
+    const { data, isLoading } = useQuery({
+        queryKey: ["userProfile"],
+        queryFn: getUserProfile,
+        staleTime: 5000,
+        enabled: true
+    });
+
+    console.log("Profile data for update:", data);
+
+    const { formData, handleChange } = useFormData("profile");
+    const [isWantUpdate, setIsWantUpdate] = useState<boolean>(false);
+    const queryClient = useQueryClient();
+
+    // Mutation to update profile
+    const updateMutation = useMutation({
+        mutationFn: (profileData: any) => updateUserProfile(profileData),
+        onSuccess: () => {
+            // Refetch profile data after successful update
+            queryClient.invalidateQueries({ queryKey: ["userProfile"] });
+            setIsWantUpdate(false);
+        }
+    });
+
+    const handleUpdateProfile = () => {
+        updateMutation.mutate({
+            avatarUrl: formData.avatarUrl,
+            name: formData.name,
+            newEmail: formData.newEmail,
+            phoneNumber: formData.phoneNumber,
+            dateOfBirth: formData.dateOfBirth,
+            currentPassword: formData.currentPassword,
+            newPassword: formData.newPassword,
+            confirmedNewPassword: formData.confirmedNewPassword,
+        });
+    };
+
+    if (data) {
+
+        return (
+            <>
+                <div className="p-4">
+                    <h1 className="text-2xl font-medium">View Profile</h1>
+                    <div className="flex flex-col gap-4 mt-4">
+                        <img src={data.data.avatarUrl} alt="Profile Picture" className="w-32 h-32 rounded-full object-cover" />
+                        <Input onChange={handleChange} id="name" name="name" type="text" value={data.data.username}>Full Name</Input>
+                        <Input onChange={handleChange} id="email" name="newEmail" type="email" value={data.data.email}>Email Address</Input>
+                        <Input onChange={handleChange} id="ph-no" name="phoneNumber" type="text" value="+1234567890">Phone Number</Input>
+                        <Input onChange={handleChange} id="birthday" name="dateOfBirth" type="date" >Date of Birth</Input>
+                        <Input onChange={handleChange} id="password" name="newPassword" type="text" value="********">Current Password</Input>
+                    </div>
+                </div>
+                <input
+                    type="button"
+                    value={isWantUpdate ? "Save Changes" : "Update Profile"}
+                    onClick={handleUpdateProfile}
+                    className="mt-4 main-color-gradient text-white font-medium px-4 py-2 rounded-md cursor-pointer"
+                />
+                {isWantUpdate && (
+                    <input
+                        type="button"
+                        value="Cancel"
+                        onClick={() => setIsWantUpdate(false)}
+                        className="mt-4 ml-2 bg-gray-300 text-gray-700 font-medium px-4 py-2 rounded-md cursor-pointer"
+                    />
+                )}
+            </>
+
+        )
+
+    } if (isLoading) {
+        return <div>Loading...</div>;
+    }
+}
+
 function ViewProfile() {
 
-    const { data, refetch } = useQuery({
-        queryKey: ['loginUser'],
-        queryFn: () => getUserProfile(),
+    console.log("ViewProfile component is rendered");
+
+    // Query to get user profile
+    const { data, isLoading } = useQuery({
+        queryKey: ["userProfile"],
+        queryFn: getUserProfile,
         staleTime: 5000,
-    })
-    console.log(data);
-    return (
-        <div className="p-4">
-            <h1 className="text-2xl font-medium">View Profile</h1>
-            <div>
-                <Input name="name" disabled type="text" placeholder="Full Name">Full Name</Input>
-                <Input name="newEmail" disabled type="email" placeholder="test@gmail.com">Email Address</Input>
-                <Input name="phoneNumber" disabled type="text" placeholder="+1234567890">Phone Number</Input>
-                <Input name="dateOfBirth" disabled type="date" placeholder="Date of Birth">Date of Birth</Input>
-                <Input name="newpassword" disabled type="password" placeholder="Current Password">Current Password</Input>
-            </div>
-        </div>
-    )
+        enabled: true
+    });
+
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
+
+    if (data) {
+
+        // 
+        const userData = Object.entries(data.data);
+
+        return (
+            <>
+                <div className="p-4">
+                    <h1 className="text-2xl font-medium">View Profile</h1>
+                    <div className="flex flex-col gap-4 mt-4">
+                        <img src={data.data.avatarUrl} alt="Profile Picture" className="w-32 h-32 rounded-full object-cover" />
+                        <Link href={"/profile/dealer/register"}>
+                            <button className=" text-primary font-medium px-4 py-2 rounded-md cursor-pointer">
+                                Become our partner
+                            </button>
+                        </Link>
+                        {userData.map(([key, value]) => (
+                            key !== "id" && key !== "role" && key !== "avatarUrl" && key !== "provider" &&
+                            <Input key={key} id={key} disabled={true} name={key} type="text" value={String(value)}>{key.charAt(0).toUpperCase() + key.slice(1)}</Input>
+                        ))}
+                    </div>
+                </div>
+
+            </>
+        );
+    }
 }
 
 function Settings() {
+    console.log("Settings component is rendered");
     return (
         <div>
             <h1>Settings</h1>
@@ -211,7 +327,7 @@ function Login() {
     return (
 
         <div className="px-6 py-1.5 main-color-gradient cursor-pointer">
-            <Link href="/auth/login"><button className="text-black font-semibold">Login</button></Link>
+            <Link href="/auth/login"><button className="font-semibold">Login</button></Link>
         </div>
     )
 }
