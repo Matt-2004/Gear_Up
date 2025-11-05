@@ -1,13 +1,14 @@
 // PopupContext.tsx
 import { createContext, useContext, useState } from "react";
-import { string } from "zod";
+
+type Tag = "viewProfile" | "settings" | "updateProfile";
 
 interface PopupContextType {
     isOpen: boolean;
     openPopup: () => void;
     closePopup: () => void;
-    tag: "viewProfile" | "settings";
-    setTag: (tag: "viewProfile" | "settings") => void;
+    tag: Tag;
+    setTag: (tag: Tag) => void;
 }
 
 const PopupContext = createContext<PopupContextType>({
@@ -19,7 +20,7 @@ const PopupContext = createContext<PopupContextType>({
 });
 
 export const TitleContentProvider = ({ children }: { children: React.ReactNode }) => {
-    const [tag, setTag] = useState<"viewProfile" | "settings">("viewProfile");
+    const [tag, setTag] = useState<Tag>("viewProfile");
     const [isOpen, setIsOpen] = useState(false);
     return (
         <PopupContext.Provider
@@ -28,7 +29,7 @@ export const TitleContentProvider = ({ children }: { children: React.ReactNode }
                 openPopup: () => setIsOpen(true),
                 closePopup: () => setIsOpen(false),
                 tag: tag,
-                setTag: (tag: "viewProfile" | "settings") => setTag(tag),
+                setTag: (tag: Tag) => setTag(tag),
             }}
         >
             {children}
