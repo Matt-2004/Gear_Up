@@ -1,4 +1,4 @@
-import NextAuth, { Session } from "next-auth";
+import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
 const googleClientId = process.env.GOOGLE_CLIENT_ID;
@@ -16,28 +16,16 @@ const handler = NextAuth({
       clientId: googleClientId,
       clientSecret: googleClientSecret,
     }),
+    // ...add more providers here
   ],
   session: {
-    strategy: "jwt", // ✅ prevents NextAuth from using cookies as sessions
+    strategy: "jwt",
   },
   callbacks: {
-    async jwt({ token, account }) {
-      // ✅ Attach Google access token to JWT
-      if (account) {
-        token.accessToken = account.access_token;
-      }
-      return token;
+    async session({ session, token, user }) {
+      return session; // The return type will match the one returned in `useSession()`
     },
-    async session({ session, token }) {
-      // ✅ Expose access token to client
-      (session as any).access_token = token.accessToken;
-      return session;
-    },
-  },
-  pages: {
-    signIn: "/auth/signin",
   },
 });
 
-export const GET = handler;
-export const POST = handler;
+export { handler as GET, handler as POST };
