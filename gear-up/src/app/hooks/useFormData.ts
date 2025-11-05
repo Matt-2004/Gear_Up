@@ -27,11 +27,11 @@ export interface IProfileFormData {
   newEmail: "string";
   name: "string";
   avatarUrl: "string";
-  dateOfBirth: "2025-10-27";
-  phoneNumber: "string";
-  currentPassword: "string";
-  newPassword: "string";
-  confirmedNewPassword: "string";
+  dateOfBirth: Date;
+  phoneNumber: number;
+  currentPassword: string;
+  newPassword: string;
+  confirmedNewPassword: string;
 }
 
 type DynamicForm<T extends FormType> = T extends "login"
