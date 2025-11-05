@@ -10,121 +10,119 @@ import {
 import { API_URL } from "@/lib/config";
 import axios from "axios";
 import { getAccessToken } from "./getClientCookie";
-
-interface IloginResponse {
-  isSuccess: boolean;
-  message: string;
-  data: {
-    accessToken: string;
-    refreshToken: string;
-  };
-  status: number;
-}
-
-export interface UserProfileData {
-  isSuccess: boolean;
-  message: string;
-  data: {
-    id: string;
-    provider: string | null;
-    username: string;
-    email: string;
-    name: string;
-    role: "Customer" | "Admin" | "Moderator";
-    avatarUrl: string;
-  };
-  status: number;
-}
+import { UserProfileData } from "@/app/types/api.types";
 
 // Create an axios instance
+// initiate data
+
 const api = axios.create({
   baseURL: API_URL,
   withCredentials: true,
-  headers: {
-    "Content-Type": "application/json",
-  },
 });
 
-api.interceptors.response.use(
-  (response) => {
-    console.log("API Response:", response);
-    // If the response is successful, just return it
-    return response;
-  },
-  async (error) => {
-    console.error("API Error Response:", error.response);
-    const originalRequest = error.config;
-    if (error.response.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true; // Mark the request as retried to avoid infinite loops.
-      try {
-        // Retrieve the stored refresh token.
-        // Make a request to your auth server to refresh the token.
-        const response = await axios.post(
-          "http://localhost:5255/api/v1/auth/refresh",
-          {},
-          { withCredentials: true }
-        );
-        console.log("Refresh response:", response.data);
-
-        // Update the authorization header with the new access token.
-        return api(originalRequest); // Retry the original request with the new access token.
-      } catch (refreshError) {
-        // Handle refresh token errors by clearing stored tokens and redirecting to the login page.
-        console.error("Token refresh failed:", refreshError);
-        return Promise.reject(refreshError);
-      }
+api.interceptors.request.use(
+  (request) => {
+    const accessToken = getAccessToken();
+    console.log(
+      "Getting Access Token in interceptors request. Data:: ",
+      accessToken
+    );
+    if (accessToken) {
+      request.headers["Authorization"] = `Bearer ${accessToken}`;
     }
-    return Promise.reject(error); // For all other errors, return the error as is.
+    return request;
+  },
+  (error) => {
+    return Promise.reject(error);
   }
 );
 
-export async function authRequest(
-  url: string,
-  formData: ILoginFormData | IRegisterFormData
-): Promise<IloginResponse> {
-  try {
-    const res = await api.post(`${url}`, formData);
+// api interceptors that run before calling request
+// Add a variable to track the refresh token promise
+let refreshTokenPromise: Promise<any> | null = null;
 
-    return res.data;
-  } catch (error: any) {
-    console.error("Fetch API Error:", error.message);
-    throw error;
+api.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      // If a refresh is already in progress, wait for it
+      if (refreshTokenPromise) {
+        try {
+          await refreshTokenPromise;
+          return api(originalRequest);
+        } catch (refreshError) {
+          return Promise.reject(refreshError);
+        }
+      }
+
+      // Start a new refresh
+      refreshTokenPromise = axios.post(
+        "http://localhost:5255/api/v1/auth/refresh",
+        {},
+        { withCredentials: true }
+      );
+
+      try {
+        const response = await refreshTokenPromise;
+        console.log("Refresh response:", response.data);
+
+        // If your backend returns an access token, update the Authorization header
+        if (response.data.accessToken) {
+          api.defaults.headers.common[
+            "Authorization"
+          ] = `Bearer ${response.data.accessToken}`;
+          originalRequest.headers[
+            "Authorization"
+          ] = `Bearer ${response.data.accessToken}`;
+        }
+
+        refreshTokenPromise = null;
+        return api(originalRequest);
+      } catch (refreshError) {
+        refreshTokenPromise = null;
+        console.error("Token refresh failed:", refreshError);
+
+        // Clear auth state and redirect to login
+        // window.location.href = '/login';
+
+        return Promise.reject(refreshError);
+      }
+    }
+
+    return Promise.reject(error);
   }
-}
+);
 
+// main api calling function
 export async function apiRequest(
   url: string,
-  formData?: IForgotPassword | INewPassword | IProfileFormData,
+  formData?:
+    | ILoginFormData
+    | IRegisterFormData
+    | IForgotPassword
+    | INewPassword
+    | IProfileFormData,
   method: "POST" | "GET" | "PUT" = "POST"
 ) {
   try {
-    const access_token = getAccessToken();
-    console.log(access_token ? "Access Token still valid" : "Token Expired");
-    console.log("Access Token:", access_token);
-
-    const headers = { Authorization: `Bearer ${access_token}` };
-
     const fullUrl = `${API_URL}${url}`;
 
     if (method === "POST") {
-      const res = await api.post(fullUrl, formData, {
-        headers,
-        withCredentials: true,
-      });
+      const res = await api.post(fullUrl, formData);
       return res.data;
     }
     if (method === "PUT") {
-      const res = await api.put(fullUrl, formData, {
-        headers,
-        withCredentials: true,
-      });
+      const res = await api.put(fullUrl, formData);
       return res;
     }
     if (method === "GET") {
-      const res = await api.get(fullUrl, {
-        headers,
-        withCredentials: true,
-      });
+      const res = await api.get(fullUrl);
       return res.data;
     }
 
@@ -136,11 +134,11 @@ export async function apiRequest(
 }
 
 export async function login(formData: ILoginFormData) {
-  return authRequest("/api/v1/auth/login", formData);
+  return apiRequest("/api/v1/auth/login", formData, "POST");
 }
 
 export async function register(formData: IRegisterFormData) {
-  return authRequest("/api/v1/auth/register", formData);
+  return apiRequest("/api/v1/auth/register", formData, "POST");
 }
 
 // Require access token in the header
