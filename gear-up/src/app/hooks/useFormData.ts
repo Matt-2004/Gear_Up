@@ -24,9 +24,9 @@ export interface INewPassword {
 }
 
 export interface IProfileFormData {
-  newEmail: "string";
-  name: "string";
-  avatarUrl: "string";
+  newEmail: string;
+  name: string;
+  avatarUrl: string;
   dateOfBirth: Date;
   phoneNumber: number;
   currentPassword: string;
