@@ -1,4 +1,4 @@
-import { NavbarContentProvider } from "@/provider/TitleContext";
+import { NavbarContentProvider } from "@/provider/NavbarContext";
 import { Logo, NavUtils } from "./Presentation";
 import NavbarContainer from "./NavbarContainer";
 import NavbarTabs from "./NavbarTabs";
