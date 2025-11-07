@@ -10,91 +10,41 @@ import {
 import { API_URL } from "@/lib/config";
 import axios from "axios";
 import { getAccessToken } from "./getClientCookie";
-import { UserProfileData } from "@/app/types/api.types";
+import { userProfileResponse } from "@/app/types/api.types";
 
 // Create an axios instance
 // initiate data
+const refreshAccessToken = async () => {
+  const refreshTokenPromise = await axios.post(
+    "http://localhost:5255/api/v1/auth/refresh",
+    {},
+    { withCredentials: true }
+  );
+  return refreshTokenPromise;
+};
 
 const api = axios.create({
   baseURL: API_URL,
   withCredentials: true,
 });
 
+// Interceptors for api request
 api.interceptors.request.use(
-  (request) => {
+  async (request) => {
     const accessToken = getAccessToken();
-    console.log(
-      "Getting Access Token in interceptors request. Data:: ",
-      accessToken
-    );
+
     if (accessToken) {
+      request.headers["Authorization"] = `Bearer ${accessToken}`;
+    } else {
+      // generate new refresh/access token
+      await refreshAccessToken();
+      const accessToken = getAccessToken();
+
       request.headers["Authorization"] = `Bearer ${accessToken}`;
     }
     return request;
   },
   (error) => {
-    return Promise.reject(error);
-  }
-);
-
-// api interceptors that run before calling request
-// Add a variable to track the refresh token promise
-let refreshTokenPromise: Promise<any> | null = null;
-
-api.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  async (error) => {
-    const originalRequest = error.config;
-
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-
-      // If a refresh is already in progress, wait for it
-      if (refreshTokenPromise) {
-        try {
-          await refreshTokenPromise;
-          return api(originalRequest);
-        } catch (refreshError) {
-          return Promise.reject(refreshError);
-        }
-      }
-
-      // Start a new refresh
-      refreshTokenPromise = axios.post(
-        "http://localhost:5255/api/v1/auth/refresh",
-        {},
-        { withCredentials: true }
-      );
-
-      try {
-        const response = await refreshTokenPromise;
-        console.log("Refresh response:", response.data);
-
-        // If your backend returns an access token, update the Authorization header
-        if (response.data.accessToken) {
-          api.defaults.headers.common[
-            "Authorization"
-          ] = `Bearer ${response.data.accessToken}`;
-          originalRequest.headers[
-            "Authorization"
-          ] = `Bearer ${response.data.accessToken}`;
-        }
-
-        refreshTokenPromise = null;
-        return api(originalRequest);
-      } catch (refreshError) {
-        refreshTokenPromise = null;
-        console.error("Token refresh failed:", refreshError);
-
-        // Clear auth state and redirect to login
-        // window.location.href = '/login';
-
-        return Promise.reject(refreshError);
-      }
-    }
-
     return Promise.reject(error);
   }
 );
@@ -134,11 +84,15 @@ export async function apiRequest(
 }
 
 export async function login(formData: ILoginFormData) {
-  return apiRequest("/api/v1/auth/login", formData, "POST");
+  return axios.post(`${API_URL}/api/v1/auth/login`, formData, {
+    withCredentials: true,
+  });
 }
 
 export async function register(formData: IRegisterFormData) {
-  return apiRequest("/api/v1/auth/register", formData, "POST");
+  return axios.post(`${API_URL}/api/v1/auth/register`, formData, {
+    withCredentials: true,
+  });
 }
 
 // Require access token in the header
@@ -168,7 +122,7 @@ export async function getUserProfile() {
     "/api/v1/users/me",
     undefined,
     "GET"
-  ) as Promise<UserProfileData>;
+  ) as Promise<userProfileResponse>;
 }
 
 export async function updateUserProfile(formData: IProfileFormData) {
