@@ -19,7 +19,7 @@ const PopupContext = createContext<PopupContextType>({
     setTag: () => { },
 });
 
-export const TitleContentProvider = ({ children }: { children: React.ReactNode }) => {
+export const NavbarContentProvider = ({ children }: { children: React.ReactNode }) => {
     const [tag, setTag] = useState<Tag>("viewProfile");
     const [isOpen, setIsOpen] = useState(false);
     return (
