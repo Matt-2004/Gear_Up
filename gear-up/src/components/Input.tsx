@@ -8,11 +8,11 @@ interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "size">
     type: "email" | "password" | "text" | "checkbox" | "date";
     ref?: Ref<HTMLInputElement>;
     children: React.ReactNode;
-    inputSize?: "half" | "full";
+    size?: "half" | "full";
 }
 
 export default function Input({
-    inputSize = "full",
+    size = "full",
     type = "email",
     ref,
     children,
@@ -30,7 +30,7 @@ export default function Input({
                     type={isPasswordVisible ? "text" : type}
                     ref={ref}
                     {...props}
-                    className={clsx(inputSize == "half" ? "md:w-[14.5rem]" : "md:w-[30rem]", "w-full placeholder:text-[14px] outline-none text-[16px]  py-3 px-4  rounded-md focus:border-primary border border-gray-200  bg-white text-gray-800 ")}
+                    className={clsx(size == "half" ? "md:w-[14.5rem]" : "md:w-[30rem]", "w-full placeholder:text-[14px] outline-none text-[16px]  py-3 px-4  rounded-md focus:border-primary border border-gray-200  bg-white text-gray-800 ")}
                 />
 
                 {type == "password" &&

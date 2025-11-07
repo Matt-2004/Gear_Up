@@ -1,14 +1,14 @@
 "use client";
 
 import { Fragment } from "react"
-import Title from "@/components/Title"
+import Navbar from "@/components/Navbar/Navbar";
 
 export default function HOME({
 
 }) {
   return (
     <Fragment>
-      <Title />
+      <Navbar />
     </Fragment>
 
   )

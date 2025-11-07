@@ -27,8 +27,8 @@ export interface IProfileFormData {
   newEmail: string;
   name: string;
   avatarUrl: string;
-  dateOfBirth: Date;
-  phoneNumber: number;
+  dateOfBirth: string;
+  phoneNumber: string;
   currentPassword: string;
   newPassword: string;
   confirmedNewPassword: string;
@@ -53,9 +53,12 @@ type FormType =
   | "newPassword"
   | "profile";
 
-export function useFormData<T extends FormType>(formType: T) {
+export function useFormData<T extends FormType>(
+  formType: T,
+  initiate?: DynamicForm<T>
+) {
   const [formData, setFormData] = useState<DynamicForm<T>>(
-    {} as DynamicForm<T>
+    initiate as DynamicForm<T>
   );
 
   const handleChange = (
