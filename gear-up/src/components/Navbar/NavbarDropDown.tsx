@@ -1,4 +1,4 @@
-import { usePopup } from "@/provider/TitleContext";
+import { usePopup } from "@/provider/NavbarContext";
 import { signOut } from "next-auth/react";
 
 export function ProfileDownDown() {

@@ -1,4 +1,4 @@
-import { usePopup } from "@/provider/TitleContext";
+import { usePopup } from "@/provider/NavbarContext";
 import { ReactNode } from "react";
 import ProfileMenu from "./NavbarProfileMenu";
 
