@@ -1,6 +1,6 @@
 "use client";
 
-import { useFormData } from "@/app/hooks/useFormData";
+import { useJSON } from "@/app/hooks/useJSON";
 import { useToast } from "@/app/hooks/useToast";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
@@ -25,7 +25,7 @@ interface IFormDate {
 
 const Page = () => {
 
-    const { formData, handleChange } = useFormData("register");
+    const { formData, handleChange } = useJSON("register");
 
     const { refetch } = useQuery({
         queryKey: ['loginUser'],
@@ -61,8 +61,8 @@ const Page = () => {
                 </div>
                 <div id="body" className="flex flex-col justify-center items-center gap-4">
                     <div className="flex justify-between w-full">
-                        <Input name="firstName" onChange={handleChange} inputSize="half" type="text" placeholder="John">First Name</Input>
-                        <Input name="lastName" onChange={handleChange} inputSize="half" type="text" placeholder="Doe">Last Name</Input>
+                        <Input name="firstName" onChange={handleChange} size="half" type="text" placeholder="John">First Name</Input>
+                        <Input name="lastName" onChange={handleChange} size="half" type="text" placeholder="Doe">Last Name</Input>
 
                     </div>
                     <Input name="username" type="text" onChange={handleChange} placeholder="John_Doe">Username</Input>

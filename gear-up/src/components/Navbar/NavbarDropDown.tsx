@@ -1,25 +1,21 @@
-import { usePopup } from "@/provider/NavbarContext";
 import { signOut } from "next-auth/react";
+import Link from "next/link";
 
 export function ProfileDownDown() {
 
-    // Popup value is handling with Context Provider
-    const { openPopup, setTag } = usePopup();
-
-    // TODO: Logout function --> handle for manually and provider 
-
     return (
-        <div className="absolute top-12  w-48 bg-white shadow-lg rounded-md p-4 z-30">
-            <ul className="space-y-2">
-                <li className="cursor-pointer hover:text-[#7ED957]" onClick={() => {
-                    setTag("viewProfile");
-                    openPopup();
-                }}>View Profile</li>
-                <li className="cursor-pointer hover:text-[#7ED957]" onClick={() => {
-                    setTag("settings");
-                    openPopup();
-                }}>Settings</li>
-                <li onClick={() => signOut()} className="cursor-pointer hover:text-[#7ED957]">Logout</li>
+        <div className="absolute top-11 border-gray-800 right-0 shadow-gray-700  w-64 bg-background text-white shadow-sm rounded-md p-2 z-30">
+            <ul className="">
+                <li className="cursor-pointer  px-4 py-2 rounded-sm hover:border-gray-600 hover:bg-gray-700">
+                    <Link href="/profile/user">
+                        Profile
+                    </Link>
+                </li>
+                <li className="cursor-pointer   px-4 py-2 rounded-sm hover:border-gray-600 hover:bg-gray-700">Settings</li>
+                <li className="cursor-pointer  px-4 py-2 rounded-sm hover:border-gray-600 hover:bg-gray-700">
+                    <Link href={"/kyc/submit"}>Dealership registration</Link>
+                </li>
+                <li onClick={() => signOut()} className="cursor-pointer  px-4 py-2 rounded-sm hover:border-gray-600 hover:bg-gray-700">Logout</li>
             </ul>
         </div>
     )

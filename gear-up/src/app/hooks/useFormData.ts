@@ -1,81 +1,59 @@
-import { useState } from "react";
-
-export interface IRegisterFormData {
-  username: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
+interface IProfileFormData {
+  NewEmail: string;
+  Name: string;
+  AvatarImage: string;
+  DateOfBirth: string;
+  PhoneNumber: string;
+  CurrentPassword: string;
+  NewPassword: string;
+  ConfirmedNewPassword: string;
 }
 
-export interface ILoginFormData {
-  usernameOrEmail: string;
-  password: string;
+interface IKYCdata {
+  DocumentType: string;
+  Kyc: string[];
+  SelifeImage: string; // BinaryString
 }
 
-export interface IForgotPassword {
-  email: string;
-}
+type FromType = "profile" | "KYC";
 
-export interface INewPassword {
-  newPassword: string;
-  confirmedPassword: string;
-}
-
-export interface IProfileFormData {
-  newEmail: string;
-  name: string;
-  avatarUrl: string;
-  dateOfBirth: string;
-  phoneNumber: string;
-  currentPassword: string;
-  newPassword: string;
-  confirmedNewPassword: string;
-}
-
-type DynamicForm<T extends FormType> = T extends "login"
-  ? ILoginFormData
-  : T extends "register"
-  ? IRegisterFormData
-  : T extends "emailVerify"
-  ? IForgotPassword
-  : T extends "newPassword"
-  ? INewPassword
-  : T extends "profile"
+type DynamicForm<T extends FromType> = T extends "profile"
   ? IProfileFormData
-  : never;
+  : T extends "KYC"
+  ? IKYCdata
+  : null;
 
-type FormType =
-  | "login"
-  | "register"
-  | "emailVerify"
-  | "newPassword"
-  | "profile";
-
-export function useFormData<T extends FormType>(
+function useFormData<T extends FromType>(
   formType: T,
-  initiate?: DynamicForm<T>
-) {
-  const [formData, setFormData] = useState<DynamicForm<T>>(
-    initiate as DynamicForm<T>
-  );
+  jsonData: Record<string, any>
+): FormData {
+  const formData = new FormData();
 
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
-    const { name, value, type, checked } = e.target as HTMLInputElement;
+  Object.keys(jsonData).forEach((key) => {
+    const value = jsonData[key];
 
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
+    // Handle different data types
+    if (value instanceof File || value instanceof Blob) {
+      formData.append(key, value);
+    } else if (Array.isArray(value)) {
+      // Handle arrays
+      value.forEach((item, index) => {
+        if (item instanceof File || item instanceof Blob) {
+          formData.append(key, item);
+        } else {
+          formData.append(`${key}[${index}]`, JSON.stringify(item));
+        }
+      });
+    } else if (value !== null && value !== undefined && value !== "") {
+      // Convert other types to string
+      formData.append(
+        key,
+        typeof value === "object" ? JSON.stringify(value) : String(value)
+      );
+    }
+  });
 
-  return {
-    formData,
-    handleChange,
-  };
+  return formData;
 }
+
+export default useFormData;

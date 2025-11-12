@@ -6,11 +6,12 @@ import {
   INewPassword,
   IProfileFormData,
   IRegisterFormData,
-} from "@/app/hooks/useFormData";
+} from "@/app/hooks/useJSON";
 import { API_URL } from "@/lib/config";
 import axios from "axios";
 import { getAccessToken } from "./getClientCookie";
 import { userProfileResponse } from "@/app/types/api.types";
+import useFormData from "@/app/hooks/useFormData";
 
 // Create an axios instance
 // initiate data
@@ -23,9 +24,12 @@ const refreshAccessToken = async () => {
   return refreshTokenPromise;
 };
 
-const api = axios.create({
+export const api = axios.create({
   baseURL: API_URL,
   withCredentials: true,
+  headers: {
+    Accept: "application/json",
+  },
 });
 
 // Interceptors for api request
@@ -57,7 +61,9 @@ export async function apiRequest(
     | IRegisterFormData
     | IForgotPassword
     | INewPassword
-    | IProfileFormData,
+    | IProfileFormData
+    | FormData
+    | FormDataEntryValue,
   method: "POST" | "GET" | "PUT" = "POST"
 ) {
   try {
@@ -68,7 +74,11 @@ export async function apiRequest(
       return res.data;
     }
     if (method === "PUT") {
-      const res = await api.put(fullUrl, formData);
+      const res = await api.put(fullUrl, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data", // Axios often handles this automatically
+        },
+      });
       return res;
     }
     if (method === "GET") {
@@ -125,6 +135,13 @@ export async function getUserProfile() {
   ) as Promise<userProfileResponse>;
 }
 
-export async function updateUserProfile(formData: IProfileFormData) {
-  return apiRequest("/api/v1/users/me", formData, "PUT");
+export async function updateUserProfile(data: Partial<IProfileFormData>) {
+  // In here, I can convert Object data into FormData
+
+  const formdata = useFormData("profile", data);
+  return apiRequest("/api/v1/users/me", formdata, "PUT");
+}
+
+export async function kycRegister(data: FormData) {
+  return apiRequest("/api/v1/users/kyc", data, "POST");
 }

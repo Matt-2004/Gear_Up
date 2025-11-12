@@ -1,6 +1,6 @@
 "use client"
 
-import { INewPassword, useFormData } from "@/app/hooks/useFormData";
+import { useJSON } from "@/app/hooks/useJSON";
 import { useToast } from "@/app/hooks/useToast";
 import Button from "@/components/Button";
 import Input from "@/components/Input"
@@ -10,13 +10,14 @@ import axios from "axios";
 import { AnimatePresence } from "framer-motion";
 import Image from "next/image"
 import { FormEvent } from "react";
-import { getClientCookies } from "@/utils/getClientCookie";
+import { getAccessToken, getResetToken } from "@/utils/getClientCookie";
 import { updateNewPassword } from "@/utils/FetchAPI";
 
 const Page = () => {
-    const token = getClientCookies() as { access_token?: string, reset_token?: string } | void;
 
-    const { formData, handleChange } = useFormData("newPassword");
+
+    const { formData, handleChange } = useJSON("newPassword");
+    const reset_token = getResetToken();
 
     // updateNewPassword(formdata, access_token, reset_token)
     const { refetch } = useQuery({
@@ -24,7 +25,7 @@ const Page = () => {
         queryFn: () => updateNewPassword({
             newPassword: formData.newPassword,
             confirmedPassword: formData.confirmedPassword
-        }, token?.access_token as string, token?.reset_token as string),
+        }, reset_token),
         staleTime: 5000,
         enabled: false
     })

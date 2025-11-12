@@ -1,26 +1,22 @@
 "use client";
 
+import { IProfileFormData } from "@/app/hooks/useJSON";
 import { getUserProfile } from "@/utils/FetchAPI";
 import { getRefreshToken } from "@/utils/getRefreshToken";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
 
-export const userProfile = () => {
-  const [isTokenExist, setIsTokenExist] = useState(false);
-
-  useEffect(() => {
-    const isRefreshTokenExist = async () => {
-      const token = await getRefreshToken();
-      setIsTokenExist(token);
-    };
-    isRefreshTokenExist();
-  }, []);
-
-  const { data } = useQuery({
+export const useProfile = () => {
+  const { data, refetch, isLoading } = useQuery({
     queryKey: ["userProfile"],
-    queryFn: getUserProfile,
+    queryFn: async () => {
+      const token = await getRefreshToken();
+      if (!token) {
+        return;
+      }
+      return getUserProfile();
+    },
     staleTime: 5000,
-    enabled: isTokenExist,
+    retry: false,
   });
-  return data;
+  return { data, refetch, isLoading };
 };

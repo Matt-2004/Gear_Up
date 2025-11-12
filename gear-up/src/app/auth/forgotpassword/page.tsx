@@ -8,13 +8,13 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { FormEvent } from "react";
 import { useToast } from "@/app/hooks/useToast";
-import { useFormData } from "@/app/hooks/useFormData";
+import { useJSON } from "@/app/hooks/useJSON";
 import { AnimatePresence } from "framer-motion";
 
 import { resentEmailForgetPassword } from "@/utils/FetchAPI";
 
 const Page = () => {
-    const { formData, handleChange } = useFormData("emailVerify");
+    const { formData, handleChange } = useJSON("emailVerify");
 
     const { refetch } = useQuery({
         queryKey: ['forgetPassword'],

@@ -1,17 +1,27 @@
 "use client";
 
 import { ButtonHTMLAttributes, memo, useState } from "react"
-import { extend } from "zod/v4-mini"
 import Spinner from "./Spinner";
 import { signIn } from "next-auth/react";
+import clsx from "clsx";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
     children: React.ReactNode;
-    loading?: boolean;
+    loading: boolean;
     provider: "google" | "facebook" | "manual";
+    disabled: boolean;
+    size: "half" | "full"
 }
 
-function Button({ children, loading, provider }: ButtonProps) {
+// Button usage 
+// -> Auth
+// -> Profile
+
+// function
+// -> Should have "Loading" when click...
+// 
+
+function Button({ children, loading, provider, disabled, size = "full" }: Partial<ButtonProps>) {
     function handleProviderLogin() {
         if (provider === "google") {
             // Handle Google login
@@ -23,10 +33,9 @@ function Button({ children, loading, provider }: ButtonProps) {
         }
 
     }
-    console.log(provider + " login clicked");
 
     return (
-        <button onClick={handleProviderLogin} type={provider == "manual" ? "submit" : "button"} className="w-[30rem] main-color-gradient py-3 rounded-md font-medium text-xl text-white mb-4 flex justify-center items-center gap-6">{loading && <Spinner />}{children}</button>
+        <button onClick={handleProviderLogin} disabled={disabled} type="submit" className={clsx(size === "half" ? "w-[14.5rem]" : "w-[30rem]", "transition-all  disabled:bg-gray-400 bg-primary py-3 rounded-md font-medium text-xl text-white flex justify-center items-center gap-6")}>{loading && <Spinner />}{children}</button>
     )
 }
 

@@ -8,7 +8,7 @@ export default function HOME({
 }) {
   return (
     <Fragment>
-      <Navbar />
+
     </Fragment>
 
   )

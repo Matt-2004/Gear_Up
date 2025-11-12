@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Roboto } from "next/font/google";
+import { Geist, Geist_Mono, Montserrat, Roboto } from "next/font/google";
 import "./globals.css";
 import ReactQueryProvider from "@/provider/ReactQueryProvider";
 import NextAuthSessionProvider from "@/provider/NextAuthSessionProvider";
+import Navbar from "@/components/Navbar/Navbar";
 
-const roboto = Roboto({
-  weight: '400',
-  subsets: ['latin'],
+
+const montserrat = Montserrat({
+  subsets: ['latin']
 })
 
 export const metadata: Metadata = {
@@ -20,13 +21,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={montserrat.className}>
       <body
-        className={` ${roboto.className} antialiased`}
+        className={` antialiased`}
       >
+
         <NextAuthSessionProvider>
 
           <ReactQueryProvider>
+            <Navbar />
             {children}
           </ReactQueryProvider>
         </NextAuthSessionProvider>

@@ -5,7 +5,10 @@
   --foreground: #171717;
   --main-color: #7ed957;
   --google-color-background: #1b72e8;
-  --line-coloe-background: #3aad42;
+  --line-color-background: #3aad42;
+  --primary-background: #e9ffe0;
+  --input-bg: #2a2e3d;
+  --input-border: #3b4252;
 }
 
 @theme inline {
@@ -14,6 +17,10 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-roboto: var(--font-roboto)
+  --color-primary-background: var(--primary-background);
+  --color-input-background: var(--input-bg);
+  --color-input-border: var(--input-border);
 }
 
 .main-color-gradient {
@@ -39,4 +46,8 @@ body {
   color: var(--foreground);
   z-index: 0;
   font-family: Arial, Helvetica, sans-serif;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1); /* Makes black icon white */
 }

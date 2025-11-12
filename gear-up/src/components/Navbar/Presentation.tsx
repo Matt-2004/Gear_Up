@@ -1,30 +1,37 @@
-import { usePopup } from "@/provider/NavbarContext";
-import { ReactNode, useState } from "react";
-import { ChatIcon, MagnifyingGlass, MenuBar, XIcon } from "../SVGs";
-import clsx from "clsx";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getUserProfile, updateUserProfile } from "@/utils/FetchAPI";
+"use client"
+
+
+import { useState } from "react";
+import { ChatIcon, MagnifyingGlass } from "../SVGs";
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import Input from "../Input";
-import { useFormData } from "@/app/hooks/useFormData";
-import { signOut } from "next-auth/react"
 import Image from "next/image";
-import { userProfileResponse } from "@/app/types/api.types";
 import NavbarItems from "./NavbarItem";
-import { userProfile } from "./useProfile";
+import { useProfile } from "./useProfile";
 import { ProfileDownDown } from "./NavbarDropDown";
+import { getRefreshToken } from "@/utils/getRefreshToken";
 
 export function Logo() {
     return (
         <div className="w-40 h-16 items-center flex z-20">
-            <Image src={"/Gear.png"} priority alt="Logo" width={150} height={150} className="" />
+            <Image src={"/logo.png"} priority alt="Logo" width={150} height={150} className="" />
         </div>
     )
 }
 
 export function NavUtils() {
-    const profile = userProfile();
 
+    const [isAuthenticate, setIsAuthenticate] = useState<boolean>(false);
+
+    useQuery({
+        queryKey: ["authenticate"],
+        queryFn: async () => {
+            const res = await getRefreshToken();
+            setIsAuthenticate(res)
+            return res
+        },
+        enabled: true
+    })
     return (
         <div className="lg:flex h-full items-center xl:gap-8 lg:gap-6 hidden">
             <NavbarItems>
@@ -34,26 +41,35 @@ export function NavUtils() {
                 <Chat />
             </NavbarItems>
             <NavbarItems>
-                {profile ? <User profile={profile} /> : <Login />}
+                {isAuthenticate ? <User /> : <Login />}
             </NavbarItems>
         </div>
     )
 }
 
-function User({ profile }: { profile: userProfileResponse }) {
+function User() {
 
+    const { data } = useProfile();
     const [isOpenUserProfileMenu, setIsOpenUserProfileMenu] = useState<boolean>(false);
-    const { avatarUrl, name } = profile.data
 
-    return (
+    if (data) {
+        const { avatarUrl, name } = data.data;
+        return (
 
-        <div className="flex items-center gap-4 cursor-pointer relative" onClick={() => { setIsOpenUserProfileMenu(!isOpenUserProfileMenu) }}>
-            <Image src={avatarUrl} alt="Profile Picture" width={40} height={40} className="rounded-full" />
-            <span className="text-white font-medium">{name}</span>
-            {isOpenUserProfileMenu && <ProfileDownDown />}
-        </div>
+            <div className="flex items-center gap-4 cursor-pointer relative" onClick={() => { setIsOpenUserProfileMenu(!isOpenUserProfileMenu) }}>
+                <Image src={avatarUrl} alt="Profile Picture" width={40} height={40} className="rounded-full" />
+                <span className="text-white font-medium">{name}</span>
+                {isOpenUserProfileMenu && <ProfileDownDown />}
+            </div>
 
+        )
+    }
+    if (!data) (
+        <div>Fetching Data failed!!</div>
     )
+
+
+
 }
 
 function SearchBarIcon() {

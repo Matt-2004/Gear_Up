@@ -10,18 +10,18 @@ import Button from "@/components/Button";
 import { useToast } from "@/app/hooks/useToast";
 import { AnimatePresence } from "framer-motion";
 import { login } from "@/utils/FetchAPI";
-import { useFormData } from "@/app/hooks/useFormData";
+import { useJSON } from "@/app/hooks/useJSON";
 
 
 
 const Page = () => {
-    const { formData, handleChange } = useFormData("login");
+    const { JSONData, handleChange } = useJSON("login");
 
     const { refetch } = useQuery({
         queryKey: ['loginUser'],
         queryFn: () => login({
-            usernameOrEmail: formData.usernameOrEmail,
-            password: formData.password,
+            usernameOrEmail: JSONData.usernameOrEmail,
+            password: JSONData.password,
         }),
         staleTime: 5000,
         enabled: false, // Disable automatic query on mount
@@ -62,7 +62,7 @@ const Page = () => {
 
                 <h1>Don't have an account? <Link href={"/auth/register"} className="text-blue-600 font-medium hover:underline hover:underline-offset-4">Register Now</Link></h1>
             </form>
-            <Button provider="google">Login with Google</Button>
+            <Button provider="google" >Login with Google</Button>
         </div>
     );
 };

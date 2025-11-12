@@ -1,3 +1,5 @@
+"use client"
+
 import { useState } from "react";
 import { MenuBar, XIcon } from "../SVGs";
 import clsx from "clsx";

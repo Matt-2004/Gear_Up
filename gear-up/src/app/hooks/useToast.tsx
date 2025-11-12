@@ -7,7 +7,7 @@ import clsx from "clsx";
 import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
-import { IForgotPassword, ILoginFormData, INewPassword, IRegisterFormData, useFormData } from "@/app/hooks/useFormData";
+import { IForgotPassword, ILoginFormData, INewPassword, IRegisterFormData } from "@/app/hooks/useJSON";
 
 
 
@@ -24,12 +24,13 @@ interface Toast {
     duration: number;
 }
 
-type MessageType = "login" | "register" | "emailVerify" | "newPassword";
+type MessageType = "login" | "register" | "emailVerify" | "newPassword" | "updateProfile";
 interface MessageRequireType {
     login: string;
     register: string;
     emailVerify: string;
-    newPassword: string
+    newPassword: string;
+    updateProfile: string;
 }
 
 export function useToast<T = ToastInterface>(refetch: (options?: RefetchOptions | undefined) => Promise<QueryObserverResult<T, Error>>, type: MessageType) {
@@ -40,14 +41,16 @@ export function useToast<T = ToastInterface>(refetch: (options?: RefetchOptions 
         login: "Login successful. Redirecting...",
         register: "Account created successful, Redirecting...",
         emailVerify: "Verification email sent. Please check your inbox.",
-        newPassword: "Password updated successfully. Please login again!"
+        newPassword: "Password updated successfully. Please login again!",
+        updateProfile: "Profile information updated successfully."
     }
 
     const errorMessage: MessageRequireType = {
         login: "Incorrect username or password.",
         register: "Registration failed. Please try again later.",
         emailVerify: "No account found with this email.",
-        newPassword: "Failed to update password. Please try again."
+        newPassword: "Failed to update password. Please try again.",
+        updateProfile: "Failed to update profile information. Please try again."
     }
 
     const [toast, setToast] = useState<Toast | null>(null);

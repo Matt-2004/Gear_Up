@@ -5,32 +5,34 @@ import { InputHTMLAttributes, Ref, useState } from "react";
 import { EyeIcon, EyeSlashIcon } from "./SVGs";
 
 interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "size"> {
-    type: "email" | "password" | "text" | "checkbox" | "date";
-    ref?: Ref<HTMLInputElement>;
+    type: "email" | "password" | "text" | "checkbox" | "date" | "tel";
+    ref: Ref<HTMLInputElement>;
     children: React.ReactNode;
-    size?: "half" | "full";
+    size: "half" | "full";
+    horizontal: boolean;
 }
 
 export default function Input({
     size = "full",
     type = "email",
+    horizontal = false,
     ref,
     children,
     ...props
-}: InputProps) {
+}: Partial<InputProps>) {
 
     const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
 
     return (
-        <div className=" flex flex-col gap-1">
-            <label htmlFor={type} className="text-[14px]">{children}</label>
-            <div className="relative w-full">
+        <div className={clsx("flex", horizontal === true ? "items-center justify-between gap-10" : "flex-col")}>
+            <label htmlFor={type} className=" text-gray-300 font-medium text-lg">{children}</label>
+            <div className="relative w-[30rem]">
                 <input
                     id={type}
                     type={isPasswordVisible ? "text" : type}
                     ref={ref}
                     {...props}
-                    className={clsx(size == "half" ? "md:w-[14.5rem]" : "md:w-[30rem]", "w-full placeholder:text-[14px] outline-none text-[16px]  py-3 px-4  rounded-md focus:border-primary border border-gray-200  bg-white text-gray-800 ")}
+                    className={clsx(size == "half" ? "md:w-[14.5rem]" : "md:w-[30rem]", "w-full outline-none   py-3 px-4  rounded-md focus:border-primary border border-[#3B4252] bg-gray-100 text-black  disabled:bg-[#2A2E3D] disabled:text-white ")}
                 />
 
                 {type == "password" &&
