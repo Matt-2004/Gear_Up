@@ -1,79 +1,103 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import {useMutation, UseMutationResult, useQuery} from "@tanstack/react-query";
 import Link from "next/link";
-import { FormEvent, useEffect, useState } from "react";
-import Image from "next/image";
+import {FormEvent} from "react";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
-import { useToast } from "@/app/hooks/useToast";
-import { AnimatePresence } from "framer-motion";
-import { login } from "@/utils/FetchAPI";
-import { useJSON } from "@/app/hooks/useJSON";
+import {ToastType, useToast} from "@/app/hooks/useToast";
+import {AnimatePresence} from "framer-motion";
+import {login} from "@/utils/FetchAPI";
+import { useInputData } from "@/app/hooks/useInputData";
+import {AxiosResponse} from "axios";
+import {useRouter} from "next/navigation";
+import {useDispatch} from "react-redux";
+import {handleAuthenticationLogin} from "@/lib/Features/authSlice";
+import {error} from "next/dist/build/output/log";
+import {updateAuthStatus} from "@/app/auth/helper";
 
-
+interface LoginResponse {
+    "isSuccess": boolean,
+    "message": string,
+    "data": {
+        "accessToken": string,
+        "refreshToken": string
+    },
+    "status": number
+}
 
 const Page = () => {
-    const { JSONData, handleChange } = useJSON("login");
+    const router = useRouter();
+    const dispatch = useDispatch();
+    const {inputData, handleInputChange} = useInputData("login");
+    const {ToastComponent, addToastMessage, removeToastMessage} = useToast({toastType: "success", message: null})
 
-    const { refetch } = useQuery({
-        queryKey: ['loginUser'],
-        queryFn: () => login({
-            usernameOrEmail: JSONData.usernameOrEmail,
-            password: JSONData.password,
-        }),
-        staleTime: 5000,
-        enabled: false, // Disable automatic query on mount
+
+    const mutation = useMutation({
+        mutationFn: login,
+
+        onSuccess: (
+            data: AxiosResponse<LoginResponse>
+        ) => {
+            addToastMessage("success", data.data.message)
+            setTimeout( () => {
+                removeToastMessage("success", null)
+                router.push("/");
+                updateAuthStatus(dispatch);
+            }, 4000)
+        },
+        onError: (
+            error: AxiosResponse<LoginResponse>
+        ) => {
+            addToastMessage("error", error.data.message)
+            setTimeout(() => {
+                removeToastMessage("error", null)
+            }, 4000)
+        },
+
     })
 
-
-
-    const { ToastUI, loading, show, handleToastContext } = useToast(refetch, "login");
-
-    const onsubmit = async (e: FormEvent<HTMLFormElement>) => {
+    const onsubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        handleToastContext();
+        mutation.mutate({
+            usernameOrEmail: inputData.usernameOrEmail,
+            password: inputData.password
+        })
+
     }
 
     return (
         <div className="relative h-screen w-screen flex justify-center items-center flex-col">
             <AnimatePresence>
-                {show && <ToastUI />}
+                {mutation.isSuccess && <ToastComponent />}
             </AnimatePresence>
             <form onSubmit={onsubmit} className="relative h-[70%] w-[60%] bg-white rounded-lg flex flex-col justify-center items-center gap-1 p-8">
-                <Image src={"/Gear.png"} alt="logo" width={180} height={120} className="absolute -top-8 left-0 " />
-                <Title name="Login to your account" />
+
+                <div id="header" className="h-1/4 flex justify-center items-center text-4xl font-bold">
+                    {/* Logo */}
+                    <h1>Login to your account</h1>
+                </div>
                 <div id="body" className="flex flex-col justify-center items-center gap-4 mb-4">
 
-                    <Input name="usernameOrEmail" required autoComplete="email" onChange={handleChange} type="email" placeholder="example@gmail.com or matthew">Email or User Name</Input>
+                    <Input name="usernameOrEmail" required autoComplete="email" onChange={handleInputChange} type="email" placeholder="example@gmail.com or matthew">Email or User Name</Input>
 
-                    <Input name="password" required minLength={8} autoComplete="current-password" onChange={handleChange} type="password" placeholder="Password (mininum at least 8 characters)">Password</Input>
+                    <Input name="password" required minLength={8} autoComplete="current-password" onChange={handleInputChange} type="password" placeholder="Password (mininum at least 8 characters)">Password</Input>
 
                 </div>
                 <div className="w-[30rem] flex justify-between items-center mb-4">
                     <div className="flex h-full gap-2 items-center">
-                        <input onChange={handleChange} id="rememberMe" type="checkbox" />
+                        <input onChange={handleInputChange} id="rememberMe" type="checkbox" />
                         <label htmlFor="rememberMe" className="">Remember me</label>
                     </div>
                     <Link href="/auth/forgotpassword/" className="text-sm text-blue-600 hover:underline">Forgot Password?</Link>
                 </div>
-                <Button loading={loading} provider={"manual"}>Login</Button>
+                <Button loading={mutation.isPending} provider={"manual"}>Login</Button>
 
-                <h1>Don't have an account? <Link href={"/auth/register"} className="text-blue-600 font-medium hover:underline hover:underline-offset-4">Register Now</Link></h1>
+                <h1>Do not have an account? <Link href={"/auth/register"} className="text-blue-600 font-medium hover:underline hover:underline-offset-4">Register Now</Link></h1>
             </form>
             <Button provider="google" >Login with Google</Button>
         </div>
     );
 };
-
-export const Title = ({ name }: { name: string }) => {
-    return (
-        <div id="header" className="h-1/4 flex justify-center items-center text-4xl font-bold">
-            {/* Logo */}
-            <h1>{name}</h1>
-        </div>
-    )
-}
 
 export default Page;

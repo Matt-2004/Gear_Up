@@ -1,13 +1,22 @@
 "use client";
 
 import { Fragment } from "react"
-import Navbar from "@/components/Navbar/Navbar";
+import {useAppDispatch, useAppSelector} from "@/lib/hooks";
+import {handleAuthenticationLogin} from "@/lib/Features/authSlice";
 
 export default function HOME({
 
 }) {
+    const auth = useAppSelector((state) => state.auth.isAuthenticated)
+    const dispatch = useAppDispatch();
+    console.log("isAuthenticated:: ", auth)
   return (
     <Fragment>
+        <div className="text-white">
+            <h1>isAuthenticated:: {auth.toString()}</h1>
+            <button onClick={() => dispatch(handleAuthenticationLogin())}>Click to change Authenticate values:: </button>
+        </div>
+
 
     </Fragment>
 

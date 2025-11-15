@@ -1,48 +1,60 @@
 "use client"
 
-import { useJSON } from "@/app/hooks/useJSON";
 import { useToast } from "@/app/hooks/useToast";
 import Button from "@/components/Button";
 import Input from "@/components/Input"
-import { API_URL } from "@/lib/config";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { useMutation } from "@tanstack/react-query";
+import { AxiosResponse } from "axios";
 import { AnimatePresence } from "framer-motion";
 import Image from "next/image"
 import { FormEvent } from "react";
-import { getAccessToken, getResetToken } from "@/utils/getClientCookie";
 import { updateNewPassword } from "@/utils/FetchAPI";
+import { updateAuthStatus } from "@/app/auth/helper";
+import { useInputData } from "@/app/hooks/useInputData";
+import { useAppDispatch } from "@/lib/hooks";
+import { useRouter } from "next/navigation";
 
 const Page = () => {
 
+    const router = useRouter();
+    const dispatch = useAppDispatch();
+    const { inputData, handleInputChange } = useInputData("newPassword");
+    const { ToastComponent, addToastMessage, removeToastMessage } = useToast({toastType: "success", message: null});
 
-    const { formData, handleChange } = useJSON("newPassword");
-    const reset_token = getResetToken();
-
-    // updateNewPassword(formdata, access_token, reset_token)
-    const { refetch } = useQuery({
-        queryKey: ['newPassoword'],
-        queryFn: () => updateNewPassword({
-            newPassword: formData.newPassword,
-            confirmedPassword: formData.confirmedPassword
-        }, reset_token),
-        staleTime: 5000,
-        enabled: false
+    const mutation = useMutation({
+        mutationFn: updateNewPassword,
+        onSuccess: (
+            data: AxiosResponse
+        ) => {
+            addToastMessage("success", data.data.message)
+            setTimeout( () => {
+                removeToastMessage("success", null)
+                router.push("/");
+                updateAuthStatus(dispatch);
+            }, 4000)
+        },
+        onError: (
+            error: AxiosResponse
+        ) => {
+            addToastMessage("error", error.data.message)
+            setTimeout(() => {
+                removeToastMessage("error", null)
+            }, 4000)
+        },
     })
-
-    const { ToastUI, loading, show, handleToastContext } = useToast(refetch, "emailVerify");
-
 
     const onsubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        handleToastContext();
-
+        mutation.mutate({
+            newPassword: inputData.newPassword,
+            confirmedPassword: inputData.confirmedPassword,
+        })
     }
 
     return (
         <div className="h-screen w-screen flex justify-center items-center flex-col">
             <AnimatePresence>
-                {show && <ToastUI />}
+                {mutation.isSuccess && <ToastComponent />}
             </AnimatePresence>
             <form onSubmit={onsubmit} className="relative h-[70%] w-[60%] bg-white rounded-lg flex flex-col justify-center items-center gap-1 p-8">
                 <Image src={"/Gear.png"} alt="logo" width={180} height={120} className="absolute -top-8 left-0 " />
@@ -54,10 +66,10 @@ const Page = () => {
                 <p className="w-2/4 mb-4 -ml-4">Your new password must be different from previous and password.</p>
                 <div className="flex flex-col gap-4 mb-4">
 
-                    <Input name="newPassword" onChange={handleChange} required minLength={8} autoComplete="new-password" type="password" placeholder="Enter your new password">New Password</Input>
-                    <Input name="confirmedPassword" onChange={handleChange} required minLength={8} type="password" placeholder="Re-enter your new password">Confirm Password</Input>
+                    <Input name="newPassword" onChange={handleInputChange} required minLength={8} autoComplete="new-password" type="password" placeholder="Enter your new password">New Password</Input>
+                    <Input name="confirmedPassword" onChange={handleInputChange} required minLength={8} type="password" placeholder="Re-enter your new password">Confirm Password</Input>
                 </div>
-                <Button loading={loading}>Change Password</Button>
+                <Button loading={mutation.isPending}>Change Password</Button>
             </form>
         </div>
     )

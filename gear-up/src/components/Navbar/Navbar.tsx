@@ -1,5 +1,4 @@
-
-import { Logo, NavUtils } from "./Presentation";
+import { Logo, NavUtils } from "./NavUtils";
 import NavbarContainer from "./NavbarContainer";
 import NavbarTabs from "./NavbarTabs";
 

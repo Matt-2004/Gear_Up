@@ -1,15 +1,16 @@
 "use client"
 
-
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { ChatIcon, MagnifyingGlass } from "../SVGs";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import Image from "next/image";
 import NavbarItems from "./NavbarItem";
-import { useProfile } from "./useProfile";
 import { ProfileDownDown } from "./NavbarDropDown";
-import { getRefreshToken } from "@/utils/getRefreshToken";
+import {getUserProfile} from "@/utils/FetchAPI";
+import {getRefreshToken} from "@/utils/getRefreshToken";
+import {useAppDispatch, useAppSelector} from "@/lib/hooks";
+import {handleAuthenticationLogin} from "@/lib/Features/authSlice";
 
 export function Logo() {
     return (
@@ -20,18 +21,18 @@ export function Logo() {
 }
 
 export function NavUtils() {
+    const dispatch = useAppDispatch();
+    const isAuthenticated = useAppSelector(state => state.auth.isAuthenticated)
 
-    const [isAuthenticate, setIsAuthenticate] = useState<boolean>(false);
-
-    useQuery({
-        queryKey: ["authenticate"],
-        queryFn: async () => {
+    useEffect(() => {
+        // check the refresh token exist or not
+        const tokenCheck = async () => {
             const res = await getRefreshToken();
-            setIsAuthenticate(res)
-            return res
-        },
-        enabled: true
-    })
+        }
+        tokenCheck().then(() => dispatch(handleAuthenticationLogin()))
+    }, []);
+
+
     return (
         <div className="lg:flex h-full items-center xl:gap-8 lg:gap-6 hidden">
             <NavbarItems>
@@ -41,7 +42,7 @@ export function NavUtils() {
                 <Chat />
             </NavbarItems>
             <NavbarItems>
-                {isAuthenticate ? <User /> : <Login />}
+                { isAuthenticated ?  <User/> : <Login />}
             </NavbarItems>
         </div>
     )
@@ -49,27 +50,42 @@ export function NavUtils() {
 
 function User() {
 
-    const { data } = useProfile();
     const [isOpenUserProfileMenu, setIsOpenUserProfileMenu] = useState<boolean>(false);
 
-    if (data) {
-        const { avatarUrl, name } = data.data;
+    const { data: profile, isLoading, isError } = useQuery({
+        queryKey: ["userProfile"],
+        queryFn: getUserProfile,
+        staleTime: 5000,
+        retry: false,
+        enabled: true,
+    });;
+    console.log("Profile", profile);
+    console.log("Loading",isLoading);
+    console.log("Error", isError);
+
+    console.log("Data in User Component is :: ", profile?.data)
+    if(isLoading) {
+        return <div>Loading...</div>
+    }
+
+    if (profile) {
+        const {avatarUrl, name} = profile.data
+
         return (
 
             <div className="flex items-center gap-4 cursor-pointer relative" onClick={() => { setIsOpenUserProfileMenu(!isOpenUserProfileMenu) }}>
-                <Image src={avatarUrl} alt="Profile Picture" width={40} height={40} className="rounded-full" />
+                <Image src={avatarUrl} alt="Profile Picture" width={40} height={40} className="rounded-full"></Image>
                 <span className="text-white font-medium">{name}</span>
                 {isOpenUserProfileMenu && <ProfileDownDown />}
             </div>
 
         )
     }
-    if (!data) (
-        <div>Fetching Data failed!!</div>
-    )
-
-
-
+    if (!isError) {
+        return (
+            <div>Fetching Data Error!!</div>
+        )
+    }
 }
 
 function SearchBarIcon() {

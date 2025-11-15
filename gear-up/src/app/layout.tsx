@@ -4,6 +4,7 @@ import "./globals.css";
 import ReactQueryProvider from "@/provider/ReactQueryProvider";
 import NextAuthSessionProvider from "@/provider/NextAuthSessionProvider";
 import Navbar from "@/components/Navbar/Navbar";
+import StoreProvider from "@/app/hooks/StoreProvider";
 
 
 const montserrat = Montserrat({
@@ -27,11 +28,12 @@ export default function RootLayout({
       >
 
         <NextAuthSessionProvider>
-
-          <ReactQueryProvider>
-            <Navbar />
-            {children}
-          </ReactQueryProvider>
+            <StoreProvider>
+              <ReactQueryProvider>
+                <Navbar />
+                {children}
+              </ReactQueryProvider>
+            </StoreProvider>
         </NextAuthSessionProvider>
       </body>
     </html>

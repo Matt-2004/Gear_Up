@@ -13,7 +13,7 @@ export function ProfileDownDown() {
                 </li>
                 <li className="cursor-pointer   px-4 py-2 rounded-sm hover:border-gray-600 hover:bg-gray-700">Settings</li>
                 <li className="cursor-pointer  px-4 py-2 rounded-sm hover:border-gray-600 hover:bg-gray-700">
-                    <Link href={"/kyc/submit"}>Dealership registration</Link>
+                    <Link href={"/profile/dealer/register"}>Dealership registration</Link>
                 </li>
                 <li onClick={() => signOut()} className="cursor-pointer  px-4 py-2 rounded-sm hover:border-gray-600 hover:bg-gray-700">Logout</li>
             </ul>

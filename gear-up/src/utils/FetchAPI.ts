@@ -6,18 +6,14 @@ import {
   INewPassword,
   IProfileFormData,
   IRegisterFormData,
-} from "@/app/hooks/useJSON";
+} from "@/app/types/auth.types";
 import { API_URL } from "@/lib/config";
-import axios from "axios";
-import { getAccessToken } from "./getClientCookie";
-import { userProfileResponse } from "@/app/types/api.types";
-import useFormData from "@/app/hooks/useFormData";
+import axios, {AxiosResponse} from "axios";
+import {getAccessToken, getResetToken} from "./getClientCookie";
 
-// Create an axios instance
-// initiate data
 const refreshAccessToken = async () => {
   const refreshTokenPromise = await axios.post(
-    "http://localhost:5255/api/v1/auth/refresh",
+    `${API_URL}/api/v1/auth/refresh`,
     {},
     { withCredentials: true }
   );
@@ -27,21 +23,20 @@ const refreshAccessToken = async () => {
 export const api = axios.create({
   baseURL: API_URL,
   withCredentials: true,
-  headers: {
-    Accept: "application/json",
-  },
 });
 
 // Interceptors for api request
 api.interceptors.request.use(
   async (request) => {
     const accessToken = getAccessToken();
+    console.log("Access token in request", accessToken)
 
     if (accessToken) {
       request.headers["Authorization"] = `Bearer ${accessToken}`;
     } else {
       // generate new refresh/access token
       await refreshAccessToken();
+      console.log("After calling refresh token ")
       const accessToken = getAccessToken();
 
       request.headers["Authorization"] = `Bearer ${accessToken}`;
@@ -71,7 +66,7 @@ export async function apiRequest(
 
     if (method === "POST") {
       const res = await api.post(fullUrl, formData);
-      return res.data;
+      return res;
     }
     if (method === "PUT") {
       const res = await api.put(fullUrl, formData, {
@@ -83,7 +78,7 @@ export async function apiRequest(
     }
     if (method === "GET") {
       const res = await api.get(fullUrl);
-      return res.data;
+      return res;
     }
 
     throw new Error(`Unsupported method: ${method}`);
@@ -94,52 +89,52 @@ export async function apiRequest(
 }
 
 export async function login(formData: ILoginFormData) {
-  return axios.post(`${API_URL}/api/v1/auth/login`, formData, {
-    withCredentials: true,
-  });
+  return await axios.post(`${API_URL}/api/v1/auth/login`, formData, {withCredentials: true});
 }
 
 export async function register(formData: IRegisterFormData) {
-  return axios.post(`${API_URL}/api/v1/auth/register`, formData, {
+  return await axios.post(`${API_URL}/api/v1/auth/register`, formData, {
     withCredentials: true,
   });
 }
 
 // Require access token in the header
-export async function resentEmailForgetPassword(
-  formData: IForgotPassword,
+export async function verifyPassword(
   email: string
 ) {
   return apiRequest(
     `/api/v1/auth/send-password-reset-token?email=${email}`,
-    formData,
-    "POST"
-  );
-}
-export async function updateNewPassword(
-  formData: INewPassword,
-  reset_token: string
-) {
-  return apiRequest(
-    `/api/v1/auth/reset-password?token=${reset_token}`,
-    formData,
+      undefined,
     "POST"
   );
 }
 
+export async function updateNewPassword(
+  formData: INewPassword,
+) {
+    const reset_token = await getResetToken();
+    console.log("Getting Reset token in API fetching:: ", reset_token);
+  return  apiRequest(
+    `/api/v1/auth/reset-password?token=${reset_token}`,
+    formData,
+    "POST"
+  )
+}
+
 export async function getUserProfile() {
-  return apiRequest(
-    "/api/v1/users/me",
-    undefined,
-    "GET"
-  ) as Promise<userProfileResponse>;
+    const res = await apiRequest(
+        "/api/v1/users/me",
+        undefined,
+        "GET"
+    ) ;
+    return res.data;
 }
 
 export async function updateUserProfile(data: Partial<IProfileFormData>) {
   // In here, I can convert Object data into FormData
 
-  const formdata = useFormData("profile", data);
-  return apiRequest("/api/v1/users/me", formdata, "PUT");
+  // const formdata = useFormData("profile", data);
+  // return apiRequest("/api/v1/users/me", formdata, "PUT");
 }
 
 export async function kycRegister(data: FormData) {

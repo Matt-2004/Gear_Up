@@ -1,4 +1,4 @@
-export interface IloginResponse {
+export interface loginRes {
   isSuccess: boolean;
   message: string;
   data: {
@@ -8,7 +8,7 @@ export interface IloginResponse {
   status: number;
 }
 
-export interface userProfileResponse {
+export interface getUserProfileRes {
   isSuccess: boolean;
   message: string;
   data: {
