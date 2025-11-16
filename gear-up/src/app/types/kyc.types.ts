@@ -1,18 +1,24 @@
-export interface KYC {
-  DocumentType: string;
-  Kyc: File;
-  SelfieImage: File;
+export interface IKycSubmissions {
+    id: string,
+    userId: string,
+    fullName: string,
+    email: string,
+    phoneNumber: string ,
+    dateOfBirth: string,
+    status: string,
+    documentType: string,
+    documentUrls: string[],
+    selfieUrl: string,
+    submittedAt: string,
+    rejectionReason: string | null
 }
 
-export interface IProgressStep {
-  id: number;
-  name: string;
-  label: string;
-  isComplete: boolean;
-}
-
-export interface IKycFormData {
-  DocumentType: string;
-  Kyc: File[];
-  SelfieImage: File | null;
+export interface IKycRes {
+    isSuccess: boolean,
+    message: string,
+    data: {
+        kycSubmissions: IKycSubmissions[]
+        totalCount: number
+    },
+    status: number
 }

@@ -8,10 +8,12 @@ import {
   IRegisterFormData,
 } from "@/app/types/auth.types";
 import { API_URL } from "@/lib/config";
-import axios, {AxiosResponse} from "axios";
+import axios from "axios";
 import {getAccessToken, getResetToken} from "./getClientCookie";
+import {IAdminLogin} from "@/app/types/admin.types";
+import useFormData from "@/app/hooks/useFormData";
 
-const refreshAccessToken = async () => {
+export const refreshAccessToken = async () => {
   const refreshTokenPromise = await axios.post(
     `${API_URL}/api/v1/auth/refresh`,
     {},
@@ -29,14 +31,14 @@ export const api = axios.create({
 api.interceptors.request.use(
   async (request) => {
     const accessToken = getAccessToken();
-    console.log("Access token in request", accessToken)
+
 
     if (accessToken) {
       request.headers["Authorization"] = `Bearer ${accessToken}`;
     } else {
       // generate new refresh/access token
       await refreshAccessToken();
-      console.log("After calling refresh token ")
+
       const accessToken = getAccessToken();
 
       request.headers["Authorization"] = `Bearer ${accessToken}`;
@@ -82,8 +84,8 @@ export async function apiRequest(
     }
 
     throw new Error(`Unsupported method: ${method}`);
-  } catch (error: any) {
-    console.error("Fetch API Error:", error.message);
+  } catch (error) {
+    console.error("Fetch API Error:", error);
     throw error;
   }
 }
@@ -130,13 +132,24 @@ export async function getUserProfile() {
     return res.data;
 }
 
-export async function updateUserProfile(data: Partial<IProfileFormData>) {
-  // In here, I can convert Object data into FormData
-
-  // const formdata = useFormData("profile", data);
-  // return apiRequest("/api/v1/users/me", formdata, "PUT");
-}
+// export async function updateUserProfile(data) {
+//
+//   const formdata = useFormData("profile", data);
+//   return apiRequest("/api/v1/users/me", formdata, "PUT");
+// }
 
 export async function kycRegister(data: FormData) {
   return apiRequest("/api/v1/users/kyc", data, "POST");
+}
+
+export async function adminLogin(data: IAdminLogin) {
+    return await axios.post(`${API_URL}/api/v1/admin/login`, data, {withCredentials: true});
+}
+
+export async function getAllKyc() {
+    return await apiRequest("/api/v1/admin/kyc", undefined, "GET");
+}
+
+export async function getKycById(id: string) {
+    return await apiRequest(`/api/v1/admin/kyc/${id}`, undefined, "GET");
 }
