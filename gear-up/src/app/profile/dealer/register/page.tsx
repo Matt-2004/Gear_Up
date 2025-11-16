@@ -8,7 +8,7 @@ import SelfieImageUpload from "./SelfileImageUpload";
 import { useState, useCallback } from "react";
 import { ProgressSteps } from "./ProgressSteps";
 import { StepNavigation } from "./StepNavigation";
-import { IProgressStep, IKycFormData } from "@/app/types/kyc.types";
+import { IProgressStep, IKycFormData } from "@/app/types/kycRegister.types";
 
 const STEPS: IProgressStep[] = [
     { id: 1, name: "DocumentType", label: "Document Type", isComplete: false },

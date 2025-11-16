@@ -1,6 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
-import { IProgressStep } from "@/app/types/kyc.types";
+import { IProgressStep } from "@/app/types/kycRegister.types";
 
 interface ProgressStepsProps {
     steps: IProgressStep[];

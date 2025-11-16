@@ -2,6 +2,7 @@
 
 import {ChangeEvent, useState} from "react";
 import {ILoginFormData, IRegisterFormData, IForgotPassword, INewPassword, IProfileFormData} from "@/app/types/auth.types";
+import {IAdminLogin} from "@/app/types/admin.types";
 
 
 
@@ -15,14 +16,17 @@ export type DynamicForm<T extends FormType> = T extends "login"
   ? INewPassword
   : T extends "profile"
   ? IProfileFormData
-  : never;
+  : T extends "admin_login"
+  ? IAdminLogin : null;
+
 
 export type FormType =
   | "login"
   | "register"
   | "emailVerify"
   | "newPassword"
-  | "profile";
+  | "profile"
+  | "admin_login"
 
 export function useInputData<T extends FormType>(
   formType: T,

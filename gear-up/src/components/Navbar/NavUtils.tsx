@@ -11,6 +11,10 @@ import {getUserProfile} from "@/utils/FetchAPI";
 import {getRefreshToken} from "@/utils/getRefreshToken";
 import {useAppDispatch, useAppSelector} from "@/lib/hooks";
 import {handleAuthenticationLogin} from "@/lib/Features/authSlice";
+import {getUserProfileRes} from "@/app/types/user.types";
+import {Partial} from "@sinclair/typebox";
+import {router} from "next/client";
+import {useRouter} from "next/navigation";
 
 export function Logo() {
     return (
@@ -21,16 +25,39 @@ export function Logo() {
 }
 
 export function NavUtils() {
+    const router = useRouter();
     const dispatch = useAppDispatch();
     const isAuthenticated = useAppSelector(state => state.auth.isAuthenticated)
+
+    const { data: profile, refetch } = useQuery({
+        queryKey: ["userProfile"],
+        queryFn: getUserProfile,
+        staleTime: 5000,
+        retry: false,
+        enabled: true,
+    });
 
     useEffect(() => {
         // check the refresh token exist or not
         const tokenCheck = async () => {
             const res = await getRefreshToken();
         }
-        tokenCheck().then(() => dispatch(handleAuthenticationLogin()))
-    }, []);
+
+        try {
+            tokenCheck()
+                .then( () => refetch())
+                .then(() => dispatch(handleAuthenticationLogin()))
+        } catch(err) {
+            console.error("Fetching error in <NavUtils/> ", err)
+        }
+
+        if(profile) {
+            profile.data.role === "Admin" ? router.push("/profile/admin") : router.push("/");
+        } else {
+
+        }
+    }, [profile]);
+
 
 
     return (
@@ -42,35 +69,16 @@ export function NavUtils() {
                 <Chat />
             </NavbarItems>
             <NavbarItems>
-                { isAuthenticated ?  <User/> : <Login />}
+                { isAuthenticated ?  <User profile={profile}/> : <Login />}
             </NavbarItems>
         </div>
     )
 }
 
-function User() {
+function User({ profile }: { profile: getUserProfileRes }) {
 
     const [isOpenUserProfileMenu, setIsOpenUserProfileMenu] = useState<boolean>(false);
-
-    const { data: profile, isLoading, isError } = useQuery({
-        queryKey: ["userProfile"],
-        queryFn: getUserProfile,
-        staleTime: 5000,
-        retry: false,
-        enabled: true,
-    });;
-    console.log("Profile", profile);
-    console.log("Loading",isLoading);
-    console.log("Error", isError);
-
-    console.log("Data in User Component is :: ", profile?.data)
-    if(isLoading) {
-        return <div>Loading...</div>
-    }
-
-    if (profile) {
-        const {avatarUrl, name} = profile.data
-
+    const {avatarUrl, name} = profile.data;
         return (
 
             <div className="flex items-center gap-4 cursor-pointer relative" onClick={() => { setIsOpenUserProfileMenu(!isOpenUserProfileMenu) }}>
@@ -80,12 +88,6 @@ function User() {
             </div>
 
         )
-    }
-    if (!isError) {
-        return (
-            <div>Fetching Data Error!!</div>
-        )
-    }
 }
 
 function SearchBarIcon() {
@@ -105,7 +107,6 @@ function SearchBarIcon() {
             }
         </div>
     )
-
 }
 
 function Chat() {

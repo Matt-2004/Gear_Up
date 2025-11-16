@@ -5,7 +5,7 @@ import ReactQueryProvider from "@/provider/ReactQueryProvider";
 import NextAuthSessionProvider from "@/provider/NextAuthSessionProvider";
 import Navbar from "@/components/Navbar/Navbar";
 import StoreProvider from "@/app/hooks/StoreProvider";
-
+import {ConditionalNavbar} from "@/components/Navbar/ContionalNavbar";
 
 const montserrat = Montserrat({
   subsets: ['latin']
@@ -21,6 +21,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   return (
     <html lang="en" className={montserrat.className}>
       <body
@@ -30,7 +31,7 @@ export default function RootLayout({
         <NextAuthSessionProvider>
             <StoreProvider>
               <ReactQueryProvider>
-                <Navbar />
+                <ConditionalNavbar />
                 {children}
               </ReactQueryProvider>
             </StoreProvider>

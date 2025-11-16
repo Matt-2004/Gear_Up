@@ -62,3 +62,18 @@ clsx
 # Testing
 
 Jest
+
+Middleware structure
+
+    -> get the access_token
+    -> get the refresh_token
+
+## Access Token
+    -> check role
+        -> if "customer" 
+            -> redirect to default page
+        -> if "admin"
+            -> redirect to admin dashboard page
+
+## !Access token but refresh token exist
+    -> regenerate the access_token
