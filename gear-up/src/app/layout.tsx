@@ -8,7 +8,8 @@ import StoreProvider from "@/app/hooks/StoreProvider";
 import {ConditionalNavbar} from "@/components/Navbar/ContionalNavbar";
 
 const montserrat = Montserrat({
-  subsets: ['latin']
+  subsets: ['latin'],
+    weight: ["400", "500", "600"]
 })
 
 export const metadata: Metadata = {
