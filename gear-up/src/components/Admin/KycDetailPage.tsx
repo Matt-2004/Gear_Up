@@ -9,6 +9,7 @@ import { timeFormat } from "@/utils/timeFormat";
 import { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
 import { useRouter } from "next/navigation";
 import { IKycUpdateByAdmin } from "@/app/types/kyc.types";
+import StatusUI from "@/components/StatusUI";
 
 export interface KycResponse {
   isSuccess: boolean;
@@ -33,7 +34,6 @@ export interface KycData {
 }
 
 const KycDetailPage = ({ id }: { id: string }) => {
-  // type     UserStatus = "Pending" | "Approved" | "Rejected";
   const [text, setText] = useState("");
   const [kycData, setKycData] = useState<KycResponse>();
 
@@ -41,7 +41,7 @@ const KycDetailPage = ({ id }: { id: string }) => {
     queryKey: ["KYC", id],
     queryFn: async () => {
       const res = await getKycById(id);
-      setKycData(res.data);
+      setKycData(res?.data);
       return res;
     },
     staleTime: 5000,
@@ -53,7 +53,7 @@ const KycDetailPage = ({ id }: { id: string }) => {
    *  Pending - Orange
    *  Approved - Green
    *  Rejected - Red
-   * */
+   */
 
   if (kycData) {
     return (
@@ -134,36 +134,45 @@ const PersonalInfoComponent = ({
         </h1>
         <div className={"grid grid-flow-col grid-cols-2 grid-rows-3 gap-4"}>
           {Object.entries(kycData.data).map((item, i: number) => {
-            // userId, fullName, email, PhoneNumber, dateOfBirth, submittedAt
-            // documentUrls, selfieUrl
-            if (
-              item[0] === "id" ||
-              item[0] === "email" ||
-              item[0] === "fullName" ||
-              item[0] === "phoneNumber" ||
-              item[0] === "dateOfBirth" ||
-              item[0] === "status"
-            ) {
-              return (
-                <div key={i} className={""}>
-                  <label className={"text-gray-300  font-normal"}>
-                    {item[0].charAt(0).toUpperCase() + item[0].slice(1)}
-                  </label>
-                  <div
-                    className={clsx(
-                      item[1] === "" ? "text-red-400" : "text-white",
-                      "text-lg font-medium w-[200px]",
-                      item[1] === "Pending"
-                        ? "text-yellow-500 bg-yellow-100 text-center rounded-full"
-                        : "text-white",
-                    )}
-                  >
-                    {item[1] === "" ? "No Data" : item[1]}
+            return (
+              <>
+                {item[0] === "status" ? (
+                  <div className={""}>
+                    <label className={"text-gray-300  font-normal"}>
+                      Status
+                    </label>
+
+                    <StatusUI status={item[1]} />
                   </div>
-                </div>
-              );
-            }
+                ) : (
+                  (item[0] === "id" ||
+                    item[0] === "email" ||
+                    item[0] === "fullName" ||
+                    item[0] === "phoneNumber" ||
+                    item[0] === "dateOfBirth") && (
+                    <div key={i} className={""}>
+                      <label className={"text-gray-300  font-normal"}>
+                        {(item[0] === "id" && "ID") ||
+                          (item[0] === "email" && "Email") ||
+                          (item[0] === "fullName" && "Full Name") ||
+                          (item[0] === "phoneNumber" && "Phone Number") ||
+                          (item[0] === "dateOfBirth" && "BirthDay")}
+                      </label>
+                      <div
+                        className={clsx(
+                          item[1] === "" ? "text-red-400" : "text-white",
+                          " font-medium w-[200px]",
+                        )}
+                      >
+                        {item[1] === "" ? "No Data" : item[1]}
+                      </div>
+                    </div>
+                  )
+                )}
+              </>
+            );
           })}
+          ;
         </div>
       </div>
       <div id={"spacer"} className={"h-1 border-b border-gray-600 my-8"} />
@@ -276,8 +285,6 @@ const ApprovedButton = ({ id, data }: IDecision) => {
     mutationFn: async (params: { id: string; data: IKycUpdateByAdmin }) =>
       await updateKycByAdmin(data, id),
     onSuccess: (data) => {
-      console.log("Successfully approved");
-      console.log("return data from onSuccess:: ", data);
       queryClient.invalidateQueries({ queryKey: ["KYC"] });
     },
   });
@@ -291,6 +298,7 @@ const ApprovedButton = ({ id, data }: IDecision) => {
       },
     });
   };
+
   return (
     <button
       className={

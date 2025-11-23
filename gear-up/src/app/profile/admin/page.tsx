@@ -6,10 +6,10 @@ import { PageSwitcher } from "@/components/Admin/PageSwticher";
 export default async function Page({
   searchParams,
 }: {
-  searchParams: { tab?: string };
+  searchParams: { tab: string };
 }) {
-  const queryTab = searchParams.tab ?? "dashboard";
-  console.log("QueryTab:: ", queryTab);
+  const { tab } = await searchParams;
+  console.log("QueryTab:: ", tab);
 
   return (
     <div className={"text-white w-full flex h-screen"}>
@@ -18,10 +18,10 @@ export default async function Page({
           "w-1/6 p-2 mx-auto border-r-gray-800 shadow-gray-700  shadow-sm"
         }
       >
-        <Tabs selectedTab={queryTab ?? "dashboard"} />
+        <Tabs selectedTab={tab ?? "dashboard"} />
       </div>
       <div className={"w-5/6"}>
-        <PageSwitcher selectedTab={queryTab ?? "dashboard"} />
+        <PageSwitcher selectedTab={tab ?? "dashboard"} />
       </div>
     </div>
   );

@@ -36,7 +36,7 @@ export const Tabs = ({ selectedTab }: { selectedTab: string }) => {
             ? "bg-gray-700 border-gray-600"
             : "",
         )}
-        onClick={() => router.replace(`${path}?tab=dealership-verification}`)}
+        onClick={() => router.replace(`${path}?tab=dealership-verification`)}
       >
         Dealership Verification
       </ol>

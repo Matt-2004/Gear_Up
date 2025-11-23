@@ -1,3 +1,5 @@
+import { Status } from "@/components/StatusUI";
+
 export interface IKycSubmissions {
   id: string;
   userId: string;
@@ -5,7 +7,7 @@ export interface IKycSubmissions {
   email: string;
   phoneNumber: string;
   dateOfBirth: string;
-  status: string;
+  status: Status;
   documentType: string;
   documentUrls: string[];
   selfieUrl: string;
