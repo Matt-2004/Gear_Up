@@ -11,16 +11,14 @@ import { API_URL } from "@/lib/config";
 import axios from "axios";
 import { getAccessToken, getResetToken } from "./getClientCookie";
 import { IAdminLogin } from "@/app/types/admin.types";
-import useFormData from "@/app/hooks/useFormData";
 import { IKycUpdateByAdmin } from "@/app/types/kyc.types";
 
 export const refreshAccessToken = async () => {
-  const refreshTokenPromise = await axios.post(
+  return await axios.post(
     `${API_URL}/api/v1/auth/refresh`,
     {},
     { withCredentials: true },
   );
-  return refreshTokenPromise;
 };
 
 export const api = axios.create({
@@ -68,19 +66,14 @@ export async function apiRequest(
     const fullUrl = `${API_URL}${url}`;
 
     if (method === "GET") {
-      const res = await api.get(fullUrl);
-      return res;
+      return await api.get(fullUrl);
     }
     if (method === "POST") {
-      const res = await api.post(fullUrl, formData);
-      return res;
+      return await api.post(fullUrl, formData);
     }
     if (method === "PUT") {
-      const res = await api.put(fullUrl, formData);
-      return res;
+      return await api.put(fullUrl, formData);
     }
-
-    throw new Error(`Unsupported method: ${method}`);
   } catch (error) {
     console.error("Fetch API Error:", error);
     throw error;
@@ -149,4 +142,8 @@ export async function getKycById(id: string) {
 
 export async function updateKycByAdmin(data: IKycUpdateByAdmin, id: string) {
   return await apiRequest(`/api/v1/admin/kyc/${id}`, data, "PUT");
+}
+
+export async function getKycWithStatus(status: string) {
+  return await apiRequest(`/api/v1/kyc/status/${status}`, undefined, "GET");
 }
