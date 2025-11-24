@@ -1,16 +1,15 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Montserrat, Roboto } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import ReactQueryProvider from "@/provider/ReactQueryProvider";
 import NextAuthSessionProvider from "@/provider/NextAuthSessionProvider";
-import Navbar from "@/components/Navbar/Navbar";
 import StoreProvider from "@/app/hooks/StoreProvider";
-import {ConditionalNavbar} from "@/components/Navbar/ContionalNavbar";
+import { ConditionalNavbar } from "@/components/Navbar/ContionalNavbar";
 
-const montserrat = Montserrat({
-  subsets: ['latin'],
-    weight: ["400", "500", "600"]
-})
+const montserrat = Inter({
+  subsets: ["latin"],
+  weight: "500",
+});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -22,20 +21,16 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
   return (
     <html lang="en" className={montserrat.className}>
-      <body
-        className={` antialiased`}
-      >
-
+      <body className={` antialiased`}>
         <NextAuthSessionProvider>
-            <StoreProvider>
-              <ReactQueryProvider>
-                <ConditionalNavbar />
-                {children}
-              </ReactQueryProvider>
-            </StoreProvider>
+          <StoreProvider>
+            <ReactQueryProvider>
+              <ConditionalNavbar />
+              {children}
+            </ReactQueryProvider>
+          </StoreProvider>
         </NextAuthSessionProvider>
       </body>
     </html>
