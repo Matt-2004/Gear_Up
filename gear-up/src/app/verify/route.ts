@@ -21,7 +21,7 @@ export async function GET(request: Request) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(token),
-      }
+      },
     );
 
     if (!response.ok) {
@@ -39,10 +39,10 @@ export async function GET(request: Request) {
         data,
         redirect: "http:localhost:3000/",
       }),
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
-    return new Response(JSON.stringify({ message: "Internal Server Error" }), {
+    return new Response(JSON.stringify({ message: error }), {
       status: 500,
     });
   }

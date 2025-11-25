@@ -53,7 +53,7 @@ export function NavUtils() {
         .then(() => refetch())
         .then(() => dispatch(handleAuthenticationLogin()));
     } catch (err) {
-      console.error("Fetching error in <NavUtils/> ", err);
+      console.error("Fetching error in NavUtils ", err);
     }
 
     if (profile.data.role === "Admin") {

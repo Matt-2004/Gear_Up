@@ -17,15 +17,9 @@ interface IKYCdata {
 
 type FromType = "profile" | "KYC";
 
-type DynamicForm<T extends FromType> = T extends "profile"
-  ? IProfileFormData
-  : T extends "KYC"
-  ? IKYCdata
-  : null;
-
 function useFormData<T extends FromType>(
   formType: T,
-  jsonData: Record<string, any>
+  jsonData: Record<string, string | File | Blob>,
 ): FormData {
   const formData = new FormData();
 
@@ -48,7 +42,7 @@ function useFormData<T extends FromType>(
       // Convert other types to string
       formData.append(
         key,
-        typeof value === "object" ? JSON.stringify(value) : String(value)
+        typeof value === "object" ? JSON.stringify(value) : String(value),
       );
     }
   });

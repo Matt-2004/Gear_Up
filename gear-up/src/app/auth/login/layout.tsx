@@ -1,21 +1,15 @@
 import { Metadata } from "next";
-import { cookies } from "next/headers";
 
 export default async function LoginLayout({
-    children,
+  children,
 }: {
-    children: React.ReactNode;
+  children: React.ReactNode;
 }) {
-
-
-    return (
-        <div>
-            {children}
-        </div>
-    )
+  return <div>{children}</div>;
 }
 
 export const metadata: Metadata = {
-    title: "Login - Gear Up",
-    description: "Login to your Gear Up account to access exclusive features and personalized content.",
-}
+  title: "Login - Gear Up",
+  description:
+    "Login to your Gear Up account to access exclusive features and personalized content.",
+};
