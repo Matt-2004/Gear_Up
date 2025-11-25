@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ChatIcon, MagnifyingGlass } from "../SVGs";
+import { ChatIcon, MagnifyingGlass } from "../Common/SVGs";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import Image from "next/image";
@@ -56,13 +56,10 @@ export function NavUtils() {
       console.error("Fetching error in <NavUtils/> ", err);
     }
 
-    if (profile) {
-      profile.data.role === "Admin"
-        ? router.push("/profile/admin?tab=dashboard")
-        : router.push("/");
-    } else {
+    if (profile.data.role === "Admin") {
+      router.push("/profile/admin?tab=dashboard");
     }
-  }, [profile]);
+  }, []);
 
   return (
     <div className="lg:flex h-full items-center xl:gap-8 lg:gap-6 hidden">

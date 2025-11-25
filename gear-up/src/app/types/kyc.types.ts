@@ -1,4 +1,4 @@
-import { Status } from "@/components/StatusUI";
+import { Status } from "@/components/Common/StatusUI";
 
 export interface IKycSubmissions {
   id: string;

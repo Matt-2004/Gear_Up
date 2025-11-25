@@ -9,7 +9,7 @@ import { timeFormat } from "@/utils/timeFormat";
 import { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
 import { useRouter } from "next/navigation";
 import { IKycUpdateByAdmin } from "@/app/types/kyc.types";
-import StatusUI from "@/components/StatusUI";
+import StatusUI from "@/components/Common/StatusUI";
 
 export interface KycResponse {
   isSuccess: boolean;
@@ -252,7 +252,7 @@ interface IDecision {
 const RejectButton = ({ id, data }: IDecision) => {
   const mutation = useMutation({
     mutationFn: async (params: { id: string; data: IKycUpdateByAdmin }) =>
-      await updateKycByAdmin(data, id),
+      await updateKycByAdmin(params.data, params.id),
     onSuccess: () => console.log("Successfully Rejected!"),
   });
 
@@ -283,8 +283,8 @@ const ApprovedButton = ({ id, data }: IDecision) => {
 
   const mutation = useMutation({
     mutationFn: async (params: { id: string; data: IKycUpdateByAdmin }) =>
-      await updateKycByAdmin(data, id),
-    onSuccess: (data) => {
+      await updateKycByAdmin(params.data, params.id),
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["KYC"] });
     },
   });

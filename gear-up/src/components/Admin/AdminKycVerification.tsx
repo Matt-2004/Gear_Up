@@ -14,10 +14,13 @@ import {
 } from "lucide-react";
 import { IKycRes } from "@/app/types/kyc.types";
 import clsx from "clsx";
+import {
+  KycDocumentType,
+  StatusType,
+  useKycFilterContext,
+} from "@/Context/AdminKycFilterContext";
 
 const AdminKycVerification = () => {
-  // const [getStatus, setGetStatus] = useState<string>("");
-
   const { data: kyc, isLoading } = useQuery({
     queryKey: ["kycVerification"],
     queryFn: getAllKyc,
@@ -25,22 +28,9 @@ const AdminKycVerification = () => {
     enabled: true,
   });
 
-  // const { data: kycWithStatus } = useQuery({
-  //   queryKey: ["kycWithStatus", getStatus],
-  //   queryFn: () => getKycWithStatus(getStatus),
-  //   enabled: getStatus.length < 0,
-  // });
-
   if (isLoading) {
     return <div>Loading</div>;
   }
-
-  /*
-   * TODO
-   *  -> Need to write the fetching function for KycDataWithStatus
-   *  -> Implement in Each UI
-   *0
-   * */
 
   if (kyc) {
     return (
@@ -67,75 +57,90 @@ const AdminKycVerification = () => {
                 "mt-6 w-full h-[68px] rounded-sm bg-background shadow-sm shadow-gray-600 border-gray-800 flex justify-between items-center px-2"
               }
             >
-              <div className={"flex w-2/3 gap-2"}>
-                <div
-                  className={
-                    "w-1/2 flex items-center gap-4 border border-gray-600  rounded-sm p-2"
-                  }
-                >
-                  <Search className={"w-5 h-5"} />
-                  <input
-                    className={"w-full focus:outline-none"}
-                    type={"text"}
-                    placeholder={"Search by name, ID, or document type"}
-                  />
-                </div>
-
-                <div
-                  className={"text-white border p-2 rounded-sm border-gray-600"}
-                >
-                  <select
-                    name="doc-type"
-                    id="all-doc-type"
-                    className={"focus:outline-none"}
-                    defaultValue={""}
-                  >
-                    <option value={""} disabled hidden>
-                      All Document Type
-                    </option>
-                    <option value="Passport">Passport</option>
-                    <option value="NationID">Nation ID</option>
-                    <option value="DriverLicense">Driver License</option>
-                    <option value="UtilityBill">Utility Bill</option>
-                    <option value="Other">Other</option>
-                  </select>
-                </div>
-                <div
-                  className={"text-white border p-2 rounded-sm border-gray-600"}
-                >
-                  <select
-                    name="doc-type"
-                    id="all-doc-type"
-                    className={"focus:outline-none"}
-                    defaultValue={""}
-                  >
-                    <option value={""} disabled hidden>
-                      All Status
-                    </option>
-                    <option value="All">All</option>
-                    <option value="Pending">Pending</option>
-                    <option value="Approved">Approved</option>
-                    <option value="Rejected">Rejected</option>
-                  </select>
-                </div>
-              </div>
-              <div
-                className={
-                  "bg-primary px-8 py-2 rounded-sm mr-2 flex gap-2 cursor-pointer hover:bg-primary-btn-hover"
-                }
-              >
-                <SlidersHorizontal />
-                Filter
-              </div>
+              <FilterUI />
             </div>
             <div className={"w-full"}>
-              <DataTable kyc={kyc.data} />
+              <DataTable kyc={kyc.data.data.kycSubmissions} />
             </div>
           </div>
         </div>
       </div>
     );
   }
+};
+
+const FilterUI = () => {
+  const { setFilter } = useKycFilterContext();
+
+  return (
+    <>
+      <div className={"flex w-2/3 gap-2"}>
+        <div
+          className={
+            "w-1/2 flex items-center gap-4 border border-gray-600  rounded-sm p-2"
+          }
+        >
+          <Search className={"w-5 h-5"} />
+          <input
+            className={"w-full focus:outline-none"}
+            type={"text"}
+            placeholder={"Search by name, ID, or document type"}
+            onChange={(e) => setFilter({ searchData: e.currentTarget.value })}
+          />
+        </div>
+
+        <div className={"text-white border p-2 rounded-sm border-gray-600"}>
+          <select
+            name="doc-type"
+            id="all-doc-type"
+            className={"focus:outline-none"}
+            defaultValue={""}
+            onChange={(e) =>
+              setFilter({
+                documentType: e.currentTarget.value as KycDocumentType,
+              })
+            }
+          >
+            <option value={""} disabled hidden>
+              All Document Type
+            </option>
+            <option value="Passport">Passport</option>
+            <option value="NationalID">National ID</option>
+            <option value="DriverLicense">Driver License</option>
+            <option value="UtilityBill">Utility Bill</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div className={"text-white border p-2 rounded-sm border-gray-600"}>
+          <select
+            name="doc-type"
+            id="all-doc-type"
+            className={"focus:outline-none"}
+            defaultValue={""}
+            onChange={(e) =>
+              setFilter({ statusType: e.currentTarget.value as StatusType })
+            }
+          >
+            <option value={""} disabled hidden>
+              All Status
+            </option>
+            <option value="All">All</option>
+            <option value="Pending">Pending</option>
+            <option value="Approved">Approved</option>
+            <option value="Rejected">Rejected</option>
+          </select>
+        </div>
+      </div>
+      <div
+        className={
+          "bg-primary px-8 py-2 rounded-sm mr-2 flex gap-2 cursor-pointer hover:bg-primary-btn-hover"
+        }
+      >
+        <SlidersHorizontal />
+        Filter
+      </div>
+    </>
+  );
 };
 
 const StatusCountComponent = ({

@@ -1,10 +1,8 @@
 "use client";
 
 import {
-  IForgotPassword,
   ILoginFormData,
   INewPassword,
-  IProfileFormData,
   IRegisterFormData,
 } from "@/app/types/auth.types";
 import { API_URL } from "@/lib/config";
@@ -48,72 +46,41 @@ api.interceptors.request.use(
   },
 );
 
-// main api calling function
-export async function apiRequest(
-  url: string,
-  formData?:
-    | ILoginFormData
-    | IRegisterFormData
-    | IForgotPassword
-    | INewPassword
-    | IProfileFormData
-    | FormData
-    | FormDataEntryValue
-    | IKycUpdateByAdmin,
-  method: "POST" | "GET" | "PUT" = "POST",
-) {
-  try {
-    const fullUrl = `${API_URL}${url}`;
-
-    if (method === "GET") {
-      return await api.get(fullUrl);
-    }
-    if (method === "POST") {
-      return await api.post(fullUrl, formData);
-    }
-    if (method === "PUT") {
-      return await api.put(fullUrl, formData);
-    }
-  } catch (error) {
-    console.error("Fetch API Error:", error);
-    throw error;
-  }
-}
-
 export async function login(formData: ILoginFormData) {
-  return await axios.post(`${API_URL}/api/v1/auth/login`, formData, {
+  const res = await axios.post(`${API_URL}/api/v1/auth/login`, formData, {
     withCredentials: true,
   });
+  return res.data;
 }
 
 export async function register(formData: IRegisterFormData) {
-  return await axios.post(`${API_URL}/api/v1/auth/register`, formData, {
+  const res = await axios.post(`${API_URL}/api/v1/auth/register`, formData, {
     withCredentials: true,
   });
+  return res.data;
 }
 
 // Require access token in the header
-export async function verifyPassword(email: string) {
-  return apiRequest(
-    `/api/v1/auth/send-password-reset-token?email=${email}`,
-    undefined,
-    "POST",
+export async function resendVerificationEmail(email: string) {
+  const res = await api.post(
+    `/api/v1/auth/resend-verification-email/email?=${email}`,
   );
+  return res?.data;
 }
 
 export async function updateNewPassword(formData: INewPassword) {
   const reset_token = await getResetToken();
-  console.log("Getting Reset token in API fetching:: ", reset_token);
-  return apiRequest(
+
+  const res = await api.post(
     `/api/v1/auth/reset-password?token=${reset_token}`,
     formData,
-    "POST",
   );
+  return res?.data;
 }
 
 export async function getUserProfile() {
-  const res = await apiRequest("/api/v1/users/me", undefined, "GET");
-  return res.data;
+  const res = await api.get("/api/v1/users/me");
+  return res?.data;
 }
 
 // export async function updateUserProfile(data) {
@@ -123,27 +90,52 @@ export async function getUserProfile() {
 // }
 
 export async function kycRegister(data: FormData) {
-  return apiRequest("/api/v1/users/kyc", data, "POST");
+  const response = await api.post("/api/v1/users/kyc", data);
+  return response?.data;
 }
 
 export async function adminLogin(data: IAdminLogin) {
-  return await axios.post(`${API_URL}/api/v1/admin/login`, data, {
+  const response = await axios.post(`${API_URL}/api/v1/admin/login`, data, {
     withCredentials: true,
   });
+  return response.data;
 }
 
 export async function getAllKyc() {
-  return await apiRequest("/api/v1/admin/kyc", undefined, "GET");
+  return await api.get("/api/v1/admin/kyc");
 }
 
 export async function getKycById(id: string) {
-  return await apiRequest(`/api/v1/admin/kyc/${id}`, undefined, "GET");
+  const res = await api.get(`/api/v1/admin/kyc/${id}`);
+  return res?.data;
 }
 
 export async function updateKycByAdmin(data: IKycUpdateByAdmin, id: string) {
-  return await apiRequest(`/api/v1/admin/kyc/${id}`, data, "PUT");
+  const res = await api.put(`/api/v1/admin/kyc/${id}`, data);
+  return res?.data;
 }
 
 export async function getKycWithStatus(status: string) {
-  return await apiRequest(`/api/v1/kyc/status/${status}`, undefined, "GET");
+  const res = await api.get(`/api/v1/kyc/status/${status}`);
+  return res?.data;
+}
+
+export async function addCar(data: FormData) {
+  const res = await api.post(`/api/v1/cars`, data);
+  return res?.data;
+}
+
+export async function getAllCars() {
+  const res = await api.get("/api/v1/cars");
+  return res?.data;
+}
+
+export async function updateCar(carId: string, data: FormData) {
+  const res = await api.post(`/api/v1/cars/${carId}`, data);
+  return res?.data;
+}
+
+export async function getCarById(carId: string) {
+  const res = await api.get(`/api/v1/cars/${carId}`);
+  return res?.data;
 }

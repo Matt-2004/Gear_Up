@@ -5,6 +5,7 @@ import ReactQueryProvider from "@/provider/ReactQueryProvider";
 import NextAuthSessionProvider from "@/provider/NextAuthSessionProvider";
 import StoreProvider from "@/app/hooks/StoreProvider";
 import { ConditionalNavbar } from "@/components/Navbar/ContionalNavbar";
+import { ReactNode } from "react";
 
 const montserrat = Inter({
   subsets: ["latin"],
@@ -19,7 +20,7 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) {
   return (
     <html lang="en" className={montserrat.className}>

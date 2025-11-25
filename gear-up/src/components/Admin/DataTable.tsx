@@ -1,12 +1,35 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { IKycRes, IKycSubmissions } from "@/app/types/kyc.types";
+import { IKycSubmissions } from "@/app/types/kyc.types";
 import clsx from "clsx";
 import { ArrowUpRight } from "lucide-react";
-import StatusUI from "@/components/StatusUI";
+import StatusUI from "@/components/Common/StatusUI";
+import { useEffect, useState } from "react";
+import { useKycFilterContext } from "@/Context/AdminKycFilterContext";
 
-const DataTable = ({ kyc }: { kyc: IKycRes }) => {
+const DataTable = ({ kyc }: { kyc: IKycSubmissions[] }) => {
+  const { searchData, statusType, documentType } = useKycFilterContext();
+  const [filterData, setFilterData] = useState<IKycSubmissions[]>([]);
+
+  useEffect(() => {
+    if (!kyc) return;
+    setFilterData(
+      kyc.filter(
+        (prev) =>
+          (statusType === "All" || prev.status === statusType) &&
+          (documentType === "All" || prev.documentType === documentType) &&
+          prev.fullName.toLowerCase().includes(searchData.toLowerCase()),
+      ),
+    );
+  }, [searchData, statusType, documentType, kyc]);
+
+  console.log("Kyc Data:: ", kyc);
+  console.log("Search data:: ", searchData);
+  console.log("Status Type:: ", statusType);
+  console.log("Document Type:: ", documentType);
+  console.log("Filtered Data:: ", filterData);
+
   return (
     <div className="overflow-x-auto mx-auto   rounded-sm border border-gray-700">
       <table className=" min-w-full bg-background text-white ">
@@ -24,12 +47,7 @@ const DataTable = ({ kyc }: { kyc: IKycRes }) => {
             >
               Name
             </th>
-            <th
-              className="px-4 py-3 border-r border-gray-700 text-center text-xs font-medium text-white uppercase tracking-wider border-b "
-              scope="col"
-            >
-              ID
-            </th>
+
             <th
               className="px-4 py-3 border-r border-gray-700 text-center text-xs font-medium text-white uppercase tracking-wider border-b "
               scope="col"
@@ -57,8 +75,10 @@ const DataTable = ({ kyc }: { kyc: IKycRes }) => {
           </tr>
         </thead>
         <tbody className={"h-full"}>
-          {kyc.data.kycSubmissions.map(
-            (submission: IKycSubmissions, index: number) => {
+          {filterData.length < 0 ? (
+            <h1 className={"text-white"}>No Data Match with filter</h1>
+          ) : (
+            filterData.map((submission: IKycSubmissions, index: number) => {
               return (
                 <tr key={submission.id} className={"border-b border-gray-700"}>
                   <th
@@ -71,9 +91,7 @@ const DataTable = ({ kyc }: { kyc: IKycRes }) => {
                   <td className=" text-center  py-2.5 border-r border-gray-700 whitespace-nowrap text-sm ">
                     {submission.fullName}
                   </td>
-                  <td className=" text-center px-4 py-2.5 border-r border-gray-700 whitespace-nowrap text-sm ">
-                    <h1 className={"w-20 truncate"}>{submission.id}</h1>
-                  </td>
+
                   <td className=" text-center  py-2.5 border-r border-gray-700 whitespace-nowrap text-sm ">
                     {submission.documentType}
                   </td>
@@ -94,7 +112,7 @@ const DataTable = ({ kyc }: { kyc: IKycRes }) => {
                   </td>
                 </tr>
               );
-            },
+            })
           )}
         </tbody>
       </table>
