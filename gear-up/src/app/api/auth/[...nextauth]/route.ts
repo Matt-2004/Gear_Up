@@ -22,10 +22,10 @@ const handler = NextAuth({
     strategy: "jwt",
   },
   callbacks: {
-    async session({ session }) {
+    async session({ session, token, user }) {
       return session; // The return type will match the one returned in `useSession()`
     },
   },
 });
 
-export { handler as POST };
+export { handler as GET, handler as POST };

@@ -14,6 +14,10 @@ import { handleAuthenticationLogin } from "@/lib/Features/authSlice";
 import { getUserProfileRes } from "@/app/types/user.types";
 import { useRouter } from "next/navigation";
 
+// Be a server side
+// pass data through props
+// use getServerSideProps to fetch data before render and pass through data
+
 export function Logo() {
   return (
     <div className="w-40 h-16 items-center flex z-20">
@@ -34,7 +38,11 @@ export function NavUtils() {
   const dispatch = useAppDispatch();
   const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
 
-  const { data: profile, refetch } = useQuery({
+  const {
+    data: profile,
+    refetch,
+    isLoading,
+  } = useQuery({
     queryKey: ["userProfile"],
     queryFn: getUserProfile,
     staleTime: 5000,
@@ -55,11 +63,13 @@ export function NavUtils() {
     } catch (err) {
       console.error("Fetching error in NavUtils ", err);
     }
+  }, []);
 
-    if (profile.data.role === "Admin") {
+  useEffect(() => {
+    if (profile?.data.role === "Admin") {
       router.push("/profile/admin?tab=dashboard");
     }
-  }, []);
+  }, [isLoading]);
 
   return (
     <div className="lg:flex h-full items-center xl:gap-8 lg:gap-6 hidden">

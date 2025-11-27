@@ -80,6 +80,7 @@ export async function updateNewPassword(formData: INewPassword) {
 
 export async function getUserProfile() {
   const res = await api.get("/api/v1/users/me");
+  console.log("This is running on backend:: ", res?.data.data);
   return res?.data;
 }
 
