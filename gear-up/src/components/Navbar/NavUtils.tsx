@@ -1,18 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ChatIcon, MagnifyingGlass } from "../Common/SVGs";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import Image from "next/image";
-import NavbarItems from "./NavbarItem";
 import { ProfileDownDown } from "./NavbarDropDown";
 import { getUserProfile } from "@/utils/FetchAPI";
-import { getRefreshToken } from "@/utils/getRefreshToken";
-import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { handleAuthenticationLogin } from "@/lib/Features/authSlice";
-import { getUserProfileRes } from "@/app/types/user.types";
-import { useRouter } from "next/navigation";
 
 // Be a server side
 // pass data through props
@@ -33,16 +27,10 @@ export function Logo() {
   );
 }
 
-export function NavUtils() {
-  const router = useRouter();
-  const dispatch = useAppDispatch();
-  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
-
-  const {
-    data: profile,
-    refetch,
-    isLoading,
-  } = useQuery({
+export function User() {
+  const [isOpenUserProfileMenu, setIsOpenUserProfileMenu] =
+    useState<boolean>(false);
+  const { data: profile, isLoading } = useQuery({
     queryKey: ["userProfile"],
     queryFn: getUserProfile,
     staleTime: 5000,
@@ -50,67 +38,34 @@ export function NavUtils() {
     enabled: true,
   });
 
-  useEffect(() => {
-    // check the refresh token exist or not
-    const tokenCheck = async () => {
-      return await getRefreshToken();
-    };
+  if (isLoading) {
+    return <h1>Loading...</h1>;
+  }
 
-    try {
-      tokenCheck()
-        .then(() => refetch())
-        .then(() => dispatch(handleAuthenticationLogin()));
-    } catch (err) {
-      console.error("Fetching error in NavUtils ", err);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (profile?.data.role === "Admin") {
-      router.push("/profile/admin?tab=dashboard");
-    }
-  }, [isLoading]);
-
-  return (
-    <div className="lg:flex h-full items-center xl:gap-8 lg:gap-6 hidden">
-      <NavbarItems>
-        <SearchBarIcon />
-      </NavbarItems>
-      <NavbarItems>
-        <Chat />
-      </NavbarItems>
-      <NavbarItems>
-        {isAuthenticated ? <User profile={profile} /> : <Login />}
-      </NavbarItems>
-    </div>
-  );
+  if (profile) {
+    const { avatarUrl, name } = profile.data;
+    return (
+      <div
+        className="flex items-center gap-4 cursor-pointer relative"
+        onClick={() => {
+          setIsOpenUserProfileMenu(!isOpenUserProfileMenu);
+        }}
+      >
+        <Image
+          src={avatarUrl}
+          alt="Profile Picture"
+          width={40}
+          height={40}
+          className="rounded-full"
+        ></Image>
+        <span className="text-white font-medium">{name}</span>
+        {isOpenUserProfileMenu && <ProfileDownDown user={profile} />}
+      </div>
+    );
+  }
 }
 
-function User({ profile }: { profile: getUserProfileRes }) {
-  const [isOpenUserProfileMenu, setIsOpenUserProfileMenu] =
-    useState<boolean>(false);
-  const { avatarUrl, name } = profile.data;
-  return (
-    <div
-      className="flex items-center gap-4 cursor-pointer relative"
-      onClick={() => {
-        setIsOpenUserProfileMenu(!isOpenUserProfileMenu);
-      }}
-    >
-      <Image
-        src={avatarUrl}
-        alt="Profile Picture"
-        width={40}
-        height={40}
-        className="rounded-full"
-      ></Image>
-      <span className="text-white font-medium">{name}</span>
-      {isOpenUserProfileMenu && <ProfileDownDown />}
-    </div>
-  );
-}
-
-function SearchBarIcon() {
+export function SearchBar() {
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
 
   return (
@@ -141,11 +96,11 @@ function SearchBarIcon() {
   );
 }
 
-function Chat() {
+export function Chat() {
   return <ChatIcon />;
 }
 
-function Login() {
+export function Login() {
   return (
     <div className="px-6 py-1.5 main-color-gradient cursor-pointer">
       <Link href="/auth/login">

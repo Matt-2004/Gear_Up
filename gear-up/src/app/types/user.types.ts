@@ -17,7 +17,7 @@ export interface getUserProfileRes {
     username: string;
     email: string;
     name: string;
-    role: "Customer" | "Admin" | "Moderator";
+    role: "Customer" | "Admin" | "Dealer";
     avatarUrl: string;
   };
   status: number;

@@ -131,6 +131,11 @@ export async function getAllCars() {
   return res?.data;
 }
 
+export async function getFakeCars() {
+  const res = await axios.get("/fakeData.json");
+  return res?.data;
+}
+
 export async function updateCar(carId: string, data: FormData) {
   const res = await api.post(`/api/v1/cars/${carId}`, data);
   return res?.data;
