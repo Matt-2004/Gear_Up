@@ -5,16 +5,18 @@ import { useQuery } from "@tanstack/react-query";
 import { getFakeCars } from "@/utils/FetchAPI";
 import { Car } from "@/app/types/car.types";
 import clsx from "clsx";
-import { SquarePen } from "lucide-react";
+import { SlidersHorizontal, SquarePen } from "lucide-react";
+import { useState } from "react";
 
 const Page = () => {
+
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+
   const { data } = useQuery({
     queryKey: ["car"],
     queryFn: getFakeCars,
     enabled: true,
   });
-
-  console.log(data);
 
   return (
     <div
@@ -24,21 +26,14 @@ const Page = () => {
       }
     >
       <div className={"w-[90%] h-[90%]"}>
-        <div className={"flex w-[70%] mb-4 items-center justify-between"}>
+        <div className={"flex mb-4 items-center justify-between"}>
           <div className={""}>
             <h1 className={"text-2xl font-semibold "}>Dashboard</h1>
             <h3 className={"text-gray-300 text-sm"}>
               Manage your inventory, sales, and performance all in one place.
             </h3>
           </div>
-          <button
-            className={
-              "items-center flex gap-2  rounded-sm hover:underline-offset-2 hover:underline cursor-pointer"
-            }
-          >
-            <SquarePen className={"h-5 w-5"} />
-            Edit
-          </button>
+
         </div>
         <div
           id={"car-container"}
@@ -50,13 +45,21 @@ const Page = () => {
               "w-[70%] h-full rounded-sm bg-background shadow-sm shadow-gray-600 border-gray-800"
             }
           >
-            <div id={"title"} className={"flex p-4 justify-between"}>
+            <div id={"header"} className={"flex p-4 justify-between items-center"}>
               <h1 className={" text-lg font-semibold "}>Available Cars</h1>
               {/*This part need to add filter component*/}
-              <div>Filter</div>
+              <div onClick={() => setIsFilterOpen(prevState => !prevState)} className="flex items-center gap-2 cursor-pointer px-4 py-2 border border-gray-600 hover:bg-gray-600">
+                <SlidersHorizontal className="h-5 w-5 " />Filter
+              </div>
             </div>
-            <div className={"flex justify-center mt-6"}>
-              <div id={"cars"} className={"grid grid-cols-3 gap-6"}>
+            {
+              isFilterOpen &&
+              <div id="conditionalFilter" className="w-full flex justify-center">
+                <ConditionalCarFilter />
+              </div>
+            }
+            <div id={"cars"} className={"flex justify-center mt-6"}>
+              <div className={"grid grid-cols-3 gap-6"}>
                 {data?.map((car: Car, index: number) => (
                   <div key={index}>
                     <CarCard car={car} />
@@ -126,6 +129,57 @@ function CarCard({ car }: { car: Car }) {
         <div id={"price"} className={"text-primary font-semibold text-lg"}>
           ${car.Price}
         </div>
+      </div>
+    </div>
+  );
+}
+
+export function ConditionalCarFilter() {
+  return (
+    <div
+      id={"filter-container"}
+      className={
+        "w-[95%]  px-4  py-2 justify-center border rounded-sm border-gray-600 border-dashed flex flex-col  gap-2"
+      }
+    >
+      {/* Placeholder for future filter options */}
+      <div id="year" className={"text-gray-300 items-center"}>
+        <h1>
+          Year: <input type="number" name="year" placeholder="1990" min={1990} max={2025} className={"bg-gray-800  focus:outline-none placeholder:text-sm text-white p-1 rounded-sm w-20 border border-gray-600"} /> to  <input type="number" placeholder="2025" name="year" min={1990} max={2025} className={"border focus:outline-none placeholder:text-sm border-gray-600 bg-gray-800 text-white p-1 rounded-sm w-20"} />
+        </h1>
+      </div>
+      <div className="h-0.5 w-full border border-gray-600" />
+      <div id="price" className={"text-gray-300 items-center"}>
+        <h1>
+          Price range: <input type="number" name="price" placeholder="$5000 - min" className={"bg-gray-800 focus:outline-none placeholder:text-sm text-white p-1  rounded-sm w-28 border border-gray-600"} /> to  <input type="number" placeholder="$20000 - max" name="price" className={"border placeholder:text-sm border-gray-600 bg-gray-800 focus:outline-none text-white p-1 rounded-sm w-28"} />
+        </h1>
+      </div>
+      <div className="h-0.5 w-full border border-gray-600" />
+      <div className="items-center flex gap-1">
+        Brand
+        <div className="flex items-center gap-1  select-none">
+          <input id="tesla" type="checkbox" name="make" value="Toyota" className="appearance-none peer hidden" />
+          <label htmlFor="tesla" className="ml-1  cursor-pointer flex gap-1 border border-gray-600 text-red-500 px-2 py-2 bg-white rounded-sm peer-checked:bg-primary"><div className="relative h-5 w-16">
+            <Image
+              src="/tesla-text.png"
+              alt="toyota"
+              fill
+              className="object-contain"
+            />
+          </div></label>
+        </div>
+        <div className="flex items-center gap-1  select-none">
+          <input id="toyota" type="checkbox" name="make" value="Toyota" className="appearance-none peer hidden" />
+          <label htmlFor="toyota" className="ml-1   cursor-pointer  flex gap-1 border border-gray-600 text-red-500 px-2 py-2 bg-white rounded-sm  peer-checked:bg-primary "><div className="relative h-5 w-16">
+            <Image
+              src="/toyota-text.png"
+              alt="toyota"
+              fill
+              className="object-contain scale-200"
+            />
+          </div></label>
+        </div>
+
       </div>
     </div>
   );
