@@ -7,6 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ProfileDownDown } from "./NavbarDropDown";
 import { getUserProfile } from "@/utils/FetchAPI";
+import { Cog } from "lucide-react";
 
 // Be a server side
 // pass data through props
@@ -43,7 +44,7 @@ export function User() {
   }
 
   if (profile) {
-    const { avatarUrl, name } = profile.data;
+    const { avatarUrl, name, role } = profile.data;
     return (
       <div
         className="flex items-center gap-4 cursor-pointer relative"
@@ -58,7 +59,14 @@ export function User() {
           height={40}
           className="rounded-full"
         ></Image>
-        <span className="text-white font-medium">{name}</span>
+        <h1>
+
+          <span className="text-white font-medium">{name}</span>
+          {
+            role === "Dealer" &&
+            <div className="text-gray-800 bg-primary rounded-full text-center text-sm flex gap-1 items-center px-2"><Cog className="h-4 w-4" />{role}</div>
+          }
+        </h1>
         {isOpenUserProfileMenu && <ProfileDownDown user={profile} />}
       </div>
     );
