@@ -7,7 +7,10 @@ export default function Navbar() {
   return (
     <NavbarContainer>
       <Logo />
-      <NavbarTabs />
+      <div className="hidden md:block">
+
+        <NavbarTabs />
+      </div>
       <NavbarUtility />
     </NavbarContainer>
   );

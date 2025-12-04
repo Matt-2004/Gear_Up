@@ -11,14 +11,16 @@ export interface loginRes {
 export interface getUserProfileRes {
   isSuccess: boolean;
   message: string;
-  data: {
-    id: string;
-    provider: string | null;
-    username: string;
-    email: string;
-    name: string;
-    role: "Customer" | "Admin" | "Dealer";
-    avatarUrl: string;
-  };
+  data: UserData;
   status: number;
+}
+
+export interface UserData {
+  id: string;
+  provider: string | null;
+  username: string;
+  email: string;
+  name: string;
+  role: "Customer" | "Admin" | "Dealer";
+  avatarUrl: string;
 }

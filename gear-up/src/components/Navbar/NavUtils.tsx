@@ -1,31 +1,70 @@
 "use client";
 
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { ChatIcon, MagnifyingGlass } from "../Common/SVGs";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import Image from "next/image";
 import { ProfileDownDown } from "./NavbarDropDown";
 import { getUserProfile } from "@/utils/FetchAPI";
-import { Cog } from "lucide-react";
+import { Cog, Menu, X } from "lucide-react";
+import NavbarTabs from "./NavbarTabs";
+import { div } from "framer-motion/client";
+
 
 // Be a server side
 // pass data through props
 // use getServerSideProps to fetch data before render and pass through data
 
 export function Logo() {
+
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
+
   return (
-    <div className="w-40 h-16 items-center flex z-20">
-      <Image
-        src={"/logo.png"}
-        priority
-        alt="Logo"
-        width={150}
-        height={150}
-        className=""
-      />
+    <div className="w-32 h-16 items-center flex z-20">
+      <div className="hover:bg-gray-600 p-1 rounded-md cursor-pointer active:bg-gray-600">
+        <Menu className="text-white md:hidden text-2xl h-7 w-7" onClick={() => setIsMobileMenuOpen(prev => !prev)} />
+
+        {isMobileMenuOpen && (
+          <div className="">
+
+            <MobileMenu setIsMobileMenuOpen={setIsMobileMenuOpen} />
+          </div>
+        )}
+
+      </div>
+      <div className="-translate-x-2 w-32 h-16 flex items-center">
+
+        <Image
+          src={"/logo.png"}
+          priority
+          alt="Logo"
+          width={150}
+          height={150}
+          className="object-contain "
+        />
+      </div>
     </div>
   );
+}
+
+export function MobileMenu({ setIsMobileMenuOpen }: { setIsMobileMenuOpen: Dispatch<React.SetStateAction<boolean>> }) {
+  return (
+    <>
+      <div className="fixed top-0 w-[75%] h-screen left-0  bg-background text-white flex flex-col z-40">
+        <div className="relative  flex flex-col gap-8">
+          <div className="absolute top-5 right-4">
+            <X onClick={() => setIsMobileMenuOpen(prev => !prev)} />
+          </div>
+
+          <NavbarTabs />
+        </div>
+
+
+      </div>
+      <div className="fixed inset-0 bg-gradient-to-r from-gray-900/60 to-black/80 z-30" />
+    </>
+  )
 }
 
 export function User() {
@@ -89,7 +128,7 @@ export function SearchBar() {
       </div>
       {isSearchOpen && (
         <div
-          className="absolute top-11 right-0"
+          className="absolute top-10 right-0"
           onBlur={() => setIsSearchOpen(false)}
         >
           <input

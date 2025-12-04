@@ -15,7 +15,7 @@ export const refreshAccessToken = async () => {
   return await axios.post(
     `${API_URL}/api/v1/auth/refresh`,
     {},
-    { withCredentials: true },
+    { withCredentials: true }
   );
 };
 
@@ -43,7 +43,7 @@ api.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  },
+  }
 );
 
 export async function login(formData: ILoginFormData) {
@@ -63,7 +63,7 @@ export async function register(formData: IRegisterFormData) {
 // Require access token in the header
 export async function resendVerificationEmail(email: string) {
   const res = await api.post(
-    `/api/v1/auth/resend-verification-email/email?=${email}`,
+    `/api/v1/auth/resend-verification-email/email?=${email}`
   );
   return res?.data;
 }
@@ -73,14 +73,13 @@ export async function updateNewPassword(formData: INewPassword) {
 
   const res = await api.post(
     `/api/v1/auth/reset-password?token=${reset_token}`,
-    formData,
+    formData
   );
   return res?.data;
 }
 
 export async function getUserProfile() {
   const res = await api.get("/api/v1/users/me");
-  console.log("This is running on backend:: ", res?.data.data);
   return res?.data;
 }
 
@@ -132,7 +131,7 @@ export async function getAllCars() {
 }
 
 export async function getFakeCars() {
-  const res = await axios.get("/fakeData.json");
+  const res = await axios.get("/cardata.json");
   return res?.data;
 }
 

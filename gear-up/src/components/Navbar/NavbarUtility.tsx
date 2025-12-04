@@ -25,7 +25,7 @@ export default function NavbarUtility() {
   });
 
   return (
-    <div className="lg:flex h-full items-center xl:gap-8 lg:gap-6 hidden">
+    <div className="md:flex h-full items-center xl:gap-8 lg:gap-6 md:gap-3 hidden">
       <NavbarItems>
         <SearchBar />
       </NavbarItems>

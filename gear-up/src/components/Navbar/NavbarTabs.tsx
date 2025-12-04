@@ -1,47 +1,43 @@
-"use client";
-
-import { useState } from "react";
-import { MenuBar, XIcon } from "../Common/SVGs";
 import clsx from "clsx";
 
 export default function NavbarTabs() {
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+
 
   return (
     <>
       <div
         className={clsx(
-          "absolute left-0 top-0 max-sm:z-10",
-          isMenuOpen ? "h-screen flex" : "h-0 hidden",
-          "lg:static lg:w-auto lg:flex transition-all duration-300 ease-in-out",
+          "transition-all duration-300 ease-in-out mt-16 sm:m-0 border-t border-primary sm:border-none md:flex",
         )}
       >
-        <ol className="lg:gap-8 xl:gap-12 gap-10 flex items-center  max-sm:flex-col  max-sm:w-screen max-sm:h-screen  justify-center  text-xl  bg-[#142030] font-medium text-white">
-          <li className="cursor-pointer text-[16px]  md:hover:text-[#7ED957] md:hover:underline md:hover:underline-offset-4 transition duration-100 ease-in-out">
-            Home
-          </li>
-          <li className="cursor-pointer text-[16px] md:hover:text-[#7ED957] md:hover:underline md:hover:underline-offset-4 transition duration-100 ease-in-out">
-            Promotions
-          </li>
-          <li className="cursor-pointer text-[16px] md:hover:text-[#7ED957] md:hover:underline md:hover:underline-offset-4 transition duration-100 ease-in-out">
-            Buy Cars
-          </li>
-          <li className="cursor-pointer text-[16px] md:hover:text-[#7ED957] md:hover:underline md:hover:underline-offset-4 transition duration-100 ease-in-out">
-            Rent Cars
-          </li>
-          <li className="cursor-pointer text-[16px]  md:hover:text-[#7ED957] md:hover:underline md:hover:underline-offset-4 transition duration-100 ease-in-out">
-            Contact Me
-          </li>
-        </ol>
+        <div className=" md:py-1 md:px-1 flex  sm:flex-row w-full h-screen sm:h-16   text-xl  font-medium text-white">
+          <ol className="flex flex-col md:flex-row gap-0 sm:gap-2 md:gap-2 lg:gap-8 w-full">
+            <li className="hidden sm:block cursor-pointer border-b border-gray-500 sm:border-none text-[16px] p-4 md:py-4 md:px-1  md:hover:text-[#7ED957] md:hover:underline md:hover:underline-offset-4 transition duration-100 ease-in-out">
+              Home
+            </li>
+
+            <li className="w-full">
+              <button className="text-start whitespace-nowrap active:bg-gray-500 w-full cursor-pointer  border-b border-gray-500 sm:border-none text-[16px] p-4 md:py-4 md:px-1 md:hover:text-[#7ED957] md:hover:underline md:hover:underline-offset-4 transition duration-100 ease-in-out">
+
+                Buy Cars
+              </button>
+            </li>
+            <li className="w-full">
+              <button className="text-start whitespace-nowrap active:bg-gray-500 w-full cursor-pointer  border-b border-gray-500 sm:border-none text-[16px] p-4 md:py-4 md:px-1 md:hover:text-[#7ED957] md:hover:underline md:hover:underline-offset-4 transition duration-100 ease-in-out">
+
+                Rent Cars
+              </button>
+            </li>
+            <li className="w-full">
+              <button className="text-start whitespace-nowrap active:bg-gray-500 w-full cursor-pointer  border-b border-gray-500 sm:border-none text-[16px] p-4 md:py-4 md:px-1 md:hover:text-[#7ED957] md:hover:underline md:hover:underline-offset-4 transition duration-100 ease-in-out">
+
+                Contact Me
+              </button>
+            </li>
+          </ol>
+        </div>
       </div>
-      <div
-        id="menu-bar"
-        onClick={() => setIsMenuOpen(!isMenuOpen)}
-        className="flex z-20 items-center justify-center lg:hidden"
-      >
-        {isMenuOpen && <XIcon />}
-        {!isMenuOpen && <MenuBar />}
-      </div>
+
     </>
   );
 }

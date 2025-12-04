@@ -1,0 +1,395 @@
+{
+    "isSuccess": true,
+    "message": "Cars fetched successfully",
+    "data": {
+        "totalCount": 12991,
+        "pageSize": 10,
+        "currentPage": 1,
+        "totalPages": 1300,
+        "items": [
+            {
+                "id": "4d786b22-5ee6-4c2a-831b-5d7abcccdf6f",
+                "title": "Spyder",
+                "description": "Soluta aliquid ut est accusantium quia. Nisi impedit beatae laboriosam velit vel dignissimos cupiditate quidem. Reiciendis praesentium ut sint ut voluptates est rerum.",
+                "model": "Taurus",
+                "make": "Volvo",
+                "year": 2019,
+                "price": 63931.707007948855,
+                "color": "tan",
+                "mileage": 195433,
+                "seatingCapacity": 2,
+                "engineCapacity": 4995,
+                "carImages": [
+                    {
+                        "id": "50a0aaf8-2e5f-42e1-b7a6-0e5d88719274",
+                        "url": "https://picsum.photos/640/480/?image=184"
+                    },
+                    {
+                        "id": "6ca545ab-0122-4139-b340-ccad3d44f754",
+                        "url": "https://picsum.photos/640/480/?image=576"
+                    },
+                    {
+                        "id": "a4e796ce-0828-430e-b718-ecfa51b87ca2",
+                        "url": "https://picsum.photos/640/480/?image=702"
+                    },
+                    {
+                        "id": "da2fe926-e2e4-4e57-8514-fb82fd907106",
+                        "url": "https://picsum.photos/640/480/?image=942"
+                    }
+                ],
+                "fuelType": "Diesel",
+                "carCondition": "Default",
+                "transmissionType": "Automatic",
+                "carStatus": "Available",
+                "carValidationStatus": "Approved",
+                "vin": "256SQQOQN9GS96510",
+                "licensePlate": "4613"
+            },
+            {
+                "id": "2d90da6c-5282-4dee-914b-8a89cfab0708",
+                "title": "Focus",
+                "description": "Ut laborum deleniti numquam non voluptatem. Cum autem suscipit dolore voluptas. Perferendis suscipit eos voluptatem. Debitis accusantium et. Tempora eos consequuntur eos adipisci est consequatur voluptatem minus. Natus et quaerat quia aut recusandae eveniet.",
+                "model": "Ranchero",
+                "make": "Ferrari",
+                "year": 2020,
+                "price": 57065.306409058816,
+                "color": "magenta",
+                "mileage": 150623,
+                "seatingCapacity": 4,
+                "engineCapacity": 1685,
+                "carImages": [
+                    {
+                        "id": "08857005-6431-4eb1-9dc5-e9743df5196c",
+                        "url": "https://picsum.photos/640/480/?image=516"
+                    },
+                    {
+                        "id": "9a555233-695d-4b38-966d-61d191db7317",
+                        "url": "https://picsum.photos/640/480/?image=1036"
+                    },
+                    {
+                        "id": "cf3e20cb-408a-4cb0-a7c4-f54701a90eb5",
+                        "url": "https://picsum.photos/640/480/?image=293"
+                    },
+                    {
+                        "id": "d6fd5f73-948f-4fd7-a960-b8213a670e36",
+                        "url": "https://picsum.photos/640/480/?image=629"
+                    }
+                ],
+                "fuelType": "Petrol",
+                "carCondition": "New",
+                "transmissionType": "SemiAutomatic",
+                "carStatus": "Available",
+                "carValidationStatus": "Approved",
+                "vin": "I7E7PWWBVMMV14752",
+                "licensePlate": "5151"
+            },
+            {
+                "id": "a72b7a2d-9925-4560-aa57-1308ce243f1d",
+                "title": "Durango",
+                "description": "Est eos illo non. Odit doloremque quia mollitia. Ipsam consequatur animi quis. In voluptatem magni ipsum assumenda similique et commodi quibusdam. Perspiciatis placeat necessitatibus excepturi eos aut.",
+                "model": "Mercielago",
+                "make": "Polestar",
+                "year": 2016,
+                "price": 18749.315513348938,
+                "color": "magenta",
+                "mileage": 174356,
+                "seatingCapacity": 2,
+                "engineCapacity": 3191,
+                "carImages": [
+                    {
+                        "id": "15712ca8-9898-4b1f-8ef3-0322f13a1a16",
+                        "url": "https://picsum.photos/640/480/?image=329"
+                    },
+                    {
+                        "id": "1575e9cc-fe44-4153-9acf-613fba6e2248",
+                        "url": "https://picsum.photos/640/480/?image=850"
+                    },
+                    {
+                        "id": "e0ae0b2b-bd0b-4702-b033-f0a92b848ce1",
+                        "url": "https://picsum.photos/640/480/?image=1025"
+                    },
+                    {
+                        "id": "ebf975be-1b3e-42f2-8df4-a0f9aba01241",
+                        "url": "https://picsum.photos/640/480/?image=1074"
+                    }
+                ],
+                "fuelType": "Hybrid",
+                "carCondition": "Used",
+                "transmissionType": "Manual",
+                "carStatus": "Available",
+                "carValidationStatus": "Approved",
+                "vin": "1WLXHJ4HK1GP48553",
+                "licensePlate": "3514"
+            },
+            {
+                "id": "cf156508-1eaf-4f8d-b8cc-ecb23a3eaafa",
+                "title": "A8",
+                "description": "Quaerat ut enim eum est dolore. Magni deleniti et reprehenderit eaque magnam delectus minima. Dignissimos fugiat et iste similique dolore dolorum laudantium voluptatem occaecati. Odit et molestiae nulla incidunt. Nulla omnis perferendis dignissimos voluptates sit.",
+                "model": "Mustang",
+                "make": "Bugatti",
+                "year": 2023,
+                "price": 14677.460080196777,
+                "color": "plum",
+                "mileage": 36134,
+                "seatingCapacity": 2,
+                "engineCapacity": 1500,
+                "carImages": [
+                    {
+                        "id": "2ebd9ab6-73d9-4b99-9405-905a476a73cc",
+                        "url": "https://picsum.photos/640/480/?image=240"
+                    },
+                    {
+                        "id": "ba1a2c86-5e15-46eb-8247-76bc3a9dc004",
+                        "url": "https://picsum.photos/640/480/?image=1055"
+                    },
+                    {
+                        "id": "d2fb2c32-669d-49fa-b599-14c2b7852b19",
+                        "url": "https://picsum.photos/640/480/?image=948"
+                    },
+                    {
+                        "id": "ef0293a4-5d4c-4f9c-ab89-e4ecb52a366b",
+                        "url": "https://picsum.photos/640/480/?image=777"
+                    }
+                ],
+                "fuelType": "Diesel",
+                "carCondition": "Default",
+                "transmissionType": "Automatic",
+                "carStatus": "Available",
+                "carValidationStatus": "Approved",
+                "vin": "LXMI3U0ELYQ916375",
+                "licensePlate": "3404"
+            },
+            {
+                "id": "d57d1107-8dc7-40a0-b4fb-172b84631ea4",
+                "title": "A8",
+                "description": "Est ducimus magnam autem et sed aut quibusdam dicta maiores. Vel consequuntur rerum. Dolorum non corporis est illum quia voluptatem corporis sapiente tempore. Molestias corrupti quis. Omnis animi occaecati fuga dicta velit minima quia. Iure consequatur omnis.",
+                "model": "Civic",
+                "make": "Mini",
+                "year": 2020,
+                "price": 42513.5092370354,
+                "color": "magenta",
+                "mileage": 62738,
+                "seatingCapacity": 3,
+                "engineCapacity": 976,
+                "carImages": [
+                    {
+                        "id": "3639f0ea-1faa-445f-a78f-74e13be7cdcb",
+                        "url": "https://picsum.photos/640/480/?image=215"
+                    },
+                    {
+                        "id": "50d174e9-82dd-48b6-9bc3-e4ee8163288d",
+                        "url": "https://picsum.photos/640/480/?image=66"
+                    },
+                    {
+                        "id": "d1fc0fca-9977-4b33-8da5-539c5e9ddd57",
+                        "url": "https://picsum.photos/640/480/?image=857"
+                    }
+                ],
+                "fuelType": "Electric",
+                "carCondition": "Default",
+                "transmissionType": "Default",
+                "carStatus": "Available",
+                "carValidationStatus": "Approved",
+                "vin": "JVCUMXS7F4DE52839",
+                "licensePlate": "7498"
+            },
+            {
+                "id": "7b23f232-a5cc-4632-90f3-89706951c194",
+                "title": "Camry",
+                "description": "Debitis iste perspiciatis earum ea laudantium rerum et aspernatur. Unde officiis sequi quis perferendis laudantium qui voluptates est. Iste nostrum nihil reiciendis aspernatur qui ut quis.",
+                "model": "Model S",
+                "make": "Polestar",
+                "year": 2024,
+                "price": 51878.50209227624,
+                "color": "red",
+                "mileage": 148167,
+                "seatingCapacity": 5,
+                "engineCapacity": 4481,
+                "carImages": [
+                    {
+                        "id": "22972efe-2eaa-4897-b08f-16262a3d0895",
+                        "url": "https://picsum.photos/640/480/?image=89"
+                    },
+                    {
+                        "id": "27fe407d-8819-4da8-9c7c-48198580dd11",
+                        "url": "https://picsum.photos/640/480/?image=985"
+                    },
+                    {
+                        "id": "44642941-1125-4348-a8fa-9d12a32f73e0",
+                        "url": "https://picsum.photos/640/480/?image=378"
+                    },
+                    {
+                        "id": "93d74453-59cf-4c86-98c2-a78af90e7fdf",
+                        "url": "https://picsum.photos/640/480/?image=378"
+                    },
+                    {
+                        "id": "b39a2f1b-76f2-4a3e-b1df-ae99fcd04459",
+                        "url": "https://picsum.photos/640/480/?image=365"
+                    }
+                ],
+                "fuelType": "Diesel",
+                "carCondition": "Default",
+                "transmissionType": "Manual",
+                "carStatus": "Available",
+                "carValidationStatus": "Approved",
+                "vin": "K6KK2ZDOO9VH26251",
+                "licensePlate": "3869"
+            },
+            {
+                "id": "ea23ccc5-d8b9-4089-b6e5-3bb80834d1ff",
+                "title": "Escalade",
+                "description": "Aliquam expedita beatae et sit iste sed dolore qui voluptatem. Quae consequatur earum quia. Illo et harum repellendus. Optio dolorem eos tempora id ut. Dolorem quisquam ut ut nesciunt fuga. Quasi error odit quam natus cum magnam iusto reprehenderit cum.",
+                "model": "Colorado",
+                "make": "Nissan",
+                "year": 2017,
+                "price": 45095.00105460761,
+                "color": "orange",
+                "mileage": 41225,
+                "seatingCapacity": 3,
+                "engineCapacity": 1594,
+                "carImages": [
+                    {
+                        "id": "173793a2-2bfe-451e-9efa-a94b6bbbebba",
+                        "url": "https://picsum.photos/640/480/?image=549"
+                    },
+                    {
+                        "id": "2a04c208-74ff-4ccc-83a4-33201b25c76b",
+                        "url": "https://picsum.photos/640/480/?image=829"
+                    },
+                    {
+                        "id": "4c629636-bcce-4ae8-85c8-d0ed5fcddf51",
+                        "url": "https://picsum.photos/640/480/?image=310"
+                    },
+                    {
+                        "id": "b84bf392-0235-46a9-96c6-e491b0db7275",
+                        "url": "https://picsum.photos/640/480/?image=374"
+                    },
+                    {
+                        "id": "ccf51ad4-2522-4237-9166-df56df6c73b5",
+                        "url": "https://picsum.photos/640/480/?image=902"
+                    },
+                    {
+                        "id": "fc04cfc1-57cb-41a7-ac14-4ff8abd608d0",
+                        "url": "https://picsum.photos/640/480/?image=679"
+                    }
+                ],
+                "fuelType": "Petrol",
+                "carCondition": "New",
+                "transmissionType": "Automatic",
+                "carStatus": "Available",
+                "carValidationStatus": "Approved",
+                "vin": "F18PTOQJGMCT73794",
+                "licensePlate": "1222"
+            },
+            {
+                "id": "90b44315-b505-4133-9334-d294e1bdef1e",
+                "title": "Sentra",
+                "description": "Quia illo voluptatem nulla. Magni laborum sed deserunt corrupti accusamus eligendi tempora possimus natus. Itaque vitae mollitia veniam. Quas eum odio eveniet. Molestiae a in. Ut voluptatum dolor nulla molestiae voluptatem voluptate quia praesentium.",
+                "model": "Challenger",
+                "make": "Chrysler",
+                "year": 2018,
+                "price": 56004.69834460676,
+                "color": "salmon",
+                "mileage": 151130,
+                "seatingCapacity": 7,
+                "engineCapacity": 1817,
+                "carImages": [
+                    {
+                        "id": "4ac819fc-9549-41ec-aff6-bdc2eb0c4f74",
+                        "url": "https://picsum.photos/640/480/?image=1029"
+                    },
+                    {
+                        "id": "a55d380a-51b3-4907-b6e0-fbe22500dea4",
+                        "url": "https://picsum.photos/640/480/?image=803"
+                    },
+                    {
+                        "id": "e0b14289-4845-4c15-a851-a58851b980fb",
+                        "url": "https://picsum.photos/640/480/?image=596"
+                    }
+                ],
+                "fuelType": "Default",
+                "carCondition": "Default",
+                "transmissionType": "Automatic",
+                "carStatus": "Available",
+                "carValidationStatus": "Approved",
+                "vin": "3ZRAFXAB64FN50854",
+                "licensePlate": "5711"
+            },
+            {
+                "id": "cca9a815-25d0-4304-baaa-557698e0f055",
+                "title": "Roadster",
+                "description": "Debitis cupiditate et voluptatem libero. Totam fuga laudantium suscipit rem dolor rerum. Qui voluptas quibusdam. Molestias molestiae autem. Mollitia distinctio voluptatem aut magnam beatae et facilis quis. Ut ea voluptas aperiam.",
+                "model": "Mustang",
+                "make": "Chrysler",
+                "year": 2018,
+                "price": 87024.45446138068,
+                "color": "red",
+                "mileage": 56349,
+                "seatingCapacity": 4,
+                "engineCapacity": 4492,
+                "carImages": [
+                    {
+                        "id": "04ca60d5-75bc-49fe-8d1b-fb0624ace207",
+                        "url": "https://picsum.photos/640/480/?image=1042"
+                    },
+                    {
+                        "id": "1775848a-b5d3-4426-a7cd-a99ff96e2549",
+                        "url": "https://picsum.photos/640/480/?image=804"
+                    },
+                    {
+                        "id": "43f67e34-e3ca-4656-8e94-e2ad5caeea28",
+                        "url": "https://picsum.photos/640/480/?image=791"
+                    },
+                    {
+                        "id": "f63644a7-dab6-482a-9d05-2bff49a4c5a3",
+                        "url": "https://picsum.photos/640/480/?image=1074"
+                    }
+                ],
+                "fuelType": "Petrol",
+                "carCondition": "Default",
+                "transmissionType": "Automatic",
+                "carStatus": "Available",
+                "carValidationStatus": "Approved",
+                "vin": "DY5VZ6MJE8ID73667",
+                "licensePlate": "8597"
+            },
+            {
+                "id": "1c7e76f1-1203-4d7c-a751-83d7c6f93d90",
+                "title": "CX-9",
+                "description": "Aut vel pariatur porro. Autem officia earum ut libero mollitia non est doloremque. Maiores voluptatibus quia dolorem eaque et neque minima velit alias. Est magnam aut sint minima. Sint voluptatem fugit assumenda ea magnam voluptates assumenda illum fugiat. Incidunt voluptatem id.",
+                "model": "LeBaron",
+                "make": "Chrysler",
+                "year": 2016,
+                "price": 12159.801287138402,
+                "color": "yellow",
+                "mileage": 148512,
+                "seatingCapacity": 2,
+                "engineCapacity": 3913,
+                "carImages": [
+                    {
+                        "id": "88a550d4-3f22-42ea-9fe4-83baec56a842",
+                        "url": "https://picsum.photos/640/480/?image=193"
+                    },
+                    {
+                        "id": "cc910beb-31c6-4197-91cb-9a394b66333f",
+                        "url": "https://picsum.photos/640/480/?image=1032"
+                    },
+                    {
+                        "id": "d3ad3a4d-9abb-4ea3-aff9-69cef01d37af",
+                        "url": "https://picsum.photos/640/480/?image=846"
+                    }
+                ],
+                "fuelType": "Diesel",
+                "carCondition": "Used",
+                "transmissionType": "Manual",
+                "carStatus": "Available",
+                "carValidationStatus": "Approved",
+                "vin": "WGI5BEUF49H011953",
+                "licensePlate": "1160"
+            }
+        ],
+        "hasNextPage": true,
+        "hasPreviousPage": false
+    },
+    "status": 200
+}

@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getFakeCars } from "@/utils/FetchAPI";
 import { Car } from "@/app/types/car.types";
 import clsx from "clsx";
-import { SlidersHorizontal, SquarePen } from "lucide-react";
+import { SlidersHorizontal } from "lucide-react";
 import { useState } from "react";
 
 const Page = () => {
@@ -18,15 +18,17 @@ const Page = () => {
     enabled: true,
   });
 
+  console.log("Car Data:: ", data?.data)
+
   return (
     <div
       id={"car-main-container"}
       className={
-        "text-white w-full h-screen flex flex-col justify-center items-center"
+        "text-white w-full h-full flex flex-col justify-center items-center"
       }
     >
-      <div className={"w-[90%] h-[90%]"}>
-        <div className={"flex mb-4 items-center justify-between"}>
+      <div className={"w-[90%]"}>
+        <div className={"flex py-4 items-center justify-between"}>
           <div className={""}>
             <h1 className={"text-2xl font-semibold "}>Dashboard</h1>
             <h3 className={"text-gray-300 text-sm"}>
@@ -60,7 +62,7 @@ const Page = () => {
             }
             <div id={"cars"} className={"flex justify-center mt-6"}>
               <div className={"grid grid-cols-3 gap-6"}>
-                {data?.map((car: Car, index: number) => (
+                {data && data.data.items.slice(0, 9).map((car: Car, index: number) => (
                   <div key={index}>
                     <CarCard car={car} />
                   </div>
@@ -71,9 +73,11 @@ const Page = () => {
           <div
             id={"right-side-container"}
             className={
-              "w-[25%] h-full rounded-sm bg-background shadow-sm shadow-gray-600 border-gray-800"
+              "w-[25%] h-screen rounded-sm bg-background shadow-sm shadow-gray-600 border-gray-800"
             }
-          ></div>
+          >
+            # Need to add analytics component here #
+          </div>
         </div>
       </div>
     </div>
@@ -90,7 +94,7 @@ function CarCard({ car }: { car: Car }) {
       <div className={"p-3 space-y-2"}>
         <Image
           className={"object-cover h-30 w-full"}
-          src={car.CarImages[0]}
+          src={car.carImages[0]?.url}
           alt={"car"}
           width={"100"}
           height={"50"}
@@ -99,35 +103,35 @@ function CarCard({ car }: { car: Car }) {
           id={"titleAndSave"}
           className={"flex justify-between items-center"}
         >
-          <h1>{car.Title}</h1>
+          <h1>{car.title}</h1>
           <h3
             className={clsx(
-              car.CarStatus === "Available" ? "bg-green-600" : "bg-red-500",
+              car.carStatus === "Available" ? "bg-green-600" : "bg-red-500",
               "text-xs px-2 py-0.5  rounded-md items-center",
             )}
           >
-            {car.CarStatus}
+            {car.carStatus}
           </h3>
         </div>
         <div id={"features"} className={"flex justify-between"}>
           <h1 className={"text-sm"}>
-            Style: <b>{car.Make}</b>
+            Style: <b>{car.make}</b>
           </h1>
           <h1 className={"text-sm"}>
-            Type: <b>{car.FuelType}</b>
+            Type: <b>{car.fuelType}</b>
           </h1>
           <h1 className={"text-sm flex gap-1 items-center"}>
             Color:{" "}
             <div
               className={clsx(
-                `h-5 w-5 bg-${car.Color.toLowerCase()}-500 `,
-                `bg-${car.Color.toLowerCase()}`,
+                `h-5 w-5 bg-${car.color.toLowerCase()}-500 `,
+                `bg-${car.color.toLowerCase()}`,
               )}
             />
           </h1>
         </div>
         <div id={"price"} className={"text-primary font-semibold text-lg"}>
-          ${car.Price}
+          ${car.price.toString().split(".")[0]}
         </div>
       </div>
     </div>
