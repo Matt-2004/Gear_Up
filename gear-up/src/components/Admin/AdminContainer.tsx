@@ -1,7 +1,5 @@
 const AdminContainer = () => {
-    return (
-        <div>This is </div>
-    )
+	return <div>This is </div>
 }
 
-export default AdminContainer;
+export default AdminContainer

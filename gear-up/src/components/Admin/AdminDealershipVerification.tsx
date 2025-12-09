@@ -1,7 +1,5 @@
 const AdminDealershipVerification = () => {
-    return (
-        <div> This is Dealership verification</div>
-    )
+	return <div> This is Dealership verification</div>
 }
 
-export default AdminDealershipVerification;
+export default AdminDealershipVerification

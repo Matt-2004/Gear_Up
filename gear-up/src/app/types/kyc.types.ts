@@ -1,31 +1,31 @@
-import { Status } from "@/components/Common/StatusUI";
+import { Status } from "@/components/Common/StatusUI"
 
 export interface IKycSubmissions {
-  id: string;
-  userId: string;
-  fullName: string;
-  email: string;
-  phoneNumber: string;
-  dateOfBirth: string;
-  status: Status;
-  documentType: string;
-  documentUrls: string[];
-  selfieUrl: string;
-  submittedAt: string;
-  rejectionReason: string | null;
+	id: string
+	userId: string
+	fullName: string
+	email: string
+	phoneNumber: string
+	dateOfBirth: string
+	status: Status
+	documentType: string
+	documentUrls: string[]
+	selfieUrl: string
+	submittedAt: string
+	rejectionReason: string | null
 }
 
 export interface IKycRes {
-  isSuccess: boolean;
-  message: string;
-  data: {
-    kycSubmissions: IKycSubmissions[];
-    totalCount: number;
-  };
-  status: number;
+	isSuccess: boolean
+	message: string
+	data: {
+		kycSubmissions: IKycSubmissions[]
+		totalCount: number
+	}
+	status: number
 }
 
 export interface IKycUpdateByAdmin {
-  status: "Pending" | "Rejected" | "Approved";
-  rejectionReason: string;
+	status: "Pending" | "Rejected" | "Approved"
+	rejectionReason: string
 }

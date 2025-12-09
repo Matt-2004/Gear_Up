@@ -1,5 +1,5 @@
 const UpdateCar = () => {
-  return <h1>This is Update car</h1>;
-};
+	return <h1>This is Update car</h1>
+}
 
-export default UpdateCar;
+export default UpdateCar

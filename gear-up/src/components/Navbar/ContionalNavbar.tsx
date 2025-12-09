@@ -1,13 +1,13 @@
-'use client'
+"use client"
 
-import { usePathname } from 'next/navigation'
-import Navbar from './Navbar'
+import { usePathname } from "next/navigation"
+import Navbar from "./Navbar"
 
 export function ConditionalNavbar() {
-    const pathname = usePathname()
-    const isAdminRoute = pathname?.startsWith('/profile/admin')
+	const pathname = usePathname()
+	const isAdminRoute = pathname?.startsWith("/profile/admin")
 
-    if (isAdminRoute) return null
+	if (isAdminRoute) return null
 
-    return <Navbar />
+	return <Navbar />
 }

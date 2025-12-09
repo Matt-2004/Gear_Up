@@ -1,13 +1,10 @@
-import KycDetailPage from "@/components/Admin/KycDetailPage";
-import {use} from "react";
+import KycDetailPage from "@/components/Admin/KycDetailPage"
+import { use } from "react"
 
-const KycDetail = ({params}: {params: Promise<{id: string}>}) => {
+const KycDetail = ({ params }: { params: Promise<{ id: string }> }) => {
+	const { id } = use(params)
 
-    const {id} = use(params);
-
-    return <KycDetailPage id={id}/>;
+	return <KycDetailPage id={id} />
 }
 
-
-
-export default KycDetail;
+export default KycDetail

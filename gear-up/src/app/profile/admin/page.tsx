@@ -1,28 +1,28 @@
-"use server";
+"use server"
 
-import { Tabs } from "@/components/Admin/Tabs";
-import { PageSwitcher } from "@/components/Admin/PageSwticher";
+import { Tabs } from "@/components/Admin/Tabs"
+import { PageSwitcher } from "@/components/Admin/PageSwticher"
 
 export default async function Page({
-  searchParams,
+	searchParams,
 }: {
-  searchParams: { tab: string };
+	searchParams: { tab: string }
 }) {
-  const { tab } = await searchParams;
-  console.log("QueryTab:: ", tab);
+	const { tab } = await searchParams
+	console.log("QueryTab:: ", tab)
 
-  return (
-    <div className={"text-white w-full flex h-screen"}>
-      <div
-        className={
-          "w-1/6 p-2 mx-auto border-r-gray-800 shadow-gray-700  shadow-sm"
-        }
-      >
-        <Tabs selectedTab={tab ?? "dashboard"} />
-      </div>
-      <div className={"w-5/6"}>
-        <PageSwitcher selectedTab={tab ?? "dashboard"} />
-      </div>
-    </div>
-  );
+	return (
+		<div className={"flex h-screen w-full text-white"}>
+			<div
+				className={
+					"mx-auto w-1/6 border-r-gray-800 p-2 shadow-sm shadow-gray-700"
+				}
+			>
+				<Tabs selectedTab={tab ?? "dashboard"} />
+			</div>
+			<div className={"w-5/6"}>
+				<PageSwitcher selectedTab={tab ?? "dashboard"} />
+			</div>
+		</div>
+	)
 }

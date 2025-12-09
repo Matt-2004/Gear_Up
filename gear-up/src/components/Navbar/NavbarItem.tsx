@@ -1,9 +1,7 @@
-import { ReactNode } from "react";
+import { ReactNode } from "react"
 
 const NavbarItems = ({ children }: { children: ReactNode }) => {
-    return (
-        <div>{children}</div>
-    )
+	return <div className="items-center">{children}</div>
 }
 
-export default NavbarItems;
+export default NavbarItems

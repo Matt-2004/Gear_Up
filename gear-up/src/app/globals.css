@@ -1,37 +1,37 @@
 @import "tailwindcss";
 
 :root {
-  --background: #1F2937;
-  --foreground: #142030;
-  --main-color: #7ed957;
-  --google-color-background: #1b72e8;
-  --line-color-background: #3aad42;
-  --primary-background: #e9ffe0;
-  --input-bg: #2a2e3d;
-  --input-border: #3b4252;
-    --primary-hover: #6ACB47;
+	--background: #1f2937;
+	--foreground: #142030;
+	--main-color: #7ed957;
+	--google-color-background: #1b72e8;
+	--line-color-background: #3aad42;
+	--primary-background: #e9ffe0;
+	--input-bg: #2a2e3d;
+	--input-border: #3b4252;
+	--primary-hover: #6acb47;
 }
 
 @theme inline {
-    --color-primary-btn-hover: var(--primary-hover);
-  --color-background: var(--background);
-  --color-primary: var(--main-color);
-  --color-foreground: var(--foreground);
-  --font-roboto: var(--font-roboto);
-  --color-primary-background: var(--primary-background);
-  --color-input-background: var(--input-bg);
-  --color-input-border: var(--input-border);
+	--color-primary-btn-hover: var(--primary-hover);
+	--color-background: var(--background);
+	--color-primary: var(--main-color);
+	--color-foreground: var(--foreground);
+	--font-roboto: var(--font-roboto);
+	--color-primary-background: var(--primary-background);
+	--color-input-background: var(--input-bg);
+	--color-input-border: var(--input-border);
 }
 
 .main-color-gradient {
-  background: #7ed957;
-  background: linear-gradient(90deg, #7ed957 0%, #74e000 100%);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+	background: #7ed957;
+	background: linear-gradient(90deg, #7ed957 0%, #74e000 100%);
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
 }
 
 .main-color-gradient:hover {
-  background: linear-gradient(90deg, #7ed957, #7ed957);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+	background: linear-gradient(90deg, #7ed957, #7ed957);
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 /* @media (prefers-color-scheme: dark) {
@@ -42,10 +42,10 @@
 } */
 
 body {
-  background: #111827;
-  z-index: 0;
+	background: #111827;
+	z-index: 0;
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator {
-  filter: invert(1); /* Makes black icon white */
+	filter: invert(1); /* Makes black icon white */
 }
