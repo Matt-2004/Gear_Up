@@ -1,36 +1,35 @@
 "use client"
 
-import Image from "next/image"
+import { Items } from "@/app/types/car.types"
+import { getAllCars } from "@/utils/FetchAPI"
 import { useQuery } from "@tanstack/react-query"
-import { getFakeCars } from "@/utils/FetchAPI"
-import { Car } from "@/app/types/car.types"
 import clsx from "clsx"
 import { CarFront, Fuel, PaintBucket, SlidersHorizontal } from "lucide-react"
+import Image from "next/image"
+import { useRouter } from "next/navigation"
+
 import { useState } from "react"
 
 const Page = () => {
 	const [isFilterOpen, setIsFilterOpen] = useState(false)
+	const [pageNumber, setPageNumber] = useState<number>(1)
 
 	const { data } = useQuery({
 		queryKey: ["car"],
-		queryFn: getFakeCars,
+		queryFn: () => getAllCars(pageNumber),
 		enabled: true,
 	})
-
-	console.log("Car Data:: ", data?.data)
 
 	return (
 		<div
 			id={"car-main-container"}
-			className={
-				"flex h-full w-full flex-col items-center justify-center text-white"
-			}
+			className={"flex h-full w-full flex-col items-center justify-center"}
 		>
 			<div className={"lg:w-[90%] xl:w-[75%]"}>
 				<div className={"flex items-center justify-between py-4"}>
 					<div className={""}>
-						<h1 className={"text-2xl font-semibold"}>Dashboard</h1>
-						<h3 className={"text-sm text-gray-300"}>
+						<h1 className={"text-3xl font-semibold"}>Dashboard</h1>
+						<h3 className={"text-sm text-gray-500"}>
 							Manage your inventory, sales, and performance all in one place.
 						</h3>
 					</div>
@@ -42,7 +41,7 @@ const Page = () => {
 					<div
 						id={"left-side-container"}
 						className={
-							"bg-background h-full w-full rounded-sm border-gray-800 pb-4 shadow-sm shadow-gray-600 md:w-[73%]"
+							"h-full w-full rounded-sm bg-white pb-4 shadow-sm md:w-[73%]"
 						}
 					>
 						<div
@@ -53,7 +52,7 @@ const Page = () => {
 							{/*This part need to add filter component*/}
 							<div
 								onClick={() => setIsFilterOpen((prevState) => !prevState)}
-								className="flex cursor-pointer items-center gap-2 border border-gray-600 px-4 py-2 hover:bg-gray-600"
+								className="hover:bg-primary-btn-hover hover:text-primary flex cursor-pointer items-center gap-2 rounded-sm border border-gray-200 px-4 py-2 shadow-md"
 							>
 								<SlidersHorizontal className="h-5 w-5" />
 								Filter
@@ -74,18 +73,20 @@ const Page = () => {
 								}
 							>
 								{data &&
-									data.data.items.slice(0, 9).map((car: Car, index: number) => (
-										<div key={index} className="last:hidden lg:last:block">
-											<CarCard car={car} />
-										</div>
-									))}
+									data.data.items
+										.slice(0, 9)
+										.map((car: Items, index: number) => (
+											<div key={index} className="last:hidden lg:last:block">
+												<CarCard car={car} />
+											</div>
+										))}
 							</div>
 						</div>
 					</div>
 					<div
 						id={"right-side-container"}
 						className={
-							"bg-background hidden h-screen w-[25%] rounded-sm border-gray-800 shadow-sm shadow-gray-600 md:block"
+							"hidden h-screen w-[25%] rounded-sm bg-white shadow-sm md:block"
 						}
 					>
 						# Need to add analytics component here #
@@ -96,12 +97,12 @@ const Page = () => {
 	)
 }
 
-function CarCard({ car }: { car: Car }) {
+function CarCard({ car }: { car: Items }) {
+	const router = useRouter()
 	return (
 		<div
-			className={
-				"flex h-full w-full flex-col rounded-sm border border-gray-600 bg-gray-800 shadow-gray-800"
-			}
+			onClick={() => router.push(`/profile/dealer/cars/${car.id}`)}
+			className={"flex h-full w-full flex-col rounded-sm bg-white shadow-sm"}
 		>
 			<div className={"space-y-2 p-3"}>
 				<Image
@@ -115,7 +116,7 @@ function CarCard({ car }: { car: Car }) {
 					id={"titleAndSave"}
 					className={"flex items-center justify-between"}
 				>
-					<h1>{car.title}</h1>
+					<h1 className="text-lg font-semibold text-black">{car.title}</h1>
 					<h3
 						className={clsx(
 							car.carStatus === "Available" ? "bg-green-600" : "bg-red-500",

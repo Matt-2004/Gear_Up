@@ -1,15 +1,15 @@
 "use client"
 
+import { getUserProfile } from "@/utils/FetchAPI"
+import { useQuery } from "@tanstack/react-query"
+import clsx from "clsx"
+import { Cog, Menu, Search, X } from "lucide-react"
+import Image from "next/image"
+import Link from "next/link"
 import { Dispatch, useState } from "react"
 import { ChatIcon } from "../Common/SVGs"
-import { useQuery } from "@tanstack/react-query"
-import Link from "next/link"
-import Image from "next/image"
 import { ProfileDownDown } from "./NavbarDropDown"
-import { getUserProfile } from "@/utils/FetchAPI"
-import { Cog, Menu, Search, X } from "lucide-react"
 import NavbarTabs from "./NavbarTabs"
-import clsx from "clsx"
 
 // Be a server side
 // pass data through props
@@ -19,10 +19,10 @@ export function Logo() {
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false)
 
 	return (
-		<div className="z-20 flex h-16 w-32 items-center">
-			<div className="cursor-pointer rounded-md p-1 hover:bg-gray-600 active:bg-gray-600">
+		<div className="z-20 flex h-full w-32 items-center">
+			<div className="cursor-pointer rounded-md p-1 hover:bg-gray-300 active:bg-gray-200">
 				<Menu
-					className="h-7 w-7 text-2xl text-white md:hidden"
+					className="text-primary h-7 w-7 text-2xl md:hidden"
 					onClick={() => setIsMobileMenuOpen((prev) => !prev)}
 				/>
 
@@ -55,9 +55,12 @@ export function MobileMenu({
 		<>
 			<div className="bg-background fixed top-0 left-0 z-40 flex h-screen w-[75%] flex-col text-white">
 				<div className="relative flex flex-col gap-8">
-					<div className="absolute top-5 right-4">
-						<X onClick={() => setIsMobileMenuOpen((prev) => !prev)} />
-					</div>
+					<button className="absolute top-3 right-4 rounded-full active:bg-gray-300">
+						<X
+							onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+							className="text-primary"
+						/>
+					</button>
 
 					<NavbarTabs />
 				</div>
@@ -103,12 +106,12 @@ export function User() {
 					className="h-10 w-10 rounded-full border border-gray-300"
 				></Image>
 				<h1 className="hidden md:block">
-					<span className="font-medium text-white">
+					<span className="text-primary font-medium">
 						{username.toLowerCase().charAt(0).toUpperCase() +
 							username.substring(1, username.length)}
 					</span>
 					{role === "Dealer" && (
-						<div className="bg-primary flex items-center gap-1 rounded-full px-2 text-center text-sm text-gray-800">
+						<div className="bg-primary flex items-center gap-1 rounded-full px-2 text-center text-sm text-white">
 							<Cog className="h-4 w-4" />
 							{role}
 						</div>
@@ -129,7 +132,7 @@ export function SearchBar() {
 				placeholder="Search..."
 				className={clsx(
 					isSearchBarActive ? "block" : "hidden",
-					"focus:ring-primary w-full rounded-full bg-gray-700 py-1 pl-10 text-white focus:ring-1 focus:outline-none md:block",
+					"focus:ring-primary text-primary w-full rounded-full bg-gray-300 py-1 pl-10 focus:ring-1 focus:outline-none md:block",
 				)}
 			/>
 			<div
@@ -137,13 +140,15 @@ export function SearchBar() {
 				className={clsx(
 					isSearchBarActive
 						? "left-3"
-						: "rounded-full bg-gray-600 p-2 md:bg-transparent md:p-0",
+						: "rounded-full bg-gray-300 p-2 md:bg-transparent md:p-0",
 					"absolute top-1/2 -left-5 -translate-y-1/2 transform md:left-3",
 				)}
 			>
 				<Search
 					className={clsx(
-						isSearchBarActive ? "text-white md:text-gray-400" : "text-gray-300",
+						isSearchBarActive
+							? "text-primary md:text-gray-400"
+							: "text-primary",
 						"h-5 w-5",
 					)}
 				/>
@@ -166,10 +171,10 @@ export function Chat() {
 
 export function Login() {
 	return (
-		<div className="main-color-gradient cursor-pointer px-6 py-1.5">
-			<Link href="/auth/login">
+		<Link href="/auth/login">
+			<div className="main-color-gradient cursor-pointer rounded-md px-4 py-1.5">
 				<button className="font-semibold">Login</button>
-			</Link>
-		</div>
+			</div>
+		</Link>
 	)
 }

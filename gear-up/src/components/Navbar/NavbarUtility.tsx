@@ -1,11 +1,11 @@
 "use client"
 
-import NavbarItems from "@/components/Navbar/NavbarItem"
 import { Login, SearchBar, User } from "@/components/Navbar/NavUtils"
 import { handleAuthenticationLogin } from "@/lib/Features/authSlice"
 import { useAppDispatch, useAppSelector } from "@/lib/hooks"
 import { getRefreshToken } from "@/utils/getRefreshToken"
 import { useEffect } from "react"
+import NavbarItems from "./NavbarItem"
 
 export default function NavbarUtility() {
 	const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated)
@@ -25,12 +25,12 @@ export default function NavbarUtility() {
 	})
 
 	return (
-		<div className="flex h-full w-80 items-center justify-end gap-4 md:w-full md:gap-20">
+		<div className="flex h-full w-80 items-center justify-end gap-8 px-2 md:w-full md:gap-20">
 			<NavbarItems>
 				<SearchBar />
 			</NavbarItems>
 
-			<NavbarItems>{isAuthenticated ? <User /> : <Login />}</NavbarItems>
+			{isAuthenticated ? <User /> : <Login />}
 		</div>
 	)
 }

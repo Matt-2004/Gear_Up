@@ -1,107 +1,133 @@
 "use client"
 
-import { getUserProfileRes } from "@/app/types/user.types"
-import { Edit } from "lucide-react"
-import { UserData } from "next-auth/providers/42-school"
-import { useState } from "react"
+import { getUserProfileRes, UserData } from "@/app/types/user.types"
+import Input from "@/components/Common/Input"
+
+import Image from "next/image"
+import { ChangeEvent, useEffect, useState } from "react"
+import { updateProfile } from "./action"
 
 const ProfilePage = ({ data }: { data: getUserProfileRes }) => {
-	console.log("ProfilePage received data:", data?.data.name)
-	const [isEdit, setIsEdit] = useState<boolean>(false)
 	const [isDataChange, setIsDataChange] = useState<boolean>(false)
+	const [input, setInput] = useState<Partial<UserData>>()
+	const [originalInput, setOriginalInput] = useState<Partial<UserData>>()
+	const formData = new FormData()
 
-	const [inputData, setInputData] = useState<Partial<UserData>>({})
+	const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
+		const { name, value } = e.currentTarget
 
-	// useEffect(() => {
-	// 	setInputData({
-	// 		email: data?.data.email,
-	// 		name: data?.data.name,
-	// 		role: data?.data.role,
-	// 	})
-	// })
+		setInput((prev) => ({
+			...prev,
+			[name]: value,
+		}))
+	}
 
-	// data and user input match check
+	useEffect(() => {
+		if (!data?.data) return
+		setInput(data?.data)
+		setOriginalInput(data?.data)
+	}, [])
+
+	useEffect(() => {
+		if (!originalInput || !input) {
+			setIsDataChange(false)
+			return
+		}
+
+		Object.entries(originalInput).map(([key]) => {
+			if (
+				(originalInput as Record<string, any>)[key] !==
+				(input as Record<string, any>)[key]
+			) {
+				formData.set(key, (input as Record<string, any>)[key])
+				setIsDataChange(true)
+			}
+		})
+	}, [input])
 
 	return (
-		<div className="flex h-full w-full justify-center">
+		<form
+			action={() => updateProfile(formData)}
+			className="flex h-full w-full justify-center"
+		>
 			<div className="bg-background mt-2 flex h-full w-[95%] justify-center rounded-xl p-4 text-gray-200 shadow-sm shadow-gray-600 md:h-full md:p-8 lg:w-[90%] xl:w-[75%]">
-				<div className="w-full">
-					<div className="flex justify-between">
-						<div className="flex items-end gap-4">
-							{/* <Image
-								src={data?.data.avatarUrl}
-								alt={data?.data.name}
-								width={120}
-								height={120}
-								className="h-24 w-24 rounded-full object-cover md:h-36 md:w-36"
-							></Image> */}
-							<div className="font-roboto space-y-1 font-medium">
-								<h1 className="text-xl md:text-2xl">{data?.data.name}</h1>
-								<p className="text-primary rounded-sm"># {data?.data.role}</p>
-							</div>
+				<div className="flex w-full flex-col">
+					<div className="flex items-end justify-center gap-4">
+						<Image
+							src={data?.data.avatarUrl || "/default_avatar.png"}
+							alt={data?.data.name || "User Avatar"}
+							width={120}
+							height={120}
+							className="h-24 w-24 rounded-full object-cover md:h-36 md:w-36"
+						></Image>
+
+						<div className="font-roboto space-y-1 font-medium text-black">
+							<h1 className="text-xl md:text-2xl">{data?.data.name}</h1>
+							<p className="text-primary rounded-sm underline">
+								{data?.data.role}
+							</p>
 						</div>
 					</div>
-					<div className="mt-4 grid grid-cols-1 gap-2 space-x-2 lg:grid-cols-2 lg:gap-4">
-						{/* <Input
-							type={"text"}
-							value={userInput.email}
-							placeholder={userInput.email}
+
+					<div className="mt-4 grid h-full w-full grid-cols-1 justify-items-center gap-4 lg:grid-cols-2 lg:gap-4">
+						<Input
+							type="text"
+							value={input?.name}
+							placeholder={"John Doe"}
 							onChange={handleInput}
-							disabled={!isEdit}
+							name="name"
+						>
+							Real Name
+						</Input>
+
+						<Input
+							type={"text"}
+							value={input?.email}
+							placeholder={"test@email.com"}
+							onChange={handleInput}
 							name="email"
 						>
 							Email
 						</Input>
+
 						<Input
-							type={"text"}
-							value={userInput.name}
-							placeholder={userInput.name}
+							type="tel"
+							value={input?.phoneNumber ?? ""}
 							onChange={handleInput}
-							disabled={!isEdit}
-							name="name"
+							name="phoneNumber"
 						>
-							User Name
+							Phone Number
 						</Input>
+
 						<Input
-							type={"text"}
-							value={userInput.role}
-							placeholder={userInput.role}
+							type="date"
+							value={input?.dateOfBirth}
 							onChange={handleInput}
-							disabled={!isEdit}
-							name="role"
+							name="dateOfBirth"
+							max={Date.now()}
+							min={"1990-01-01"}
 						>
-							Role
-						</Input> */}
+							Birthday
+						</Input>
 					</div>
-					<div className="mt-6 flex justify-end">
-						{isEdit ? (
-							<div className="flex gap-2">
-								<button
-									onClick={() => setIsEdit(false)}
-									className="hover:border-primary flex cursor-pointer items-center gap-4 self-start rounded-lg border border-gray-600 px-4 py-2 hover:bg-gray-700"
-								>
-									Cancel
-								</button>
-								<button
-									disabled={!isDataChange}
-									className="bg-primary flex cursor-pointer items-center gap-4 self-start rounded-lg px-4 py-2 text-black disabled:bg-gray-500"
-								>
-									Save
-								</button>
-							</div>
-						) : (
-							<button
-								onClick={() => setIsEdit(true)}
-								className="hover:border-primary flex cursor-pointer items-center gap-2 self-start rounded-lg border border-gray-600 px-3 py-2 hover:bg-gray-700"
-							>
-								<Edit />
-								Edit
+
+					<div className="mt-6 flex justify-end text-black">
+						<div className="flex gap-2">
+							<button className="hover:border-primary flex cursor-pointer items-center gap-4 self-start rounded-full border border-gray-600 px-4 py-2 hover:bg-gray-700">
+								Cancel
 							</button>
-						)}
+							<button
+								type="submit"
+								disabled={!isDataChange}
+								className="bg-primary flex cursor-pointer items-center gap-4 self-start rounded-full px-4 py-2 text-white disabled:bg-gray-500"
+							>
+								Save
+							</button>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		</form>
 	)
 }
 

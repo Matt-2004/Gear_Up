@@ -1,16 +1,14 @@
 "use client"
 
+import clsx from "clsx"
+import { signIn } from "next-auth/react"
 import { ButtonHTMLAttributes, memo } from "react"
 import Spinner from "./Spinner"
-import { signIn } from "next-auth/react"
-import clsx from "clsx"
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 	children: React.ReactNode
 	loading: boolean
 	provider: "google" | "facebook" | "manual"
-	disabled: boolean
-	size: "half" | "full"
 }
 
 // Button usage
@@ -25,8 +23,7 @@ function Button({
 	children,
 	loading,
 	provider,
-	disabled,
-	size = "full",
+	...props
 }: Partial<ButtonProps>) {
 	function handleProviderLogin() {
 		if (provider === "google") {
@@ -41,13 +38,12 @@ function Button({
 
 	return (
 		<button
-			onClick={handleProviderLogin}
-			disabled={disabled}
+			// onClick={handleProviderLogin}
 			type="submit"
 			className={clsx(
-				size === "half" ? "w-[14.5rem]" : "w-[30rem]",
-				"bg-primary flex items-center justify-center gap-6 rounded-md py-3 text-xl font-medium text-white transition-all disabled:bg-gray-400",
+				"bg-primary active:bg-primary-active flex w-full max-w-[25rem] items-center justify-center gap-6 rounded-md py-2 text-lg font-medium text-white transition-shadow hover:cursor-pointer hover:shadow-lg disabled:bg-gray-400",
 			)}
+			{...props}
 		>
 			{loading && <Spinner />}
 			{children}

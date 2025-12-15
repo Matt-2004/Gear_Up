@@ -1,4 +1,35 @@
-export interface Car {
+export interface CarRoot {
+	isSuccess: boolean
+	message: string
+	data: CarData
+}
+
+export interface CarData {
+	totalCount: number
+	pageSize: number
+	currentPage: number
+	totalPages: number
+	items: CarItems[]
+	hasNextPage: boolean
+	hasPreviousPage: boolean
+	status: number
+}
+
+export interface CarDetailData {
+	isSuccess: boolean
+	message: string
+	data: CarItems
+	status: number
+}
+
+export interface CarImages {
+	id: string
+	carId: string
+	url: string
+}
+
+export interface CarItems {
+	id: string
 	title: string
 	description: string
 	model: string
@@ -9,11 +40,12 @@ export interface Car {
 	mileage: number
 	seatingCapacity: number
 	engineCapacity: number
-	carImages: { id: string; url: string }[]
+	carImages: CarImages[]
 	fuelType: string
 	carCondition: string
 	transmissionType: string
 	carStatus: string
+	carValidationStatus: string
 	vin: string
 	licensePlate: string
 }

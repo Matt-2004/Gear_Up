@@ -1,4 +1,4 @@
-export interface IRegisterFormData {
+export interface IRegister {
 	username: string
 	firstName: string
 	lastName: string
@@ -7,7 +7,7 @@ export interface IRegisterFormData {
 	confirmPassword: string
 }
 
-export interface ILoginFormData {
+export interface ILogin {
 	usernameOrEmail: string
 	password: string
 }

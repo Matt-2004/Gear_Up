@@ -1,16 +1,34 @@
 "use server"
 
 import { IAdminLogin } from "@/app/types/admin.types"
-import {
-	ILoginFormData,
-	INewPassword,
-	IRegisterFormData,
-} from "@/app/types/auth.types"
+import { ILogin, INewPassword, IRegister } from "@/app/types/auth.types"
 import { IKycUpdateByAdmin } from "@/app/types/kyc.types"
 import { API_URL } from "@/lib/config"
 import axios, { isAxiosError } from "axios"
 import { cookies } from "next/headers"
 import { getResetToken } from "./getClientCookie"
+
+// Login & Registration -> Token integration
+// The rest -> Token Check
+
+export const api = axios.create({
+	baseURL: API_URL,
+	withCredentials: true,
+})
+
+export const backendFetchTokenIntegration = async (
+	url: string,
+	method: "post",
+	data: ILogin | IRegister,
+) => {
+	const response = await api({
+		url: url,
+		method: method,
+		data: data,
+	})
+
+	return response.data
+}
 
 export const rotateRefreshToken = async () => {
 	try {
@@ -31,18 +49,18 @@ export const rotateRefreshToken = async () => {
 			cookieStore.set("access_token", response.data.data.accessToken, {
 				httpOnly: true,
 				secure: true,
-				sameSite: "strict",
+				sameSite: "lax",
 				path: "/",
-				maxAge: 60 * 10, // 10 minutes
+				maxAge: 60 * 5, // 10 minutes
 			})
 		}
 		if (response.data?.data.refreshToken) {
 			cookieStore.set("refresh_token", response.data.data.refreshToken, {
 				httpOnly: true,
 				secure: true,
-				sameSite: "strict",
+				sameSite: "lax",
 				path: "/",
-				maxAge: 60 * 60 * 7, // 7 days
+				maxAge: 60 * 60 * 24 * 7, // 7 days
 			})
 		}
 		return response.data
@@ -53,108 +71,28 @@ export const rotateRefreshToken = async () => {
 			if (error.response) {
 				// The request was made and the server responded with a status code
 				// that falls out of the range of 2xx.
-				console.error("Server Error:", error.response.data)
-				console.error("Status:", error.response.status)
+				return error.response
 			} else if (error.request) {
 				// The request was made but no response was received.
-				console.error("No Response:", error.request)
+				return error.request
 			} else {
 				// Something happened in setting up the request that triggered an Error.
-				console.error("Request Error:", error.message)
+				return error.message
 			}
 		} else {
 			// Handle other types of errors (e.g., network errors not from Axios)
-			console.error("Unknown Error:", error)
+			return error
 		}
 	}
 }
 
-export const api = axios.create({
-	baseURL: API_URL,
-})
+// export async function login(formData: ILogin) {
+// 	const res = await api.post(`/api/v1/auth/login`, formData)
 
-// Interceptors for api request
-api.interceptors.request.use(
-	async (request) => {
-		const cookieStore = await cookies()
+// 	return res.data
+// }
 
-		const accessToken =
-			cookieStore.has("access_token") && cookieStore.get("access_token")?.value
-
-		const refreshToken =
-			cookieStore.has("refresh_token") &&
-			cookieStore.get("refresh_token")?.value
-
-		if (accessToken) {
-			request.headers["Authorization"] = `Bearer ${accessToken}`
-		} else if (refreshToken && !accessToken) {
-			// generate new refresh/access token
-			await rotateRefreshToken()
-
-			const accessToken = cookieStore.get("access_token")?.value
-
-			request.headers["Authorization"] = `Bearer ${accessToken}`
-		}
-
-		return request
-	},
-	(error) => {
-		return Promise.reject(error)
-	},
-)
-
-// interceptors for api response
-api.interceptors.response.use(
-	async (response) => {
-		const cookieStore = await cookies()
-		console.log("Response interceptor called", response.data)
-		if (response.data?.data.accessToken) {
-			console.log("New access token received in response")
-			cookieStore.set("access_token", response.data.data.accessToken, {
-				httpOnly: true,
-				secure: true,
-				sameSite: "strict",
-				path: "/",
-				maxAge: 60 * 10, // 10 minutes
-			})
-		}
-		if (response.data?.data.refreshToken) {
-			console.log("New refresh token received in response")
-			cookieStore.set("refresh_token", response.data.data.refreshToken, {
-				httpOnly: true,
-				secure: true,
-				sameSite: "strict",
-				path: "/",
-				maxAge: 60 * 60 * 7, // 7 days
-			})
-		}
-		return response
-	},
-	async (error) => {
-		const originalRequest = error.config
-
-		if (
-			error.response.status === 401 &&
-			!originalRequest._retry &&
-			!originalRequest.url.includes("/auth/refresh")
-		) {
-			originalRequest._retry = true
-			console.log("Response interceptor: 401 detected, rotating token")
-
-			return api(originalRequest)
-		}
-		return Promise.reject(error)
-	},
-)
-
-export async function login(formData: ILoginFormData) {
-	const res = await api.post(`/api/v1/auth/login`, formData)
-	const cookieStore = await cookies()
-
-	return res.data
-}
-
-export async function register(formData: IRegisterFormData) {
+export async function register(formData: IRegister) {
 	const res = await api.post(`/api/v1/auth/register`, formData)
 	return res.data
 }
@@ -223,16 +161,17 @@ export async function addCar(data: FormData) {
 	return res?.data
 }
 
-export async function getAllCars() {
-	const res = await api.get("/api/v1/cars")
-	return res?.data
+// get
+export async function getAllCars(pageNumber: number) {
+	try {
+		const res = await api.get(`/api/v1/cars?pageNum=${pageNumber}`)
+		return res?.data
+	} catch (error) {
+		console.error(error)
+	}
 }
 
-export async function getFakeCars() {
-	const res = await axios.get("/cardata.json")
-	return res?.data
-}
-
+// update
 export async function updateCar(carId: string, data: FormData) {
 	const res = await api.post(`/api/v1/cars/${carId}`, data)
 	return res?.data
@@ -240,5 +179,16 @@ export async function updateCar(carId: string, data: FormData) {
 
 export async function getCarById(carId: string) {
 	const res = await api.get(`/api/v1/cars/${carId}`)
+	return res?.data
+}
+
+// delete
+export async function deleteCarById(carId: string) {
+	const res = await api.delete(`/api/v1/cars/${carId}`)
+	return res?.data
+}
+
+export async function searchCarWithQuery(query: string) {
+	const res = await api.get(`/api/v1/cars/search?${query}`)
 	return res?.data
 }

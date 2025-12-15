@@ -1,11 +1,11 @@
-import type { Metadata } from "next"
-import { Inter } from "next/font/google"
-import "./globals.css"
-import ReactQueryProvider from "@/provider/ReactQueryProvider"
-import NextAuthSessionProvider from "@/provider/NextAuthSessionProvider"
 import StoreProvider from "@/app/hooks/StoreProvider"
 import { ConditionalNavbar } from "@/components/Navbar/ContionalNavbar"
+import NextAuthSessionProvider from "@/provider/NextAuthSessionProvider"
+import ReactQueryProvider from "@/provider/ReactQueryProvider"
+import type { Metadata } from "next"
+import { Inter } from "next/font/google"
 import { ReactNode } from "react"
+import "./globals.css"
 
 const montserrat = Inter({
 	subsets: ["latin"],
@@ -23,13 +23,16 @@ export default function RootLayout({
 	children: ReactNode
 }>) {
 	return (
-		<html lang="en" className={montserrat.className}>
-			<body className={`antialiased`}>
+		<html
+			lang="en"
+			className={`${montserrat.className} h-full overflow-hidden`}
+		>
+			<body className={`m-0 h-full overflow-hidden antialiased`}>
 				<NextAuthSessionProvider>
 					<StoreProvider>
 						<ReactQueryProvider>
 							<ConditionalNavbar />
-							{children}
+							<main className="h-full overflow-y-auto">{children}</main>
 						</ReactQueryProvider>
 					</StoreProvider>
 				</NextAuthSessionProvider>

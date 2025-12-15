@@ -1,0 +1,86 @@
+"use client"
+
+import { useToast } from "@/app/hooks/useToast"
+import Button from "@/components/Common/Button"
+import Input from "@/components/Common/Input"
+import {
+	AuthPageCaption,
+	AuthPageContainer,
+	FormContainer,
+} from "@/components/Navbar/common"
+import Link from "next/link"
+import { useFormStatus } from "react-dom"
+import { Submit } from "./action"
+
+const Login = ({ onSubmit }: { onSubmit: Submit }) => {
+	const { pending } = useFormStatus()
+	const { ToastComponent, addToastMessage, removeToastMessage } = useToast({
+		toastType: "success",
+		message: null,
+	})
+
+	return (
+		<AuthPageContainer>
+			{/* <AnimatePresence>
+				{mutation.isSuccess && <ToastComponent />}
+			</AnimatePresence> */}
+			<FormContainer>
+				<AuthPageCaption>Login to your account</AuthPageCaption>
+				<form
+					action={onSubmit}
+					id="body"
+					className="mb-4 flex w-full flex-col items-center justify-center gap-4"
+				>
+					<Input
+						name="usernameOrEmail"
+						required
+						autoComplete="email"
+						type="email"
+						placeholder="example@gmail.com or matthew"
+					>
+						Email or User Name
+					</Input>
+
+					<Input
+						name="password"
+						required
+						minLength={8}
+						autoComplete="current-password"
+						type="password"
+						placeholder="Password (mininum at least 8 characters)"
+					>
+						Password
+					</Input>
+					<div className="mb-4 flex w-full max-w-[25rem] items-center justify-between">
+						<div className="flex h-full items-center gap-2">
+							<input id="rememberMe" type="checkbox" />
+							<label htmlFor="rememberMe" className="">
+								Remember me
+							</label>
+						</div>
+						<Link
+							href="/auth/email/reset-password"
+							className="text-sm text-blue-600 hover:underline"
+						>
+							Forgot Password?
+						</Link>
+					</div>
+					<Button provider={"manual"}>Login</Button>
+					<h1>
+						Do not have an account?{" "}
+						<Link
+							href={"/auth/register"}
+							className="font-medium text-blue-600 hover:underline hover:underline-offset-4"
+						>
+							Register Now
+						</Link>
+					</h1>
+				</form>
+
+				<Button provider="google">Login with Google</Button>
+			</FormContainer>
+		</AuthPageContainer>
+	)
+}
+
+export default Login

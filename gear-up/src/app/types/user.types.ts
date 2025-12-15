@@ -16,11 +16,13 @@ export interface getUserProfileRes {
 }
 
 export interface UserData {
-	id: string
-	provider: string | null
+	id: number
+	provider: string
 	username: string
 	email: string
 	name: string
 	role: "Customer" | "Admin" | "Dealer"
+	dateOfBirth: string
+	phoneNumber: number
 	avatarUrl: string
 }

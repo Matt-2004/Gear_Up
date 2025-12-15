@@ -1,4 +1,4 @@
-export function timeFormat(iso: string) {
+export function timeFormat(iso: string, format: "Hour" | "Date") {
 	const d = new Date(iso)
 
 	const year = d.getFullYear()
@@ -7,5 +7,8 @@ export function timeFormat(iso: string) {
 	const hour = String(d.getHours()).padStart(2, "0")
 	const minute = String(d.getMinutes()).padStart(2, "0")
 
-	return `${day}/${month}/${year} ${hour}:${minute}`
+	if (format === "Hour") {
+		return `${day}/${month}/${year} ${hour}:${minute}`
+	}
+	return `${day}/${month}/${year}`
 }

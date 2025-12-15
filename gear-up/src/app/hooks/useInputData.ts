@@ -1,19 +1,19 @@
 "use client"
 
-import { ChangeEvent, useState } from "react"
+import { IAdminLogin } from "@/app/types/admin.types"
 import {
-	ILoginFormData,
-	IRegisterFormData,
 	IForgotPassword,
+	ILogin,
 	INewPassword,
 	IProfileFormData,
+	IRegister,
 } from "@/app/types/auth.types"
-import { IAdminLogin } from "@/app/types/admin.types"
+import { ChangeEvent, useState } from "react"
 
 export type DynamicForm<T extends FormType> = T extends "login"
-	? ILoginFormData
+	? ILogin
 	: T extends "register"
-		? IRegisterFormData
+		? IRegister
 		: T extends "emailVerify"
 			? IForgotPassword
 			: T extends "newPassword"
