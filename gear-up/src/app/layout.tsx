@@ -32,7 +32,9 @@ export default function RootLayout({
 					<StoreProvider>
 						<ReactQueryProvider>
 							<ConditionalNavbar />
-							<main className="h-full overflow-y-auto">{children}</main>
+							<main className="h-full overflow-x-hidden overflow-y-auto">
+								{children}
+							</main>
 						</ReactQueryProvider>
 					</StoreProvider>
 				</NextAuthSessionProvider>

@@ -74,9 +74,55 @@
 					"commentedUserProfilePictureUrl": "https://i.pravatar.cc/300",
 					"content": "Libero culpa minima dolor eos.seeded_comment",
 					"parentCommentId": null,
-					"replies": [],
 					"createdAt": "2025-12-13T14:19:56.055861",
-					"updatedAt": "2025-12-13T14:19:56.055861"
+					"updatedAt": "2025-12-13T14:19:56.055861",
+					"replies": [
+						{
+							"id": "a12c4e21-7d9c-4f77-bc3e-9c1c2b7d8123",
+							"postId": "67ba1b6c-3005-4a20-a188-94fa5e164e74",
+							"commentedUserId": "c10123fd-12ab-44cd-9a88-123abc456def",
+							"commentedUserName": "Dealer Support",
+							"likeCount": 3,
+							"isLikedByCurrentUser": false,
+							"isEdited": false,
+							"commentedUserProfilePictureUrl": "https://i.pravatar.cc/301",
+							"content": "Thanks for your question! Yes, this car is still available.",
+							"parentCommentId": "29b1ad3d-e005-4e42-bcc7-68fff5c9293c",
+							"createdAt": "2025-12-13T14:32:10.124981",
+							"updatedAt": "2025-12-13T14:32:10.124981",
+							"replies": []
+						},
+						{
+							"id": "b34f8a90-91de-4bcb-9f8a-4f29f3bc912e",
+							"postId": "67ba1b6c-3005-4a20-a188-94fa5e164e74",
+							"commentedUserId": "e98a77dc-4c11-4d21-8b02-9fd982ab1122",
+							"commentedUserName": "Sophia Turner",
+							"likeCount": 1,
+							"isLikedByCurrentUser": false,
+							"isEdited": false,
+							"commentedUserProfilePictureUrl": "https://i.pravatar.cc/302",
+							"content": "Is the price negotiable or fixed?",
+							"parentCommentId": "29b1ad3d-e005-4e42-bcc7-68fff5c9293c",
+							"createdAt": "2025-12-13T15:01:44.884210",
+							"updatedAt": "2025-12-13T15:01:44.884210",
+							"replies": []
+						},
+						{
+							"id": "c77e2c18-8e3f-4f21-bb90-8a12dcb3a991",
+							"postId": "67ba1b6c-3005-4a20-a188-94fa5e164e74",
+							"commentedUserId": "bb29aef1-9f44-41a1-92c2-77b128991abc",
+							"commentedUserName": "Michael Ross",
+							"likeCount": 0,
+							"isLikedByCurrentUser": false,
+							"isEdited": false,
+							"commentedUserProfilePictureUrl": "https://i.pravatar.cc/303",
+							"content": "Can I schedule a test drive this weekend?",
+							"parentCommentId": "29b1ad3d-e005-4e42-bcc7-68fff5c9293c",
+							"createdAt": "2025-12-13T15:18:05.339772",
+							"updatedAt": "2025-12-13T15:18:05.339772",
+							"replies": []
+						}
+					]
 				},
 				{
 					"id": "3153986c-90b7-40b9-9a40-82095bc8d48b",
