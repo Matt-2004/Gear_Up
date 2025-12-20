@@ -1,6 +1,6 @@
 "use client"
 
-import { Items } from "@/app/types/car.types"
+import { CarItems } from "@/app/types/car.types"
 import { getAllCars } from "@/utils/FetchAPI"
 import { useQuery } from "@tanstack/react-query"
 import clsx from "clsx"
@@ -75,7 +75,7 @@ const Page = () => {
 								{data &&
 									data.data.items
 										.slice(0, 9)
-										.map((car: Items, index: number) => (
+										.map((car: CarItems, index: number) => (
 											<div key={index} className="last:hidden lg:last:block">
 												<CarCard car={car} />
 											</div>
@@ -97,7 +97,7 @@ const Page = () => {
 	)
 }
 
-function CarCard({ car }: { car: Items }) {
+function CarCard({ car }: { car: CarItems }) {
 	const router = useRouter()
 	return (
 		<div

@@ -7,6 +7,7 @@ import {
 	PostItem,
 } from "@/app/types/post.types"
 import { timeFormat } from "@/utils/timeFormat"
+import clsx from "clsx"
 import {
 	ChevronLeft,
 	ChevronRight,
@@ -56,7 +57,7 @@ const PostCard = ({ postItem }: IPostCard) => {
 				likeCount={postItem.likeCount}
 				commentCount={postItem.commentCount}
 			/>
-			<Comment comments={postItem.latestComments} />
+			<Comment comments={postItem.latestComments} level={0} />
 		</section>
 	)
 }
@@ -171,6 +172,49 @@ const CarouselPostImage = ({ carImage }: ICarouselPostImageProps) => {
 	)
 }
 
+const CommentTextBox = ({
+	value,
+	onChange,
+	onSubmit,
+	onCancel,
+}: {
+	value: string
+	onChange: (v: string) => void
+	onSubmit: () => void
+	onCancel: () => void
+}) => {
+
+	const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+	const handleInputAutoSize = () => {
+		if (textareaRef.current) {
+			textareaRef.current.style.height = "auto"
+			textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`
+		}
+	}
+	return (
+		<div className="flex w-full flex-col items-stretch gap-2">
+			<textarea
+				ref={textareaRef}
+				value={value}
+				onInput={handleInputAutoSize}
+				onChange={(e) => onChange(e.target.value)}
+				placeholder="Add a comment..."
+				className="w-full rounded-md border border-gray-400 focus:outline-none focus:border-primary p-2 text-sm"
+				rows={1}
+			/>
+			<div className="flex gap-2 justify-end">
+				<button onClick={onCancel} className="rounded border px-3 py-1 text-sm">
+					Cancel
+				</button>
+				<button onClick={onSubmit} className="rounded bg-primary px-5 py-1 text-white">
+					Post
+				</button>
+			</div>
+		</div>
+	)
+}
+
 interface ILikeAndCommentBtnProps {
 	likeCount: number
 	commentCount: number
@@ -178,7 +222,7 @@ interface ILikeAndCommentBtnProps {
 
 const LikeCount = ({ likeCount }: { likeCount: number }) => {
 	return (
-		<div className="hover:bg-primary-background hover:text-primary flex cursor-pointer gap-1 rounded-md py-1">
+		<div className="hover:bg-primary-background text-gray-600 hover:text-primary flex cursor-pointer gap-1 rounded-md py-1">
 			<Heart className="h-5 w-5" />
 			<h3 className="text-sm">{likeCount}</h3>
 		</div>
@@ -208,37 +252,91 @@ const LikeAndCommentBtn = ({
 
 interface ICommnetsProps {
 	comments: LatestComment[]
+	level: number
 }
 
-const Comment = ({ comments }: ICommnetsProps) => {
+const Comment = ({ comments, level = 0 }: ICommnetsProps) => {
+	const [openReplyId, setOpenReplyId] = useState<string | null>(null)
+	const [replyText, setReplyText] = useState<string>("")
+
+	const handleToggleReply = (id: string) => {
+		setOpenReplyId((prev) => (prev === id ? null : id))
+		if (openReplyId !== id) setReplyText("")
+	}
+
+	const handleSubmitReply = (parentId: string) => {
+		console.log("Submitting reply for", parentId, replyText)
+		// TODO: call API / action to post reply
+		setOpenReplyId(null)
+		setReplyText("")
+	}
+
 	return (
-		<div className="ml-8 space-y-4">
+		<div className={clsx(level > 0 ? "pl-12" : "pl-6", "space-y-4  relative")}>
+			{/* vertical guide for this nested block (only visible for nested levels) */}
+			{level > 0 && (
+				<div
+					className="absolute left-4 top-0 bottom-0 h-[calc(100%-3.8rem)] w-px bg-gray-300"
+					aria-hidden
+				/>
+			)}
+
 			{comments.map((comment, i) => (
-				<div key={i} className="w-full">
-					<div className="flex w-full">
-						<Image
-							src={comment.commentedUserProfilePictureUrl}
-							alt={comment.commentedUserName}
-							width={40}
-							height={40}
-							className="mt-2 h-10 w-10 rounded-full"
+				<div key={comment.commentedUserId || i} className="relative">
+					{/* connector from vertical guide to this comment */}
+					{level > 0 && (
+						<div
+							className="absolute -left-8 top-4 border-b border-l border-gray-300 rounded-bl-full h-4 w-7 bg-white"
+							aria-hidden
 						/>
-						<div className="mb-4 flex w-fit flex-col">
-							<div className="rounded-lg px-4 py-1">
-								<h1 className="text-sm font-semibold">
-									{comment.commentedUserName}
-								</h1>
-								<p className="text-sm">{comment.content}</p>
-							</div>
-							<div className="flex items-center gap-2 pl-4">
-								<LikeCount likeCount={comment.likeCount} />
-								<h3 className="text-sm">Reply</h3>
+					)}
+
+					<div className="w-full">
+						<div className="flex w-full ">
+							<Image
+								src={comment.commentedUserProfilePictureUrl}
+								alt={comment.commentedUserName}
+								width={60}
+								height={40}
+								className="mt-2 h-10 w-10 rounded-full"
+							/>
+							<div className="flex w-full flex-col">
+								<div className="rounded-lg px-4 py-1">
+									<h1 className="text-sm font-semibold">
+										{comment.commentedUserName}
+									</h1>
+									<p className="text-sm">{comment.content}</p>
+								</div>
+								<div className="flex relative flex-col items-start gap-2 pl-4">
+									<div className="flex gap-2 items-center pl-3">
+										<LikeCount likeCount={comment.likeCount} />
+										<button
+											className="text-xs text-gray-600 hover:underline"
+											onClick={() => handleToggleReply(String(comment.commentedUserId || i))}
+										>
+											Reply
+										</button>
+									</div>
+
+									{/* Reply text box and submit button (render only for this comment) */}
+									{openReplyId === String(comment.commentedUserId || i) && (
+										<div className="w-full mt-2 pl-3">
+											<CommentTextBox
+												value={replyText}
+												onChange={setReplyText}
+												onSubmit={() => handleSubmitReply(String(comment.commentedUserId || i))}
+												onCancel={() => setOpenReplyId(null)}
+											/>
+										</div>
+									)}
+								</div>
 							</div>
 						</div>
+
+						{comment?.replies && comment.replies.length > 0 && (
+							<Comment comments={comment.replies} level={level + 1} />
+						)}
 					</div>
-					{comment?.replies && comment.replies.length > 0 && (
-						<Comment comments={comment.replies} />
-					)}
 				</div>
 			))}
 		</div>
