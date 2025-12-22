@@ -132,7 +132,7 @@ const CarouselPostImage = ({ carImage }: ICarouselPostImageProps) => {
 		return () => container.removeEventListener("scroll", handleScroll)
 	}, [])
 	return (
-		<div className="relative z-20 mt-4">
+		<div className="relative z-10 mt-4">
 			<div
 				ref={scrollRef}
 				className="flex snap-x snap-mandatory overflow-x-scroll scroll-smooth"
@@ -258,6 +258,7 @@ interface ICommnetsProps {
 const Comment = ({ comments, level = 0 }: ICommnetsProps) => {
 	const [openReplyId, setOpenReplyId] = useState<string | null>(null)
 	const [replyText, setReplyText] = useState<string>("")
+	const [isShowingReplies, setIsShowingReplies] = useState<boolean>(false)
 
 	const handleToggleReply = (id: string) => {
 		setOpenReplyId((prev) => (prev === id ? null : id))
@@ -291,8 +292,10 @@ const Comment = ({ comments, level = 0 }: ICommnetsProps) => {
 						/>
 					)}
 
+
+
 					<div className="w-full">
-						<div className="flex w-full ">
+						<div className="flex w-full relative">
 							<Image
 								src={comment.commentedUserProfilePictureUrl}
 								alt={comment.commentedUserName}
@@ -307,7 +310,7 @@ const Comment = ({ comments, level = 0 }: ICommnetsProps) => {
 									</h1>
 									<p className="text-sm">{comment.content}</p>
 								</div>
-								<div className="flex relative flex-col items-start gap-2 pl-4">
+								<div className="flex flex-col items-start gap-2 pl-4">
 									<div className="flex gap-2 items-center pl-3">
 										<LikeCount likeCount={comment.likeCount} />
 										<button
@@ -317,6 +320,7 @@ const Comment = ({ comments, level = 0 }: ICommnetsProps) => {
 											Reply
 										</button>
 									</div>
+
 
 									{/* Reply text box and submit button (render only for this comment) */}
 									{openReplyId === String(comment.commentedUserId || i) && (
@@ -329,11 +333,30 @@ const Comment = ({ comments, level = 0 }: ICommnetsProps) => {
 											/>
 										</div>
 									)}
+
 								</div>
+								{comment?.replies && comment.replies.length > 0 && !isShowingReplies && (
+									<>
+										<div
+											className="absolute left-4 top-14 bottom-0 h-[calc(100%-5rem)] w-px bg-gray-300"
+											aria-hidden
+										/>
+										<div
+											className="absolute left-4	 top-20 border-b border-l border-gray-300 rounded-bl-full h-4 w-7 bg-white"
+											aria-hidden
+										/>
+										<button
+											onClick={() => setIsShowingReplies(true)}
+											className="text-xs mt-3 ml-6 cursor-pointer text-start text-gray-600 hover:underline"
+										>
+											Show 3 replies
+										</button>
+									</>
+								)}
 							</div>
 						</div>
 
-						{comment?.replies && comment.replies.length > 0 && (
+						{comment?.replies && comment.replies.length > 0 && isShowingReplies && (
 							<Comment comments={comment.replies} level={level + 1} />
 						)}
 					</div>
