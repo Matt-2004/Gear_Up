@@ -1,14 +1,14 @@
 "use client"
 
+import { IUser } from "@/app/types/user.types"
 import { getUserProfile } from "@/utils/FetchAPI"
-import { useQuery } from "@tanstack/react-query"
 import clsx from "clsx"
 import { Cog, Menu, Search, X } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
-import { Dispatch, useState } from "react"
+import { Dispatch, useEffect, useState } from "react"
 import { ChatIcon } from "../Common/SVGs"
-import { ProfileDownDown } from "./NavbarDropDown"
+import { ProfileDropDown } from "./NavbarDropDown"
 import NavbarTabs from "./NavbarTabs"
 
 // Be a server side
@@ -73,54 +73,49 @@ export function MobileMenu({
 export function User() {
 	const [isOpenUserProfileMenu, setIsOpenUserProfileMenu] =
 		useState<boolean>(false)
-	const { data: profile, isLoading } = useQuery({
-		queryKey: ["userProfile"],
-		queryFn: getUserProfile,
-		staleTime: 5000,
-		retry: false,
-		enabled: true,
-	})
+	const [data, setData] = useState<IUser>({} as IUser)
 
-	if (isLoading) {
-		return <h1>Loading...</h1>
-	}
+	useEffect(() => {
+		const fetchUserProfile = async () => {
+			const response = await getUserProfile()
 
-	if (profile) {
-		const {
-			avatarUrl,
-			username,
-			role,
-		}: { avatarUrl: string; username: string; role: string } = profile.data
-		return (
-			<div
-				className="relative flex h-full w-16 cursor-pointer items-center justify-end gap-2"
-				onClick={() => {
-					setIsOpenUserProfileMenu(!isOpenUserProfileMenu)
-				}}
-			>
-				<Image
-					src={avatarUrl}
-					alt="Profile Picture"
-					width={40}
-					height={40}
-					className="h-10 w-10 rounded-full border border-gray-300"
-				></Image>
-				<h1 className="hidden md:block">
-					<span className="text-primary font-medium">
-						{username.toLowerCase().charAt(0).toUpperCase() +
+			setData(response)
+		}
+		fetchUserProfile()
+	}, [])
+
+	const { avatarUrl, username, role }: Partial<IUser> = data || {}
+
+	return (
+		<div
+			className="relative flex h-full w-16 cursor-pointer items-center justify-end gap-2"
+			onClick={() => {
+				setIsOpenUserProfileMenu(!isOpenUserProfileMenu)
+			}}
+		>
+			<Image
+				src={avatarUrl || "/default_profile.jpg"}
+				alt="Profile Picture"
+				width={40}
+				height={40}
+				className="h-10 w-10 rounded-full border border-gray-300"
+			></Image>
+			<h1 className="hidden md:block">
+				<span className="text-primary font-medium">
+					{username &&
+						username.toLowerCase().charAt(0).toUpperCase() +
 							username.substring(1, username.length)}
-					</span>
-					{role === "Dealer" && (
-						<div className="bg-primary flex items-center gap-1 rounded-full px-2 text-center text-sm text-white">
-							<Cog className="h-4 w-4" />
-							{role}
-						</div>
-					)}
-				</h1>
-				{isOpenUserProfileMenu && <ProfileDownDown user={profile} />}
-			</div>
-		)
-	}
+				</span>
+				{role === "Dealer" && (
+					<div className="bg-primary flex items-center gap-1 rounded-full px-2 text-center text-sm text-white">
+						<Cog className="h-4 w-4" />
+						{role}
+					</div>
+				)}
+			</h1>
+			{isOpenUserProfileMenu && <ProfileDropDown user={data} />}
+		</div>
+	)
 }
 
 export function SearchBar() {

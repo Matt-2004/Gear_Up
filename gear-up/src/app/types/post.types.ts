@@ -1,3 +1,11 @@
+export interface PostRoot {
+	isSuccess: boolean
+	data: PostData
+	successMessage: string
+	errorMessage: string
+	status: number
+}
+
 export interface PostData {
 	totalCount: number
 	pageSize: number
@@ -12,6 +20,8 @@ export interface PostItem {
 	id: string
 	caption: string
 	content: string
+	authorUsername: string
+	authorAvatarUrl: string
 	visibility: string
 	carDto: CarDto
 	createdAt: string
@@ -20,7 +30,6 @@ export interface PostItem {
 	isLikedByCurrentUser: boolean
 	commentCount: number
 	viewCount: number
-	latestComments: LatestComment[]
 }
 
 export interface CarDto {
@@ -49,20 +58,4 @@ export interface CarImage {
 	id: string
 	carId: string
 	url: string
-}
-
-export interface LatestComment {
-	id: string
-	postId: string
-	commentedUserId: string
-	commentedUserName: string
-	likeCount: number
-	isLikedByCurrentUser: boolean
-	isEdited: boolean
-	commentedUserProfilePictureUrl: string
-	content: string
-	parentCommentId: any
-	replies: any[]
-	createdAt: string
-	updatedAt: string
 }

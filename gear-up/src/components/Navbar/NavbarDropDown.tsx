@@ -1,12 +1,10 @@
-import { getUserProfileRes } from "@/app/types/user.types"
+import { IUser } from "@/app/types/user.types"
 import { Car, LogOut, Settings, User, UserPlus } from "lucide-react"
 import { signOut } from "next-auth/react"
 import Link from "next/link"
-import { HTMLAttributes, ReactNode, useState } from "react"
+import { HTMLAttributes, ReactNode } from "react"
 
-export function ProfileDownDown({ user }: { user: getUserProfileRes }) {
-	const [users] = useState<getUserProfileRes>(user)
-
+export function ProfileDropDown({ user }: { user: IUser }) {
 	return (
 		<div className="bg-background text-primary absolute top-11 right-0 z-30 w-64 rounded-md border-gray-800 shadow-sm shadow-gray-700">
 			<ul className="p-1">
@@ -16,7 +14,7 @@ export function ProfileDownDown({ user }: { user: getUserProfileRes }) {
 					</div>
 					Profile
 				</DropDownItem>
-				{users.data.role === "Dealer" && (
+				{user.role === "Dealer" && (
 					<DropDownItem className="" link={"/profile/dealer/cars"}>
 						<div className="items-center rounded-full p-1">
 							<Car className="h-5 w-5" />

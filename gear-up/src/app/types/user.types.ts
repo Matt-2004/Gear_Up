@@ -11,17 +11,19 @@ export interface loginRes {
 export interface getUserProfileRes {
 	isSuccess: boolean
 	message: string
-	data: UserData
+	data: IUser
 	status: number
 }
 
-export interface UserData {
+type UserRole = "Customer" | "Admin" | "Dealer"
+
+export interface IUser {
 	id: number
 	provider: string
 	username: string
 	email: string
 	name: string
-	role: "Customer" | "Admin" | "Dealer"
+	role: UserRole
 	dateOfBirth: string
 	phoneNumber: number
 	avatarUrl: string

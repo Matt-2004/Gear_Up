@@ -1,4 +1,6 @@
-import { DEFAULT_API_URL } from "@/lib/config"
+import { authCookieIntegration } from "@/lib/authCookieIntegration"
+import { revalidatePath } from "next/cache"
+import { redirect, RedirectType } from "next/navigation"
 
 export async function submit(formData: FormData) {
 	"use server"
@@ -9,22 +11,21 @@ export async function submit(formData: FormData) {
 	const password = formData.get("password") as string
 	const confirmPassword = formData.get("confirmPassword") as string
 
-	console.log(username, email, firstName, lastName, password, confirmPassword)
-
-	await fetch(`${DEFAULT_API_URL}/api/auth/login`, {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify({
-			username,
-			email,
-			firstName,
-			lastName,
-			password,
-			confirmPassword,
-		}),
+	const res = await authCookieIntegration(`/api/auth/register`, {
+		username,
+		email,
+		firstName,
+		lastName,
+		password,
+		confirmPassword,
 	})
+
+	revalidatePath("/")
+
+	// redirect if successful
+	if (res.isSuccess) {
+		redirect("/", RedirectType.push)
+	}
 }
 
 export type Submit = typeof submit

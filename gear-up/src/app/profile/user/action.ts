@@ -11,6 +11,7 @@ export async function updateProfile(formData: FormData) {
 		console.log("formData phoneNumber:: ", formData.get("phoneNumber"))
 		console.log("formData birthday:: ", formData.get("dateOfBirth"))
 		const res = await updateUserProfile(formData)
+		console.log("Profile update response:: ", res)
 		revalidatePath("/profile/user")
 	} catch (error) {
 		console.error(error)

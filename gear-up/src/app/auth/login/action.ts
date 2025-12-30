@@ -1,23 +1,25 @@
 // app/actions/auth.ts
-import { DEFAULT_API_URL } from "@/lib/config"
+import { authCookieIntegration } from "@/lib/authCookieIntegration"
+import { revalidatePath } from "next/cache"
+
+import { redirect, RedirectType } from "next/navigation"
 
 export async function submit(formData: FormData) {
 	"use server"
 	const usernameOrEmail = formData.get("usernameOrEmail") as string
 	const password = formData.get("password") as string
-	console.log("server action is working....")
-	console.log(usernameOrEmail, password)
 
-	await fetch(`${DEFAULT_API_URL}/api/auth/login`, {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify({
-			usernameOrEmail,
-			password,
-		}),
+	const res = await authCookieIntegration(`/api/auth/login`, {
+		usernameOrEmail,
+		password,
 	})
+
+	revalidatePath("/")
+
+	// redirect if successful
+	if (res.isSuccess) {
+		redirect("/", RedirectType.push)
+	}
 }
 
 export type Submit = typeof submit

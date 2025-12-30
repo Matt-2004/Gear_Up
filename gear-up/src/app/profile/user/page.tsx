@@ -1,4 +1,3 @@
-import { getUserProfileRes } from "@/app/types/user.types"
 import { getUserProfile } from "@/utils/FetchAPI"
 import ProfilePage from "./ProfilePage"
 
@@ -13,7 +12,7 @@ async function getData() {
 }
 
 const Page = async () => {
-	const data: getUserProfileRes = await getData()
+	const data = await getData()
 	return (
 		<>
 			<ProfilePage data={data} />

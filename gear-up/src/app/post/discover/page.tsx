@@ -1,8 +1,8 @@
+import { getAllPosts } from "@/utils/FetchAPI"
 import DiscoverPost from "./DiscoverPost"
-import { getPostData } from "./helper"
 
 const Page = async () => {
-	const postData = await getPostData()
+	const postData = await getAllPosts(1)
 
 	return <DiscoverPost post={postData} />
 }

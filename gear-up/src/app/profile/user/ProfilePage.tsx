@@ -1,16 +1,16 @@
 "use client"
 
-import { getUserProfileRes, UserData } from "@/app/types/user.types"
+import { IUser } from "@/app/types/user.types"
 import Input from "@/components/Common/Input"
 
 import Image from "next/image"
 import { ChangeEvent, useEffect, useState } from "react"
 import { updateProfile } from "./action"
 
-const ProfilePage = ({ data }: { data: getUserProfileRes }) => {
+const ProfilePage = ({ data }: { data: IUser }) => {
 	const [isDataChange, setIsDataChange] = useState<boolean>(false)
-	const [input, setInput] = useState<Partial<UserData>>()
-	const [originalInput, setOriginalInput] = useState<Partial<UserData>>()
+	const [input, setInput] = useState<Partial<IUser>>()
+	const [originalInput, setOriginalInput] = useState<Partial<IUser>>()
 	const formData = new FormData()
 
 	const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
@@ -23,9 +23,9 @@ const ProfilePage = ({ data }: { data: getUserProfileRes }) => {
 	}
 
 	useEffect(() => {
-		if (!data?.data) return
-		setInput(data?.data)
-		setOriginalInput(data?.data)
+		if (!data) return
+		setInput(data)
+		setOriginalInput(data)
 	}, [])
 
 	useEffect(() => {
@@ -54,18 +54,16 @@ const ProfilePage = ({ data }: { data: getUserProfileRes }) => {
 				<div className="flex w-full flex-col">
 					<div className="flex items-end justify-center gap-4">
 						<Image
-							src={data?.data.avatarUrl || "/default_avatar.png"}
-							alt={data?.data.name || "User Avatar"}
+							src={data.avatarUrl || "/default_profile.jpg"}
+							alt={data.name || "User Avatar"}
 							width={120}
 							height={120}
 							className="h-24 w-24 rounded-full object-cover md:h-36 md:w-36"
 						></Image>
 
 						<div className="font-roboto space-y-1 font-medium text-black">
-							<h1 className="text-xl md:text-2xl">{data?.data.name}</h1>
-							<p className="text-primary rounded-sm underline">
-								{data?.data.role}
-							</p>
+							<h1 className="text-xl md:text-2xl">{data.name}</h1>
+							<p className="text-primary rounded-sm underline">{data.role}</p>
 						</div>
 					</div>
 
