@@ -27,8 +27,8 @@ export async function getFetch(url: string) {
 			},
 		})
 		return response.data
-	} catch (error) {
-		console.log("Error in getFetch:", error)
+	} catch (error: any) {
+		console.log("Error in getFetch:", error?.response.data)
 		throw error
 	}
 }
@@ -38,17 +38,22 @@ export async function postFetch(
 	data: INewPassword | IAdminLogin | FormData | null,
 ) {
 	const access_token = (await cookies()).get("access_token")?.value
+	if (data instanceof FormData) {
+		console.log(
+			"In postfetch api function formdata value:: ",
+			Object.fromEntries(data),
+		)
+	}
 	// url & options
 	try {
 		const response = await api.post(url, data, {
 			headers: {
-				"Content-Type": "application/json",
 				Authorization: `Bearer ${access_token}`,
 			},
 		})
 		return response.data
-	} catch (error) {
-		console.log("Error in postFetch:", error)
+	} catch (error: any) {
+		console.log("Error in postFetch:", error?.response?.data)
 		throw error
 	}
 }
@@ -67,8 +72,8 @@ export async function putFetch(
 			},
 		})
 		return response.data
-	} catch (error) {
-		console.log("Error in putFetch:", error)
+	} catch (error: any) {
+		console.log("Error in putFetch:", error?.response?.data)
 		throw error
 	}
 }
@@ -84,8 +89,8 @@ export async function deleteFetch(url: string) {
 			},
 		})
 		return response.data
-	} catch (error) {
-		console.log("Error in deleteFetch:", error)
+	} catch (error: any) {
+		console.log("Error in deleteFetch:", error?.response?.data)
 		throw error
 	}
 }
@@ -119,18 +124,14 @@ export async function updateUserProfile(formdata: FormData) {
 }
 
 export async function kycRegister(data: FormData) {
+	console.log("In KycRegsiter api function:: ", Object.fromEntries(data))
 	const response = await postFetch("/api/v1/users/kyc", data)
 	return response?.data
 }
 
-export async function adminLogin(data: IAdminLogin) {
-	const response = await postFetch(`${API_URL}/api/v1/admin/login`, data)
-	return response.data
-}
-
 export async function getAllKyc() {
 	const res = await getFetch("/api/v1/admin/kyc")
-	return res?.data
+	return res
 }
 
 export async function getKycById(id: string) {

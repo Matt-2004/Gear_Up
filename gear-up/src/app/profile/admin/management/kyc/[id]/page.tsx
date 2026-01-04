@@ -1,10 +1,16 @@
 import KycDetailPage from "@/components/Admin/KycDetailPage"
-import { use } from "react"
+import { getKycById } from "@/utils/FetchAPI"
 
-const KycDetail = ({ params }: { params: Promise<{ id: string }> }) => {
-	const { id } = use(params)
-
-	return <KycDetailPage id={id} />
+const getKycDataById = async (id: string) => {
+	const response = await getKycById(id)
+	return response
 }
 
-export default KycDetail
+const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
+	const { id } = await params
+	const kycById = await getKycDataById(id)
+
+	return <KycDetailPage kycById={kycById} />
+}
+
+export default Page

@@ -1,16 +1,38 @@
 "use client"
 
 import { CarImage, PostData, PostItem } from "@/app/types/post.types"
+import { IUser } from "@/app/types/user.types"
 import { getAllPosts } from "@/utils/FetchAPI"
 import { timeFormat } from "@/utils/timeFormat"
 import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query"
 import { useVirtualizer } from "@tanstack/react-virtual"
-import { ChevronLeft, ChevronRight, MessageCircleMore } from "lucide-react"
+import {
+	ChevronLeft,
+	ChevronRight,
+	MessageCircleMore,
+	Plus,
+} from "lucide-react"
 import Image from "next/image"
 import { useEffect, useRef, useState } from "react"
 import { LikeCount } from "./Comment"
 
-const DiscoverPost = ({ post }: { post: PostData }) => {
+/* Discover post -> feeds & create post btn
+	
+		// create post
+		-> fetch the user data
+		-> check this step
+		if dealership && want create posts:
+			-> get the dealer's cars
+			-> select - Dealer's Cars
+			-> create post page
+				- caption
+				- context
+
+		else:
+			only FEEDS
+*/
+
+const DiscoverPost = ({ post, user }: { post: PostData; user: IUser }) => {
 	const { data, fetchNextPage, isFetchingNextPage, hasNextPage } =
 		useInfiniteQuery<
 			PostData,
@@ -62,7 +84,10 @@ const DiscoverPost = ({ post }: { post: PostData }) => {
 	])
 
 	return (
-		<div ref={parentRef} className="h-[100vh] min-w-screen overflow-y-auto">
+		<div
+			ref={parentRef}
+			className="relative h-[100vh] min-w-screen overflow-y-auto"
+		>
 			<div className="flex h-full w-full justify-center">
 				<div className="flex w-full flex-col items-center justify-center gap-1 sm:w-[80%] md:w-[60%] lg:w-[40%]">
 					<div
@@ -93,6 +118,16 @@ const DiscoverPost = ({ post }: { post: PostData }) => {
 					</div>
 				</div>
 			</div>
+			{user.role === "Dealer" && (
+				<div className="fixed right-16 bottom-10">
+					<button className="bg-primary flex items-center gap-2 rounded-lg px-4 py-2 text-white">
+						<div className="flex h-5 w-5 flex-col items-center justify-center rounded-full bg-white">
+							<Plus className="text-primary h-4 w-4" />
+						</div>
+						Create Post
+					</button>
+				</div>
+			)}
 		</div>
 	)
 }

@@ -6,14 +6,16 @@ import AdminGenerateReport from "@/components/Admin/AdminGenerateReport"
 import AdminKycVerification from "@/components/Admin/AdminKycVerification"
 import { PageSwitcher } from "@/components/Admin/PageSwitcher"
 import { Tabs } from "@/components/Admin/Tabs"
+import { getAllKyc } from "@/utils/FetchAPI"
 
-export default async function Page({
-	searchParams,
-}: {
-	searchParams: { tab: string }
-}) {
-	const { tab } = await searchParams
+const getKycData = () => {
+	const res = getAllKyc()
+	return res
+}
 
+export default async function Page() {
+	const kyc = await getKycData()
+	console.log(kyc)
 	const tabs = [
 		{ name: "Dashboard", path: "?tab=dashboard" },
 		{ name: "Kyc Verification", path: "?tab=kyc-verification" },
@@ -23,13 +25,13 @@ export default async function Page({
 
 	const pages = [
 		{ name: "dashboard", page: <AdminDashboard /> },
-		{ name: "kyc-verification", page: <AdminKycVerification /> },
+		{ name: "kyc-verification", page: <AdminKycVerification kyc={kyc} /> },
 		{ name: "dealer-verification", page: <AdminDealershipVerification /> },
 		{ name: "generate-report", page: <AdminGenerateReport /> },
 	]
 
 	return (
-		<div className={"flex h-screen w-full text-white"}>
+		<div className={"flex h-screen w-full text-gray-500"}>
 			<div className={"mx-auto w-1/6 p-2 shadow-md"}>
 				<Tabs tabs={tabs} />
 			</div>

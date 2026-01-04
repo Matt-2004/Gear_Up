@@ -1,6 +1,10 @@
+"use client"
+
 import clsx from "clsx"
+import { useRouter } from "next/navigation"
 
 export default function NavbarTabs() {
+	const router = useRouter()
 	return (
 		<>
 			<div
@@ -20,8 +24,11 @@ export default function NavbarTabs() {
 							</button>
 						</li>
 						<li className="w-full">
-							<button className="w-full cursor-pointer border-b border-gray-500 p-4 text-start text-[16px] whitespace-nowrap transition duration-100 ease-in-out active:bg-gray-500 sm:border-none md:px-1 md:py-4 md:hover:text-[#7ED957] md:hover:underline md:hover:underline-offset-4">
-								Rent Cars
+							<button
+								onClick={() => router.push("/post/discover")}
+								className="w-full cursor-pointer border-b border-gray-500 p-4 text-start text-[16px] whitespace-nowrap transition duration-100 ease-in-out active:bg-gray-500 sm:border-none md:px-1 md:py-4 md:hover:text-[#7ED957] md:hover:underline md:hover:underline-offset-4"
+							>
+								Discover feeds
 							</button>
 						</li>
 						<li className="w-full">

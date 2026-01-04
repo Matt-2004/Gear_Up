@@ -1,7 +1,8 @@
 import StoreProvider from "@/app/hooks/StoreProvider"
-import Navbar from "@/components/Navbar/Navbar"
+import ConditionalNavbar from "@/components/Navbar/ConditionalNavbar"
 import NextAuthSessionProvider from "@/provider/NextAuthSessionProvider"
 import ReactQueryProvider from "@/provider/ReactQueryProvider"
+import { getUserProfile } from "@/utils/FetchAPI"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import { cookies } from "next/headers"
@@ -23,7 +24,9 @@ export default async function RootLayout({
 }: Readonly<{
 	children: ReactNode
 }>) {
-	const refreshToken = (await cookies()).get("refresh_token")?.value
+	const refreshToken = (await cookies()).get("refresh_token")
+
+	const user = refreshToken ? await getUserProfile() : null
 	return (
 		<html
 			lang="en"
@@ -33,7 +36,7 @@ export default async function RootLayout({
 				<NextAuthSessionProvider>
 					<StoreProvider>
 						<ReactQueryProvider>
-							<Navbar isAuth={!!refreshToken} />
+							<ConditionalNavbar user={user} />
 							<main className="h-full overflow-x-hidden overflow-y-auto">
 								{children}
 							</main>

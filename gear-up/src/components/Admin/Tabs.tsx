@@ -47,45 +47,5 @@ export const Tabs = ({ tabs }: { tabs: ITab[] }) => {
 				))}
 			</ul>
 		</>
-		// <ul
-		// 	className={
-		// 		"text-primary [&>ol]:hover:bg-primary-background flex w-full flex-col items-start gap-2 [&>ol]:w-full [&>ol]:cursor-pointer [&>ol]:rounded-sm [&>ol]:px-4 [&>ol]:py-2 [&>ol]:hover:border-gray-600"
-		// 	}
-		// >
-		// 	<ol
-		// 		className={clsx(
-		// 			selectedTab === "dashboard" ? "bg-primary-background" : "",
-		// 		)}
-		// 		onClick={() => router.replace(`${path}?tab=dashboard`)}
-		// 	>
-		// 		Dashboard
-		// 	</ol>
-		// 	<ol
-		// 		className={clsx(
-		// 			selectedTab === "kyc-verification" ? "bg-primary-background" : "",
-		// 		)}
-		// 		onClick={() => router.replace(`${path}?tab=kyc-verification`)}
-		// 	>
-		// 		Kyc Verification
-		// 	</ol>
-		// 	<ol
-		// 		className={clsx(
-		// 			selectedTab === "dealership-verification"
-		// 				? "bg-primary-background"
-		// 				: "",
-		// 		)}
-		// 		onClick={() => router.replace(`${path}?tab=dealership-verification`)}
-		// 	>
-		// 		Dealership Verification
-		// 	</ol>
-		// 	<ol
-		// 		className={clsx(
-		// 			selectedTab === "generate-report" ? "bg-primary-background" : "",
-		// 		)}
-		// 		onClick={() => router.replace(`${path}?tab=generate-report`)}
-		// 	>
-		// 		Generate report
-		// 	</ol>
-		// </ul>
 	)
 }

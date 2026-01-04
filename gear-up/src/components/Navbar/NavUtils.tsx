@@ -1,12 +1,11 @@
 "use client"
 
 import { IUser } from "@/app/types/user.types"
-import { getUserProfile } from "@/utils/FetchAPI"
 import clsx from "clsx"
 import { Cog, Menu, Search, X } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
-import { Dispatch, useEffect, useState } from "react"
+import { Dispatch, useState } from "react"
 import { ChatIcon } from "../Common/SVGs"
 import { ProfileDropDown } from "./NavbarDropDown"
 import NavbarTabs from "./NavbarTabs"
@@ -70,21 +69,11 @@ export function MobileMenu({
 	)
 }
 
-export function User() {
+export function User({ user }: { user: IUser }) {
 	const [isOpenUserProfileMenu, setIsOpenUserProfileMenu] =
 		useState<boolean>(false)
-	const [data, setData] = useState<IUser>({} as IUser)
 
-	useEffect(() => {
-		const fetchUserProfile = async () => {
-			const response = await getUserProfile()
-
-			setData(response)
-		}
-		fetchUserProfile()
-	}, [])
-
-	const { avatarUrl, username, role }: Partial<IUser> = data || {}
+	const { avatarUrl, username, role }: Partial<IUser> = user
 
 	return (
 		<div
@@ -113,7 +102,7 @@ export function User() {
 					</div>
 				)}
 			</h1>
-			{isOpenUserProfileMenu && <ProfileDropDown user={data} />}
+			{isOpenUserProfileMenu && <ProfileDropDown user={user} />}
 		</div>
 	)
 }

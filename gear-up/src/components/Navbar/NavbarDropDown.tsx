@@ -28,7 +28,7 @@ export function ProfileDropDown({ user }: { user: IUser }) {
 					</div>
 					Settings
 				</DropDownItem>
-				<DropDownItem className="" link={"/profile/dealer/register"}>
+				<DropDownItem className="" link={"/profile/dealer/register?step=1"}>
 					<div className="items-center rounded-full p-1">
 						<UserPlus className="h-5 w-5" />
 					</div>

@@ -11,8 +11,16 @@ export interface IProgressStep {
 	isComplete: boolean
 }
 
+export type DocId =
+	| "Passport"
+	| "NationalId"
+	| "DriverLicense"
+	| "UtilityBill"
+	| "Other"
+	| null
+
 export interface IKycFormData {
-	DocumentType: string
-	Kyc: File[]
+	DocumentType: DocId
+	Kyc: [File, File] | null
 	SelfieImage: File | null
 }

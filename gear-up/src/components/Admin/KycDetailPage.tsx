@@ -1,53 +1,17 @@
 "use client"
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { getKycById, updateKycByAdmin } from "@/utils/FetchAPI"
-import clsx from "clsx"
-import Image from "next/image"
-import { ArrowLeft, Check, FileCheck, UserCheck, X } from "lucide-react"
-import { timeFormat } from "@/utils/timeFormat"
-import { ChangeEvent, Dispatch, SetStateAction, useState } from "react"
-import { useRouter } from "next/navigation"
-import { IKycUpdateByAdmin } from "@/app/types/kyc.types"
+import { IKycSubmissions, IKycUpdateByAdmin } from "@/app/types/kyc.types"
 import StatusUI from "@/components/Common/StatusUI"
+import { updateKycByAdmin } from "@/utils/FetchAPI"
+import { timeFormat } from "@/utils/timeFormat"
+import clsx from "clsx"
+import { ArrowLeft, Check, FileCheck, UserCheck, X } from "lucide-react"
+import Image from "next/image"
+import { useRouter } from "next/navigation"
+import { ChangeEvent, Dispatch, SetStateAction, useState } from "react"
 
-export interface KycResponse {
-	isSuccess: boolean
-	message: string
-	data: KycData
-	status: number
-}
-
-export interface KycData {
-	id: string
-	userId: string
-	fullName: string
-	email: string
-	phoneNumber: string // can be empty string
-	dateOfBirth: string // ISO date string, e.g., "0001-01-01"
-	status: "Pending" | "Approved" | "Rejected" // based on your app's possible values
-	documentType: string
-	documentUrls: string[] // array of image URLs
-	selfieUrl: string
-	submittedAt: string // ISO datetime string
-	rejectionReason: string | null // nullable
-}
-
-const KycDetailPage = ({ id }: { id: string }) => {
+const KycDetailPage = ({ kycById }: { kycById: IKycSubmissions }) => {
 	const [text, setText] = useState("")
-	const [kycData, setKycData] = useState<KycData>()
-
-	useQuery({
-		queryKey: ["KYC", id],
-		queryFn: async () => {
-			const res = await getKycById(id)
-			setKycData(res?.data)
-			return res
-		},
-		staleTime: 5000,
-		retry: false,
-		enabled: true,
-	})
 
 	/*
 	 *  Pending - Orange
@@ -55,32 +19,23 @@ const KycDetailPage = ({ id }: { id: string }) => {
 	 *  Rejected - Red
 	 */
 
-	if (kycData) {
-		console.log("KYC Data:", kycData)
-		return (
-			<div
-				className={"flex h-full w-full flex-col items-center justify-center"}
-			>
-				<div className={"h-full w-8/10"}>
-					<PageHeader />
+	return (
+		<div className={"flex h-full w-full flex-col items-center justify-center"}>
+			<div className={"h-full w-8/10"}>
+				<PageHeader />
+				<div className={"grid w-full grid-cols-3 grid-rows-4 gap-4"}>
+					<PersonalInfoComponent kycData={kycById} text={text} />
 					<div
-						className={
-							"grid-col-2 grid h-7/8 w-full grid-flow-col grid-rows-4 gap-4"
-						}
+						className={"bg-foreground w-96 rounded-lg border border-gray-600"}
 					>
-						<PersonalInfoComponent kycData={kycData} text={text} />
-						<div
-							className={"bg-foreground w-96 rounded-lg border border-gray-600"}
-						>
-							01
-						</div>
-						<RejectReasonComponent text={text} setText={setText} />
-						<HistoryComponent submittedAt={kycData.submittedAt ?? "12345"} />
+						01
 					</div>
+					<RejectReasonComponent text={text} setText={setText} />
+					<HistoryComponent submittedAt={kycById.submittedAt ?? "12345"} />
 				</div>
 			</div>
-		)
-	}
+		</div>
+	)
 }
 
 const PageHeader = () => {
@@ -91,13 +46,13 @@ const PageHeader = () => {
 				className={"cursor-pointer rounded-full p-2 hover:bg-gray-600"}
 				onClick={() => router.back()}
 			>
-				<ArrowLeft className={"h-7 w-7 text-gray-300"} />
+				<ArrowLeft className={"h-7 w-7 text-gray-500"} />
 			</div>
 			<div className={"flex flex-col"}>
-				<h1 className={"text-2xl font-semibold text-white"}>
+				<h1 className={"text-2xl font-semibold text-gray-600"}>
 					User Detail Review
 				</h1>
-				<h3 className={"text-gray-300"}>
+				<h3 className={"text-gray-400"}>
 					Review and approve user verification
 				</h3>
 			</div>
@@ -106,7 +61,7 @@ const PageHeader = () => {
 }
 
 interface PersonalInfoComponentProps {
-	kycData: KycData
+	kycData: IKycSubmissions
 	text: string
 }
 
@@ -115,11 +70,7 @@ const PersonalInfoComponent = ({
 	text,
 }: PersonalInfoComponentProps) => {
 	return (
-		<div
-			className={
-				"bg-foreground col-span-2 row-span-4 w-full rounded-lg border p-4"
-			}
-		>
+		<div className={"bg-foreground col-span-2 row-span-4 mb-4 rounded-lg p-10"}>
 			<div className={"mb-4 flex flex-col justify-center"}>
 				<h1
 					className={
@@ -142,15 +93,13 @@ const PersonalInfoComponent = ({
 										<StatusUI status={item[1]} />
 									</div>
 								) : (
-									(item[0] === "id" ||
-										item[0] === "email" ||
+									(item[0] === "email" ||
 										item[0] === "fullName" ||
 										item[0] === "phoneNumber" ||
 										item[0] === "dateOfBirth") && (
 										<div key={i} className={""}>
 											<label className={"font-normal text-gray-300"}>
-												{(item[0] === "id" && "ID") ||
-													(item[0] === "email" && "Email") ||
+												{(item[0] === "email" && "Email") ||
 													(item[0] === "fullName" && "Full Name") ||
 													(item[0] === "phoneNumber" && "Phone Number") ||
 													(item[0] === "dateOfBirth" && "BirthDay")}
@@ -180,28 +129,26 @@ const PersonalInfoComponent = ({
 					<FileCheck className={"text-gray-300"} />
 					Documents Review
 				</h1>
-				<div className={"n w-full gap-7"}>
-					<div className={"flex w-full justify-between gap-4"}>
+				<div className={"w-full gap-7"}>
+					<div className={"flex w-full flex-col justify-between gap-4"}>
 						<div className={"flex flex-col gap-2"}>
 							<h1>KYC documents</h1>
 							<div
 								className={
-									"flex h-80 w-full justify-between rounded-lg border border-gray-400 p-4 shadow-sm"
+									"grid h-80 w-full grid-cols-2 gap-4 rounded-lg border-gray-400 shadow-sm"
 								}
 							>
 								{kycData.documentUrls.map((items: string, i: number) => {
 									if (items) {
 										return (
-											<div key={i} className={"flex justify-center gap-2"}>
-												<Image
-													className={"max-h-full max-w-full object-contain"}
-													key={i}
-													src={items}
-													alt={"Document-image"}
-													width={450}
-													height={400}
-												/>
-											</div>
+											<Image
+												className={"h-full w-fit object-cover"}
+												key={i}
+												src={items}
+												alt={"Document-image"}
+												width={200}
+												height={300}
+											/>
 										)
 									}
 								})}
@@ -211,11 +158,11 @@ const PersonalInfoComponent = ({
 							<label className={"font-normal"}>Selfie Image</label>
 							<div
 								className={
-									"flex h-80 w-80 justify-center rounded-lg border border-gray-400 p-4 shadow-sm"
+									"flex h-80 w-80 justify-center rounded-lg border-gray-400 shadow-sm"
 								}
 							>
 								<Image
-									className={"max-h-full max-w-full object-contain"}
+									className={"h-full w-full object-contain"}
 									src={kycData.selfieUrl}
 									alt={"selfie-image"}
 									width={300}
@@ -246,63 +193,41 @@ interface IDecision {
 }
 
 const RejectButton = ({ id, data }: IDecision) => {
-	const mutation = useMutation({
-		mutationFn: async (params: { id: string; data: IKycUpdateByAdmin }) =>
-			await updateKycByAdmin(params.data, params.id),
-		onSuccess: () => console.log("Successfully Rejected!"),
-	})
+	const router = useRouter()
+	const onSubmit = async () => {
+		await updateKycByAdmin(data, id)
 
-	const onSubmit = () => {
-		mutation.mutate({
-			id: id,
-			data: {
-				status: data.status,
-				rejectionReason: data.rejectionReason,
-			},
-		})
+		router.replace("/profile/admin?tab=kyc-verification")
 	}
 	return (
 		<button
 			className={
-				"border-background flex cursor-pointer items-center gap-2 rounded-lg border bg-red-600 px-4 py-2 text-white"
+				"flex cursor-pointer items-center gap-1 rounded-lg bg-red-600 px-4 py-2 text-white"
 			}
 			onClick={onSubmit}
 		>
-			<X />
+			<X className="h-5 w-5" />
 			Reject
 		</button>
 	)
 }
 
 const ApprovedButton = ({ id, data }: IDecision) => {
-	const queryClient = useQueryClient()
+	const router = useRouter()
+	const onSubmit = async () => {
+		await updateKycByAdmin(data, id)
 
-	const mutation = useMutation({
-		mutationFn: async (params: { id: string; data: IKycUpdateByAdmin }) =>
-			await updateKycByAdmin(params.data, params.id),
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["KYC"] })
-		},
-	})
-
-	const onSubmit = () => {
-		mutation.mutate({
-			id: id,
-			data: {
-				status: data.status,
-				rejectionReason: data.rejectionReason,
-			},
-		})
+		router.replace("/profile/admin?tab=kyc-verification")
 	}
 
 	return (
 		<button
 			className={
-				"border-background flex cursor-pointer items-center gap-2 rounded-lg border bg-green-600 px-4 py-2 text-white"
+				"flex cursor-pointer items-center gap-1 rounded-lg bg-green-600 px-4 py-2 text-white"
 			}
 			onClick={onSubmit}
 		>
-			<Check />
+			<Check className="h-5 w-5" />
 			Approve
 		</button>
 	)
@@ -369,7 +294,9 @@ const HistoryComponent = ({ submittedAt }: { submittedAt: string }) => {
 				<div className={"h-full w-1 bg-yellow-500"} />
 				<div>
 					<h2 className={"font-semibold"}>Initial Submission</h2>
-					<h3 className={"text-sm text-gray-400"}>{timeFormat(submittedAt)}</h3>
+					<h3 className={"text-sm text-gray-400"}>
+						{timeFormat(submittedAt, "Hour")}
+					</h3>
 				</div>
 			</div>
 		</div>

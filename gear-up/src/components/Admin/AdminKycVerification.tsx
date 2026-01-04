@@ -1,9 +1,14 @@
 "use client"
 
-import { useQuery } from "@tanstack/react-query"
-import { getAllKyc } from "@/utils/FetchAPI"
+import { IKycRes } from "@/app/types/kyc.types"
 import DataTable from "@/components/Admin/DataTable"
+import FilterProvider, {
+	KycDocumentType,
+	StatusType,
+	useKycFilterContext,
+} from "@/Context/AdminKycFilterContext"
 import { kycFilter } from "@/utils/Filter"
+import clsx from "clsx"
 import {
 	CircleCheck,
 	CircleX,
@@ -12,28 +17,13 @@ import {
 	Search,
 	SlidersHorizontal,
 } from "lucide-react"
-import { IKycRes } from "@/app/types/kyc.types"
-import clsx from "clsx"
-import {
-	KycDocumentType,
-	StatusType,
-	useKycFilterContext,
-} from "@/Context/AdminKycFilterContext"
 
-const AdminKycVerification = () => {
-	const { data: kyc, isLoading } = useQuery({
-		queryKey: ["kycVerification"],
-		queryFn: getAllKyc,
-		retry: false,
-		enabled: true,
-	})
-
-	if (isLoading) {
-		return <div>Loading</div>
+const AdminKycVerification = ({ kyc }: { kyc: IKycRes }) => {
+	if (!kyc) {
+		return <h3>Kyc data missing</h3>
 	}
-
-	if (kyc) {
-		return (
+	return (
+		<FilterProvider>
 			<div className={"flex w-full justify-center"}>
 				<div className={"w-9/10 space-y-8"}>
 					<div id={"header"} className={"pt-4"}>
@@ -47,26 +37,26 @@ const AdminKycVerification = () => {
 						className={"flex w-full flex-col justify-between gap-4"}
 					>
 						<div className={"flex justify-between"}>
-							<StatusCountComponent status={"All"} kyc={kyc.data} />
-							<StatusCountComponent status={"Pending"} kyc={kyc.data} />
-							<StatusCountComponent status={"Approved"} kyc={kyc.data} />
-							<StatusCountComponent status={"Rejected"} kyc={kyc.data} />
+							<StatusCountComponent status={"All"} kyc={kyc} />
+							<StatusCountComponent status={"Pending"} kyc={kyc} />
+							<StatusCountComponent status={"Approved"} kyc={kyc} />
+							<StatusCountComponent status={"Rejected"} kyc={kyc} />
 						</div>
 						<div
 							className={
-								"bg-background mt-6 flex h-[68px] w-full items-center justify-between rounded-sm border-gray-800 px-2 shadow-sm shadow-gray-600"
+								"bg-background mt-6 flex h-[68px] w-full items-center justify-between"
 							}
 						>
 							<FilterUI />
 						</div>
 						<div className={"w-full"}>
-							<DataTable kyc={kyc.data.data.kycSubmissions} />
+							<DataTable kyc={kyc.data.kycSubmissions} />
 						</div>
 					</div>
 				</div>
 			</div>
-		)
-	}
+		</FilterProvider>
+	)
 }
 
 const FilterUI = () => {
@@ -74,22 +64,24 @@ const FilterUI = () => {
 
 	return (
 		<>
-			<div className={"flex w-2/3 gap-2"}>
+			<div className={"flex gap-2"}>
 				<div
 					className={
-						"flex w-1/2 items-center gap-4 rounded-sm border border-gray-600 p-2"
+						"flex w-1/2 items-center gap-4 rounded-sm border border-gray-300 p-2"
 					}
 				>
 					<Search className={"h-5 w-5"} />
 					<input
-						className={"w-full focus:outline-none"}
+						className={
+							"w-full placeholder:text-sm placeholder:text-gray-500 focus:outline-none"
+						}
 						type={"text"}
 						placeholder={"Search by name, ID, or document type"}
 						onChange={(e) => setFilter({ searchData: e.currentTarget.value })}
 					/>
 				</div>
 
-				<div className={"rounded-sm border border-gray-600 p-2 text-white"}>
+				<div className={"rounded-sm border border-gray-300 p-2 text-gray-500"}>
 					<select
 						name="doc-type"
 						id="all-doc-type"
@@ -111,7 +103,7 @@ const FilterUI = () => {
 						<option value="Other">Other</option>
 					</select>
 				</div>
-				<div className={"rounded-sm border border-gray-600 p-2 text-white"}>
+				<div className={"rounded-sm border border-gray-300 p-2 text-gray-500"}>
 					<select
 						name="doc-type"
 						id="all-doc-type"
@@ -133,7 +125,7 @@ const FilterUI = () => {
 			</div>
 			<div
 				className={
-					"bg-primary hover:bg-primary-btn-hover mr-2 flex cursor-pointer gap-2 rounded-sm px-8 py-2"
+					"bg-primary hover:bg-primary-btn-hover mr-2 flex cursor-pointer gap-2 rounded-sm px-8 py-2 text-white"
 				}
 			>
 				<SlidersHorizontal />
@@ -158,7 +150,7 @@ const StatusCountComponent = ({
 				status === "All" && "bg-[#DBEAFE]",
 				status === "Pending" && "bg-[#FFEDD5]",
 				status === "Rejected" && "bg-[#FEE2E2]",
-				"flex h-40 w-2/10 flex-col justify-center gap-1 rounded-sm border-gray-800 p-4 text-black shadow-sm shadow-gray-600",
+				"flex h-40 w-2/10 flex-col justify-center gap-1 rounded-sm border-gray-800 p-4 text-black shadow-sm shadow-gray-300",
 			)}
 		>
 			<div

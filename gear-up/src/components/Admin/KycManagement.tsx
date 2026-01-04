@@ -1,5 +1,5 @@
 const KycManagement = () => {
-	return <div>This is reviewing </div>
+	return <div className="text-black">This is reviewing </div>
 }
 
 export default KycManagement

@@ -17,7 +17,7 @@ export async function submit(formData: FormData) {
 	revalidatePath("/")
 
 	// redirect if successful
-	if (res.isSuccess) {
+	if (res) {
 		redirect("/", RedirectType.push)
 	}
 }

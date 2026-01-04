@@ -1,13 +1,12 @@
 "use client"
 
-import React, { useState, useRef } from "react"
 import Image from "next/image"
+import React, { useRef, useState } from "react"
+import { StepNavigation } from "./StepNavigation"
+import { useKycRegisterContext } from "./context/KycRegisterContext"
 
-interface SelfieImageUploadProps {
-	onUpload: (file: File) => void
-}
-
-const SelfieImageUpload: React.FC<SelfieImageUploadProps> = ({ onUpload }) => {
+const SelfieImageUpload = () => {
+	const { updateKycData } = useKycRegisterContext()
 	const [preview, setPreview] = useState<string>("")
 	const [file, setFile] = useState<File | null>(null)
 	const [useCameraMode, setUseCameraMode] = useState(false)
@@ -18,10 +17,11 @@ const SelfieImageUpload: React.FC<SelfieImageUploadProps> = ({ onUpload }) => {
 		const selectedFile = e.target.files?.[0]
 		if (selectedFile) {
 			setFile(selectedFile)
-			onUpload(selectedFile)
+			// onUpload(selectedFile)
 			const url = URL.createObjectURL(selectedFile)
 			setPreview(url)
 		}
+		updateKycData({ SelfieImage: selectedFile })
 	}
 
 	const startCamera = async () => {
@@ -54,7 +54,7 @@ const SelfieImageUpload: React.FC<SelfieImageUploadProps> = ({ onUpload }) => {
 						type: "image/jpeg",
 					})
 					setFile(capturedFile)
-					onUpload(capturedFile)
+					// onUpload(capturedFile)
 					setPreview(URL.createObjectURL(capturedFile))
 					stopCamera()
 				}
@@ -234,6 +234,7 @@ const SelfieImageUpload: React.FC<SelfieImageUploadProps> = ({ onUpload }) => {
 					</div>
 				</div>
 			</div>
+			<StepNavigation />
 		</div>
 	)
 }
