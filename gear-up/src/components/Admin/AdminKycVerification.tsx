@@ -50,7 +50,7 @@ const AdminKycVerification = ({ kyc }: { kyc: IKycRes }) => {
 							<FilterUI />
 						</div>
 						<div className={"w-full"}>
-							<DataTable kyc={kyc.data.kycSubmissions} />
+							<DataTable kyc={kyc.data.kycDto} />
 						</div>
 					</div>
 				</div>
@@ -142,6 +142,7 @@ const StatusCountComponent = ({
 	status: string
 	kyc: IKycRes
 }) => {
+
 	return (
 		<div
 			id={status}

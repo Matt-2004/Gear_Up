@@ -12,3 +12,25 @@ export function timeFormat(iso: string, format: "Hour" | "Date") {
 	}
 	return `${day}/${month}/${year}`
 }
+
+type TimeDiff =
+	| { value: number; unit: "minute" }
+	| { value: number; unit: "hour" }
+	| { value: number; unit: "day" }
+
+export function diffFromNowAuto(iso: string): TimeDiff {
+	const diffMs = Date.now() - new Date(iso).getTime()
+
+	const minutes = Math.floor(diffMs / (1000 * 60))
+	if (minutes < 60) {
+		return { value: minutes, unit: "minute" }
+	}
+
+	const hours = Math.floor(minutes / 60)
+	if (hours < 24) {
+		return { value: hours, unit: "hour" }
+	}
+
+	const days = Math.floor(hours / 24)
+	return { value: days, unit: "day" }
+}

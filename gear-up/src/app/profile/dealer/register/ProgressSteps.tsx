@@ -1,9 +1,10 @@
 import clsx from "clsx"
 import { useSearchParams } from "next/navigation"
 import { Fragment } from "react"
-import { Steps } from "./StepNavigation"
 
-export const ProgressSteps = () => {
+import { ISteps } from "./KycRegister"
+
+export const ProgressSteps = ({ Steps }: { Steps: ISteps }) => {
 	const searchPath = useSearchParams().get("step") ?? "1"
 
 	const stepIndex = Steps.findIndex(
@@ -11,7 +12,7 @@ export const ProgressSteps = () => {
 	)
 
 	return (
-		<form className="mb-12 w-full max-w-4xl">
+		<form className="w-full max-w-4xl">
 			<div className="flex items-center justify-between">
 				{Steps.map((step, index) => (
 					<Fragment key={step.id}>

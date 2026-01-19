@@ -1,19 +1,26 @@
-import { CommentData } from "@/app/types/comment.types"
+"use client"
+
+import { AddComment, CommentData } from "@/app/types/comment.types"
 import {
+	addComment,
 	getCommentsByPostId,
 	getNestedCommentsByCommentId,
 } from "@/utils/FetchAPI"
+import { diffFromNowAuto } from "@/utils/timeFormat"
+import * as signalR from "@microsoft/signalr"
 import clsx from "clsx"
-import { Heart } from "lucide-react"
+import { Heart, Reply } from "lucide-react"
 import Image from "next/image"
 import { useEffect, useRef, useState } from "react"
 
 interface ICommnetsProps {
-	id: string
+	access_token: string
+	postId: string
 	level: number
 }
 
-export const Comment = ({ id, level }: ICommnetsProps) => {
+export const Comment = ({ access_token, postId, level }: ICommnetsProps) => {
+
 	const contentRef = useRef<HTMLDivElement>(null)
 	const [commentData, setCommentData] = useState<CommentData[]>([])
 	const [openReplyId, setOpenReplyId] = useState<string | null>(null)
@@ -21,27 +28,71 @@ export const Comment = ({ id, level }: ICommnetsProps) => {
 	const [showingReplayById, setShowingReplayById] = useState<string | null>(
 		null,
 	)
-	// Default comment count to show at first
-	const [defaultCommentCount, setDefaultCommentCount] = useState<number>(1)
-	const [showMoreComments, setShowMoreComments] = useState<boolean>(false)
 
-	const [connectorHeight, setConnectorHeight] = useState<number>(0)
+	const [activeReplyId, setActiveReplyId] = useState<string | null>(null)
+	// get the id of the comment to show reply
 
-	const handleToggleReply = (id: string) => {
-		setOpenReplyId((prev) => (prev === id ? null : id))
-		if (openReplyId !== id) setReplyText("")
+
+	const handleReplySubmit = async ({ postId, text, parentCommentId }: AddComment) => {
+		console.log("This function is working...")
+		try {
+			await addComment({ postId, text, parentCommentId })
+		} catch (err) {
+			console.error("Error in creating comment:: ", err)
+		}
 	}
 
-	const handleSubmitReply = (parentId: string) => {
-		// TODO: call API / action to post reply
-		setOpenReplyId(null)
+	const handleActiveReply = (id: string | null) => {
+		setActiveReplyId(id)
 		setReplyText("")
 	}
+	useEffect(() => {
+		if (!postId) {
+			console.log("Id doesn't exist")
+			return
+		}
+
+		// SignalR connection start
+		const connection = new signalR.HubConnectionBuilder()
+			.withUrl("http://localhost:5255/hubs/post", {
+				accessTokenFactory: () => access_token
+			})
+			.withAutomaticReconnect()
+			.configureLogging(signalR.LogLevel.Information)
+			.build()
+
+		// Join group to Commnet Group
+		const JoinGroups = async () => {
+
+			await connection.start().catch(err => console.error(err))
+
+			try {
+				await connection.invoke('JoinGroup', postId)
+				await connection.invoke('JoinCommentsGroup', postId)
+			} catch (err) {
+				console.error("Join group error:: ", err)
+			}
+		}
+		// Join Group
+		JoinGroups()
+
+		connection.on('CommentCreated', (event) => {
+			setCommentData(prevComments => [event, ...prevComments])
+			console.log("Comment created:: ", event)
+		})
+
+
+
+		return () => {
+			connection.off("CommentCreated")
+			connection.stop()
+		}
+	}, [])
 
 	useEffect(() => {
 		if (level === 0) {
 			const fetchComments = async () => {
-				const data = await getCommentsByPostId(id)
+				const data = await getCommentsByPostId(postId)
 				setCommentData(data)
 			}
 			fetchComments()
@@ -49,21 +100,15 @@ export const Comment = ({ id, level }: ICommnetsProps) => {
 			// For nested comments, you might want to implement a different API call
 
 			const fetchNestedComments = async () => {
-				const data = await getNestedCommentsByCommentId(id)
+				const data = await getNestedCommentsByCommentId(postId)
 				setCommentData(data)
 			}
 			fetchNestedComments()
 		}
-	}, [id, level])
-
-	useEffect(() => {
-		if (contentRef.current) {
-			setConnectorHeight(contentRef.current.getBoundingClientRect().height)
-		}
-	}, [])
+	}, [postId, level])
 
 	return (
-		<div className={clsx(level > 0 ? "pl-12" : "pl-6", "relative space-y-4")}>
+		<div className={clsx(level > 0 ? "pl-12" : "pl-6", "relative space-y-4 mt-2")}>
 			{/* vertical guide for this nested block (only visible for nested levels) */}
 			{level > 0 && (
 				<div
@@ -74,8 +119,8 @@ export const Comment = ({ id, level }: ICommnetsProps) => {
 				/>
 			)}
 
-			{commentData.slice(0, defaultCommentCount).map((comment, i) => (
-				<div key={comment.commentedUserId || i} className="relative">
+			{commentData.map((comment, i) => (
+				<div key={i} className="relative">
 					{/* connector from vertical guide to this comment */}
 
 					{level > 0 && (
@@ -86,7 +131,7 @@ export const Comment = ({ id, level }: ICommnetsProps) => {
 					)}
 
 					<div className="w-full">
-						<div className="flex w-full">
+						<div className="flex w-full gap-4">
 							<Image
 								src={comment.commentedUserProfilePictureUrl}
 								alt={comment.commentedUserName}
@@ -97,42 +142,43 @@ export const Comment = ({ id, level }: ICommnetsProps) => {
 							<div className="flex w-full flex-col">
 								{/* Comment Content */}
 								<div>
-									<div className="rounded-lg px-4 py-1">
-										<h1 className="text-sm font-semibold">
+									<div className="rounded-lg">
+										<h1 className="text-sm ">
 											{comment.commentedUserName}
 										</h1>
 										<p ref={contentRef} className="text-sm">
 											{comment.content}
 										</p>
 									</div>
+									{/* Timeline */}
+									<div className="mb-2">
+										<h3 className="text-xs font-light">{diffFromNowAuto(comment.createdAt).value} {diffFromNowAuto(comment.createdAt).unit} ago</h3>
+									</div>
 									{/* Comment Actions */}
-									<div className="flex flex-col items-start gap-2 pl-4">
-										<div className="flex items-center gap-2 pl-3">
+									<div className="flex flex-col items-start gap-2">
+										<div className="flex items-center gap-2">
 											<LikeCount likeCount={comment.likeCount} />
-											<button
-												className="text-xs text-gray-600 hover:underline"
-												onClick={() =>
-													handleToggleReply(
-														String(comment.commentedUserId || i),
-													)
-												}
-											>
-												Reply
-											</button>
+											<ReplyBtn
+												handleActiveReply={handleActiveReply}
+												comment={comment}
+											/>
 										</div>
 									</div>
 									{/* Reply text box and submit button (render only for this comment) */}
-									{openReplyId === String(comment.commentedUserId || i) && (
-										<div className="mt-2 w-full pl-3">
+									{activeReplyId === String(comment.id || i) && (
+
+										<div className="mt-2 w-full ">
 											<CommentTextBox
 												value={replyText}
 												onChange={setReplyText}
 												onSubmit={() =>
-													handleSubmitReply(
-														String(comment.commentedUserId || i),
-													)
+													handleReplySubmit({
+														postId: comment.postId,
+														text: replyText,
+														parentCommentId: String(comment.id),
+													})
 												}
-												onCancel={() => setOpenReplyId(null)}
+												onCancel={() => setActiveReplyId(null)}
 											/>
 										</div>
 									)}
@@ -144,12 +190,12 @@ export const Comment = ({ id, level }: ICommnetsProps) => {
 											aria-hidden
 										/>
 										<div
-											className="absolute top-[calc(100%-1.4rem)] left-4 h-4 w-7 rounded-bl-full border-b border-l border-gray-300 bg-white"
+											className="absolute top-[calc(100%-1.4rem)] left-4 h-4 w-7 rounded-bl-full border-b border-l border-gray-300 "
 											aria-hidden
 										/>
 										<button
 											onClick={() => setShowingReplayById(comment.id)}
-											className="mt-3 ml-6 cursor-pointer text-start text-xs text-gray-600 hover:underline"
+											className="mt-3 cursor-pointer text-start text-xs text-gray-600 hover:underline"
 										>
 											Show {comment.childCount} replies
 										</button>
@@ -159,20 +205,12 @@ export const Comment = ({ id, level }: ICommnetsProps) => {
 						</div>
 
 						{showingReplayById === comment.id && (
-							<Comment id={showingReplayById} level={level + 1} />
+							<Comment access_token={access_token} postId={showingReplayById} level={level + 1} />
 						)}
 					</div>
 				</div>
 			))}
-			<div
-				onClick={() => {
-					setShowMoreComments(!showMoreComments)
-					setDefaultCommentCount((prev) => prev + commentData.length - 1)
-				}}
-				className="flex justify-center"
-			>
-				{level === 0 && !showMoreComments && <h3>Show more</h3>}
-			</div>
+
 		</div>
 	)
 }
@@ -208,12 +246,12 @@ export const CommentTextBox = ({
 				rows={1}
 			/>
 			<div className="flex justify-end gap-2">
-				<button onClick={onCancel} className="rounded border px-3 py-1 text-sm">
+				<button onClick={onCancel} className="rounded cursor-pointer border px-3 py-1 text-sm">
 					Cancel
 				</button>
 				<button
 					onClick={onSubmit}
-					className="bg-primary rounded px-5 py-1 text-white"
+					className="bg-primary active:bg-primary-dark cursor-pointer rounded px-5 py-1 text-white"
 				>
 					Post
 				</button>
@@ -222,11 +260,30 @@ export const CommentTextBox = ({
 	)
 }
 
+export const ReplyBtn = ({ handleActiveReply, comment }: { handleActiveReply: (id: string) => void, comment: CommentData }) => {
+	return (
+		<button
+			className="hover:bg-primary-background hover:text-primary flex cursor-pointer items-center gap-1 rounded-md  text-gray-600"
+			onClick={() =>
+				handleActiveReply(
+					String(comment.id),
+				)
+			}
+		>
+			<Reply className=" h-4 w-4 -scale-x-100 font-normal" />
+			<h3 className="text-xs font-light">
+
+				Reply
+			</h3>
+		</button>
+	)
+}
+
 export const LikeCount = ({ likeCount }: { likeCount: number }) => {
 	return (
-		<div className="hover:bg-primary-background hover:text-primary flex cursor-pointer gap-1 rounded-md px-2 py-1 text-gray-600">
-			<Heart className="h-5 w-5" />
-			<h3 className="text-sm">{likeCount}</h3>
-		</div>
+		<button className="hover:bg-primary-background hover:text-primary flex cursor-pointer items-center gap-1 rounded-md  text-gray-600">
+			<Heart className="h-4 w-4 font-normal" />
+			<h3 className="font-light text-sm">{likeCount}</h3>
+		</button>
 	)
 }

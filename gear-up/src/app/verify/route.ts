@@ -37,7 +37,7 @@ export async function GET(request: Request) {
 			JSON.stringify({
 				message: "Email verified successfully",
 				data,
-				redirect: "http:localhost:3000/",
+				redirect: "http://localhost:3000/",
 			}),
 			{ status: 200 },
 		)

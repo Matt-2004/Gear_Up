@@ -1,6 +1,6 @@
 "use client"
 
-import { CarImage, PostData, PostItem } from "@/app/types/post.types"
+import { AllPostData, CarImage, PostItem } from "@/app/types/post.types"
 import { IUser } from "@/app/types/user.types"
 import { getAllPosts } from "@/utils/FetchAPI"
 import { timeFormat } from "@/utils/timeFormat"
@@ -13,6 +13,9 @@ import {
 	Plus,
 } from "lucide-react"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
+
+import { DEFAULT_API_URL } from "@/lib/config"
 import { useEffect, useRef, useState } from "react"
 import { LikeCount } from "./Comment"
 
@@ -32,17 +35,17 @@ import { LikeCount } from "./Comment"
 			only FEEDS
 */
 
-const DiscoverPost = ({ post, user }: { post: PostData; user: IUser }) => {
+const DiscoverPost = ({ post, user }: { post: AllPostData; user: IUser }) => {
 	const { data, fetchNextPage, isFetchingNextPage, hasNextPage } =
 		useInfiniteQuery<
-			PostData,
+			AllPostData,
 			Error,
-			InfiniteData<PostData, number>,
+			InfiniteData<AllPostData, number>,
 			string[],
 			number
 		>({
 			queryKey: ["discover-posts"],
-			queryFn: ({ pageParam }) => getAllPosts(pageParam),
+			queryFn: ({ pageParam = 1 }) => getAllPosts("lastest", pageParam),
 			initialPageParam: 1,
 			initialData: {
 				pages: [post],
@@ -86,7 +89,8 @@ const DiscoverPost = ({ post, user }: { post: PostData; user: IUser }) => {
 	return (
 		<div
 			ref={parentRef}
-			className="relative h-[100vh] min-w-screen overflow-y-auto"
+			className="relative h-screen w-full overflow-y-auto"
+			style={{ scrollbarGutter: "stable" }}
 		>
 			<div className="flex h-full w-full justify-center">
 				<div className="flex w-full flex-col items-center justify-center gap-1 sm:w-[80%] md:w-[60%] lg:w-[40%]">
@@ -137,9 +141,16 @@ interface IPostCard {
 }
 
 const PostCard = ({ postItem }: IPostCard) => {
+	const router = useRouter()
+
 	if (!postItem) return null
 	return (
-		<section className="h-full min-w-full rounded-xl bg-white px-4 py-2">
+		<section
+			onClick={() => {
+				router.push(`${DEFAULT_API_URL}/post/${postItem.id}`)
+			}}
+			className="h-full min-w-full rounded-xl bg-white px-4 py-2"
+		>
 			{/* Date and Time */}
 			<h3 className="text-xs text-gray-500">
 				{timeFormat(postItem.updatedAt, "Date")}
@@ -150,7 +161,7 @@ const PostCard = ({ postItem }: IPostCard) => {
 				<PostContent postContent={postItem.content} />
 			</div>
 			{/* <h3>{postItem.visibility}</h3> */}
-			<CarouselPostImage carImage={postItem?.carDto?.carImages} />
+			<CarouselImages images={postItem?.carDto?.carImages} />
 
 			{/* Like and Commnet */}
 			<div className="flex gap-4 p-2">
@@ -159,7 +170,7 @@ const PostCard = ({ postItem }: IPostCard) => {
 			</div>
 			{/* Comments Section */}
 			{/* If comment show... */}
-			{/* <Comment id={postItem.id} level={0} /> */}
+
 		</section>
 	)
 }
@@ -167,7 +178,7 @@ interface IPostContentProps {
 	postContent: string
 }
 
-const PostContent = ({ postContent }: IPostContentProps) => {
+export const PostContent = ({ postContent }: IPostContentProps) => {
 	const [expanded, setExpanded] = useState(false)
 
 	// This function is used to scroll to the current index
@@ -179,29 +190,37 @@ const PostContent = ({ postContent }: IPostContentProps) => {
 		expanded || !isLong ? postContent : postContent.slice(0, LIMIT)
 	return (
 		<p className="text-sm leading-relaxed">
-			<span className={expanded ? "" : "line-clamp-2"}>{displayText}</span>
-
-			{!expanded && isLong && (
-				<button
-					onClick={() => setExpanded(true)}
-					className="ml-1 font-medium text-blue-500 hover:underline"
-				>
-					see more
-				</button>
-			)}
+			<span className={expanded ? "" : "line-clamp-2"}>
+				{displayText}
+				{"..."}
+				{!expanded && isLong && (
+					<button
+						onClick={() => setExpanded(true)}
+						className="ml-1 font-medium text-blue-500 hover:underline"
+					>
+						see more
+					</button>
+				)}
+			</span>
 		</p>
 	)
 }
 interface ICarouselPostImageProps {
-	carImage: CarImage[]
+	images: CarImage[]
 }
 
-const CarouselPostImage = ({ carImage }: ICarouselPostImageProps) => {
+
+
+export const CarouselImages = ({
+
+	images,
+}: ICarouselPostImageProps) => {
 	const scrollRef = useRef<HTMLDivElement>(null)
 	const imageRef = useRef<HTMLImageElement>(null)
 	const [currentIndex, setCurrentIndex] = useState<number>(0)
 
-	function scrollNext() {
+	function scrollNext(e: React.MouseEvent<HTMLButtonElement>) {
+		e.preventDefault()
 		if (!scrollRef.current) return
 
 		scrollRef.current.scrollBy({
@@ -210,7 +229,8 @@ const CarouselPostImage = ({ carImage }: ICarouselPostImageProps) => {
 		})
 	}
 
-	function scrollPrevious() {
+	function scrollPrevious(e: React.MouseEvent<HTMLButtonElement>) {
+		e.preventDefault()
 		if (!scrollRef.current) return
 
 		scrollRef.current.scrollBy({
@@ -236,33 +256,33 @@ const CarouselPostImage = ({ carImage }: ICarouselPostImageProps) => {
 		<div className="relative z-10 mt-4">
 			<div
 				ref={scrollRef}
-				className="flex snap-x snap-mandatory overflow-x-scroll scroll-smooth"
+				className="flex snap-x snap-mandatory items-center overflow-x-scroll scroll-smooth"
 				style={{ scrollbarWidth: "none" }}
 			>
-				{carImage?.map((image, i) => (
-					<Image
-						key={i}
-						ref={imageRef}
-						src={image.url}
-						alt={image.carId}
-						width={200}
-						height={200}
-						className="block h-[28rem] min-w-full snap-start"
-					></Image>
-				))}
-
-				{/* Left and right icons */}
+				{
+					images?.map((image, i) => (
+						<Image
+							key={i}
+							ref={imageRef}
+							src={image.url}
+							alt={image.carId}
+							width={200}
+							height={200}
+							className="block h-[28rem] min-w-full snap-start"
+						></Image>
+					))
+				}
 				{currentIndex !== 0 && (
 					<button
-						onClick={() => scrollPrevious()}
+						onClick={(e) => scrollPrevious(e)}
 						className="absolute top-1/2 left-0 z-30 translate-x-1/2 cursor-pointer rounded-full bg-white/70 p-2 shadow-lg backdrop-blur-md active:bg-white/90"
 					>
 						<ChevronLeft className="text-primary h-8 w-8" />
 					</button>
 				)}
-				{currentIndex < carImage?.length - 1 && (
+				{currentIndex < images?.length - 1 && (
 					<button
-						onClick={() => scrollNext()}
+						onClick={(e) => scrollNext(e)}
 						className="absolute top-1/2 right-12 z-30 translate-x-1/2 cursor-pointer rounded-full bg-white/70 p-2 shadow-lg backdrop-blur-md active:bg-white/90"
 					>
 						<ChevronRight className="text-primary h-8 w-8" />

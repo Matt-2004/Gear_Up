@@ -21,3 +21,9 @@ export interface CommentData {
 	createdAt: string
 	updatedAt: string
 }
+
+export interface AddComment {
+	postId: string
+	text: string
+	parentCommentId: string | null
+}

@@ -4,14 +4,14 @@ import NextAuthSessionProvider from "@/provider/NextAuthSessionProvider"
 import ReactQueryProvider from "@/provider/ReactQueryProvider"
 import { getUserProfile } from "@/utils/FetchAPI"
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
+import { Roboto } from "next/font/google"
 import { cookies } from "next/headers"
 import { ReactNode } from "react"
 import "./globals.css"
 
-const montserrat = Inter({
+const roboto = Roboto({
 	subsets: ["latin"],
-	weight: "500",
+	weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 })
 
 export const metadata: Metadata = {
@@ -28,16 +28,13 @@ export default async function RootLayout({
 
 	const user = refreshToken ? await getUserProfile() : null
 	return (
-		<html
-			lang="en"
-			className={`${montserrat.className} h-full overflow-hidden`}
-		>
-			<body className={`m-0 h-full overflow-hidden antialiased`}>
+		<html lang="en" className={`${roboto.className} overflow-x-hidden`}>
+			<body className={`antialiased`}>
 				<NextAuthSessionProvider>
 					<StoreProvider>
 						<ReactQueryProvider>
-							<ConditionalNavbar user={user} />
-							<main className="h-full overflow-x-hidden overflow-y-auto">
+							<main className="flex h-screen flex-col">
+								<ConditionalNavbar user={user} />
 								{children}
 							</main>
 						</ReactQueryProvider>

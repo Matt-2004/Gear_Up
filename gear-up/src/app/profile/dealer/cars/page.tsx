@@ -1,268 +1,155 @@
-"use client"
+// const getOwnCarData = () => {
 
 import { CarItems } from "@/app/types/car.types"
-import { getAllCars } from "@/utils/FetchAPI"
-import { useQuery } from "@tanstack/react-query"
-import clsx from "clsx"
-import { CarFront, Fuel, PaintBucket, SlidersHorizontal } from "lucide-react"
-import Image from "next/image"
-import { useRouter } from "next/navigation"
+import Cars from "./Cars"
 
-import { useState } from "react"
+// }
 
 const Page = () => {
-	const [isFilterOpen, setIsFilterOpen] = useState(false)
-	const [pageNumber, setPageNumber] = useState<number>(1)
+	// const carData = getOwnCarData()
+	const carData: CarItems[] = [
+		{
+			id: "d83894df-8c5b-4363-92ce-cda1c6dd5494",
+			title: "Escalade",
+			description:
+				"Voluptatem quasi veniam consequatur. Inventore molestiae tenetur impedit voluptatibus reiciendis laudantium voluptatibus neque. Rerum voluptas est. Fugiat quo provident aperiam sint.",
+			model: "Civic",
+			make: "Dodge",
+			year: 2024,
+			price: 37630.311973938,
+			color: "indigo",
+			mileage: 181118,
+			seatingCapacity: 4,
+			engineCapacity: 4778,
+			carImages: [
+				{
+					id: "27bda1b0-11a7-436d-88f9-a00a6e844eb0",
+					carId: "d83894df-8c5b-4363-92ce-cda1c6dd5494",
+					url: "https://picsum.photos/640/480/?image=208",
+				},
+				{
+					id: "6712f0b6-3b02-468f-b897-1032132ad2a9",
+					carId: "d83894df-8c5b-4363-92ce-cda1c6dd5494",
+					url: "https://picsum.photos/640/480/?image=351",
+				},
+				{
+					id: "9c21267a-891c-4164-8b80-55109273d483",
+					carId: "d83894df-8c5b-4363-92ce-cda1c6dd5494",
+					url: "https://picsum.photos/640/480/?image=92",
+				},
+				{
+					id: "a778841f-f527-4d25-ad2a-d7f0f2813256",
+					carId: "d83894df-8c5b-4363-92ce-cda1c6dd5494",
+					url: "https://picsum.photos/640/480/?image=248",
+				},
+				{
+					id: "fe2dbbee-46df-411a-8f2f-13a3433d2765",
+					carId: "d83894df-8c5b-4363-92ce-cda1c6dd5494",
+					url: "https://picsum.photos/640/480/?image=462",
+				},
+			],
+			fuelType: "Hybrid",
+			carCondition: "Used",
+			transmissionType: "Automatic",
+			carStatus: "Available",
+			carValidationStatus: "Approved",
+			vin: "PI45G4ZOELKE36794",
+			licensePlate: "1530",
+		},
+		{
+			id: "7564052b-2552-4c99-8906-2bea69e672b2",
+			title: "Cruze",
+			description:
+				"Provident labore sed voluptas. Quis minima laudantium at repellendus aut est. Vel iusto neque et quia ut. Voluptas quia ut in commodi omnis dicta. Rem ipsa voluptatum. Voluptas voluptas omnis repellat aut est eius.",
+			model: "Silverado",
+			make: "BMW",
+			year: 2021,
+			price: 21709.15679409601,
+			color: "azure",
+			mileage: 119434,
+			seatingCapacity: 6,
+			engineCapacity: 3903,
+			carImages: [
+				{
+					id: "6ed28613-5f92-4f76-940b-a030901d2d69",
+					carId: "7564052b-2552-4c99-8906-2bea69e672b2",
+					url: "https://picsum.photos/640/480/?image=812",
+				},
+				{
+					id: "8087c7db-b17d-498a-a0fd-11ec9da4b92b",
+					carId: "7564052b-2552-4c99-8906-2bea69e672b2",
+					url: "https://picsum.photos/640/480/?image=220",
+				},
+				{
+					id: "c96e0097-5a93-493d-b382-f8cf6a6a4c87",
+					carId: "7564052b-2552-4c99-8906-2bea69e672b2",
+					url: "https://picsum.photos/640/480/?image=564",
+				},
+				{
+					id: "f83a2ffb-7cf5-43bf-b9ce-324c1b8702d4",
+					carId: "7564052b-2552-4c99-8906-2bea69e672b2",
+					url: "https://picsum.photos/640/480/?image=361",
+				},
+				{
+					id: "fbc460af-3c6c-4fbd-a5e3-ef5aa1d7caf5",
+					carId: "7564052b-2552-4c99-8906-2bea69e672b2",
+					url: "https://picsum.photos/640/480/?image=735",
+				},
+			],
+			fuelType: "Petrol",
+			carCondition: "New",
+			transmissionType: "SemiAutomatic",
+			carStatus: "Available",
+			carValidationStatus: "Approved",
+			vin: "FZ1G8SLG97P276457",
+			licensePlate: "9767",
+		},
+		{
+			id: "03f6c411-5bb2-4561-8835-96ba4dff864c",
+			title: "A8",
+			description:
+				"Eos inventore illo nisi nostrum amet dolores dolorum et libero. Excepturi eaque a commodi perferendis. Assumenda nostrum tempora velit error tempora veniam consequatur sapiente nobis. Aperiam porro veritatis consequatur distinctio qui commodi velit velit. Aut voluptas quo.",
+			model: "Prius",
+			make: "Nissan",
+			year: 2017,
+			price: 41715.36768861947,
+			color: "indigo",
+			mileage: 196978,
+			seatingCapacity: 8,
+			engineCapacity: 1582,
+			carImages: [
+				{
+					id: "1b309fb0-7925-4bb9-8ef1-735ba891b0fe",
+					carId: "03f6c411-5bb2-4561-8835-96ba4dff864c",
+					url: "https://picsum.photos/640/480/?image=26",
+				},
+				{
+					id: "64186966-161f-42a0-8242-ed0d12d6f0c7",
+					carId: "03f6c411-5bb2-4561-8835-96ba4dff864c",
+					url: "https://picsum.photos/640/480/?image=933",
+				},
+				{
+					id: "6ad0cc18-dd3d-4efe-8422-5d1ac8748802",
+					carId: "03f6c411-5bb2-4561-8835-96ba4dff864c",
+					url: "https://picsum.photos/640/480/?image=417",
+				},
+				{
+					id: "8b3fcfd8-37c0-49b6-a742-5da45db82fc4",
+					carId: "03f6c411-5bb2-4561-8835-96ba4dff864c",
+					url: "https://picsum.photos/640/480/?image=541",
+				},
+			],
+			fuelType: "Electric",
+			carCondition: "Used",
+			transmissionType: "Manual",
+			carStatus: "Available",
+			carValidationStatus: "Approved",
+			vin: "BUR2L8EQKZJQ48208",
+			licensePlate: "3118",
+		},
+	]
 
-	const { data } = useQuery({
-		queryKey: ["car"],
-		queryFn: () => getAllCars(pageNumber),
-		enabled: true,
-	})
-
-	return (
-		<div
-			id={"car-main-container"}
-			className={"flex h-full w-full flex-col items-center justify-center"}
-		>
-			<div className={"lg:w-[90%] xl:w-[75%]"}>
-				<div className={"flex items-center justify-between py-4"}>
-					<div className={""}>
-						<h1 className={"text-3xl font-semibold"}>Dashboard</h1>
-						<h3 className={"text-sm text-gray-500"}>
-							Manage your inventory, sales, and performance all in one place.
-						</h3>
-					</div>
-				</div>
-				<div
-					id={"car-container"}
-					className={"flex h-full w-full md:justify-between"}
-				>
-					<div
-						id={"left-side-container"}
-						className={
-							"h-full w-full rounded-sm bg-white pb-4 shadow-sm md:w-[73%]"
-						}
-					>
-						<div
-							id={"header"}
-							className={"flex items-center justify-between p-4"}
-						>
-							<h1 className={"text-lg font-semibold"}>Available Cars</h1>
-							{/*This part need to add filter component*/}
-							<div
-								onClick={() => setIsFilterOpen((prevState) => !prevState)}
-								className="hover:bg-primary-btn-hover hover:text-primary flex cursor-pointer items-center gap-2 rounded-sm border border-gray-200 px-4 py-2 shadow-md"
-							>
-								<SlidersHorizontal className="h-5 w-5" />
-								Filter
-							</div>
-						</div>
-						{isFilterOpen && (
-							<div
-								id="conditionalFilter"
-								className="flex w-full justify-center"
-							>
-								<ConditionalCarFilter />
-							</div>
-						)}
-						<div id={"cars"} className={"mt-2 flex w-full justify-center"}>
-							<div
-								className={
-									"grid w-[95%] auto-cols-max grid-cols-2 gap-4 lg:grid-cols-3"
-								}
-							>
-								{data &&
-									data.data.items
-										.slice(0, 9)
-										.map((car: CarItems, index: number) => (
-											<div key={index} className="last:hidden lg:last:block">
-												<CarCard car={car} />
-											</div>
-										))}
-							</div>
-						</div>
-					</div>
-					<div
-						id={"right-side-container"}
-						className={
-							"hidden h-screen w-[25%] rounded-sm bg-white shadow-sm md:block"
-						}
-					>
-						# Need to add analytics component here #
-					</div>
-				</div>
-			</div>
-		</div>
-	)
-}
-
-function CarCard({ car }: { car: CarItems }) {
-	const router = useRouter()
-	return (
-		<div
-			onClick={() => router.push(`/profile/dealer/cars/${car.id}`)}
-			className={"flex h-full w-full flex-col rounded-sm bg-white shadow-sm"}
-		>
-			<div className={"space-y-2 p-3"}>
-				<Image
-					className={"h-30 w-full object-cover"}
-					src={car.carImages[0]?.url}
-					alt={"car"}
-					width={"100"}
-					height={"50"}
-				></Image>
-				<div
-					id={"titleAndSave"}
-					className={"flex items-center justify-between"}
-				>
-					<h1 className="text-lg font-semibold text-black">{car.title}</h1>
-					<h3
-						className={clsx(
-							car.carStatus === "Available" ? "bg-green-600" : "bg-red-500",
-							"items-center rounded-md px-2 py-0.5 text-xs",
-						)}
-					>
-						{car.carStatus}
-					</h3>
-				</div>
-				<div
-					id={"features"}
-					className={"hidden flex-col justify-between md:flex md:flex-row"}
-				>
-					<h1 className={"flex items-center gap-1 text-xs md:text-sm"}>
-						<CarFront className="h-5 w-5" /> <b>{car.make}</b>
-					</h1>
-					<h1 className={"flex items-center gap-1 text-xs md:text-sm"}>
-						<Fuel className="h-5 w-5" /> <b>{car.fuelType}</b>
-					</h1>
-					<h1 className={"flex items-center gap-1 text-xs md:text-sm"}>
-						<PaintBucket className="h-5 w-5" />
-
-						<div
-							className={clsx(
-								`h-5 w-5 bg-${car.color.toLowerCase()}-500 `,
-								`bg-${car.color.toLowerCase()}`,
-							)}
-						/>
-					</h1>
-				</div>
-				<div id={"price"} className={"text-primary text-lg font-semibold"}>
-					${car.price.toString().split(".")[0]}
-				</div>
-			</div>
-		</div>
-	)
-}
-
-export function ConditionalCarFilter() {
-	return (
-		<div
-			id={"filter-container"}
-			className={
-				"flex w-[95%] flex-col justify-center gap-2 rounded-sm border border-dashed border-gray-600 px-4 py-2"
-			}
-		>
-			{/* Placeholder for future filter options */}
-			<div id="year" className={"items-center text-gray-300"}>
-				<h1>
-					Year:{" "}
-					<input
-						type="number"
-						name="year"
-						placeholder="1990"
-						min={1990}
-						max={2025}
-						className={
-							"w-20 rounded-sm border border-gray-600 bg-gray-800 p-1 text-white placeholder:text-sm focus:outline-none"
-						}
-					/>{" "}
-					to{" "}
-					<input
-						type="number"
-						placeholder="2025"
-						name="year"
-						min={1990}
-						max={2025}
-						className={
-							"w-20 rounded-sm border border-gray-600 bg-gray-800 p-1 text-white placeholder:text-sm focus:outline-none"
-						}
-					/>
-				</h1>
-			</div>
-			<div className="h-0.5 w-full border border-gray-600" />
-			<div id="price" className={"items-center text-gray-300"}>
-				<h1>
-					Price range:{" "}
-					<input
-						type="number"
-						name="price"
-						placeholder="$5000 - min"
-						className={
-							"w-28 rounded-sm border border-gray-600 bg-gray-800 p-1 text-white placeholder:text-sm focus:outline-none"
-						}
-					/>{" "}
-					to{" "}
-					<input
-						type="number"
-						placeholder="$20000 - max"
-						name="price"
-						className={
-							"w-28 rounded-sm border border-gray-600 bg-gray-800 p-1 text-white placeholder:text-sm focus:outline-none"
-						}
-					/>
-				</h1>
-			</div>
-			<div className="h-0.5 w-full border border-gray-600" />
-			<div className="flex items-center gap-1">
-				Brand
-				<div className="flex items-center gap-1 select-none">
-					<input
-						id="tesla"
-						type="checkbox"
-						name="make"
-						value="Toyota"
-						className="peer hidden appearance-none"
-					/>
-					<label
-						htmlFor="tesla"
-						className="peer-checked:bg-primary ml-1 flex cursor-pointer gap-1 rounded-sm border border-gray-600 bg-white px-2 py-2 text-red-500"
-					>
-						<div className="relative h-5 w-16">
-							<Image
-								src="/tesla-text.png"
-								alt="toyota"
-								fill
-								className="object-contain"
-							/>
-						</div>
-					</label>
-				</div>
-				<div className="flex items-center gap-1 select-none">
-					<input
-						id="toyota"
-						type="checkbox"
-						name="make"
-						value="Toyota"
-						className="peer hidden appearance-none"
-					/>
-					<label
-						htmlFor="toyota"
-						className="peer-checked:bg-primary ml-1 flex cursor-pointer gap-1 rounded-sm border border-gray-600 bg-white px-2 py-2 text-red-500"
-					>
-						<div className="relative h-5 w-16">
-							<Image
-								src="/toyota-text.png"
-								alt="toyota"
-								fill
-								className="scale-200 object-contain"
-							/>
-						</div>
-					</label>
-				</div>
-			</div>
-		</div>
-	)
+	return <Cars carData={carData} />
 }
 
 export default Page

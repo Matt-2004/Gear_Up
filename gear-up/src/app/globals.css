@@ -48,6 +48,20 @@ body {
 	z-index: 0;
 }
 
+.hide-scrollbar {
+	/* For Internet Explorer and Edge */
+	-ms-overflow-style: none;
+	/* For Firefox */
+	scrollbar-width: none;
+	/* Ensure scrolling is still possible if content overflows */
+	overflow: auto;
+}
+
+/* For Chrome, Safari, and Opera */
+.hide-scrollbar::-webkit-scrollbar {
+	display: none;
+}
+
 .two-line-ellipsis {
 	display: -webkit-box;
 	-webkit-line-clamp: 2;

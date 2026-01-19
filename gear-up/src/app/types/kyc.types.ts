@@ -19,7 +19,7 @@ export interface IKycRes {
 	isSuccess: boolean
 	message: string
 	data: {
-		kycSubmissions: IKycSubmissions[]
+		kycDto: IKycSubmissions[]
 		totalCount: number
 	}
 	status: number

@@ -1,4 +1,5 @@
 import { IUser } from "@/app/types/user.types"
+import clsx from "clsx"
 import { Car, LogOut, Settings, User, UserPlus } from "lucide-react"
 import { signOut } from "next-auth/react"
 import Link from "next/link"
@@ -6,35 +7,45 @@ import { HTMLAttributes, ReactNode } from "react"
 
 export function ProfileDropDown({ user }: { user: IUser }) {
 	return (
-		<div className="bg-background text-primary absolute top-11 right-0 z-30 w-64 rounded-md border-gray-800 shadow-sm shadow-gray-700">
+		<div className="text-primary absolute top-10 right-0 z-30 w-52 rounded-md border-gray-800 bg-white shadow-sm shadow-gray-300">
 			<ul className="p-1">
-				<DropDownItem className="" link={"/profile/user"}>
+				<DropDownItem className="" link={"/profile/user"} whatFor="Navbar">
 					<div className="items-center rounded-full p-1">
 						<User className="h-5 w-5" />
 					</div>
 					Profile
 				</DropDownItem>
 				{user.role === "Dealer" && (
-					<DropDownItem className="" link={"/profile/dealer/cars"}>
+					<DropDownItem
+						className=""
+						link={"/profile/dealer/cars"}
+						whatFor="Navbar"
+					>
 						<div className="items-center rounded-full p-1">
 							<Car className="h-5 w-5" />
 						</div>
 						Cars
 					</DropDownItem>
 				)}
-				<DropDownItem className="" link={"/profile/user"}>
+				<DropDownItem className="" link={"/profile/user"} whatFor="Navbar">
 					<div className="items-center rounded-full p-1">
 						<Settings className="h-5 w-5" />
 					</div>
 					Settings
 				</DropDownItem>
-				<DropDownItem className="" link={"/profile/dealer/register?step=1"}>
-					<div className="items-center rounded-full p-1">
-						<UserPlus className="h-5 w-5" />
-					</div>
-					Dealership registration
-				</DropDownItem>
-				<DropDownItem link={""} onClick={() => signOut()}>
+				{user.role !== "Dealer" && (
+					<DropDownItem
+						className=""
+						link={"/profile/dealer/register?step=1"}
+						whatFor="Navbar"
+					>
+						<div className="items-center rounded-full p-1">
+							<UserPlus className="h-5 w-5" />
+						</div>
+						Dealership registration
+					</DropDownItem>
+				)}
+				<DropDownItem link={""} onClick={() => signOut()} whatFor="Navbar">
 					<div className="items-center rounded-full p-1">
 						<LogOut className="h-5 w-5" />
 					</div>
@@ -48,20 +59,42 @@ export function ProfileDropDown({ user }: { user: IUser }) {
 interface DropDownProps extends HTMLAttributes<HTMLDivElement> {
 	link: string
 	children: ReactNode
+	type: "DELETE"
+	whatFor: "Navbar" | "Card"
 }
 
-function DropDownItem({ link, children, ...props }: DropDownProps) {
+export function DropDownItem({
+	link,
+	children,
+	type,
+	whatFor,
+	...props
+}: Partial<DropDownProps>) {
 	return (
 		<div {...props}>
-			<Link href={link}>
+			{link ? (
+				<Link href={link ?? ""}>
+					<div
+						className={
+							"flex cursor-pointer items-center gap-1 rounded-sm px-2 py-2 hover:border-green-200 hover:bg-green-100"
+						}
+					>
+						{children}
+					</div>
+				</Link>
+			) : (
 				<div
-					className={
-						"flex cursor-pointer items-center gap-2 rounded-sm px-4 py-2 hover:border-gray-600 hover:bg-gray-300"
-					}
+					className={clsx(
+						type !== "DELETE"
+							? "hover:text-primary hover:border-green-200 hover:bg-green-100"
+							: "bg-red-200 text-red-500 hover:bg-red-500 hover:text-red-100",
+						whatFor === "Navbar" ? "rounded-sm" : "rounded-tr-lg rounded-bl-lg",
+						"flex cursor-pointer items-center gap-1 px-2 py-2 text-sm",
+					)}
 				>
 					{children}
 				</div>
-			</Link>
+			)}
 		</div>
 	)
 }

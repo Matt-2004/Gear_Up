@@ -78,8 +78,11 @@ export function User({ user }: { user: IUser }) {
 	return (
 		<div
 			className="relative flex h-full w-16 cursor-pointer items-center justify-end gap-2"
-			onClick={() => {
-				setIsOpenUserProfileMenu(!isOpenUserProfileMenu)
+			onMouseEnter={() => {
+				setIsOpenUserProfileMenu(true)
+			}}
+			onMouseLeave={() => {
+				setIsOpenUserProfileMenu(false)
 			}}
 		>
 			<Image
@@ -90,10 +93,10 @@ export function User({ user }: { user: IUser }) {
 				className="h-10 w-10 rounded-full border border-gray-300"
 			></Image>
 			<h1 className="hidden md:block">
-				<span className="text-primary font-medium">
+				<span className="text-primary whitespace-nowrap font-medium">
 					{username &&
 						username.toLowerCase().charAt(0).toUpperCase() +
-							username.substring(1, username.length)}
+						username.substring(1, username.length)}
 				</span>
 				{role === "Dealer" && (
 					<div className="bg-primary flex items-center gap-1 rounded-full px-2 text-center text-sm text-white">

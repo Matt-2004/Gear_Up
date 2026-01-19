@@ -22,7 +22,7 @@ export async function authCookieIntegration(
 			body: JSON.stringify(payload),
 		})
 		const response = (await res.json()) as authResponse
-		console.log("response in authCookieIntegration function:: ", response)
+
 		// cookie integration
 		cookieStore.set("access_token", response.data.accessToken, {
 			httpOnly: true,

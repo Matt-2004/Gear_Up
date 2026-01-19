@@ -1,14 +1,10 @@
 "use client"
 
-import { useState } from "react"
 import DocumentType from "./DocumentType"
 import KycUpload from "./KycUpload"
 import { ProgressSteps } from "./ProgressSteps"
 import Confirmation from "./Review"
 import SelfieImageUpload from "./SelfileImageUpload"
-
-import { useKycRegisterContext } from "./context/KycRegisterContext"
-import { ISteps, Steps } from "./StepNavigation"
 
 // Content shows depend on params
 
@@ -16,11 +12,44 @@ import { ISteps, Steps } from "./StepNavigation"
 
 // FormAction
 
+interface StepState {
+	id: string
+	type: string
+	label: string
+	path: string
+}
+
+export type ISteps = StepState[]
+
+export const Steps: ISteps = [
+	{
+		id: "1",
+		type: "DocumentType",
+		label: "Document Type",
+		path: "?step=1",
+	},
+	{
+		id: "2",
+		type: "KycUpload",
+		label: "Upload Documents",
+		path: "?step=2",
+	},
+	{
+		id: "3",
+		type: "SelfieUplaod",
+		label: "Selfie Verification",
+		path: "?step=3",
+	},
+	{
+		id: "4",
+		type: "review",
+		label: "Review & Submit",
+		path: "?step=4",
+	},
+]
+
 const KycRegister = ({ step }: { step: string }) => {
 	// Passing useState to child components to get data
-
-	const [currentStep, setCurrentStep] = useState(0)
-	const [steps, setSteps] = useState<ISteps>(Steps)
 
 	return (
 		<div className="flex min-h-screen flex-col items-center bg-gray-900 px-4 py-12 text-white">
@@ -37,7 +66,7 @@ const KycRegister = ({ step }: { step: string }) => {
 
 				{/* Progress Steps */}
 				<div className="mb-8 flex justify-center">
-					<ProgressSteps />
+					<ProgressSteps Steps={Steps} />
 				</div>
 
 				{/* Step Content */}
@@ -71,7 +100,6 @@ interface IRenderStepContentProps {
 }
 
 const RenderStepContent = ({ step }: IRenderStepContentProps) => {
-	const { kycData } = useKycRegisterContext()
 	return (
 		<>
 			{step === "1" && <DocumentType />}

@@ -2,6 +2,7 @@
 
 import { IAdminLogin } from "@/app/types/admin.types"
 import { INewPassword } from "@/app/types/auth.types"
+import { AddComment } from "@/app/types/comment.types"
 import { IKycUpdateByAdmin } from "@/app/types/kyc.types"
 import { API_URL } from "@/lib/config"
 import axios from "axios"
@@ -35,15 +36,10 @@ export async function getFetch(url: string) {
 
 export async function postFetch(
 	url: string,
-	data: INewPassword | IAdminLogin | FormData | null,
+	data: INewPassword | IAdminLogin | FormData | null | AddComment,
 ) {
 	const access_token = (await cookies()).get("access_token")?.value
-	if (data instanceof FormData) {
-		console.log(
-			"In postfetch api function formdata value:: ",
-			Object.fromEntries(data),
-		)
-	}
+
 	// url & options
 	try {
 		const response = await api.post(url, data, {
@@ -179,8 +175,11 @@ export async function searchCarWithQuery(query: string) {
 	return res?.data
 }
 
-export async function getAllPosts(pageNumber: number) {
-	const res = await getFetch(`/api/v1/posts?pageNumber=${pageNumber}`)
+export async function getAllPosts(mode: string, pageNumber: number) {
+	console.log("Number value:: ", pageNumber)
+	const res = await getFetch(
+		`/api/v1/posts?pageNumber=${pageNumber}&mode=${mode}`,
+	)
 	return res?.data
 }
 
@@ -209,11 +208,8 @@ export async function getNestedCommentsByCommentId(parentCommentId: string) {
 	return res?.data
 }
 
-export async function addCommentToPost(postId: string, content: string) {
-	const res = await postFetch(`/api/v1/comments`, {
-		postId,
-		content,
-	} as any)
+export async function addComment(data: AddComment) {
+	const res = await postFetch(`/api/v1/comments`, data)
 	return res?.data
 }
 

@@ -194,11 +194,16 @@ interface IDecision {
 
 const RejectButton = ({ id, data }: IDecision) => {
 	const router = useRouter()
-	const onSubmit = async () => {
-		await updateKycByAdmin(data, id)
+	const onSubmit = () => {
+		console.log(data.rejectionReason)
+		const reject = async () => {
 
-		router.replace("/profile/admin?tab=kyc-verification")
+			await updateKycByAdmin(data, id)
+			router.replace("/profile/admin?tab=kyc-verification")
+		}
+		reject()
 	}
+
 	return (
 		<button
 			className={
@@ -214,10 +219,14 @@ const RejectButton = ({ id, data }: IDecision) => {
 
 const ApprovedButton = ({ id, data }: IDecision) => {
 	const router = useRouter()
-	const onSubmit = async () => {
-		await updateKycByAdmin(data, id)
+	const onSubmit = () => {
+		const approve = async () => {
+			await updateKycByAdmin(data, id)
 
-		router.replace("/profile/admin?tab=kyc-verification")
+			router.replace("/profile/admin?tab=kyc-verification")
+
+		}
+		approve()
 	}
 
 	return (
@@ -232,6 +241,8 @@ const ApprovedButton = ({ id, data }: IDecision) => {
 		</button>
 	)
 }
+
+
 
 interface ITextArea {
 	text: string

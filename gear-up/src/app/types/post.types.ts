@@ -1,12 +1,12 @@
 export interface PostRoot {
 	isSuccess: boolean
-	data: PostData
+	data: AllPostData
 	successMessage: string
 	errorMessage: string
 	status: number
 }
 
-export interface PostData {
+export interface AllPostData {
 	totalCount: number
 	pageSize: number
 	currentPage: number

@@ -9,6 +9,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 	children: React.ReactNode
 	loading: boolean
 	provider: "google" | "facebook" | "manual"
+	width: "full" | "half"
 }
 
 // Button usage
@@ -23,6 +24,7 @@ function Button({
 	children,
 	loading,
 	provider,
+	width = "full",
 	...props
 }: Partial<ButtonProps>) {
 	function handleProviderLogin() {
@@ -41,7 +43,8 @@ function Button({
 			// onClick={handleProviderLogin}
 			type="submit"
 			className={clsx(
-				"bg-primary active:bg-primary-active flex w-full max-w-[25rem] items-center justify-center gap-6 rounded-md py-2 text-lg font-medium text-white transition-shadow hover:cursor-pointer hover:shadow-lg disabled:bg-gray-400",
+				width === "full" ? "max-w-[25rem]" : "max-w-[15rem]",
+				"bg-primary active:bg-primary-active flex w-full min-w-[10rem] items-center justify-center gap-6 rounded-md py-2 text-lg font-medium text-white transition-shadow hover:cursor-pointer hover:shadow-lg disabled:bg-gray-400",
 			)}
 			{...props}
 		>

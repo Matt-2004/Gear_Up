@@ -1,42 +1,7 @@
 import clsx from "clsx"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-
-interface StepState {
-	id: string
-	type: string
-	label: string
-	path: string
-}
-
-export type ISteps = StepState[]
-
-export const Steps: ISteps = [
-	{
-		id: "1",
-		type: "DocumentType",
-		label: "Document Type",
-		path: "?step=1",
-	},
-	{
-		id: "2",
-		type: "KycUpload",
-		label: "Upload Documents",
-		path: "?step=2",
-	},
-	{
-		id: "3",
-		type: "SelfieUplaod",
-		label: "Selfie Verification",
-		path: "?step=3",
-	},
-	{
-		id: "4",
-		type: "review",
-		label: "Review & Submit",
-		path: "?step=4",
-	},
-]
+import { Steps } from "./KycRegister"
 
 export const StepNavigation = () => {
 	const router = useRouter()
