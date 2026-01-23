@@ -111,46 +111,54 @@ const Review = () => {
 						<div className="flex flex-col gap-1">
 							<h3 className="text-sm font-semibold">Basic</h3>
 							<table className="w-xs border border-gray-200">
-								{basicSpecTableData.map((d, i) => {
-									const [key, value] = Object.entries(d)[0]
+								<tbody>
+									{basicSpecTableData.map((d, i) => {
+										const [key, value] = Object.entries(d)[0]
 
-									return (
-										<TableRow key={i} index={i}>
-											<td className="max-w-[3.5rem] pl-2">{key}</td>
-											<td className="">{value}</td>
-										</TableRow>
-									)
-								})}
+										return (
+											<TableRow key={i} index={i}>
+												<td className="max-w-[3.5rem] pl-2">{key}</td>
+												<td className="">{value}</td>
+											</TableRow>
+										)
+									})}
+								</tbody>
 							</table>
 						</div>
 						<div className="flex flex-col gap-1">
 							<h3 className="text-sm font-semibold">Performance</h3>
 							<table className="w-xs border border-gray-200">
-								{performanceSpecTableData.map((d, i) => {
-									const [key, value] = Object.entries(d)[0]
+								<tbody>
 
-									return (
-										<TableRow key={i} index={i}>
-											<td className="max-w-[3.5rem] pl-2">{key}</td>
-											<td className="">{value}</td>
-										</TableRow>
-									)
-								})}
+									{performanceSpecTableData.map((d, i) => {
+										const [key, value] = Object.entries(d)[0]
+
+										return (
+											<TableRow key={i} index={i}>
+												<td className="max-w-[3.5rem] pl-2">{key}</td>
+												<td className="">{value}</td>
+											</TableRow>
+										)
+									})}
+								</tbody>
 							</table>
 						</div>
 						<div className="flex flex-col gap-1">
 							<h3 className="text-sm font-semibold">Capacity</h3>
 							<table className="w-xs border border-gray-200">
-								{capacitySpecTableData.map((d, i) => {
-									const [key, value] = Object.entries(d)[0]
+								<tbody>
 
-									return (
-										<TableRow key={i} index={i}>
-											<td className="max-w-[3.5rem] pl-2">{key}</td>
-											<td className="">{value}</td>
-										</TableRow>
-									)
-								})}
+									{capacitySpecTableData.map((d, i) => {
+										const [key, value] = Object.entries(d)[0]
+
+										return (
+											<TableRow key={i} index={i}>
+												<td className="max-w-[3.5rem] pl-2">{key}</td>
+												<td className="">{value}</td>
+											</TableRow>
+										)
+									})}
+								</tbody>
 							</table>
 						</div>
 					</div>
@@ -163,17 +171,17 @@ const Review = () => {
 
 export const TableRow = ({ index, children }: { index: number, children: ReactNode }) => {
 	return (
-		<tbody>
 
-			<tr
-				className={clsx(
-					index % 2 == 0 ? "bg-[#F9F9F9]" : "bg-[#F1F1F1]",
-					"h-8 text-sm text-gray-600",
-				)}
-			>
-				{children}
-			</tr>
-		</tbody>
+
+		<tr
+			className={clsx(
+				index % 2 == 0 ? "bg-[#F9F9F9]" : "bg-[#F1F1F1]",
+				"h-8 text-sm text-gray-600 ",
+			)}
+		>
+			{children}
+		</tr>
+
 	)
 }
 

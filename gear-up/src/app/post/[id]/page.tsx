@@ -1,5 +1,6 @@
 import { getPostById } from "@/utils/FetchAPI"
 import { cookies } from "next/headers"
+import CommentContextProvider from "./CommentContext"
 import Details from "./Details"
 
 const getData = async (id: string) => {
@@ -18,9 +19,13 @@ const Page = async ({
 	const access_token = cookieStore.get("access_token")?.value
 
 
-	return <Details access_token={access_token ?? ""}
-		id={id}
-		data={postData} />
+	return (
+		<CommentContextProvider>
+			<Details access_token={access_token ?? ""}
+
+				postData={postData} />
+		</CommentContextProvider>
+	)
 }
 
 export default Page

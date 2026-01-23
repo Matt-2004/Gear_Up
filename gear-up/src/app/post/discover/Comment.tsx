@@ -2,39 +2,43 @@
 
 import { AddComment, CommentData } from "@/app/types/comment.types"
 import {
-	addComment,
-	getCommentsByPostId,
-	getNestedCommentsByCommentId,
+	addComment
 } from "@/utils/FetchAPI"
 import { diffFromNowAuto } from "@/utils/timeFormat"
-import * as signalR from "@microsoft/signalr"
+
 import clsx from "clsx"
 import { Heart, Reply } from "lucide-react"
 import Image from "next/image"
-import { useEffect, useRef, useState } from "react"
+import { useRef, useState } from "react"
+import { ICommentProps, useCommentContext } from "../[id]/CommentContext"
 
 interface ICommnetsProps {
-	access_token: string
-	postId: string
+	comment: ICommentProps[]
 	level: number
 }
 
-export const Comment = ({ access_token, postId, level }: ICommnetsProps) => {
+export const Comment = ({ comment, level }: ICommnetsProps) => {
+
+
+	const { handleParentIdUpdate, requestedParentCommentId } = useCommentContext()
+	/* 
+				Data flow
+
+			1. Get the context data 
+			2. Request replies using parentCommentId and pass through with context -> main page fetch -> store
+			3.
+
+	*/
 
 	const contentRef = useRef<HTMLDivElement>(null)
-	const [commentData, setCommentData] = useState<CommentData[]>([])
-	const [openReplyId, setOpenReplyId] = useState<string | null>(null)
 	const [replyText, setReplyText] = useState<string>("")
-	const [showingReplayById, setShowingReplayById] = useState<string | null>(
-		null,
-	)
 
+	// get the id of the comment to show reply box
 	const [activeReplyId, setActiveReplyId] = useState<string | null>(null)
-	// get the id of the comment to show reply
 
 
 	const handleReplySubmit = async ({ postId, text, parentCommentId }: AddComment) => {
-		console.log("This function is working...")
+
 		try {
 			await addComment({ postId, text, parentCommentId })
 		} catch (err) {
@@ -46,66 +50,9 @@ export const Comment = ({ access_token, postId, level }: ICommnetsProps) => {
 		setActiveReplyId(id)
 		setReplyText("")
 	}
-	useEffect(() => {
-		if (!postId) {
-			console.log("Id doesn't exist")
-			return
-		}
-
-		// SignalR connection start
-		const connection = new signalR.HubConnectionBuilder()
-			.withUrl("http://localhost:5255/hubs/post", {
-				accessTokenFactory: () => access_token
-			})
-			.withAutomaticReconnect()
-			.configureLogging(signalR.LogLevel.Information)
-			.build()
-
-		// Join group to Commnet Group
-		const JoinGroups = async () => {
-
-			await connection.start().catch(err => console.error(err))
-
-			try {
-				await connection.invoke('JoinGroup', postId)
-				await connection.invoke('JoinCommentsGroup', postId)
-			} catch (err) {
-				console.error("Join group error:: ", err)
-			}
-		}
-		// Join Group
-		JoinGroups()
-
-		connection.on('CommentCreated', (event) => {
-			setCommentData(prevComments => [event, ...prevComments])
-			console.log("Comment created:: ", event)
-		})
 
 
 
-		return () => {
-			connection.off("CommentCreated")
-			connection.stop()
-		}
-	}, [])
-
-	useEffect(() => {
-		if (level === 0) {
-			const fetchComments = async () => {
-				const data = await getCommentsByPostId(postId)
-				setCommentData(data)
-			}
-			fetchComments()
-		} else {
-			// For nested comments, you might want to implement a different API call
-
-			const fetchNestedComments = async () => {
-				const data = await getNestedCommentsByCommentId(postId)
-				setCommentData(data)
-			}
-			fetchNestedComments()
-		}
-	}, [postId, level])
 
 	return (
 		<div className={clsx(level > 0 ? "pl-12" : "pl-6", "relative space-y-4 mt-2")}>
@@ -119,7 +66,7 @@ export const Comment = ({ access_token, postId, level }: ICommnetsProps) => {
 				/>
 			)}
 
-			{commentData.map((comment, i) => (
+			{comment.map((c, i) => (
 				<div key={i} className="relative">
 					{/* connector from vertical guide to this comment */}
 
@@ -133,8 +80,8 @@ export const Comment = ({ access_token, postId, level }: ICommnetsProps) => {
 					<div className="w-full">
 						<div className="flex w-full gap-4">
 							<Image
-								src={comment.commentedUserProfilePictureUrl}
-								alt={comment.commentedUserName}
+								src={c.commentedUserProfilePictureUrl}
+								alt={c.commentedUserName}
 								width={60}
 								height={40}
 								className="mt-2 h-10 w-10 rounded-full"
@@ -144,28 +91,28 @@ export const Comment = ({ access_token, postId, level }: ICommnetsProps) => {
 								<div>
 									<div className="rounded-lg">
 										<h1 className="text-sm ">
-											{comment.commentedUserName}
+											{c.commentedUserName}
 										</h1>
 										<p ref={contentRef} className="text-sm">
-											{comment.content}
+											{c.content}
 										</p>
 									</div>
 									{/* Timeline */}
 									<div className="mb-2">
-										<h3 className="text-xs font-light">{diffFromNowAuto(comment.createdAt).value} {diffFromNowAuto(comment.createdAt).unit} ago</h3>
+										<h3 className="text-xs font-light">{diffFromNowAuto(c.createdAt).value} {diffFromNowAuto(c.createdAt).unit} ago</h3>
 									</div>
-									{/* Comment Actions */}
+									{/* c Actions */}
 									<div className="flex flex-col items-start gap-2">
 										<div className="flex items-center gap-2">
-											<LikeCount likeCount={comment.likeCount} />
+											<LikeCount likeCount={c.likeCount} />
 											<ReplyBtn
 												handleActiveReply={handleActiveReply}
-												comment={comment}
+												comment={c}
 											/>
 										</div>
 									</div>
-									{/* Reply text box and submit button (render only for this comment) */}
-									{activeReplyId === String(comment.id || i) && (
+									{/* Reply text box and submit button (render only for this c) */}
+									{activeReplyId === String(c.id || i) && (
 
 										<div className="mt-2 w-full ">
 											<CommentTextBox
@@ -173,9 +120,9 @@ export const Comment = ({ access_token, postId, level }: ICommnetsProps) => {
 												onChange={setReplyText}
 												onSubmit={() =>
 													handleReplySubmit({
-														postId: comment.postId,
+														postId: c.postId,
 														text: replyText,
-														parentCommentId: String(comment.id),
+														parentCommentId: c.id,
 													})
 												}
 												onCancel={() => setActiveReplyId(null)}
@@ -183,7 +130,7 @@ export const Comment = ({ access_token, postId, level }: ICommnetsProps) => {
 										</div>
 									)}
 								</div>
-								{comment.childCount > 0 && showingReplayById !== comment.id && (
+								{c.childCount > 0 && requestedParentCommentId !== c.id && (
 									<>
 										<div
 											className="absolute top-14 bottom-0 left-4 h-[calc(100%-4.9rem)] w-px bg-gray-300"
@@ -194,18 +141,18 @@ export const Comment = ({ access_token, postId, level }: ICommnetsProps) => {
 											aria-hidden
 										/>
 										<button
-											onClick={() => setShowingReplayById(comment.id)}
+											onClick={() => handleParentIdUpdate(c.id)}
 											className="mt-3 cursor-pointer text-start text-xs text-gray-600 hover:underline"
 										>
-											Show {comment.childCount} replies
+											Show {c.childCount} replies
 										</button>
 									</>
 								)}
 							</div>
 						</div>
 
-						{showingReplayById === comment.id && (
-							<Comment access_token={access_token} postId={showingReplayById} level={level + 1} />
+						{requestedParentCommentId === c.id && c.replies && (
+							<Comment comment={c.replies} level={level + 1} />
 						)}
 					</div>
 				</div>
