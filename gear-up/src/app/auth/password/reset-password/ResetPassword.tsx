@@ -9,25 +9,47 @@ import {
 	AuthPageContent,
 	FormContainer,
 } from "@/components/Navbar/common"
-import { Submit } from "./action"
+import { useRouter } from "next/navigation"
+import { useActionState, useEffect } from "react"
+import { submit, type ResetPasswordActionState } from "./action"
 
-const ResetPassword = ({ onSubmit }: { onSubmit: Submit }) => {
+
+const initialState: ResetPasswordActionState = {
+	ok: false,
+	toastType: "info",
+	message: null,
+	redirectTo: null,
+}
+
+const ResetPassword = () => {
+	const router = useRouter()
+	const [state, formAction, pending] = useActionState(submit, initialState)
 	const { ToastComponent, addToastMessage, removeToastMessage } = useToast({
 		toastType: "success",
 		message: null,
 	})
+
+	useEffect(() => {
+		if (!state?.message) return
+
+		addToastMessage(state.toastType, state.message)
+		new Promise(res => setTimeout(() => {
+			removeToastMessage(state.toastType, null)
+			router.push('/')
+		}, 4000))
+
+	}, [pending])
+
 	return (
 		<AuthPageContainer>
-			{/* <AnimatePresence>
-								{mutation.isSuccess && <ToastComponent />}
-							</AnimatePresence> */}
+			<ToastComponent />
 			<FormContainer>
 				<AuthPageCaption>Create new password</AuthPageCaption>
 				<AuthPageContent>
 					Your new password must be different from previous and password.
 				</AuthPageContent>
 				<form
-					action={onSubmit}
+					action={formAction}
 					className="flex w-full flex-col items-center justify-center gap-4"
 				>
 					<Input
@@ -49,7 +71,9 @@ const ResetPassword = ({ onSubmit }: { onSubmit: Submit }) => {
 					>
 						Confirm Password
 					</Input>
-					<Button>Change Password</Button>
+					<Button provider="manual" loading={pending} disabled={pending}>
+						Change Password
+					</Button>
 				</form>
 			</FormContainer>
 		</AuthPageContainer>

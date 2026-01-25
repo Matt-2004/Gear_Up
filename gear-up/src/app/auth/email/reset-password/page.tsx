@@ -1,8 +1,7 @@
 import EmailSend from "../EmailSend"
-import { submit } from "./action"
 
 const Page = () => {
-	return <EmailSend onSubmit={submit} />
+	return <EmailSend variant="reset-password" />
 }
 
 export default Page

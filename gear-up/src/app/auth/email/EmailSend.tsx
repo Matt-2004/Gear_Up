@@ -10,16 +10,61 @@ import {
 	FormContainer,
 } from "@/components/Navbar/common"
 import Link from "next/link"
-import { Submit } from "./verification/action"
+import { useRouter } from "next/navigation"
+import { useActionState, useEffect } from "react"
+import { submit as submitReset } from "./reset-password/action"
+import { submit as submitVerification } from "./verification/action"
 
-const EmailSend = ({ onSubmit }: { onSubmit: Submit }) => {
+
+type EmailVariant = "verification" | "reset-password"
+
+type EmailActionState = {
+	ok: boolean
+	toastType: "success" | "error" | "info"
+	message: string | null
+	redirectTo?: string | null
+}
+
+const initialState: EmailActionState = {
+	ok: false,
+	toastType: "info",
+	message: null,
+	redirectTo: null,
+}
+
+const EmailSend = ({ variant }: { variant: EmailVariant }) => {
+	const router = useRouter()
+	const action = variant === "verification" ? submitVerification : submitReset
+	const [state, formAction, pending] = useActionState(action, initialState)
 	const { ToastComponent, addToastMessage, removeToastMessage } = useToast({
 		toastType: "success",
 		message: null,
 	})
 
+	useEffect(() => {
+		if (!state?.message) return
+		addToastMessage(state.toastType, state.message)
+
+		const toastTimer = setTimeout(() => {
+			removeToastMessage(state.toastType, null)
+		}, 4000)
+
+		let redirectTimer: ReturnType<typeof setTimeout> | undefined
+		if (state.ok && state.redirectTo) {
+			redirectTimer = setTimeout(() => {
+				router.push(state.redirectTo as string)
+			}, 800)
+		}
+
+		return () => {
+			clearTimeout(toastTimer)
+			if (redirectTimer) clearTimeout(redirectTimer)
+		}
+	}, [addToastMessage, removeToastMessage, router, state])
+
 	return (
 		<AuthPageContainer>
+			<ToastComponent />
 			{/* <AnimatePresence>
 								{mutation.isSuccess && <ToastComponent />}
 							</AnimatePresence> */}
@@ -30,7 +75,7 @@ const EmailSend = ({ onSubmit }: { onSubmit: Submit }) => {
 					email with instructions to reset password
 				</AuthPageContent>
 				<form
-					action={onSubmit}
+					action={formAction}
 					className="flex w-full flex-col items-center justify-center gap-4"
 				>
 					<Input
@@ -40,7 +85,9 @@ const EmailSend = ({ onSubmit }: { onSubmit: Submit }) => {
 					>
 						Email
 					</Input>
-					<Button provider="manual">Send Reset Link</Button>
+					<Button provider="manual" loading={pending} disabled={pending}>
+						Send Reset Link
+					</Button>
 					<h1>
 						Remember your password?{" "}
 						<Link

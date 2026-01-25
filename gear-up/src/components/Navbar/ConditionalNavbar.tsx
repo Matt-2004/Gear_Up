@@ -7,7 +7,9 @@ import Navbar from "./Navbar"
 const ConditionalNavbar = ({ user }: { user: IUser }) => {
 	const currentPath = usePathname()
 
-	if (currentPath === "/profile/admin") {
+	const listPath = ["/auth/login", "/auth/register", "/auth/forgot-password", "/auth/reset-password", "/profile/admin"]
+
+	if (listPath.includes(currentPath)) {
 		return null
 	}
 	return <Navbar user={user} />

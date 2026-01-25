@@ -1,9 +1,9 @@
 "use client"
 
-import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
 import { CircleCheck, CircleXMark, XIcon } from "@/components/Common/SVGs"
 import clsx from "clsx"
+import { AnimatePresence, motion } from "framer-motion"
+import { useState } from "react"
 
 export type ToastType = "success" | "error" | "info"
 
@@ -36,7 +36,7 @@ export function useToast({ toastType, message }: Toast) {
 							animate={{ y: 0, opacity: 1 }}
 							exit={{ y: -100, opacity: 0 }}
 							transition={{ type: "spring", stiffness: 300, damping: 25 }}
-							className={`fixed top-6 left-1/2 z-[9999] w-[350px] -translate-x-1/2`}
+							className={`fixed top-6 left-1/2 z-9999 w-87.5 -translate-x-1/2`}
 						>
 							<div
 								className={`flex w-full max-w-sm items-start justify-between gap-3 border px-4 py-3 shadow-md ${toast.toastType === "success" ? "border-green-500 bg-[#00a973]" : ""} ${toast.toastType === "error" ? "border-red-500 bg-red-400" : ""} ${toast.toastType === "info" ? "border-blue-500 bg-blue-400" : ""} `}

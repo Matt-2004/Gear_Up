@@ -1,25 +1,75 @@
-// app/actions/auth.ts
+"use server"
+
 import { authCookieIntegration } from "@/lib/authCookieIntegration"
-import { revalidatePath } from "next/cache"
 
-import { redirect, RedirectType } from "next/navigation"
+export type ToastType = "success" | "error" | "info"
 
-export async function submit(formData: FormData) {
-	"use server"
+export type LoginActionState = {
+	ok: boolean
+	toastType: ToastType
+	message: string | null
+	redirectTo?: string | null
+}
+
+const initialMessageFromResponse = (ok: boolean) =>
+	ok ? "Login successful" : "Invalid credentials"
+
+export async function submit(
+	prevState: LoginActionState,
+	formData: FormData,
+): Promise<LoginActionState> {
 	const usernameOrEmail = formData.get("usernameOrEmail") as string
 	const password = formData.get("password") as string
 
-	const res = await authCookieIntegration(`/api/auth/login`, {
-		usernameOrEmail,
-		password,
-	})
+	if (!usernameOrEmail || !password) {
+		return {
+			ok: false,
+			toastType: "error",
+			message: "Email/username and password are required",
+			redirectTo: null,
+		}
+	}
 
-	revalidatePath("/")
+	try {
+		const res = await authCookieIntegration(`/api/auth/login`, {
+			usernameOrEmail,
+			password,
+		})
 
-	// redirect if successful
-	if (res) {
-		redirect("/", RedirectType.push)
+		if (!res) {
+			return {
+				ok: false,
+				toastType: "error",
+				message: "Login failed",
+				redirectTo: null,
+			}
+		}
+
+		let payload: any = null
+		try {
+			payload = await res.json()
+		} catch {
+			payload = null
+		}
+
+		const ok = res.ok
+		const message =
+			(payload && typeof payload === "object" && "message" in payload
+				? String(payload.message)
+				: initialMessageFromResponse(ok)) || initialMessageFromResponse(ok)
+
+		return {
+			ok,
+			toastType: ok ? "success" : "error",
+			message,
+			redirectTo: ok ? "/" : null,
+		}
+	} catch (error) {
+		return {
+			ok: false,
+			toastType: "error",
+			message: "Unexpected error during login",
+			redirectTo: null,
+		}
 	}
 }
-
-export type Submit = typeof submit

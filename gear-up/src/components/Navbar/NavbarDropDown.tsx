@@ -1,11 +1,23 @@
+"use client"
+
 import { IUser } from "@/app/types/user.types"
 import clsx from "clsx"
 import { Car, LogOut, Settings, User, UserPlus } from "lucide-react"
-import { signOut } from "next-auth/react"
 import Link from "next/link"
 import { HTMLAttributes, ReactNode } from "react"
 
 export function ProfileDropDown({ user }: { user: IUser }) {
+
+	const signOut = async () => {
+		try {
+			await fetch("/api/token/remove", {
+				method: "POST",
+			})
+		} finally {
+			// Full reload clears all client-side state (useState, caches, etc.)
+			window.location.reload()
+		}
+	}
 	return (
 		<div className="text-primary absolute top-10 right-0 z-30 w-52 rounded-md border-gray-800 bg-white shadow-sm shadow-gray-300">
 			<ul className="p-1">

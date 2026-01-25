@@ -13,8 +13,7 @@ export default function NavbarUtility({ user }: { user: IUser }) {
 				<SearchBar />
 			</div>
 
-
-			<NotificationBell />
+			{user && <NotificationBell />}
 			{user ? <User user={user} /> : <Login />}
 		</div>
 	)
@@ -32,7 +31,6 @@ export const NotificationBell = () => {
 		const fetchToken = async () => {
 			const response = await fetch('/api/token/access_token_get')
 			const data = await response.json()
-			console.log("Fetched Access Token:", data.access_token)
 			setToken(data.access_token)
 		}
 

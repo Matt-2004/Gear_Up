@@ -25,7 +25,6 @@ export default async function RootLayout({
 	children: ReactNode
 }>) {
 	const refreshToken = (await cookies()).get("refresh_token")
-
 	const user = refreshToken ? await getUserProfile() : null
 	return (
 		<html lang="en" className={`${roboto.className} overflow-x-hidden`}>

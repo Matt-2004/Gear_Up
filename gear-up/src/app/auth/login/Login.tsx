@@ -8,26 +8,52 @@ import {
 	AuthPageContainer,
 	FormContainer,
 } from "@/components/Navbar/common"
+import { AnimatePresence } from "framer-motion"
 import Link from "next/link"
-import { useFormStatus } from "react-dom"
-import { Submit } from "./action"
+import { useRouter } from "next/navigation"
+import { useActionState, useEffect } from "react"
+import { submit, type LoginActionState } from "./action"
 
-const Login = ({ onSubmit }: { onSubmit: Submit }) => {
-	const { pending } = useFormStatus()
+
+const initialState: LoginActionState = {
+	ok: false,
+	toastType: "info",
+	message: null,
+	redirectTo: null,
+}
+
+const Login = () => {
+	const router = useRouter()
+	const [state, formAction, pending] = useActionState(submit, initialState)
 	const { ToastComponent, addToastMessage, removeToastMessage } = useToast({
 		toastType: "success",
 		message: null,
 	})
 
+	useEffect(() => {
+		if (!state?.message) return
+
+		addToastMessage(state.toastType, state.message)
+		new Promise(res => setTimeout(() => {
+			removeToastMessage(state.toastType, null)
+			router.push('/')
+		}, 4000))
+
+
+
+
+	}, [pending])
+
 	return (
 		<AuthPageContainer>
-			{/* <AnimatePresence>
-				{mutation.isSuccess && <ToastComponent />}
-			</AnimatePresence> */}
+			<AnimatePresence>
+				<ToastComponent />
+			</AnimatePresence>
+
 			<FormContainer>
 				<AuthPageCaption>Login to your account</AuthPageCaption>
 				<form
-					action={onSubmit}
+					action={formAction}
 					id="body"
 					className="mb-4 flex w-full flex-col items-center justify-center gap-4"
 				>
@@ -51,7 +77,7 @@ const Login = ({ onSubmit }: { onSubmit: Submit }) => {
 					>
 						Password
 					</Input>
-					<div className="mb-4 flex w-full max-w-[25rem] items-center justify-between">
+					<div className="mb-4 flex w-full max-w-100 items-center justify-between">
 						<div className="flex h-full items-center gap-2">
 							<input id="rememberMe" type="checkbox" />
 							<label htmlFor="rememberMe" className="">
@@ -65,7 +91,9 @@ const Login = ({ onSubmit }: { onSubmit: Submit }) => {
 							Forgot Password?
 						</Link>
 					</div>
-					<Button provider={"manual"}>Login</Button>
+					<Button provider={"manual"} loading={pending} disabled={pending}>
+						Login
+					</Button>
 					<h1>
 						Do not have an account?{" "}
 						<Link

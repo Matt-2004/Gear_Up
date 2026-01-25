@@ -1,8 +1,7 @@
 import EmailSend from "../EmailSend"
-import { submit } from "./action"
 
 const Page = () => {
-	return <EmailSend onSubmit={submit} />
+	return <EmailSend variant="verification" />
 }
 
 export default Page

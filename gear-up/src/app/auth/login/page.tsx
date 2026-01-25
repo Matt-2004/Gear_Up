@@ -1,4 +1,3 @@
-import { submit } from "./action"
 import Login from "./Login"
 
 const Page = () => {
@@ -6,7 +5,7 @@ const Page = () => {
 	// Toast
 	// Redirect
 
-	return <Login onSubmit={submit} />
+	return <Login />
 }
 
 export default Page

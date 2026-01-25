@@ -1,9 +1,9 @@
 import { API_URL } from "@/lib/config"
+import { NextResponse } from "next/server"
 
 export async function GET(request: Request) {
 	const { searchParams } = new URL(request.url)
 	const token = searchParams.get("token")
-	console.log("Token received in route:", token)
 
 	if (!token) {
 		return new Response(JSON.stringify({ message: "Token is required" }), {
@@ -33,16 +33,11 @@ export async function GET(request: Request) {
 
 		const data = await response.json()
 
-		return new Response(
-			JSON.stringify({
-				message: "Email verified successfully",
-				data,
-				redirect: "http://localhost:3000/",
-			}),
-			{ status: 200 },
+		return NextResponse.redirect(
+			new URL("http://localhost:3000/")
 		)
 	} catch (error) {
-		return new Response(JSON.stringify({ message: error }), {
+		return new NextResponse(JSON.stringify({ message: error }), {
 			status: 500,
 		})
 	}
