@@ -30,13 +30,13 @@ export async function proxy(req: NextRequest) {
 		response.cookies.set("access_token", accessToken, {
 			httpOnly: true,
 			secure: true,
-			sameSite: "lax",
+			sameSite: "none",
 			maxAge: 60 * 5, // 5 minutes
 		})
 		response.cookies.set("refresh_token", refreshToken, {
 			httpOnly: true,
 			secure: true,
-			sameSite: "lax",
+			sameSite: "none",
 			maxAge: 60 * 60 * 24 * 7, // 7 days
 		})
 

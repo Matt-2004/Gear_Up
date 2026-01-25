@@ -113,13 +113,13 @@ export function User({ user }: { user: IUser }) {
 export function SearchBar() {
 	const [isSearchBarActive, setIsSearchBarActive] = useState<boolean>(false)
 	return (
-		<div className="relative h-full w-full transition-all duration-150 ease-in">
+		<div className="min-w-80 relative h-full w-full transition-all duration-150 ease-in">
 			<input
 				type="text"
 				placeholder="Search..."
 				className={clsx(
 					isSearchBarActive ? "block" : "hidden",
-					"focus:ring-primary text-primary w-full rounded-full bg-gray-300 py-1 pl-10 focus:ring-1 focus:outline-none md:block",
+					"focus:ring-primary placeholder:text-primary-500 text-primary w-full rounded-full bg-primary-100 py-2 pl-10 focus:ring-1 focus:outline-none md:block",
 				)}
 			/>
 			<div

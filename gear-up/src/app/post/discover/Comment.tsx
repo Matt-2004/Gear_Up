@@ -2,14 +2,16 @@
 
 import { AddComment, CommentData } from "@/app/types/comment.types"
 import {
-	addComment
+	addComment,
+	addLikeToComment
 } from "@/utils/FetchAPI"
 import { diffFromNowAuto } from "@/utils/timeFormat"
 
+import { HeartFilledSVG, HeartSVG } from "@/utils/SVG"
 import clsx from "clsx"
-import { Heart, Reply } from "lucide-react"
+import { Reply } from "lucide-react"
 import Image from "next/image"
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { ICommentProps, useCommentContext } from "../[id]/CommentContext"
 
 interface ICommnetsProps {
@@ -18,17 +20,14 @@ interface ICommnetsProps {
 }
 
 export const Comment = ({ comment, level }: ICommnetsProps) => {
-
-
-	const { handleParentIdUpdate, requestedParentCommentId } = useCommentContext()
-	/* 
-				Data flow
-
-			1. Get the context data 
-			2. Request replies using parentCommentId and pass through with context -> main page fetch -> store
-			3.
-
-	*/
+	const {
+		handleParentIdUpdate,
+		expandedCommentIds,
+		toggleExpandedCommentId,
+	} = useCommentContext()
+	useEffect(() => {
+		console.log("Rendering comments:: ", comment, level)
+	}, [comment, level])
 
 	const contentRef = useRef<HTMLDivElement>(null)
 	const [replyText, setReplyText] = useState<string>("")
@@ -38,7 +37,6 @@ export const Comment = ({ comment, level }: ICommnetsProps) => {
 
 
 	const handleReplySubmit = async ({ postId, text, parentCommentId }: AddComment) => {
-
 		try {
 			await addComment({ postId, text, parentCommentId })
 		} catch (err) {
@@ -49,6 +47,21 @@ export const Comment = ({ comment, level }: ICommnetsProps) => {
 	const handleActiveReply = (id: string | null) => {
 		setActiveReplyId(id)
 		setReplyText("")
+	}
+
+	// level: 0 => comment level 1, 1 => level 2, 2 => level 3 (stop)
+	const canExpandMore = level < 2
+
+	const handleToggleShowReplies = (c: ICommentProps) => {
+		if (!canExpandMore) return
+		const id = String(c.id)
+		const willExpand = !expandedCommentIds.includes(id)
+		toggleExpandedCommentId(id)
+
+		// trigger fetch only when expanding and replies aren't loaded yet
+		if (willExpand && (!c.replies || c.replies.length === 0)) {
+			handleParentIdUpdate(id)
+		}
 	}
 
 
@@ -103,12 +116,16 @@ export const Comment = ({ comment, level }: ICommnetsProps) => {
 									</div>
 									{/* c Actions */}
 									<div className="flex flex-col items-start gap-2">
-										<div className="flex items-center gap-2">
-											<LikeCount likeCount={c.likeCount} />
-											<ReplyBtn
-												handleActiveReply={handleActiveReply}
-												comment={c}
-											/>
+										<div className="flex items-center">
+											<LikeCount id={c.id} isLikedByCurrentUser={c.isLikedByCurrentUser} likeCount={c.likeCount} />
+											{
+												level < 2 && (
+													<ReplyBtn
+														handleActiveReply={handleActiveReply}
+														comment={c}
+													/>
+												)
+											}
 										</div>
 									</div>
 									{/* Reply text box and submit button (render only for this c) */}
@@ -130,7 +147,7 @@ export const Comment = ({ comment, level }: ICommnetsProps) => {
 										</div>
 									)}
 								</div>
-								{c.childCount > 0 && requestedParentCommentId !== c.id && (
+								{canExpandMore && c.childCount > 0 && !expandedCommentIds.includes(String(c.id)) && (
 									<>
 										<div
 											className="absolute top-14 bottom-0 left-4 h-[calc(100%-4.9rem)] w-px bg-gray-300"
@@ -141,7 +158,7 @@ export const Comment = ({ comment, level }: ICommnetsProps) => {
 											aria-hidden
 										/>
 										<button
-											onClick={() => handleParentIdUpdate(c.id)}
+											onClick={() => handleToggleShowReplies(c)}
 											className="mt-3 cursor-pointer text-start text-xs text-gray-600 hover:underline"
 										>
 											Show {c.childCount} replies
@@ -151,7 +168,7 @@ export const Comment = ({ comment, level }: ICommnetsProps) => {
 							</div>
 						</div>
 
-						{requestedParentCommentId === c.id && c.replies && (
+						{expandedCommentIds.includes(String(c.id)) && c.replies && (
 							<Comment comment={c.replies} level={level + 1} />
 						)}
 					</div>
@@ -210,7 +227,7 @@ export const CommentTextBox = ({
 export const ReplyBtn = ({ handleActiveReply, comment }: { handleActiveReply: (id: string) => void, comment: CommentData }) => {
 	return (
 		<button
-			className="hover:bg-primary-background hover:text-primary flex cursor-pointer items-center gap-1 rounded-md  text-gray-600"
+			className="  flex cursor-pointer items-center gap-1 px-2 rounded-md  text-gray-600"
 			onClick={() =>
 				handleActiveReply(
 					String(comment.id),
@@ -218,7 +235,7 @@ export const ReplyBtn = ({ handleActiveReply, comment }: { handleActiveReply: (i
 			}
 		>
 			<Reply className=" h-4 w-4 -scale-x-100 font-normal" />
-			<h3 className="text-xs font-light">
+			<h3 className="text-xs font-light hover:font-medium">
 
 				Reply
 			</h3>
@@ -226,11 +243,21 @@ export const ReplyBtn = ({ handleActiveReply, comment }: { handleActiveReply: (i
 	)
 }
 
-export const LikeCount = ({ likeCount }: { likeCount: number }) => {
+
+export const LikeCount = ({ id, isLikedByCurrentUser, likeCount }: { id: string, isLikedByCurrentUser: boolean, likeCount: number }) => {
+	const addLikeToCommentFunc = async (commentId: string) => {
+		await addLikeToComment(commentId)
+		setCount(prev => prev + (liked ? -1 : 1))
+		setLiked(prev => !prev)
+	}
+
+	const [liked, setLiked] = useState<boolean>(isLikedByCurrentUser)
+	const [count, setCount] = useState<number>(likeCount)
 	return (
-		<button className="hover:bg-primary-background hover:text-primary flex cursor-pointer items-center gap-1 rounded-md  text-gray-600">
-			<Heart className="h-4 w-4 font-normal" />
-			<h3 className="font-light text-sm">{likeCount}</h3>
+		<button onClick={() => addLikeToCommentFunc(id)} className="hover:bg-primary-btn-hover hover:text-primary flex cursor-pointer items-center gap-1 px-2 rounded-md  text-gray-600">
+			{/* TODO: if isLikedByCurrentUser is true, change the heart icon to a filled heart */}
+			{liked ? <HeartFilledSVG /> : <HeartSVG />}
+			<h3 className="font-light text-sm">{count}</h3>
 		</button>
 	)
 }

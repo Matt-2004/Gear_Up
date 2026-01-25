@@ -31,7 +31,7 @@ const Details = ({
 	
 	
 	*/
-	const { comments, handleDataUpdate, requestedParentCommentId } = useCommentContext()
+	const { comments, handleComment, requestedParentCommentId } = useCommentContext()
 
 
 	const { make, model, year, color } = postData.carDto
@@ -51,32 +51,29 @@ const Details = ({
 
 	const { mileage, seatingCapacity } = postData.carDto
 	const capacitySpecTableData = [
-		{ Mileage: mileage },
-		{ SeatingCapacity: seatingCapacity },
+		{ Mileage: mileage + " km" },
+		{ SeatingCapacity: seatingCapacity + " seats" },
 	]
-
 	const fetchComments = async (postId: string) => {
 		const data = await getCommentsByPostId(postId)
-		handleDataUpdate(data, null)
+		handleComment(data, null)
 	}
 
 	const fetchNestedComments = async (requestedParentCommentId: string) => {
 		const data = await getNestedCommentsByCommentId(requestedParentCommentId)
-		handleDataUpdate(data, requestedParentCommentId)
+		handleComment(data, requestedParentCommentId)
 	}
 
 
 	useEffect(() => {
-
+		// Comment fetch on initial load
 		fetchComments(postData.id)
-
 	}, [])
 
 	useEffect(() => {
+		// Fetch nested comments when requestedParentCommentId changes
 		if (!requestedParentCommentId) return
-
 		fetchNestedComments(requestedParentCommentId)
-
 	}, [requestedParentCommentId, postData.id])
 
 	// SignalR connection for real-time comments
@@ -111,10 +108,12 @@ const Details = ({
 		JoinGroups()
 
 		connection.on('CommentCreated', (data: CommentData) => {
-
-			handleDataUpdate(data, data.parentCommentId)
+			handleComment(data, data.parentCommentId ?? null)
 		})
 
+		connection.on('CommentLikeUpdated', (data) => {
+			console.log(data)
+		})
 
 
 		return () => {
@@ -129,26 +128,33 @@ const Details = ({
 
 	return (
 		<div className={"flex h-full w-full flex-col items-center"}>
-			<div className={"h-full w-7/10 rounded-xl mt-2 bg-white px-4 flex justify-between"}>
-				<div className="min-h-screen overflow-hidden py-2">
+			<div
+				className={
+					"h-full w-full lg:w-7/10 rounded-xl mt-2 bg-white px-4 flex flex-col lg:flex-row lg:justify-between"
+				}
+			>
+				<div className="min-h-screen w-full sm:w-4/5  md:w-3/5  border-r border-gray-200 mx-auto overflow-hidden py-2">
 					<div className="overflow-y-auto h-full" style={{ scrollbarWidth: "none" }}>
 						<div id="header-container" className="w-lg space-y-2 mt-6">
 							<h1 id="caption" className="text-xl">{postData.caption}</h1>
 							<PostContent postContent={postData.content} />
 						</div>
 
-						<div className="">
+						<div className="space-y-4">
 							<CarouselImages images={postData.carDto.carImages} />
-							<table className="flex flex-col items-center min-w-full">
-								<tbody className="w-full flex flex-col items-center">
-
+							<table className=" min-w-lg mx-auto">
+								<tbody className="border border-gray-200">
+									<TableRow key={"header"} index={0}>
+										<th className="pl-2 w-2/5 border-x border-gray-200">Features</th>
+										<th className="pl-2 w-1/2 border-x border-gray-200">Descriptions</th>
+									</TableRow>
 									{basicSpecTableData.map((d, i) => {
 										const [key, value] = Object.entries(d)[0]
 
 										return (
 											<TableRow key={i} index={i}>
-												<td className=" pl-2">{key}</td>
-												<td className="">{value}</td>
+												<td className="pl-2 w-2/5 border-x border-gray-200">{key}</td>
+												<td className="pl-2 w-3/5 border-x border-gray-200">{value}</td>
 											</TableRow>
 										)
 									})}
@@ -157,8 +163,8 @@ const Details = ({
 
 										return (
 											<TableRow key={i} index={i}>
-												<td className=" pl-2">{key}</td>
-												<td className="">{value}</td>
+												<td className="pl-2 w-2/5 border-x border-gray-200">{key}</td>
+												<td className="pl-2">{value}</td>
 											</TableRow>
 										)
 									})}
@@ -167,8 +173,8 @@ const Details = ({
 
 										return (
 											<TableRow key={i} index={i}>
-												<td className=" pl-2">{key}</td>
-												<td className="">{value}</td>
+												<td className="pl-2 w-2/5 border-x border-gray-200">{key}</td>
+												<td className="pl-2">{value}</td>
 											</TableRow>
 										)
 									})}
@@ -177,9 +183,9 @@ const Details = ({
 						</div>
 					</div>
 				</div>
-				<div className="h-screen bg-white p-4 w-2/5 overflow-hidden">
+				<div className="bg-white p-4 w-full overflow-hidden sm:w-8/10 space-y-4 mx-auto md:w-3/5">
+					<h1 className="font-medium text-xl">Comments</h1>
 					<div className="overflow-y-auto h-full" style={{ scrollbarWidth: "none" }}>
-
 						<Comment comment={comments} level={0} />
 					</div>
 				</div>

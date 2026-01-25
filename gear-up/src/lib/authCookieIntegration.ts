@@ -27,13 +27,13 @@ export async function authCookieIntegration(
 		cookieStore.set("access_token", response.data.accessToken, {
 			httpOnly: true,
 			secure: true,
-			sameSite: "lax",
+			sameSite: "none",
 			maxAge: 60 * 5, // 5 minutes
 		})
 		cookieStore.set("refresh_token", response.data.refreshToken, {
 			httpOnly: true,
 			secure: true,
-			sameSite: "lax",
+			sameSite: "none",
 			maxAge: 60 * 60 * 24 * 7, // 7 days
 		})
 		return res

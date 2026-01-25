@@ -176,7 +176,7 @@ export const TableRow = ({ index, children }: { index: number, children: ReactNo
 		<tr
 			className={clsx(
 				index % 2 == 0 ? "bg-[#F9F9F9]" : "bg-[#F1F1F1]",
-				"h-8 text-sm text-gray-600 ",
+				"h-8 text-sm text-gray-600 columns-2 text-left first-letter:capitalize",
 			)}
 		>
 			{children}

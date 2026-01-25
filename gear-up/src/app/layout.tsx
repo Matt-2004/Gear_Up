@@ -33,7 +33,7 @@ export default async function RootLayout({
 				<NextAuthSessionProvider>
 					<StoreProvider>
 						<ReactQueryProvider>
-							<main className="flex h-screen flex-col">
+							<main className="flex flex-col">
 								<ConditionalNavbar user={user} />
 								{children}
 							</main>

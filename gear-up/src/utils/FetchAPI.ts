@@ -29,7 +29,12 @@ export async function getFetch(url: string) {
 		})
 		return response.data
 	} catch (error: any) {
-		console.log("Error in getFetch:", error?.response.data)
+		console.log({
+			status: error?.response?.status,
+			data: error?.response?.data,
+			headers: error?.response?.headers,
+		})
+
 		throw error
 	}
 }
