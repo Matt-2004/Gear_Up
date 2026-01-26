@@ -44,7 +44,7 @@ function Button({
 			type="submit"
 			className={clsx(
 				width === "full" ? "max-w-[25rem]" : "max-w-[15rem]",
-				"bg-primary active:bg-primary-active flex w-full min-w-[10rem] items-center justify-center gap-6 rounded-md py-2 text-lg font-medium text-white transition-shadow hover:cursor-pointer hover:shadow-lg disabled:bg-gray-400",
+				"bg-primary-500 font-semibold active:bg-primary-600 flex w-full min-w-[10rem] items-center justify-center gap-6 rounded-md py-2 text-lg text-white transition-shadow hover:cursor-pointer hover:shadow-sm shadow-primary-200 disabled:bg-gray-400",
 			)}
 			{...props}
 		>

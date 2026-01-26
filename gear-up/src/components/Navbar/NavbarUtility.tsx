@@ -8,7 +8,7 @@ import { useEffect, useState } from "react"
 
 export default function NavbarUtility({ user }: { user: IUser }) {
 	return (
-		<div className="flex h-full min-w-96 items-center justify-end gap-8 px-2 md:w-full ">
+		<div className="flex items-center gap-2 ">
 			<div className="items-center">
 				<SearchBar />
 			</div>

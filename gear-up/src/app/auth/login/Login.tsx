@@ -11,7 +11,8 @@ import {
 import { AnimatePresence } from "framer-motion"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useActionState, useEffect } from "react"
+import { useActionState, useEffect, useState } from "react"
+import { z } from "zod"
 import { submit, type LoginActionState } from "./action"
 
 
@@ -22,13 +23,66 @@ const initialState: LoginActionState = {
 	redirectTo: null,
 }
 
+const loginSchema = z.object({
+	usernameOrEmail: z
+		.email({ message: "Invalid email format, end with @gmail.com, @yahoo.com, etc." }),
+
+	password: z
+		.string()
+		.min(8, "Password must be at least 8 characters")
+		.max(20, "Password is too long")
+		.regex(/[a-z]/, "- Must Contain at least one lowercase letter")
+		.regex(/[A-Z]/, "- Must contain at least one uppercase letter")
+		.regex(/[0-9]/, "- Must contain at least one number")
+		.regex(/[^A-Za-z0-9]/, "- Must contain at least one symbol")
+
+})
+
 const Login = () => {
 	const router = useRouter()
 	const [state, formAction, pending] = useActionState(submit, initialState)
+	const [formData, setFormData] = useState({
+		usernameOrEmail: "",
+		password: "",
+	})
+	const [errors, setErrors] = useState<{
+		usernameOrEmail?: string
+		password?: string
+	}>({})
 	const { ToastComponent, addToastMessage, removeToastMessage } = useToast({
 		toastType: "success",
 		message: null,
 	})
+
+	// Validate on input change with useEffect
+	useEffect(() => {
+		const validationResult = loginSchema.safeParse(formData)
+
+		if (!validationResult.success) {
+			const fieldErrors = z.flattenError(validationResult.error).fieldErrors
+			setErrors({
+				usernameOrEmail: fieldErrors.usernameOrEmail?.[0],
+				password: fieldErrors.password?.[0],
+			})
+		} else {
+			setErrors({})
+		}
+	}, [formData])
+
+	const handleSubmit = (formDataObj: FormData) => {
+		const rawData = {
+			usernameOrEmail: formDataObj.get("usernameOrEmail") as string,
+			password: formDataObj.get("password") as string,
+		}
+
+		const validationResult = loginSchema.safeParse(rawData)
+
+		if (!validationResult.success) {
+			return
+		}
+
+		formAction(formDataObj)
+	}
 
 	useEffect(() => {
 		if (!state?.message) return
@@ -38,9 +92,6 @@ const Login = () => {
 			removeToastMessage(state.toastType, null)
 			router.push('/')
 		}, 4000))
-
-
-
 
 	}, [pending])
 
@@ -53,33 +104,52 @@ const Login = () => {
 			<FormContainer>
 				<AuthPageCaption>Login to your account</AuthPageCaption>
 				<form
-					action={formAction}
+					action={handleSubmit}
 					id="body"
 					className="mb-4 flex w-full flex-col items-center justify-center gap-4"
 				>
-					<Input
-						name="usernameOrEmail"
-						required
-						autoComplete="email"
-						type="email"
-						placeholder="example@gmail.com or matthew"
-					>
-						Email or User Name
-					</Input>
+					<div className="w-full max-w-100">
+						<Input
+							name="usernameOrEmail"
+							autoComplete="email"
+							type="text"
+							placeholder="example@gmail.com or matthew"
+							value={formData.usernameOrEmail}
+							onChange={(e) =>
+								setFormData((prev) => ({
+									...prev,
+									usernameOrEmail: e.target.value,
+								}))
+							}
+						>
+							Email or User Name
+						</Input>
+						{errors.usernameOrEmail && (
+							<p className="mt-1 text-sm text-red-600">{errors.usernameOrEmail}</p>
+						)}
+					</div>
 
-					<Input
-						name="password"
-						required
-						minLength={8}
-						autoComplete="current-password"
-						type="password"
-						placeholder="Password (mininum at least 8 characters)"
-					>
-						Password
-					</Input>
+					<div className="w-full max-w-100">
+						<Input
+							name="password"
+							minLength={8}
+							autoComplete="current-password"
+							type="password"
+							placeholder="Password (mininum at least 8 characters)"
+							value={formData.password}
+							onChange={(e) =>
+								setFormData((prev) => ({ ...prev, password: e.target.value }))
+							}
+						>
+							Password
+						</Input>
+						{errors.password && (
+							<p className="mt-1 text-sm text-red-600">{errors.password}</p>
+						)}
+					</div>
 					<div className="mb-4 flex w-full max-w-100 items-center justify-between">
 						<div className="flex h-full items-center gap-2">
-							<input id="rememberMe" type="checkbox" />
+							<input required id="rememberMe" type="checkbox" />
 							<label htmlFor="rememberMe" className="">
 								Remember me
 							</label>
@@ -91,7 +161,7 @@ const Login = () => {
 							Forgot Password?
 						</Link>
 					</div>
-					<Button provider={"manual"} loading={pending} disabled={pending}>
+					<Button provider={"manual"} loading={pending} disabled={pending} width="full">
 						Login
 					</Button>
 					<h1>

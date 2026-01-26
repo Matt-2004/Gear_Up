@@ -113,22 +113,22 @@ export function User({ user }: { user: IUser }) {
 export function SearchBar() {
 	const [isSearchBarActive, setIsSearchBarActive] = useState<boolean>(false)
 	return (
-		<div className="min-w-80 relative h-full w-full transition-all duration-150 ease-in">
+		<div className=" relative h-full w-full transition-all duration-150 ease-in">
 			<input
 				type="text"
 				placeholder="Search..."
 				className={clsx(
 					isSearchBarActive ? "block" : "hidden",
-					"focus:ring-primary placeholder:text-primary-500 text-primary w-full rounded-full bg-primary-100 py-2 pl-10 focus:ring-1 focus:outline-none md:block",
+					"focus:ring-primary placeholder:text-primary-500 text-primary w-full rounded-md bg-primary-100 py-1.5 pl-10 focus:ring-1 focus:outline-none md:block",
 				)}
 			/>
 			<div
 				onClick={() => setIsSearchBarActive(true)}
 				className={clsx(
 					isSearchBarActive
-						? "left-3"
-						: "rounded-full bg-gray-300 p-2 md:bg-transparent md:p-0",
-					"absolute top-1/2 -left-5 -translate-y-1/2 transform md:left-3",
+						? "left-3 "
+						: "rounded-full p-2 md:bg-transparent md:p-0",
+					"absolute top-1/2 -left-8 -translate-y-1/2 transform md:left-3",
 				)}
 			>
 				<Search
@@ -145,7 +145,7 @@ export function SearchBar() {
 					className="absolute top-1/2 right-2.5 -translate-y-1/2 transform text-white md:hidden"
 					onClick={() => setIsSearchBarActive(false)}
 				>
-					<X className="h-5 w-5" />
+					<X className="h-5 w-5 text-primary-400 cursor-pointer hover:text-primary-" />
 				</div>
 			)}
 		</div>
@@ -158,8 +158,8 @@ export function Chat() {
 
 export function Login() {
 	return (
-		<Link href="/auth/login">
-			<div className="main-color-gradient cursor-pointer rounded-md px-4 py-1.5">
+		<Link href="/auth/login" className="opacity-100 cursor-pointer">
+			<div className="bg-primary-500 text-primary-100 hover:bg-primary-200 hover:shadow-sm hover:shadow-primary-200 transition-colors duration-75 ease-in hover:text-primary-500  rounded-sm px-5 py-1.5">
 				<button className="font-semibold">Login</button>
 			</div>
 		</Link>

@@ -10,7 +10,7 @@ export function CarCard({ carItem }: { carItem: CarItems }) {
 	const router = useRouter();
 	return (
 		<Link href={`/car/${carItem.id}`}>
-			<article className="group flex h-full w-full flex-col overflow-hidden rounded-xl bg-white shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+			<article className="group flex h-full w-full flex-col overflow-hidden rounded-xl bg-white shadow-sm transition-all duration-300 hover:shadow-xl shadow-background hover:-translate-y-1">
 				<div className="relative h-48 w-full overflow-hidden">
 					<Image
 						src={carItem?.carImages[0]?.url ?? "/carPlaceholderImage.jpg"}
@@ -36,7 +36,7 @@ export function CarCard({ carItem }: { carItem: CarItems }) {
 						{
 							carItem.carStatus === "Available" && (
 								<div className="">
-									<span className="whitespace-nowrap rounded-full bg-primary-200 text-primary-800 px-3 py-1 text-xs font-semibold shadow-md">
+									<span className="whitespace-nowrap rounded-full bg-primary-100 text-primary-500 px-3 py-1 text-xs font-semibold">
 										For Sale
 									</span>
 								</div>
@@ -58,7 +58,8 @@ export function CarCard({ carItem }: { carItem: CarItems }) {
 							<span className="text-xs">{carItem.seatingCapacity}</span>
 						</div>
 					</div>
-					<div className="mt-auto pt-4">
+					<div className="my-3 h-px w-full bg-gray-200" />
+					<div className="mt-auto">
 						<div className="flex items-center justify-between">
 							<div>
 								<p className="text-xs text-gray-500 ">Price</p>
