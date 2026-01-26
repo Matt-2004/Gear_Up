@@ -1,4 +1,4 @@
-import { CarDetailData } from "@/app/types/car.types"
+import { CarItems } from "@/app/types/car.types"
 import { getCarById } from "@/utils/FetchAPI"
 import CarDetailPage from "./CarDetailPage"
 
@@ -12,11 +12,12 @@ async function getData(id: string) {
 	}
 }
 
-const Page = async ({ params }: { params: { id: string } }) => {
-	const { id } = params
-	const car = (await getData(id)) as CarDetailData
+const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
+	const { id } = await params
+	const car = (await getData(id)) as CarItems
+	console.log("Car data:", car)
 
-	return <CarDetailPage car={car.data} />
+	return <CarDetailPage car={car} />
 }
 
 export default Page

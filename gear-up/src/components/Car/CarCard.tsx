@@ -1,11 +1,15 @@
+"use client"
+
 import { CarItems } from "@/app/types/car.types"
 import { formatNumber } from "@/lib/numberFormatter"
 import Image from "next/image"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 export function CarCard({ carItem }: { carItem: CarItems }) {
+	const router = useRouter();
 	return (
-		<Link href={`/post/${carItem.id}`}>
+		<Link href={`/car/${carItem.id}`}>
 			<article className="group flex h-full w-full flex-col overflow-hidden rounded-xl bg-white shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
 				<div className="relative h-48 w-full overflow-hidden">
 					<Image
@@ -15,23 +19,32 @@ export function CarCard({ carItem }: { carItem: CarItems }) {
 						className="object-cover transition-transform duration-300 group-hover:scale-110"
 						sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
 					/>
-					<div className="absolute top-3 right-3">
-						<span className="rounded-full bg-orange-500 px-3 py-1 text-xs font-semibold text-white shadow-md">
-							For Sale
-						</span>
-					</div>
+
+
 				</div>
 				<div className="flex flex-1 flex-col p-4">
-					<div className="mb-2">
-						<h3 className="text-lg font-bold text-gray-900 line-clamp-1 group-hover:text-orange-600 transition-colors">
-							{carItem.title}
-						</h3>
-						<p className="text-sm text-gray-500 mt-1">
-							{carItem.make} {carItem.model} • {carItem.year}
-						</p>
+					<div className="mb-2 flex justify-between">
+						<div>
+
+							<h3 className="text-lg font-bold text-gray-900 line-clamp-1 group-hover:text-orange-600 transition-colors">
+								{carItem.title}
+							</h3>
+							<p className="text-sm text-gray-500 mt-1">
+								{carItem.make} {carItem.model} • {carItem.year}
+							</p>
+						</div>
+						{
+							carItem.carStatus === "Available" && (
+								<div className="">
+									<span className="whitespace-nowrap rounded-full bg-primary-200 text-primary-800 px-3 py-1 text-xs font-semibold shadow-md">
+										For Sale
+									</span>
+								</div>
+							)
+						}
 					</div>
 					<div className="my-3 h-px w-full bg-gray-200" />
-					<div className="flex items-center justify-between gap-2 text-sm">
+					<div className="grid grid-cols-3 justify-items-center items-center justify-between text-sm">
 						<div className="flex items-center gap-1.5 text-gray-600">
 							<CogIcon />
 							<span className="text-xs">{carItem.transmissionType}</span>
@@ -45,15 +58,20 @@ export function CarCard({ carItem }: { carItem: CarItems }) {
 							<span className="text-xs">{carItem.seatingCapacity}</span>
 						</div>
 					</div>
-					<div className="mt-auto pt-3">
+					<div className="mt-auto pt-4">
 						<div className="flex items-center justify-between">
 							<div>
-								<p className="text-xs text-gray-500 mb-1">Price</p>
-								<p className="text-2xl font-bold text-orange-600">
-									฿{formatNumber(carItem.price)}
+								<p className="text-xs text-gray-500 ">Price</p>
+								<p className="flex items-baseline gap-1">
+									<h6 className="text-orange-500">
+										฿
+									</h6>
+									<h3 className="text-2xl font-bold text-orange-600">
+										{formatNumber(carItem.price)}
+									</h3>
 								</p>
 							</div>
-							<button className="rounded-lg bg-orange-500 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-orange-600">
+							<button className="rounded-lg bg-primary-500 px-4 py-2 text-sm  text-white transition-colors hover:bg-orange-600">
 								View Details
 							</button>
 						</div>
