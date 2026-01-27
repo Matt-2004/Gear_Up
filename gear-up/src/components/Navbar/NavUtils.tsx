@@ -64,7 +64,7 @@ export function MobileMenu({
 					<NavbarTabs />
 				</div>
 			</div>
-			<div className="fixed inset-0 z-30 bg-gradient-to-r from-gray-900/60 to-black/80" />
+			<div className="fixed inset-0 z-30 bg-linear-to-r from-gray-900/60 to-black/80" />
 		</>
 	)
 }
@@ -77,7 +77,7 @@ export function User({ user }: { user: IUser }) {
 
 	return (
 		<div
-			className="relative flex h-full w-16 cursor-pointer items-center justify-end gap-2"
+			className="relative flex h-full cursor-pointer items-center justify-end gap-2"
 			onMouseEnter={() => {
 				setIsOpenUserProfileMenu(true)
 			}}

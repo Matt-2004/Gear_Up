@@ -13,11 +13,13 @@ import {
 	Mail,
 	Share2
 } from "lucide-react"
+import { useRouter } from "next/navigation"
 import { useState } from "react"
 
 export default function CarDetailPage({ car }: { car: CarItems }) {
 	const [selectedImage, setSelectedImage] = useState(0)
 	const [isFavorite, setIsFavorite] = useState(false)
+	const router = useRouter()
 
 	const nextImage = () => {
 		setSelectedImage((prev) => (prev + 1) % car.carImages.length)
@@ -221,7 +223,9 @@ export default function CarDetailPage({ car }: { car: CarItems }) {
 								</div>
 
 								<div className="space-y-3">
-									<button className="flex w-full items-center justify-center gap-3 rounded-xl bg-primary-600 py-4 font-bold text-white transition-all shadow-md hover:bg-primary-700 hover:shadow-lg hover:scale-105 active:scale-100">
+									<button
+										onClick={() => router.push(`/car/${car.id}/appointment`)}
+										className="flex w-full items-center justify-center gap-3 rounded-xl bg-primary-600 py-4 font-bold text-white transition-all shadow-md hover:bg-primary-700 hover:shadow-lg hover:scale-105 active:scale-100">
 										<Calendar className="h-5 w-5" />
 										Get a Appointment
 									</button>
