@@ -31,8 +31,6 @@ export default function CarDetailPage({ car }: { car: CarItems }) {
 		)
 	}
 
-	const features = [car.engineCapacity, car.fuelType, car.transmissionType]
-
 	if (!car) {
 		return <div>
 			Car Data not exists

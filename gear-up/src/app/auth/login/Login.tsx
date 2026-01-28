@@ -32,7 +32,6 @@ const loginSchema = z.object({
 		.min(8, "Password must be at least 8 characters")
 		.max(20, "Password is too long")
 		.regex(/[a-z]/, "- Must Contain at least one lowercase letter")
-		.regex(/[A-Z]/, "- Must contain at least one uppercase letter")
 		.regex(/[0-9]/, "- Must contain at least one number")
 		.regex(/[^A-Za-z0-9]/, "- Must contain at least one symbol")
 

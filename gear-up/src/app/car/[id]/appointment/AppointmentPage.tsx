@@ -23,6 +23,9 @@ export default function AppointmentPage({ car }: { car: CarItems }) {
         location: "",
         notes: ""
     })
+
+    console.log("Car data:: ", formData)
+
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [showSuccess, setShowSuccess] = useState(false)
     const [error, setError] = useState("")
