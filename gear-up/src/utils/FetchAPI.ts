@@ -5,6 +5,7 @@ import { createAppointmentDTO } from "@/app/types/appointment.types";
 import { INewPassword } from "@/app/types/auth.types";
 import { AddComment } from "@/app/types/comment.types";
 import { IKycUpdateByAdmin } from "@/app/types/kyc.types";
+import { CreatePostData } from "@/app/types/post.types";
 import { API_URL } from "@/lib/config";
 import axios from "axios";
 import { cookies } from "next/headers";
@@ -48,7 +49,8 @@ export async function postFetch(
     | FormData
     | null
     | AddComment
-    | createAppointmentDTO,
+    | createAppointmentDTO
+    | CreatePostData,
 ) {
   const access_token = (await cookies()).get("access_token")?.value;
 
@@ -175,7 +177,7 @@ export async function getKycWithStatus(status: string) {
 
 export async function addCar(data: FormData) {
   const res = await postFetch(`/api/v1/cars`, data);
-  return res?.data;
+  return res;
 }
 
 export async function getAllCars(pageNumber: number) {
@@ -184,7 +186,7 @@ export async function getAllCars(pageNumber: number) {
 }
 
 export async function updateCar(carId: string, data: FormData) {
-  const res = await postFetch(`/api/v1/cars/${carId}`, data);
+  const res = await putFetch(`/api/v1/cars/${carId}`, data);
   return res?.data;
 }
 
@@ -216,9 +218,9 @@ export async function getPostById(postId: string) {
   return res?.data;
 }
 
-export async function createPost(data: FormData) {
+export async function createPost(data: CreatePostData) {
   const res = await postFetch(`/api/v1/posts`, data);
-  return res?.data;
+  return res;
 }
 
 export async function giveLikeToPost(postId: string) {

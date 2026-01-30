@@ -68,16 +68,26 @@ const AddNewCar = ({ step }: { step: string }) => {
 };
 
 const FillDetails = () => {
-  const { updateAddedCar } = useVehicleContext();
+  const { updateAddedCar, addedCar } = useVehicleContext();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const currentStep = Number(searchParams.get("step") ?? 1);
 
-  const submit = (formData: FormData) => {
+  // Format year for month input (YYYY-MM format)
+  const formattedYear = addedCar?.year ? `${addedCar.year}-01` : "";
+
+  const submit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+
     updateAddedCar({
       title: formData.get("Title") as string,
       description: formData.get("Description") as string,
 
       model: formData.get("Model") as string,
       make: formData.get("Make") as string,
-      year: Number(formData.get("Year")) as number,
+      year: parseInt((formData.get("Year") as string).split("-")[0]),
 
       carStatus: "Available",
       carValidationStatus: "Available",
@@ -98,10 +108,13 @@ const FillDetails = () => {
       vin: formData.get("VIN") as string,
       licensePlate: formData.get("LicensePlate") as string,
     });
+
+    // Navigate to next step after updating context
+    router.push(`${pathname}?step=${currentStep + 1}`);
   };
 
   return (
-    <form action={submit} className="w-full">
+    <form onSubmit={submit} className="w-full">
       <main className="p-6 sm:p-8 lg:p-10 space-y-8">
         <GroupInputForm
           title={"Basic Information"}
@@ -111,6 +124,7 @@ const FillDetails = () => {
             name="Title"
             type="text"
             placeholder="e.g., 2024 Toyota Camry - Excellent Condition"
+            defaultValue={addedCar?.title || ""}
             required
           >
             Title
@@ -123,6 +137,7 @@ const FillDetails = () => {
               name="Description"
               rows={4}
               placeholder="Describe the vehicle's key features, condition, and any recent maintenance or upgrades..."
+              defaultValue={addedCar?.description || ""}
               className="w-full rounded-lg border border-gray-200 px-4 py-2 text-black placeholder:text-sm placeholder:text-gray-400 focus:bg-[#BAFFAF] focus:ring-1 focus:outline-none focus:ring-primary"
               required
             />
@@ -136,6 +151,7 @@ const FillDetails = () => {
             name="Make"
             type="text"
             placeholder="e.g., Toyota, Honda, Tesla"
+            defaultValue={addedCar?.make || ""}
             required
           >
             Make
@@ -144,6 +160,7 @@ const FillDetails = () => {
             name="Model"
             type="text"
             placeholder="e.g., Camry, Civic, Model 3"
+            defaultValue={addedCar?.model || ""}
             required
           >
             Model
@@ -154,6 +171,7 @@ const FillDetails = () => {
             min={1990}
             max={2026}
             placeholder="Select year"
+            defaultValue={formattedYear}
             required
           >
             Year
@@ -163,6 +181,7 @@ const FillDetails = () => {
             type="number"
             placeholder="e.g., 850000"
             min={0}
+            defaultValue={addedCar?.price || ""}
             required
           >
             Price (฿)
@@ -171,6 +190,7 @@ const FillDetails = () => {
             name="Color"
             type="text"
             placeholder="e.g., Black, White, Silver"
+            defaultValue={addedCar?.color || ""}
             required
           >
             Color
@@ -180,6 +200,7 @@ const FillDetails = () => {
             type="number"
             placeholder="e.g., 45000"
             min={0}
+            defaultValue={addedCar?.mileage || ""}
             required
           >
             Mileage (km)
@@ -190,59 +211,112 @@ const FillDetails = () => {
             step="0.1"
             placeholder="e.g., 2.0"
             min={0}
+            defaultValue={addedCar?.engineCapacity || ""}
             required
           >
             Engine Capacity (L)
           </Input>
           <div className="col-span-2">
             <RadioInputContainer title="Seating Capacity">
-              <RadioInput name="SeatingCapacity" value={2}>
+              <RadioInput
+                name="SeatingCapacity"
+                value={2}
+                defaultChecked={addedCar?.seatingCapacity === 2}
+              >
                 2 Seats
               </RadioInput>
-              <RadioInput name="SeatingCapacity" value={4}>
+              <RadioInput
+                name="SeatingCapacity"
+                value={4}
+                defaultChecked={addedCar?.seatingCapacity === 4}
+              >
                 4 Seats
               </RadioInput>
-              <RadioInput name="SeatingCapacity" value={6}>
+              <RadioInput
+                name="SeatingCapacity"
+                value={6}
+                defaultChecked={addedCar?.seatingCapacity === 6}
+              >
                 6 Seats
               </RadioInput>
-              <RadioInput name="SeatingCapacity" value={8}>
+              <RadioInput
+                name="SeatingCapacity"
+                value={8}
+                defaultChecked={addedCar?.seatingCapacity === 8}
+              >
                 8 Seats
               </RadioInput>
             </RadioInputContainer>
           </div>
 
           <RadioInputContainer title="Fuel Type">
-            <RadioInput name="FuelType" value={"Petrol"}>
+            <RadioInput
+              name="FuelType"
+              value={"Petrol"}
+              defaultChecked={addedCar?.fuelType === "Petrol"}
+            >
               Petrol
             </RadioInput>
-            <RadioInput name="FuelType" value={"Diesel"}>
+            <RadioInput
+              name="FuelType"
+              value={"Diesel"}
+              defaultChecked={addedCar?.fuelType === "Diesel"}
+            >
               Diesel
             </RadioInput>
-            <RadioInput name="FuelType" value={"EV"}>
+            <RadioInput
+              name="FuelType"
+              value={"Electric"}
+              defaultChecked={addedCar?.fuelType === "Electric"}
+            >
               Electric
             </RadioInput>
-            <RadioInput name="FuelType" value={"Hybrid"}>
+            <RadioInput
+              name="FuelType"
+              value={"Hybrid"}
+              defaultChecked={addedCar?.fuelType === "Hybrid"}
+            >
               Hybrid
             </RadioInput>
           </RadioInputContainer>
           <RadioInputContainer title="Condition">
-            <RadioInput name="CarCondition" value={"New"}>
+            <RadioInput
+              name="CarCondition"
+              value={"New"}
+              defaultChecked={addedCar?.carCondition === "New"}
+            >
               Brand New
             </RadioInput>
-            <RadioInput name="CarCondition" value={"Used"}>
+            <RadioInput
+              name="CarCondition"
+              value={"Used"}
+              defaultChecked={addedCar?.carCondition === "Used"}
+            >
               Pre-Owned
             </RadioInput>
           </RadioInputContainer>
           <div className="col-span-2">
             <RadioInputContainer title="Transmission Type">
-              <RadioInput name="TransmissionType" value={"Auto"}>
+              <RadioInput
+                name="TransmissionType"
+                value={"Automatic"}
+                defaultChecked={addedCar?.transmissionType === "Automatic"}
+              >
                 Automatic
               </RadioInput>
-              <RadioInput name="TransmissionType" value={"Manual"}>
+              <RadioInput
+                name="TransmissionType"
+                value={"Manual"}
+                defaultChecked={addedCar?.transmissionType === "Manual"}
+              >
                 Manual
               </RadioInput>
-              <RadioInput name="TransmissionType" value={"Dual-clutch"}>
-                Dual-Clutch
+              <RadioInput
+                name="TransmissionType"
+                value={"SemiAutomatic"}
+                defaultChecked={addedCar?.transmissionType === "SemiAutomatic"}
+              >
+                Semi-Automatic
               </RadioInput>
             </RadioInputContainer>
           </div>
@@ -257,6 +331,7 @@ const FillDetails = () => {
             type="text"
             placeholder="e.g., 1HGBH41JXMN109186"
             maxLength={17}
+            defaultValue={addedCar?.vin || ""}
             required
           >
             VIN Number
@@ -265,20 +340,25 @@ const FillDetails = () => {
             name="LicensePlate"
             type="text"
             placeholder="e.g., ABC-1234"
+            defaultValue={addedCar?.licensePlate || ""}
             required
           >
             License Plate
           </Input>
         </GroupInputForm>
         <div className="flex justify-end border-t border-gray-200 pt-6 mt-8">
-          <StepNavigation />
+          <StepNavigation isSubmitForm={true} />
         </div>
       </main>
     </form>
   );
 };
 
-const StepNavigation = () => {
+const StepNavigation = ({
+  isSubmitForm = false,
+}: {
+  isSubmitForm?: boolean;
+}) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const currentStep = Number(searchParams.get("step") ?? 1);
@@ -307,9 +387,15 @@ const StepNavigation = () => {
       >
         {currentStep === 1 ? "Cancel" : "Back"}
       </button>
-      <Button width="half" onClick={onNext}>
-        Continue →
-      </Button>
+      {isSubmitForm ? (
+        <Button width="half" type="submit">
+          Continue →
+        </Button>
+      ) : (
+        <Button width="half" onClick={onNext}>
+          Continue →
+        </Button>
+      )}
     </div>
   );
 };
@@ -346,7 +432,26 @@ export interface IFileProps {
 const CarImageUpload = () => {
   const [files, setFiles] = useState<IFileProps[]>([]);
   const nextId = useRef(1);
-  const { updateAddedCar } = useVehicleContext();
+  const { updateAddedCar, addedCar } = useVehicleContext();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const currentStep = Number(searchParams.get("step") ?? 1);
+
+  // Load existing images from context on mount
+  useEffect(() => {
+    if (addedCar?.carImages && addedCar.carImages.length > 0) {
+      const existingFiles: IFileProps[] = addedCar.carImages.map(
+        (file, index) => ({
+          id: nextId.current++,
+          file: file,
+          progress: "Uploaded",
+          url: URL.createObjectURL(file),
+        }),
+      );
+      setFiles(existingFiles);
+    }
+  }, []);
 
   /* TODO: implement progress bar using FileReader */
   // const reader = new FileReader();
@@ -404,6 +509,9 @@ const CarImageUpload = () => {
     const carImages: File[] = files.map((file) => file.file);
 
     updateAddedCar({ carImages });
+
+    // Navigate to next step after updating context
+    router.push(`${pathname}?step=${currentStep + 1}`);
   };
 
   return (
@@ -536,7 +644,7 @@ const CarImageUpload = () => {
         </div>
       )}
       <div className="flex justify-end border-t border-gray-200 pt-6 mt-8">
-        <StepNavigation />
+        <StepNavigation isSubmitForm={true} />
       </div>
     </form>
   );
