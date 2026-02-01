@@ -15,21 +15,17 @@ export type AppointmentStatus =
 
 export interface IAppointment {
   id: string;
-  userId: string;
-  userName: string;
-  userEmail: string;
-  userPhone?: string;
   agentId: string;
   agentName: string;
+  requesterId: string;
+  requesterName: string;
   carId: string;
   carTitle: string;
-  carMake: string;
-  carModel: string;
-  carYear: number;
   schedule: string;
   location: string;
   notes?: string;
   status: AppointmentStatus;
+  rejectionReason?: string;
   createdAt: string;
   updatedAt: string;
 }

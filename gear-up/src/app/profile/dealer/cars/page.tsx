@@ -1,11 +1,21 @@
-// This page have to wait backend implementation to fetch dealer's own cars
+// Dealer car inventory page
 
+import { getMyCars } from "@/utils/FetchAPI";
 import DealerCarDashboard from "./DealerCarDashboard";
 
-const Page = () => {
-  // const carData = getOwnCarData()
+const Page = async () => {
+  let carData = [];
 
-  return <DealerCarDashboard carData={[]} />;
+  try {
+    const response = await getMyCars();
+    carData = response?.items || [];
+  } catch (error) {
+    console.error("Failed to fetch dealer cars:", error);
+    // Use empty array as fallback
+    carData = [];
+  }
+
+  return <DealerCarDashboard carData={carData} />;
 };
 
 export default Page;

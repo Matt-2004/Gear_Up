@@ -290,7 +290,7 @@ export const CarouselImages = ({ images }: ICarouselPostImageProps) => {
             alt={image.carId}
             width={200}
             height={200}
-            className="block h-[28rem] min-w-full snap-start object-cover"
+            className="block h-112 min-w-full snap-start object-cover"
           ></Image>
         ))}
         {currentIndex !== 0 && (

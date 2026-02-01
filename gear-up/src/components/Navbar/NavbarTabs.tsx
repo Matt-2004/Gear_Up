@@ -1,44 +1,48 @@
-"use client"
+"use client";
 
-import clsx from "clsx"
-import { useRouter } from "next/navigation"
+import clsx from "clsx";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function NavbarTabs() {
-	const router = useRouter()
-	return (
-		<>
-			<div
-				className={clsx(
-					"border-gray-300 mt-12 border-t transition-all duration-300 ease-in-out sm:m-0 sm:border-none md:flex ",
-				)}
-			>
-				<div className="text-primary flex h-screen w-full text-xl font-normal sm:h-16 sm:flex-row md:px-1 md:py-1">
-					<ol className="flex w-full flex-col gap-0 sm:gap-2 md:flex-row md:gap-2 lg:gap-4">
-						<li className="hidden  hover:font-medium cursor-pointer border-b border-gray-300 max-sm:active:bg-primary-500 p-4 text-[16px] transition duration-100 ease-in-out sm:block sm:border-none md:px-1 md:py-4">
-							Home
-						</li>
+  const router = useRouter();
 
-						<li className="w-full hover:font-medium">
-							<button className="w-full cursor-pointer border-b border-gray-300 max-sm:active:bg-primary-500 p-4 text-start text-[16px] whitespace-nowrap transition duration-100 ease-in-out  sm:border-none md:px-1 md:py-4">
-								Buy Cars
-							</button>
-						</li>
-						<li className="w-full hover:font-medium">
-							<button
-								onClick={() => router.push("/post/discover")}
-								className="w-full  cursor-pointer border-b border-gray-300 max-sm:active:bg-primary-500 p-4 text-start text-[16px] whitespace-nowrap transition duration-100 ease-in-out  sm:border-none md:px-1 md:py-4"
-							>
-								Discover feeds
-							</button>
-						</li>
-						<li className="w-full  hover:font-medium">
-							<button className="w-full cursor-pointer border-b border-gray-300 max-sm:active:bg-primary-500 p-4 text-start text-[16px] whitespace-nowrap transition duration-100 ease-in-out  sm:border-none md:px-1 md:py-4">
-								Contact Me
-							</button>
-						</li>
-					</ol>
-				</div>
-			</div>
-		</>
-	)
+  const [selectedTab, setSelectedTab] = useState("home");
+
+  const handleTabSelection = (tabId: string) => {
+    setSelectedTab(tabId);
+  };
+
+  const tabs = ["home", "cars", "discover", "contact"];
+
+  return (
+    <>
+      <div
+        className={clsx(
+          "border-gray-300 mt-12 border-t transition-all duration-300 ease-in-out sm:m-0 sm:border-none md:flex ",
+        )}
+      >
+        <div className="flex h-screen w-full  font-normal sm:h-16 sm:flex-row md:px-1 md:py-1">
+          <ol className="flex w-full flex-col gap-0 sm:gap-2 md:flex-row md:gap-2 lg:gap-4">
+            {tabs.map((tab) => (
+              <li
+                key={tab}
+                onClick={() => {
+                  handleTabSelection(tab);
+                }}
+                className={clsx(
+                  "flex cursor-pointer items-center justify-center border-b-2  px-4 py-2 text-center transition-all duration-300 ease-in-out hover:border-primary-600 hover:text-primary-600 sm:border-none",
+                  selectedTab === tab
+                    ? "border-primary-600 text-primary-600 font-medium"
+                    : "border-transparent text-gray-600",
+                )}
+              >
+                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
+    </>
+  );
 }

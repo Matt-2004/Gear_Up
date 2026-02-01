@@ -29,6 +29,7 @@ export interface CarImages {
 }
 
 export interface CarItems {
+  dealerId: string;
   id: string;
   title: string;
   description: string;

@@ -24,8 +24,11 @@ export function CarCard({ carItem }: { carItem: CarItems }) {
               <h3 className="text-lg font-bold text-gray-900 line-clamp-1 group-hover:text-orange-600 transition-colors">
                 {carItem.title}
               </h3>
-              <p className="text-sm text-gray-500 mt-1">
-                {carItem.make} {carItem.model} • {carItem.year}
+              <p className="flex items-baseline text-sm text-gray-500 mt-1 gap-1">
+                <span className="max-w-32 truncate">
+                  {carItem.make} {carItem.model}
+                </span>
+                <span>{carItem.year}</span>
               </p>
             </div>
             {carItem.carStatus === "Available" && (

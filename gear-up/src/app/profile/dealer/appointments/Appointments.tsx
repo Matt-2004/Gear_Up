@@ -9,15 +9,12 @@ import {
 } from "@/utils/FetchAPI";
 import {
   Calendar,
-  Car,
   Check,
   CheckCircle,
   ChevronDown,
   Clock,
   Filter,
-  Mail,
   MapPin,
-  Phone,
   StickyNote,
   User,
   X,
@@ -292,13 +289,6 @@ const Appointments = ({
                           {appointment.status}
                         </span>
                       </div>
-                      <div className="flex items-center gap-2 text-gray-600">
-                        <Car className="h-4 w-4" />
-                        <span className="text-sm">
-                          {appointment.carMake} {appointment.carModel} (
-                          {appointment.carYear})
-                        </span>
-                      </div>
                     </div>
                   </div>
 
@@ -310,28 +300,10 @@ const Appointments = ({
                       </h4>
                       <div className="flex items-center gap-2 text-gray-600">
                         <User className="h-4 w-4" />
-                        <span className="text-sm">{appointment.userName}</span>
+                        <span className="text-sm">
+                          {appointment.requesterName}
+                        </span>
                       </div>
-                      <div className="flex items-center gap-2 text-gray-600">
-                        <Mail className="h-4 w-4" />
-                        <a
-                          href={`mailto:${appointment.userEmail}`}
-                          className="text-sm hover:text-primary-600"
-                        >
-                          {appointment.userEmail}
-                        </a>
-                      </div>
-                      {appointment.userPhone && (
-                        <div className="flex items-center gap-2 text-gray-600">
-                          <Phone className="h-4 w-4" />
-                          <a
-                            href={`tel:${appointment.userPhone}`}
-                            className="text-sm hover:text-primary-600"
-                          >
-                            {appointment.userPhone}
-                          </a>
-                        </div>
-                      )}
                     </div>
 
                     {/* Appointment Details */}

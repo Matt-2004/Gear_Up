@@ -200,6 +200,11 @@ export async function deleteCarById(carId: string) {
   return res?.data;
 }
 
+export async function getMyCars() {
+  const res = await getFetch(`/api/v1/cars/my-car`);
+  return res?.data;
+}
+
 export async function searchCarWithQuery(query: string) {
   const res = await getFetch(`/api/v1/cars/search?${query}`);
   return res?.data;
@@ -272,7 +277,7 @@ export async function createAppointment(
     location,
     notes,
   });
-  return res?.data;
+  return res;
 }
 
 export async function getAppointmentById(appointmentId: string) {
