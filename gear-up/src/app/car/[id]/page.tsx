@@ -1,11 +1,11 @@
 import { CarItems } from "@/app/types/car.types";
-import { getCarById } from "@/utils/FetchAPI";
+import { getCarById } from "@/utils/API/CarAPI";
 import CarDetailPage from "./CarDetailPage";
 
 async function getData(id: string) {
   try {
     const res = await getCarById(id);
-    return res;
+    return res?.data;
   } catch (error) {
     console.error("Error fetching user profile:", error);
     throw error;

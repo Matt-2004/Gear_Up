@@ -5,7 +5,7 @@ import { PostItem } from "@/app/types/post.types";
 import {
   getCommentsByPostId,
   getNestedCommentsByCommentId,
-} from "@/utils/FetchAPI";
+} from "@/utils/API/CommentAPI";
 import * as signalR from "@microsoft/signalr";
 import { useEffect } from "react";
 import { Comment } from "../discover/Comment";
@@ -19,16 +19,16 @@ interface IDetailProp {
 
 const Details = ({ access_token, postData }: IDetailProp) => {
   /*
-			Data flow 
+      Data flow 
 
-		1. This page will handle data fetching from the server using the id param
-		2. Connect the real-time and listen updates using signalR
-		3. Minipulate the data and update context stores
+    1. This page will handle data fetching from the server using the id param
+    2. Connect the real-time and listen updates using signalR
+    3. Minipulate the data and update context stores
 
-		
+  	
 	
 	
-	*/
+  */
   const { comments, handleComment, requestedParentCommentId } =
     useCommentContext();
 
@@ -53,13 +53,13 @@ const Details = ({ access_token, postData }: IDetailProp) => {
     { SeatingCapacity: seatingCapacity + " seats" },
   ];
   const fetchComments = async (postId: string) => {
-    const data = await getCommentsByPostId(postId);
-    handleComment(data, null);
+    const response = await getCommentsByPostId(postId);
+    handleComment(response?.data, null);
   };
 
   const fetchNestedComments = async (requestedParentCommentId: string) => {
-    const data = await getNestedCommentsByCommentId(requestedParentCommentId);
-    handleComment(data, requestedParentCommentId);
+    const response = await getNestedCommentsByCommentId(requestedParentCommentId);
+    handleComment(response?.data, requestedParentCommentId);
   };
 
   useEffect(() => {

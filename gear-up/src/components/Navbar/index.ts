@@ -1,4 +1,4 @@
 export * from "@/app/hooks/useToast"
 export * from "@/components/Common/SVGs"
-export * from "@/utils/FetchAPI"
+export * from "@/utils/API/FetchAPI"
 export { default as clsx } from "clsx"

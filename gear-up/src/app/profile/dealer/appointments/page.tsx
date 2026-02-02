@@ -1,22 +1,16 @@
 import { IAppointment } from "@/app/types/appointment.types";
 import {
-  dealerAppointments,
-  getUserProfile,
-  myAppointments,
-} from "@/utils/FetchAPI";
+  dealerAppointments
+} from "@/utils/API/AppointmentAPI";
+import { getUserProfile } from "@/utils/API/UserAPI";
 import Appointments from "./Appointments";
 
 async function getData() {
   const user = await getUserProfile();
 
   try {
-    if (user?.role == "Dealer") {
-      const res = await dealerAppointments();
-      return res;
-    } else if (user?.role == "Customer") {
-      const res = await myAppointments();
-      return res;
-    }
+    const res = await dealerAppointments();
+    return res?.data;
   } catch (error) {
     console.error("Failed to fetch appointments:", error);
     throw new Error("Failed to fetch appointments");
@@ -26,16 +20,6 @@ async function getData() {
 // Example mock data for development
 const Page = async () => {
   let appointments: IAppointment[] = await getData();
-
-  // Uncomment this when API is ready
-  // try {
-  //   const response = await dealerAppointments();
-  //   if (response?.isSuccess)
-  //     appointments = response.data;
-  //   }
-  // } catch (error) {
-  //   console.error("Failed to fetch appointments:", error);
-  // }
 
   return <Appointments appointments={appointments} />;
 };

@@ -4,7 +4,7 @@ import { useToast } from "@/app/hooks/useToast";
 import { CarItems } from "@/app/types/car.types";
 import AppointmentCarSummary from "@/components/Appointment/AppointmentCarSummary";
 import AppointmentForm from "@/components/Appointment/AppointmentForm";
-import { createAppointment } from "@/utils/FetchAPI";
+import { createAppointment } from "@/utils/API/AppointmentAPI";
 import { AnimatePresence } from "framer-motion";
 import { ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";

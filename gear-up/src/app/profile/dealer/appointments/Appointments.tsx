@@ -6,7 +6,7 @@ import {
   cancelAppointmentById,
   completeAppointmentById,
   rejectAppointmentById,
-} from "@/utils/FetchAPI";
+} from "@/utils/API/AppointmentAPI";
 import {
   Calendar,
   Check,
@@ -216,11 +216,10 @@ const Appointments = ({
                             setFilter(status);
                             setDropdownOpen(false);
                           }}
-                          className={`w-full flex items-center justify-between gap-2 rounded-sm px-3 py-2 hover:bg-green-100 hover:border-green-200 transition-colors text-left ${
-                            filter === status
+                          className={`w-full flex items-center justify-between gap-2 rounded-sm px-3 py-2 hover:bg-green-100 hover:border-green-200 transition-colors text-left ${filter === status
                               ? "bg-green-50 text-primary"
                               : "text-gray-700"
-                          }`}
+                            }`}
                         >
                           <span className="flex items-center gap-2">
                             {status === "Pending" && (

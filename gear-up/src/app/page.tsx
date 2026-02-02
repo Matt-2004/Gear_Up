@@ -1,12 +1,12 @@
 import { CarGrid } from "@/components/Car/CarGrid";
-import { getAllCars } from "@/utils/FetchAPI";
+import { getAllCars } from "@/utils/API/CarAPI";
 
 export default async function HOME() {
   let cars = [];
 
   try {
     const response = await getAllCars(1);
-    cars = response?.items || [];
+    cars = response?.data?.items || [];
   } catch (error) {
     console.error("Failed to fetch cars:", error);
   }

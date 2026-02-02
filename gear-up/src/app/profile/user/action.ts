@@ -1,6 +1,6 @@
 "use server"
 
-import { updateUserProfile } from "@/utils/FetchAPI"
+import { updateUserProfile } from "@/utils/API/UserAPI"
 import { revalidatePath } from "next/cache"
 
 export async function updateProfile(formData: FormData) {

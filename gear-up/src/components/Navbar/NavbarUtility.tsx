@@ -2,9 +2,8 @@
 
 import { IUser } from "@/app/types/user.types";
 import { Login, SearchBar, User } from "@/components/Navbar/NavUtils";
-import * as signalR from "@microsoft/signalr";
 import { Bell } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function NavbarUtility({ user }: { user: IUser }) {
   return (
@@ -26,32 +25,32 @@ export const NotificationBell = () => {
   // When hovered, show a dropdown with recent notifications
   const [token, setToken] = useState<string>("");
 
-  useEffect(() => {
-    const fetchToken = async () => {
-      const response = await fetch("/api/token/access_token_get");
-      const data = await response.json();
-      setToken(data.access_token);
-    };
+  // useEffect(() => {
+  //   const fetchToken = async () => {
+  //     const response = await fetch("/api/token/access_token_get");
+  //     const data = await response.json();
+  //     setToken(data.access_token);
+  //   };
 
-    fetchToken();
-  }, []);
+  //   fetchToken();
+  // }, []);
 
-  useEffect(() => {
-    const conn = new signalR.HubConnectionBuilder()
-      .withUrl("http://localhost:5255/hubs/notification", {
-        accessTokenFactory: () => token,
-      })
-      .withAutomaticReconnect()
-      .configureLogging(signalR.LogLevel.Information)
-      .build();
+  // useEffect(() => {
+  //   const conn = new signalR.HubConnectionBuilder()
+  //     .withUrl("http://localhost:5255/hubs/notification", {
+  //       accessTokenFactory: () => token,
+  //     })
+  //     .withAutomaticReconnect()
+  //     .configureLogging(signalR.LogLevel.Information)
+  //     .build();
 
-    conn.start().then(() => {
-      console.log("Notification Hub Connected");
-    });
+  //   conn.start().then(() => {
+  //     console.log("Notification Hub Connected");
+  //   });
 
-    conn.on("NotificationCreated", (data) => {
-      console.log("New Notification:", data);
-    });
-  }, [token]);
+  //   conn.on("NotificationCreated", (data) => {
+  //     console.log("New Notification:", data);
+  //   });
+  // }, [token]);
   return <Bell className="h-5 w-5 text-gray-600" />;
 };

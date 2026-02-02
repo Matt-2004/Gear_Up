@@ -1,7 +1,7 @@
 "use client";
 
 import { AddComment, CommentData } from "@/app/types/comment.types";
-import { addComment, addLikeToComment } from "@/utils/FetchAPI";
+import { addComment, addLikeToComment } from "@/utils/API/CommentAPI";
 import { diffFromNowAuto } from "@/utils/timeFormat";
 
 import { HeartFilledSVG, HeartSVG } from "@/utils/SVG";

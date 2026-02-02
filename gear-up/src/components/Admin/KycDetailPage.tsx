@@ -2,7 +2,7 @@
 
 import { IKycSubmissions, IKycUpdateByAdmin } from "@/app/types/kyc.types"
 import StatusUI from "@/components/Common/StatusUI"
-import { updateKycByAdmin } from "@/utils/FetchAPI"
+import { updateKycByAdmin } from "@/utils/API/AdminAPI"
 import { timeFormat } from "@/utils/timeFormat"
 import clsx from "clsx"
 import { ArrowLeft, Check, FileCheck, UserCheck, X } from "lucide-react"

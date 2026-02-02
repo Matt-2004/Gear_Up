@@ -1,6 +1,6 @@
 // Dealer car inventory page
 
-import { getMyCars } from "@/utils/FetchAPI";
+import { getMyCars } from "@/utils/API/CarAPI";
 import DealerCarDashboard from "./DealerCarDashboard";
 
 const Page = async () => {
@@ -8,7 +8,7 @@ const Page = async () => {
 
   try {
     const response = await getMyCars();
-    carData = response?.items || [];
+    carData = response?.data?.items || [];
   } catch (error) {
     console.error("Failed to fetch dealer cars:", error);
     // Use empty array as fallback

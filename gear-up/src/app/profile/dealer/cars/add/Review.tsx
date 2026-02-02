@@ -6,7 +6,7 @@ import { CarImages, CarItems } from "@/app/types/car.types";
 import { CarCard } from "@/components/Car/CarCard";
 import Button from "@/components/Common/Button";
 import Spinner from "@/components/Common/Spinner";
-import { addCar } from "@/utils/FetchAPI";
+import { addCar } from "@/utils/API/CarAPI";
 import { useRouter } from "next/navigation";
 import { FormEvent, ReactNode, useEffect, useState } from "react";
 import { useVehicleContext } from "./AddNewCarContext";

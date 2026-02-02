@@ -2,7 +2,7 @@ import StoreProvider from "@/app/hooks/StoreProvider";
 import ConditionalNavbar from "@/components/Navbar/ConditionalNavbar";
 import NextAuthSessionProvider from "@/provider/NextAuthSessionProvider";
 import ReactQueryProvider from "@/provider/ReactQueryProvider";
-import { getUserProfile } from "@/utils/FetchAPI";
+import { getUserProfile } from "@/utils/API/UserAPI";
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import { cookies } from "next/headers";
@@ -25,7 +25,8 @@ export default async function RootLayout({
   children: ReactNode;
 }>) {
   const refreshToken = (await cookies()).get("refresh_token");
-  const user = refreshToken ? await getUserProfile() : null;
+  const userResponse = refreshToken ? await getUserProfile() : null;
+  const user = userResponse?.data || null;
   return (
     <html lang="en" className={`${roboto.className}`}>
       <body className={`antialiased`}>

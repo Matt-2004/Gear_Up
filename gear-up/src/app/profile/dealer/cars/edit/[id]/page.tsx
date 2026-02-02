@@ -1,5 +1,5 @@
 import { CarItems } from "@/app/types/car.types";
-import { getCarById } from "@/utils/FetchAPI";
+import { getCarById } from "@/utils/API/CarAPI";
 import { redirect } from "next/navigation";
 import EditCarForm from "./EditCarForm";
 
@@ -7,7 +7,7 @@ async function fetchCarData(carId: string): Promise<CarItems | null> {
   try {
     const result = await getCarById(carId);
     console.log("Fetching car data: ", result);
-    return result;
+    return result?.data;
   } catch (err: any) {
     console.error("Error fetching car data:", err);
     return null;

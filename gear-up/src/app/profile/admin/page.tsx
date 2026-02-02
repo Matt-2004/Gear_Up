@@ -6,11 +6,11 @@ import AdminGenerateReport from "@/components/Admin/AdminGenerateReport"
 import AdminKycVerification from "@/components/Admin/AdminKycVerification"
 import { PageSwitcher } from "@/components/Admin/PageSwitcher"
 import { Tabs } from "@/components/Admin/Tabs"
-import { getAllKyc } from "@/utils/FetchAPI"
+import { getAllKyc } from "@/utils/API/AdminAPI"
 
-const getKycData = () => {
-	const res = getAllKyc()
-	return res
+const getKycData = async () => {
+	const res = await getAllKyc()
+	return res?.data
 }
 
 export default async function Page() {

@@ -3,7 +3,7 @@
 import { CarItems } from "@/app/types/car.types";
 import Button from "@/components/Common/Button";
 import Input from "@/components/Common/Input";
-import { updateCar } from "@/utils/FetchAPI";
+import { updateCar } from "@/utils/API/CarAPI";
 import { ArrowLeft, ImageUp, Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -243,11 +243,10 @@ const EditCarForm = ({ initialData }: EditCarFormProps) => {
                     {[2, 4, 5, 7].map((seats) => (
                       <label
                         key={seats}
-                        className={`flex-1 min-w-[100px] cursor-pointer rounded-lg border px-4 py-2 text-center transition-all ${
-                          formData.seatingCapacity === seats
+                        className={`flex-1 min-w-[100px] cursor-pointer rounded-lg border px-4 py-2 text-center transition-all ${formData.seatingCapacity === seats
                             ? "border-primary-500 bg-green-200 text-primary-700 font-semibold"
                             : "border-gray-300 text-gray-400 hover:border-gray-400"
-                        }`}
+                          }`}
                       >
                         <input
                           type="radio"
@@ -279,11 +278,10 @@ const EditCarForm = ({ initialData }: EditCarFormProps) => {
                     {["Petrol", "Diesel", "Electric", "Hybrid"].map((fuel) => (
                       <label
                         key={fuel}
-                        className={`flex-1 min-w-[100px] cursor-pointer rounded-lg border px-4 py-2 text-center transition-all ${
-                          formData.fuelType === fuel
+                        className={`flex-1 min-w-[100px] cursor-pointer rounded-lg border px-4 py-2 text-center transition-all ${formData.fuelType === fuel
                             ? "border-primary-500 bg-green-200 text-primary-700 font-semibold"
                             : "border-gray-300 text-gray-400 hover:border-gray-400"
-                        }`}
+                          }`}
                       >
                         <input
                           type="radio"
@@ -315,11 +313,10 @@ const EditCarForm = ({ initialData }: EditCarFormProps) => {
                     {["Manual", "Automatic"].map((transmission) => (
                       <label
                         key={transmission}
-                        className={`flex-1 min-w-[120px] cursor-pointer rounded-lg border px-4 py-2 text-center transition-all ${
-                          formData.transmissionType === transmission
+                        className={`flex-1 min-w-[120px] cursor-pointer rounded-lg border px-4 py-2 text-center transition-all ${formData.transmissionType === transmission
                             ? "border-primary-500 bg-green-200 text-primary-700 font-semibold"
                             : "border-gray-300 text-gray-400 hover:border-gray-400"
-                        }`}
+                          }`}
                       >
                         <input
                           type="radio"
@@ -355,11 +352,10 @@ const EditCarForm = ({ initialData }: EditCarFormProps) => {
                     ].map((condition) => (
                       <label
                         key={condition.value}
-                        className={`flex-1 min-w-[140px] cursor-pointer rounded-lg border px-4 py-2 text-center transition-all ${
-                          formData.carCondition === condition.value
+                        className={`flex-1 min-w-[140px] cursor-pointer rounded-lg border px-4 py-2 text-center transition-all ${formData.carCondition === condition.value
                             ? "border-primary-500 bg-green-200 text-primary-700 font-semibold"
                             : "border-gray-300 text-gray-400 hover:border-gray-400"
-                        }`}
+                          }`}
                       >
                         <input
                           type="radio"

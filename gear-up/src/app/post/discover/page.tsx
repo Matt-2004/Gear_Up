@@ -1,11 +1,12 @@
-import { getAllPosts, getUserProfile } from "@/utils/FetchAPI"
+import { getAllPosts } from "@/utils/API/PostAPI"
+import { getUserProfile } from "@/utils/API/UserAPI"
 import DiscoverPost from "./DiscoverPost"
 
 const Page = async () => {
-	const postData = await getAllPosts("lastest", 1)
-	const user = await getUserProfile()
+	const postResponse = await getAllPosts()
+	const userResponse = await getUserProfile()
 
-	return <DiscoverPost post={postData} user={user} />
+	return <DiscoverPost post={postResponse?.data} user={userResponse?.data} />
 }
 
 export default Page

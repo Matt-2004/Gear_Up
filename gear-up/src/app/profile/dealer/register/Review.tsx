@@ -1,4 +1,4 @@
-import { kycRegister } from "@/utils/FetchAPI"
+import { kycRegister } from "@/utils/API/UserAPI"
 
 import { useRouter } from "next/navigation"
 import { useKycRegisterContext } from "./context/KycRegisterContext"

@@ -1,7 +1,7 @@
 "use server"
 
 import { IKycUpdateByAdmin } from "@/app/types/kyc.types"
-import { updateKycByAdmin } from "@/utils/FetchAPI"
+import { updateKycByAdmin } from "@/utils/API/AdminAPI"
 import { revalidatePath } from "next/cache"
 
 import { redirect, RedirectType } from "next/navigation"

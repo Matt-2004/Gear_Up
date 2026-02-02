@@ -1,11 +1,11 @@
-import { getPostById } from "@/utils/FetchAPI"
+import { getPostById } from "@/utils/API/PostAPI"
 import { cookies } from "next/headers"
 import CommentContextProvider from "./CommentContext"
 import Details from "./Details"
 
 const getData = async (id: string) => {
 	const res = await getPostById(id)
-	return res
+	return res?.data
 }
 
 const Page = async ({

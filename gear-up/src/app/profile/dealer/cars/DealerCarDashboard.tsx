@@ -2,7 +2,7 @@
 
 import { CarItems } from "@/app/types/car.types";
 import { CarCard } from "@/components/Car/CarCard";
-import { deleteCarById } from "@/utils/FetchAPI";
+import { deleteCarById } from "@/utils/API/CarAPI";
 import {
   CarFront,
   MoreVertical,
@@ -118,9 +118,8 @@ const DealerCarDashboard = ({ carData }: { carData: CarItems[] }) => {
 
                       {/* Options Icon */}
                       <button
-                        className={`absolute top-3 right-3 z-10 rounded-lg bg-white/95 backdrop-blur-sm p-2 shadow-lg border border-gray-200 transition-all ${
-                          hoveredCardId === car.id ? "opacity-100" : "opacity-0"
-                        } hover:bg-gray-50`}
+                        className={`absolute top-3 right-3 z-10 rounded-lg bg-white/95 backdrop-blur-sm p-2 shadow-lg border border-gray-200 transition-all ${hoveredCardId === car.id ? "opacity-100" : "opacity-0"
+                          } hover:bg-gray-50`}
                         onClick={() =>
                           setShowOptionsId(
                             showOptionsId === car.id ? null : car.id,

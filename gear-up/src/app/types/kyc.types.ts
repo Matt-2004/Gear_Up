@@ -25,7 +25,7 @@ export interface IKycRes {
 	status: number
 }
 
-export interface IKycUpdateByAdmin {
+export interface IAdminUpdateStatus {
 	status: "Pending" | "Rejected" | "Approved"
 	rejectionReason: string
 }

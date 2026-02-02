@@ -2,7 +2,7 @@
 
 import { AllPostData, CarImage, PostItem } from "@/app/types/post.types";
 import { IUser } from "@/app/types/user.types";
-import { getAllPosts } from "@/utils/FetchAPI";
+import { getAllPosts } from "@/utils/API/PostAPI";
 import { timeFormat } from "@/utils/timeFormat";
 import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
 import { useVirtualizer } from "@tanstack/react-virtual";
@@ -21,18 +21,18 @@ import { LikeCount } from "./Comment";
 
 /* Discover post -> feeds & create post btn
 	
-		// create post
-		-> fetch the user data
-		-> check this step
-		if dealership && want create posts:
-			-> get the dealer's cars
-			-> select - Dealer's Cars
-			-> create post page
-				- caption
-				- context
+    // create post
+    -> fetch the user data
+    -> check this step
+    if dealership && want create posts:
+      -> get the dealer's cars
+      -> select - Dealer's Cars
+      -> create post page
+        - caption
+        - context
 
-		else:
-			only FEEDS
+    else:
+      only FEEDS
 */
 
 const DiscoverPost = ({ post, user }: { post: AllPostData; user: IUser }) => {
@@ -40,19 +40,22 @@ const DiscoverPost = ({ post, user }: { post: AllPostData; user: IUser }) => {
     useInfiniteQuery<
       AllPostData,
       Error,
-      InfiniteData<AllPostData, number>,
+      InfiniteData<AllPostData, string | undefined>,
       string[],
-      number
+      string | undefined
     >({
       queryKey: ["discover-posts"],
-      queryFn: ({ pageParam = 1 }) => getAllPosts("lastest", pageParam),
-      initialPageParam: 1,
+      queryFn: async ({ pageParam }) => {
+        const response = await getAllPosts(pageParam);
+        return response?.data;
+      },
+      initialPageParam: undefined,
       initialData: {
         pages: [post],
-        pageParams: [1],
+        pageParams: [undefined],
       },
       getNextPageParam: (lastPage) =>
-        lastPage.hasNextPage ? lastPage.currentPage + 1 : undefined,
+        lastPage.hasMore ? lastPage.cursor : undefined,
     });
 
   const posts = data.pages.flatMap((page) => page.items) ?? [];
