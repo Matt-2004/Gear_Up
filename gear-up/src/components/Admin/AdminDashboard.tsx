@@ -1,5 +1,8 @@
 "use client";
 
+import { CarItems } from "@/app/types/car.types";
+import { IKycSubmissions } from "@/app/types/kyc.types";
+import { CursorBaseDTO } from "@/app/types/post.types";
 import {
   Activity,
   ArrowUpRight,
@@ -13,9 +16,6 @@ import {
   XCircle,
 } from "lucide-react";
 import Link from "next/link";
-import { IKycSubmissions } from "@/app/types/kyc.types";
-import { CarItems } from "@/app/types/car.types";
-import { CursorBaseDTO } from "@/app/types/post.types";
 import { useMemo } from "react";
 
 interface DashboardData {
@@ -87,8 +87,10 @@ const AdminDashboard = ({ dashboardData }: AdminDashboardProps) => {
     const diffInDays = Math.floor(diffInHours / 24);
 
     if (diffInMins < 1) return "Just now";
-    if (diffInMins < 60) return `${diffInMins} minute${diffInMins > 1 ? "s" : ""} ago`;
-    if (diffInHours < 24) return `${diffInHours} hour${diffInHours > 1 ? "s" : ""} ago`;
+    if (diffInMins < 60)
+      return `${diffInMins} minute${diffInMins > 1 ? "s" : ""} ago`;
+    if (diffInHours < 24)
+      return `${diffInHours} hour${diffInHours > 1 ? "s" : ""} ago`;
     return `${diffInDays} day${diffInDays > 1 ? "s" : ""} ago`;
   };
   return (
@@ -188,7 +190,9 @@ const AdminDashboard = ({ dashboardData }: AdminDashboardProps) => {
                   recentKycActivity.map((kycItem) => {
                     const statusConfig = {
                       Approved: {
-                        icon: <CheckCircle className="h-5 w-5 text-green-600" />,
+                        icon: (
+                          <CheckCircle className="h-5 w-5 text-green-600" />
+                        ),
                         title: "KYC Approved",
                       },
                       Pending: {
@@ -230,25 +234,61 @@ const AdminDashboard = ({ dashboardData }: AdminDashboardProps) => {
             <OverviewCard
               title="Verification Status"
               items={[
-                { label: "Approved", value: stats.approvedKyc.toString(), color: "green" },
-                { label: "Pending", value: stats.pendingKyc.toString(), color: "orange" },
-                { label: "Rejected", value: stats.rejectedKyc.toString(), color: "red" },
+                {
+                  label: "Approved",
+                  value: stats.approvedKyc.toString(),
+                  color: "green",
+                },
+                {
+                  label: "Pending",
+                  value: stats.pendingKyc.toString(),
+                  color: "orange",
+                },
+                {
+                  label: "Rejected",
+                  value: stats.rejectedKyc.toString(),
+                  color: "red",
+                },
               ]}
             />
             <OverviewCard
               title="Vehicle Status"
               items={[
-                { label: "Approved", value: stats.approvedCars.toString(), color: "green" },
-                { label: "Pending", value: stats.pendingCars.toString(), color: "orange" },
-                { label: "Rejected", value: stats.rejectedCars.toString(), color: "red" },
+                {
+                  label: "Approved",
+                  value: stats.approvedCars.toString(),
+                  color: "green",
+                },
+                {
+                  label: "Pending",
+                  value: stats.pendingCars.toString(),
+                  color: "orange",
+                },
+                {
+                  label: "Rejected",
+                  value: stats.rejectedCars.toString(),
+                  color: "red",
+                },
               ]}
             />
             <OverviewCard
               title="Platform Stats"
               items={[
-                { label: "Total Dealers", value: stats.activeDealers.toString(), color: "blue" },
-                { label: "Total KYC", value: stats.totalUsers.toString(), color: "purple" },
-                { label: "Total Cars", value: stats.totalVehicles.toString(), color: "green" },
+                {
+                  label: "Total Dealers",
+                  value: stats.activeDealers.toString(),
+                  color: "blue",
+                },
+                {
+                  label: "Total KYC",
+                  value: stats.totalUsers.toString(),
+                  color: "purple",
+                },
+                {
+                  label: "Total Cars",
+                  value: stats.totalVehicles.toString(),
+                  color: "green",
+                },
               ]}
             />
           </div>
