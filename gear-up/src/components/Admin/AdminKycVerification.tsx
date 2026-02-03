@@ -1,181 +1,187 @@
-"use client"
+"use client";
 
-import { IKycRes } from "@/app/types/kyc.types"
-import DataTable from "@/components/Admin/DataTable"
+import { IKycSubmissions } from "@/app/types/kyc.types";
+import { CursorBaseDTO } from "@/app/types/post.types";
+import DataTable from "@/components/Admin/DataTable";
 import FilterProvider, {
-	KycDocumentType,
-	StatusType,
-	useKycFilterContext,
-} from "@/Context/AdminKycFilterContext"
-import { kycFilter } from "@/utils/Filter"
-import clsx from "clsx"
+  KycDocumentType,
+  StatusType,
+  useKycFilterContext,
+} from "@/Context/AdminKycFilterContext";
+import { kycFilter } from "@/utils/Filter";
 import {
-	CircleCheck,
-	CircleX,
-	Clock,
-	LayoutGrid,
-	Search,
-	SlidersHorizontal,
-} from "lucide-react"
+  CircleCheck,
+  CircleX,
+  Clock,
+  LayoutGrid,
+  Search,
+  SlidersHorizontal,
+} from "lucide-react";
 
-const AdminKycVerification = ({ kyc }: { kyc: IKycRes }) => {
-	if (!kyc) {
-		return <h3>Kyc data missing</h3>
-	}
-	return (
-		<FilterProvider>
-			<div className={"flex w-full justify-center"}>
-				<div className={"w-9/10 space-y-8"}>
-					<div id={"header"} className={"pt-4"}>
-						<h1 className={"text-2xl font-semibold"}>Document Verification</h1>
-						<h3 className={"text-sm text-gray-300"}>
-							Review and verify user-submitted documents
-						</h3>
-					</div>
-					<div
-						id={"Records"}
-						className={"flex w-full flex-col justify-between gap-4"}
-					>
-						<div className={"flex justify-between"}>
-							<StatusCountComponent status={"All"} kyc={kyc} />
-							<StatusCountComponent status={"Pending"} kyc={kyc} />
-							<StatusCountComponent status={"Approved"} kyc={kyc} />
-							<StatusCountComponent status={"Rejected"} kyc={kyc} />
-						</div>
-						<div
-							className={
-								"bg-background mt-6 flex h-[68px] w-full items-center justify-between"
-							}
-						>
-							<FilterUI />
-						</div>
-						<div className={"w-full"}>
-							<DataTable kyc={kyc.data.kycDto} />
-						</div>
-					</div>
-				</div>
-			</div>
-		</FilterProvider>
-	)
-}
+const AdminKycVerification = ({
+  kyc,
+}: {
+  kyc: Omit<CursorBaseDTO, "items"> & { items: IKycSubmissions[] };
+}) => {
+  if (!kyc) {
+    return <h3>Kyc data missing</h3>;
+  }
+  return (
+    <FilterProvider>
+      <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 p-8">
+        <div className="mx-auto max-w-7xl space-y-8">
+          {/* Header */}
+          <div className="space-y-2">
+            <h1 className="text-4xl font-bold text-gray-900">
+              Document Verification
+            </h1>
+            <p className="text-lg text-gray-600">
+              Review and verify user-submitted documents
+            </p>
+          </div>
+
+          {/* Stats Cards */}
+          <div className="grid gap-6 md:grid-cols-4">
+            <StatusCountComponent status="All" kyc={kyc} />
+            <StatusCountComponent status="Pending" kyc={kyc} />
+            <StatusCountComponent status="Approved" kyc={kyc} />
+            <StatusCountComponent status="Rejected" kyc={kyc} />
+          </div>
+
+          {/* Filter Section */}
+          <div className="rounded-2xl bg-white p-6 shadow-sm">
+            <FilterUI />
+          </div>
+
+          {/* Data Table */}
+          <div className="rounded-2xl bg-white shadow-sm overflow-hidden">
+            <DataTable kyc={kyc.items} />
+          </div>
+        </div>
+      </div>
+    </FilterProvider>
+  );
+};
 
 const FilterUI = () => {
-	const { setFilter } = useKycFilterContext()
+  const { setFilter } = useKycFilterContext();
 
-	return (
-		<>
-			<div className={"flex gap-2"}>
-				<div
-					className={
-						"flex w-1/2 items-center gap-4 rounded-sm border border-gray-300 p-2"
-					}
-				>
-					<Search className={"h-5 w-5"} />
-					<input
-						className={
-							"w-full placeholder:text-sm placeholder:text-gray-500 focus:outline-none"
-						}
-						type={"text"}
-						placeholder={"Search by name, ID, or document type"}
-						onChange={(e) => setFilter({ searchData: e.currentTarget.value })}
-					/>
-				</div>
+  return (
+    <div className="flex items-center justify-between gap-4">
+      <div className="flex flex-1 items-center gap-4">
+        {/* Search Input */}
+        <div className="relative flex-1 max-w-md">
+          <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
+          <input
+            className="w-full rounded-xl border-2 border-gray-200 bg-white py-3 pl-12 pr-4 text-gray-900 placeholder:text-gray-400 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-200 transition-all"
+            type="text"
+            placeholder="Search by name, ID, or document type..."
+            onChange={(e) => setFilter({ searchData: e.currentTarget.value })}
+          />
+        </div>
 
-				<div className={"rounded-sm border border-gray-300 p-2 text-gray-500"}>
-					<select
-						name="doc-type"
-						id="all-doc-type"
-						className={"focus:outline-none"}
-						defaultValue={""}
-						onChange={(e) =>
-							setFilter({
-								documentType: e.currentTarget.value as KycDocumentType,
-							})
-						}
-					>
-						<option value={""} disabled hidden>
-							All Document Type
-						</option>
-						<option value="Passport">Passport</option>
-						<option value="NationalID">National ID</option>
-						<option value="DriverLicense">Driver License</option>
-						<option value="UtilityBill">Utility Bill</option>
-						<option value="Other">Other</option>
-					</select>
-				</div>
-				<div className={"rounded-sm border border-gray-300 p-2 text-gray-500"}>
-					<select
-						name="doc-type"
-						id="all-doc-type"
-						className={"focus:outline-none"}
-						defaultValue={""}
-						onChange={(e) =>
-							setFilter({ statusType: e.currentTarget.value as StatusType })
-						}
-					>
-						<option value={""} disabled hidden>
-							All Status
-						</option>
-						<option value="All">All</option>
-						<option value="Pending">Pending</option>
-						<option value="Approved">Approved</option>
-						<option value="Rejected">Rejected</option>
-					</select>
-				</div>
-			</div>
-			<div
-				className={
-					"bg-primary hover:bg-primary-btn-hover mr-2 flex cursor-pointer gap-2 rounded-sm px-8 py-2 text-white"
-				}
-			>
-				<SlidersHorizontal />
-				Filter
-			</div>
-		</>
-	)
-}
+        {/* Document Type Filter */}
+        <div className="relative">
+          <select
+            name="doc-type"
+            id="all-doc-type"
+            className="cursor-pointer appearance-none rounded-xl border-2 border-gray-200 bg-white px-6 py-3 pr-10 text-gray-700 font-medium focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-200 transition-all hover:border-gray-300"
+            defaultValue=""
+            onChange={(e) =>
+              setFilter({
+                documentType: e.currentTarget.value as KycDocumentType,
+              })
+            }
+          >
+            <option value="" disabled hidden>
+              Document Type
+            </option>
+            <option value="Passport">Passport</option>
+            <option value="NationalID">National ID</option>
+            <option value="DriverLicense">Driver License</option>
+            <option value="UtilityBill">Utility Bill</option>
+            <option value="Other">Other</option>
+          </select>
+          <SlidersHorizontal className="pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
+        </div>
+
+        {/* Status Filter */}
+        <div className="relative">
+          <select
+            name="status-type"
+            id="all-status"
+            className="cursor-pointer appearance-none rounded-xl border-2 border-gray-200 bg-white px-6 py-3 pr-10 text-gray-700 font-medium focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-200 transition-all hover:border-gray-300"
+            defaultValue=""
+            onChange={(e) =>
+              setFilter({ statusType: e.currentTarget.value as StatusType })
+            }
+          >
+            <option value="" disabled hidden>
+              Filter Status
+            </option>
+            <option value="All">All Status</option>
+            <option value="Pending">Pending</option>
+            <option value="Approved">Approved</option>
+            <option value="Rejected">Rejected</option>
+          </select>
+          <SlidersHorizontal className="pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const StatusCountComponent = ({
-	status,
-	kyc,
+  status,
+  kyc,
 }: {
-	status: string
-	kyc: IKycRes
+  status: string;
+  kyc: Omit<CursorBaseDTO, "items"> & { items: IKycSubmissions[] };
 }) => {
+  const colorConfig = {
+    Approved: {
+      bg: "bg-green-50",
+      iconBg: "bg-green-500",
+      text: "text-green-900",
+      icon: <CircleCheck className="h-6 w-6 text-white" />,
+    },
+    All: {
+      bg: "bg-blue-50",
+      iconBg: "bg-blue-500",
+      text: "text-blue-900",
+      icon: <LayoutGrid className="h-6 w-6 text-white" />,
+    },
+    Pending: {
+      bg: "bg-orange-50",
+      iconBg: "bg-orange-500",
+      text: "text-orange-900",
+      icon: <Clock className="h-6 w-6 text-white" />,
+    },
+    Rejected: {
+      bg: "bg-red-50",
+      iconBg: "bg-red-500",
+      text: "text-red-900",
+      icon: <CircleX className="h-6 w-6 text-white" />,
+    },
+  };
 
-	return (
-		<div
-			id={status}
-			className={clsx(
-				status === "Approved" && "bg-[#DCFCE7]",
-				status === "All" && "bg-[#DBEAFE]",
-				status === "Pending" && "bg-[#FFEDD5]",
-				status === "Rejected" && "bg-[#FEE2E2]",
-				"flex h-40 w-2/10 flex-col justify-center gap-1 rounded-sm border-gray-800 p-4 text-black shadow-sm shadow-gray-300",
-			)}
-		>
-			<div
-				className={clsx(
-					status === "Approved" && "bg-[#16A34A]",
-					status === "All" && "bg-[#2563EB]",
-					status === "Pending" && "bg-[#EA580C]",
-					status === "Rejected" && "bg-[#DC2626]",
-					"flex h-10 w-10 items-center justify-center rounded-lg",
-				)}
-			>
-				{(status === "Pending" && <Clock className={"text-[#FFEDD5]"} />) ||
-					(status === "Approved" && (
-						<CircleCheck className={"text-[#DCFCE7]"} />
-					)) ||
-					(status === "Rejected" && <CircleX className={"text-[#FEE2E2]"} />) ||
-					(status === "All" && <LayoutGrid className={"text-[#DBEAFE]"} />)}
-			</div>
-			<h2 className={"text-3xl font-semibold"}>
-				{status === "All" ? kyc.data.totalCount : kycFilter(kyc, status)}
-			</h2>
-			<h1 className={"text-sm"}>{status} Reviews</h1>
-		</div>
-	)
-}
+  const config = colorConfig[status as keyof typeof colorConfig];
 
-export default AdminKycVerification
+  return (
+    <div
+      className={`group rounded-2xl ${config.bg} p-6 shadow-sm hover:shadow-sm transition-all duration-300 hover:-translate-y-1`}
+    >
+      <div
+        className={`${config.iconBg} mb-4 flex h-14 w-14 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-110`}
+      >
+        {config.icon}
+      </div>
+      <p className="text-sm font-medium text-gray-600 mb-1">{status} Reviews</p>
+      <p className={`text-4xl font-bold ${config.text}`}>
+        {status === "All" ? kyc.items.length : kycFilter(kyc, status)}
+      </p>
+    </div>
+  );
+};
+
+export default AdminKycVerification;

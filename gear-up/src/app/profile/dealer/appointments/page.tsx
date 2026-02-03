@@ -1,7 +1,6 @@
 import { IAppointment } from "@/app/types/appointment.types";
-import {
-  dealerAppointments
-} from "@/utils/API/AppointmentAPI";
+import { CursorBaseDTO } from "@/app/types/post.types";
+import { dealerAppointments } from "@/utils/API/AppointmentAPI";
 import { getUserProfile } from "@/utils/API/UserAPI";
 import Appointments from "./Appointments";
 
@@ -19,7 +18,8 @@ async function getData() {
 
 // Example mock data for development
 const Page = async () => {
-  let appointments: IAppointment[] = await getData();
+  let appointments: Omit<CursorBaseDTO, "items"> & { items: IAppointment[] } =
+    await getData();
 
   return <Appointments appointments={appointments} />;
 };

@@ -1,7 +1,7 @@
 interface StatsCardProps {
   label: string;
   value: number;
-  variant?: "default" | "yellow" | "blue" | "green" | "gray" | "red";
+  variant?: "default" | "yellow" | "green" | "red";
 }
 
 const StatsCard = ({ label, value, variant = "default" }: StatsCardProps) => {
@@ -9,12 +9,8 @@ const StatsCard = ({ label, value, variant = "default" }: StatsCardProps) => {
     switch (variant) {
       case "yellow":
         return "bg-yellow-50 border-yellow-200 text-yellow-800";
-      case "blue":
-        return "bg-blue-50 border-blue-200 text-blue-800";
       case "green":
         return "bg-green-50 border-green-200 text-green-800";
-      case "gray":
-        return "bg-gray-50 border-gray-200 text-gray-800";
       case "red":
         return "bg-red-50 border-red-200 text-red-800";
       default:
@@ -26,12 +22,8 @@ const StatsCard = ({ label, value, variant = "default" }: StatsCardProps) => {
     switch (variant) {
       case "yellow":
         return "text-yellow-900";
-      case "blue":
-        return "text-blue-900";
       case "green":
         return "text-green-900";
-      case "gray":
-        return "text-gray-900";
       case "red":
         return "text-red-900";
       default:

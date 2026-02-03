@@ -4,9 +4,11 @@ import { IUser } from "@/app/types/user.types";
 import clsx from "clsx";
 import { Calendar, Car, LogOut, Settings, User, UserPlus } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { HTMLAttributes, ReactNode } from "react";
 
 export function ProfileDropDown({ user }: { user: IUser }) {
+  const router = useRouter();
   const signOut = async () => {
     try {
       await fetch("/api/token/remove", {
@@ -15,6 +17,7 @@ export function ProfileDropDown({ user }: { user: IUser }) {
     } finally {
       // Full reload clears all client-side state (useState, caches, etc.)
       window.location.reload();
+      router.push("/");
     }
   };
   return (

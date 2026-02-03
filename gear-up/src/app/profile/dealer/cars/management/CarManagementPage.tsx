@@ -3,10 +3,15 @@
 // Remove Car -> Delete
 // Create Car -> POST
 
-import { Items } from "@/app/types/car.types"
+import { CarItems } from "@/app/types/car.types";
+import { CursorBaseDTO } from "@/app/types/post.types";
 
-const CarManagementPage = ({ car }: { car: Items[] }) => {
-	return <div>CarManagementPage</div>
-}
+const CarManagementPage = ({
+  car,
+}: {
+  car: Omit<CursorBaseDTO, "items"> & { items: CarItems[] };
+}) => {
+  return <div>CarManagementPage</div>;
+};
 
-export default CarManagementPage
+export default CarManagementPage;

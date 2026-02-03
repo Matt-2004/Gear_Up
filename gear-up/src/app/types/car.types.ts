@@ -60,3 +60,5 @@ export type ITransmissionType =
   | "SemiAutomatic";
 
 export type IFuelType = "Default" | "Petrol" | "Diesel" | "Electric" | "Hybrid";
+
+export type CarStatus = "Pending" | "Approved" | "Rejected";

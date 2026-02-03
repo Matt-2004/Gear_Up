@@ -1,21 +1,64 @@
 // Dealer car inventory page
 
+import { CarItems } from "@/app/types/car.types";
+import { CursorBaseDTO } from "@/app/types/post.types";
 import { getMyCars } from "@/utils/API/CarAPI";
 import DealerCarDashboard from "./DealerCarDashboard";
 
-const Page = async () => {
-  let carData = [];
-
+// Fetch cars by status
+async function getCarsByStatus(status: string) {
   try {
-    const response = await getMyCars();
-    carData = response?.data?.items || [];
+    const res = await getMyCars(status, null);
+    return res?.data;
   } catch (error) {
-    console.error("Failed to fetch dealer cars:", error);
-    // Use empty array as fallback
-    carData = [];
+    console.error(`Error fetching ${status} cars:`, error);
+    return null;
   }
+}
 
-  return <DealerCarDashboard carData={carData} />;
+// Fetch all cars (Pending, Approved, Rejected) and combine into CursorBaseDTO format
+async function getAllStatusCars(): Promise<
+  Omit<CursorBaseDTO, "items"> & { items: CarItems[] }
+> {
+  try {
+    const [pendingData, approvedData, rejectedData] = await Promise.all([
+      getCarsByStatus("Pending"),
+      getCarsByStatus("Approved"),
+      getCarsByStatus("Rejected"),
+    ]);
+
+    console.log(pendingData, approvedData, rejectedData);
+    // Combine all cars from different statuses into items array
+    const allCars: Omit<CursorBaseDTO, "items"> & { items: CarItems[] } = {
+      items: [
+        ...pendingData?.items,
+        ...approvedData?.items,
+        ...rejectedData?.items,
+      ],
+      hasMore: false,
+      cursor: "",
+    };
+    console.log("All cars combined:", allCars);
+    // Return in CursorBaseDTO format
+    return {
+      items: allCars.items,
+      hasMore: false,
+      cursor: "",
+    };
+  } catch (error) {
+    console.error("Error fetching all status cars:", error);
+    return {
+      items: [],
+      hasMore: false,
+      cursor: "",
+    };
+  }
+}
+
+const Page = async () => {
+  const cars = await getAllStatusCars();
+
+  return <DealerCarDashboard carData={cars} />;
 };
 
 export default Page;

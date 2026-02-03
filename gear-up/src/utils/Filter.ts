@@ -1,11 +1,15 @@
-import { IKycRes } from "@/app/types/kyc.types"
+import { IKycSubmissions } from "@/app/types/kyc.types";
+import { CursorBaseDTO } from "@/app/types/post.types";
 
-export function kycFilter(kycRes: IKycRes, status: string) {
-	if (!kycRes.data.kycDto) {
-		return
-	}
+export function kycFilter(
+  kycRes: Omit<CursorBaseDTO, "items"> & { items: IKycSubmissions[] },
+  status: string,
+) {
+  if (!kycRes.items) {
+    return;
+  }
 
-	const kycFilter = kycRes.data.kycDto.filter((data) => data.status === status)
+  const kycFilter = kycRes.items.filter((data) => data.status === status);
 
-	return kycFilter.length
+  return kycFilter.length;
 }

@@ -1,147 +1,149 @@
-"use client"
+"use client";
 
-import { IKycSubmissions } from "@/app/types/kyc.types"
-import StatusUI, { Status } from "@/components/Common/StatusUI"
-import { useKycFilterContext } from "@/Context/AdminKycFilterContext"
-import clsx from "clsx"
-import { ArrowUpRight, Check } from "lucide-react"
-import { usePathname, useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { IKycSubmissions } from "@/app/types/kyc.types";
+import StatusUI, { Status } from "@/components/Common/StatusUI";
+import { useKycFilterContext } from "@/Context/AdminKycFilterContext";
+import { ArrowUpRight, Check, Search } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const DataTable = ({ kyc }: { kyc: IKycSubmissions[] }) => {
-	const { searchData, statusType, documentType } = useKycFilterContext()
-	const [filterData, setFilterData] = useState<IKycSubmissions[]>([])
+  const { searchData, statusType, documentType } = useKycFilterContext();
+  const [filterData, setFilterData] = useState<IKycSubmissions[]>([]);
 
-	useEffect(() => {
-		if (!kyc) return
-		setFilterData(
-			kyc.filter(
-				(prev) =>
-					(statusType === "All" || prev.status === statusType) &&
-					(documentType === "All" || prev.documentType === documentType) &&
-					prev.fullName.toLowerCase().includes(searchData.toLowerCase()),
-			),
-		)
-	}, [searchData, statusType, documentType, kyc])
+  useEffect(() => {
+    if (!kyc) return;
+    setFilterData(
+      kyc.filter(
+        (prev) =>
+          (statusType === "All" || prev.status === statusType) &&
+          (documentType === "All" || prev.documentType === documentType) &&
+          prev.fullName.toLowerCase().includes(searchData.toLowerCase()),
+      ),
+    );
+  }, [searchData, statusType, documentType, kyc]);
 
-	return (
-		<div className="mx-auto overflow-x-auto rounded-sm border border-gray-300">
-			<table className="bg-background min-w-full text-gray-600">
-				<thead className="bg-background">
-					<tr>
-						<th
-							className="border-r border-b border-gray-300 px-4 py-3 text-center text-xs font-medium tracking-wider uppercase"
-							scope="col"
-						>
-							No.
-						</th>
-						<th
-							className="border-r border-b border-gray-300 px-4 py-3 text-center text-xs font-medium tracking-wider uppercase"
-							scope="col"
-						>
-							Name
-						</th>
-
-						<th
-							className="border-r border-b border-gray-300 px-4 py-3 text-center text-xs font-medium tracking-wider uppercase"
-							scope="col"
-						>
-							Document Type
-						</th>
-						<th
-							className="border-r border-b border-gray-300 px-4 py-3 text-center text-xs font-medium tracking-wider uppercase"
-							scope="col"
-						>
-							Email
-						</th>
-						<th
-							className="border-r border-b border-gray-300 px-4 py-3 text-center text-xs font-medium tracking-wider uppercase"
-							scope="col"
-						>
-							Status
-						</th>
-						<th
-							className="border-r border-b border-gray-300 px-4 py-3 text-center text-xs font-medium tracking-wider uppercase"
-							scope="col"
-						>
-							Review
-						</th>
-					</tr>
-				</thead>
-				<tbody className={"h-full"}>
-					{filterData.length < 0 ? (
-						<h1 className={"text-gray-500"}>No Data Match with filter</h1>
-					) : (
-						filterData.map((submission: IKycSubmissions, index: number) => {
-							return (
-								<tr key={submission.id} className={"border-b border-gray-300"}>
-									<th
-										className="border-r border-gray-300 py-2.5 text-center text-sm whitespace-nowrap"
-										scope="row"
-									>
-										{index + 1}
-									</th>
-
-									<td className="border-r border-gray-300 py-2.5 text-center text-sm whitespace-nowrap">
-										{submission.fullName}
-									</td>
-
-									<td className="border-r border-gray-300 py-2.5 text-center text-sm whitespace-nowrap">
-										{submission.documentType}
-									</td>
-									<td className="border-r border-gray-300 py-2.5 text-center text-sm whitespace-nowrap">
-										{submission.email}
-									</td>
-									<td
-										className={clsx(
-											"h-full border-r border-gray-300 text-center text-sm whitespace-nowrap",
-										)}
-									>
-										<div className={"flex justify-center"}>
-											<StatusUI status={submission.status} />
-										</div>
-									</td>
-									<td className="border-r border-gray-300 py-2.5 text-center text-sm whitespace-nowrap">
-										<ReviewBtn status={submission.status} id={submission.id} />
-									</td>
-								</tr>
-							)
-						})
-					)}
-				</tbody>
-			</table>
-		</div>
-	)
-}
+  return (
+    <div className="overflow-hidden">
+      <table className="min-w-full">
+        <thead className="bg-gray-50">
+          <tr>
+            <th
+              scope="col"
+              className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-700"
+            >
+              No.
+            </th>
+            <th
+              scope="col"
+              className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-700"
+            >
+              Name
+            </th>
+            <th
+              scope="col"
+              className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-700"
+            >
+              Document Type
+            </th>
+            <th
+              scope="col"
+              className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-700"
+            >
+              Email
+            </th>
+            <th
+              scope="col"
+              className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-700"
+            >
+              Status
+            </th>
+            <th
+              scope="col"
+              className="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider text-gray-700"
+            >
+              Action
+            </th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-gray-200 bg-white">
+          {filterData.length === 0 ? (
+            <tr>
+              <td colSpan={6} className="px-6 py-12 text-center">
+                <div className="flex flex-col items-center justify-center">
+                  <div className="mb-4 rounded-full bg-gray-100 p-4">
+                    <Search className="h-8 w-8 text-gray-400" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    No results found
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    Try adjusting your search or filter criteria
+                  </p>
+                </div>
+              </td>
+            </tr>
+          ) : (
+            filterData.map((submission: IKycSubmissions, index: number) => (
+              <tr
+                key={submission.id}
+                className="transition-colors hover:bg-gray-50"
+              >
+                <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
+                  {index + 1}
+                </td>
+                <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
+                  {submission.fullName}
+                </td>
+                <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-600">
+                  {submission.documentType}
+                </td>
+                <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-600">
+                  {submission.email}
+                </td>
+                <td className="whitespace-nowrap px-6 py-4">
+                  <StatusUI status={submission.status} />
+                </td>
+                <td className="whitespace-nowrap px-6 py-4 text-center">
+                  <ReviewBtn status={submission.status} id={submission.id} />
+                </td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
+    </div>
+  );
+};
 
 const ReviewBtn = ({ id, status }: { id: string; status: Status }) => {
-	const currentPath = usePathname()
-	const router = useRouter()
+  const currentPath = usePathname();
+  const router = useRouter();
 
-	return (
-		<div className={"flex justify-center"}>
-			<button
-				onClick={() => router.push(`${currentPath}/management/kyc/${id}`)}
-				className={
-					"flex cursor-pointer items-center hover:underline hover:underline-offset-1"
-				}
-			>
-				{status === "Pending" ? (
-					<div className="flex gap-1">
-						<h1>View</h1>
-						<ArrowUpRight className={"h-4 w-4"} />
-					</div>
-				) : (
-					<div className="flex items-center gap-1">
-						<h1>Completed</h1>
-						<div className="flex h-4 w-4 flex-col items-center justify-center rounded-full bg-green-500">
-							<Check className="h-2 w-2 text-white" />
-						</div>
-					</div>
-				)}
-			</button>
-		</div>
-	)
-}
+  return (
+    <div className="flex justify-center">
+      <button
+        onClick={() => router.push(`${currentPath}/management/kyc/${id}`)}
+        className="group flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-semibold transition-all duration-200 hover:bg-gray-100"
+      >
+        {status === "Pending" ? (
+          <>
+            <span className="text-blue-600 group-hover:text-blue-700">
+              View
+            </span>
+            <ArrowUpRight className="h-4 w-4 text-blue-600 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+          </>
+        ) : (
+          <>
+            <span className="text-green-600">Completed</span>
+            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-green-500">
+              <Check className="h-3 w-3 text-white" />
+            </div>
+          </>
+        )}
+      </button>
+    </div>
+  );
+};
 
-export default DataTable
+export default DataTable;

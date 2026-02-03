@@ -1,62 +1,42 @@
-import { AppointmentStatus } from "@/app/types/appointment.types";
+import { CarStatus } from "@/app/types/car.types";
 import { ChevronDown, Filter } from "lucide-react";
 
 interface FilterDropdownProps {
-  filter: AppointmentStatus | "All";
+  filter: CarStatus | "All";
   dropdownOpen: boolean;
-  appointmentCounts: {
+  carCounts: {
     total: number;
     pending: number;
-    confirmed: number;
-    completed: number;
-    cancelled: number;
+    approved: number;
     rejected: number;
   };
   onToggleDropdown: () => void;
-  onFilterChange: (filter: AppointmentStatus | "All") => void;
+  onFilterChange: (filter: CarStatus | "All") => void;
 }
 
 const FilterDropdown = ({
   filter,
   dropdownOpen,
-  appointmentCounts,
+  carCounts,
   onToggleDropdown,
   onFilterChange,
 }: FilterDropdownProps) => {
   const statusOptions: {
     label: string;
-    status: AppointmentStatus | "All";
+    status: CarStatus | "All";
     count: number;
   }[] = [
-    { label: "All", status: "All", count: appointmentCounts.total },
-    { label: "Pending", status: "Pending", count: appointmentCounts.pending },
-    {
-      label: "Confirmed",
-      status: "Confirmed",
-      count: appointmentCounts.confirmed,
-    },
-    {
-      label: "Completed",
-      status: "Completed",
-      count: appointmentCounts.completed,
-    },
-    {
-      label: "Cancelled",
-      status: "Cancelled",
-      count: appointmentCounts.cancelled,
-    },
-    {
-      label: "Rejected",
-      status: "Rejected",
-      count: appointmentCounts.rejected,
-    },
+    { label: "All", status: "All", count: carCounts.total },
+    { label: "Pending", status: "Pending", count: carCounts.pending },
+    { label: "Approved", status: "Approved", count: carCounts.approved },
+    { label: "Rejected", status: "Rejected", count: carCounts.rejected },
   ];
 
   return (
     <div className="relative">
       <button
         onClick={onToggleDropdown}
-        className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500"
       >
         <Filter className="h-4 w-4" />
         {filter === "All" ? "All Status" : filter}
@@ -76,9 +56,9 @@ const FilterDropdown = ({
                     onClick={() => {
                       onFilterChange(status);
                     }}
-                    className={`flex w-full items-center justify-between gap-2 rounded-md px-3 py-2 text-left text-sm hover:bg-blue-50 transition-colors ${
+                    className={`flex w-full items-center justify-between gap-2 rounded-md px-3 py-2 text-left text-sm hover:bg-primary-50 transition-colors ${
                       filter === status
-                        ? "bg-blue-50 text-blue-700"
+                        ? "bg-primary-50 text-primary-700"
                         : "text-gray-700"
                     }`}
                   >
