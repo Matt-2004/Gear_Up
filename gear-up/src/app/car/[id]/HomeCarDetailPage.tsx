@@ -9,7 +9,7 @@ import CarImageGallery from "@/components/Car/CarImageGallery";
 import CarSpecifications from "@/components/Car/CarSpecifications";
 import { useState } from "react";
 
-export default function CarDetailPage({ car }: { car: CarItems }) {
+export default function HomeCarDetailPage({ car }: { car: CarItems }) {
   const [selectedImage, setSelectedImage] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
 

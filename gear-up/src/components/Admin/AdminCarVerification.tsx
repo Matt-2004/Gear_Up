@@ -1,5 +1,6 @@
 "use client";
 
+import { AdminCarApprovalData } from "@/app/types/Admin_Car_Approval";
 import { CarItems } from "@/app/types/car.types";
 import { CursorBaseDTO } from "@/app/types/post.types";
 import CarDataTable from "@/components/Admin/CarDataTable";
@@ -25,7 +26,7 @@ import {
 const AdminCarVerification = ({
 	cars,
 }: {
-	cars: Omit<CursorBaseDTO, "items"> & { items: CarItems[] };
+	cars: AdminCarApprovalData;
 }) => {
 	if (!cars) {
 		return <h3>Car data missing</h3>;

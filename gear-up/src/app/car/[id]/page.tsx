@@ -1,6 +1,6 @@
 import { CarItems } from "@/app/types/car.types";
 import { getCarById } from "@/utils/API/CarAPI";
-import CarDetailPage from "./CarDetailPage";
+import HomeCarDetailPage from "./HomeCarDetailPage";
 
 async function getData(id: string) {
   try {
@@ -16,7 +16,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
   const car = (await getData(id)) as CarItems;
 
-  return <CarDetailPage car={car} />;
+  return <HomeCarDetailPage car={car} />;
 };
 
 export default Page;

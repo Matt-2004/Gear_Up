@@ -1,7 +1,9 @@
 "use client"
 
-import { IKycSubmissions, IKycUpdateByAdmin } from "@/app/types/kyc.types"
+import { IAdminUpdateStatus, IKycSubmissions } from "@/app/types/kyc.types"
 import StatusUI from "@/components/Common/StatusUI"
+
+
 import { updateKycByAdmin } from "@/utils/API/AdminAPI"
 import { timeFormat } from "@/utils/timeFormat"
 import clsx from "clsx"
@@ -189,7 +191,7 @@ const PersonalInfoComponent = ({
 
 interface IDecision {
 	id: string
-	data: IKycUpdateByAdmin
+	data: IAdminUpdateStatus
 }
 
 const RejectButton = ({ id, data }: IDecision) => {
