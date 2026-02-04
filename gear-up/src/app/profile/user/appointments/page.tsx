@@ -15,7 +15,6 @@ async function getData(cursor?: string) {
 
 const Page = async () => {
     const result: Omit<CursorBaseDTO, "items"> & { items: IAppointment[] } = await getData();
-    console.log("Fetched user appointments result:", result);
     const appointments = result?.items || [];
 
     return <Appointments appointments={appointments} />;

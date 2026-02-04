@@ -3,9 +3,9 @@
 import clsx from "clsx";
 import {
   BarChart3,
-  FileCheck,
+  ClipboardCheck,
   LayoutDashboard,
-  ShieldCheck,
+  UserRoundCheck
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -17,8 +17,8 @@ interface ITab {
 
 const tabIcons: Record<string, React.ReactNode> = {
   Dashboard: <LayoutDashboard className="h-5 w-5" />,
-  "Kyc Verification": <FileCheck className="h-5 w-5" />,
-  "Dealer Verification": <ShieldCheck className="h-5 w-5" />,
+  "Kyc Verification": <UserRoundCheck className="h-5 w-5" />,
+  "Car Verification": <ClipboardCheck className="h-5 w-5" />,
   "Generate Report": <BarChart3 className="h-5 w-5" />,
 };
 

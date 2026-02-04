@@ -1,7 +1,7 @@
 "use server";
 
+import AdminCarVerification from "@/components/Admin/AdminCarVerification";
 import AdminDashboard from "@/components/Admin/AdminDashboard";
-import AdminDealershipVerification from "@/components/Admin/AdminDealershipVerification";
 import AdminGenerateReport from "@/components/Admin/AdminGenerateReport";
 import AdminKycVerification from "@/components/Admin/AdminKycVerification";
 import { PageSwitcher } from "@/components/Admin/PageSwitcher";
@@ -10,6 +10,11 @@ import { getAllCars, getAllKyc } from "@/utils/API/AdminAPI";
 
 const getKycData = async () => {
   const res = await getAllKyc();
+  return res?.data;
+};
+
+const getCarsData = async () => {
+  const res = await getAllCars(1, 1000); // Fetch cars for verification
   return res?.data;
 };
 
@@ -35,11 +40,12 @@ const getDashboardData = async () => {
 
 export default async function Page() {
   const kyc = await getKycData();
+  const cars = await getCarsData();
   const dashboardData = await getDashboardData();
   const tabs = [
     { name: "Dashboard", path: "?tab=dashboard" },
     { name: "Kyc Verification", path: "?tab=kyc-verification" },
-    { name: "Dealer Verification", path: "?tab=dealer-verification" },
+    { name: "Car Verification", path: "?tab=car-verification" },
     { name: "Generate Report", path: "?tab=generate-report" },
   ];
 
@@ -52,7 +58,7 @@ export default async function Page() {
       name: "kyc-verification",
       page: <AdminKycVerification kyc={kyc} />,
     },
-    { name: "dealer-verification", page: <AdminDealershipVerification /> },
+    { name: "car-verification", page: <AdminCarVerification cars={cars} /> },
     { name: "generate-report", page: <AdminGenerateReport /> },
   ];
 
