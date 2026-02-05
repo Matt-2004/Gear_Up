@@ -33,7 +33,7 @@ const AdminCarVerification = ({
 	}
 	return (
 		<FilterProvider>
-			<div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 p-8">
+			<div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-primary-100/50 p-8">
 				<div className="mx-auto max-w-7xl space-y-8">
 					{/* Header */}
 					<div className="space-y-2">
@@ -43,9 +43,7 @@ const AdminCarVerification = ({
 						<p className="text-lg text-gray-600">
 							Review and verify dealer-submitted car listings
 						</p>
-					</div>
-
-					{/* Stats Cards */}
+					</div>					{/* Stats Cards */}
 					<div className="grid gap-6 md:grid-cols-4">
 						<StatusCountComponent status="All" cars={cars} />
 						<StatusCountComponent status="Pending" cars={cars} />
@@ -54,12 +52,12 @@ const AdminCarVerification = ({
 					</div>
 
 					{/* Filter Section */}
-					<div className="rounded-2xl bg-white p-6 shadow-sm">
+					<div className="rounded-2xl bg-white p-6 shadow-md border border-gray-100">
 						<FilterUI />
 					</div>
 
 					{/* Data Table */}
-					<div className="rounded-2xl bg-white shadow-sm overflow-hidden">
+					<div className="rounded-2xl bg-white shadow-md border border-gray-100 overflow-hidden">
 						<CarDataTable cars={cars.items} />
 					</div>
 				</div>
@@ -79,7 +77,7 @@ const FilterUI = () => {
 					<div className="relative flex-1 max-w-md">
 						<Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
 						<input
-							className="w-full rounded-xl border-2 border-gray-200 bg-white py-3 pl-12 pr-4 text-gray-900 placeholder:text-gray-400 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-200 transition-all"
+							className="w-full rounded-xl border-2 border-gray-200 bg-white py-3 pl-12 pr-4 text-gray-900 placeholder:text-gray-400 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-200 transition-all shadow-sm"
 							type="text"
 							placeholder="Search by car name, make, model, or ID..."
 							value={filter.searchData}
@@ -92,7 +90,7 @@ const FilterUI = () => {
 						<select
 							name="status-type"
 							id="car-status"
-							className="cursor-pointer appearance-none rounded-xl border-2 border-gray-200 bg-white px-6 py-3 pr-10 text-gray-700 font-medium focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-200 transition-all hover:border-gray-300"
+							className="cursor-pointer appearance-none rounded-xl border-2 border-gray-200 bg-white px-6 py-3 pr-10 text-gray-700 font-medium focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-200 transition-all hover:border-primary-300 shadow-sm"
 							value={filter.statusType}
 							onChange={(e) =>
 								setFilter({ statusType: e.currentTarget.value as CarStatusType })
@@ -111,7 +109,7 @@ const FilterUI = () => {
 						<select
 							name="condition-type"
 							id="car-condition"
-							className="cursor-pointer appearance-none rounded-xl border-2 border-gray-200 bg-white px-6 py-3 pr-10 text-gray-700 font-medium focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-200 transition-all hover:border-gray-300"
+							className="cursor-pointer appearance-none rounded-xl border-2 border-gray-200 bg-white px-6 py-3 pr-10 text-gray-700 font-medium focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-200 transition-all hover:border-primary-300 shadow-sm"
 							value={filter.conditionType}
 							onChange={(e) =>
 								setFilter({
@@ -131,7 +129,7 @@ const FilterUI = () => {
 						<select
 							name="fuel-type"
 							id="car-fuel"
-							className="cursor-pointer appearance-none rounded-xl border-2 border-gray-200 bg-white px-6 py-3 pr-10 text-gray-700 font-medium focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-200 transition-all hover:border-gray-300"
+							className="cursor-pointer appearance-none rounded-xl border-2 border-gray-200 bg-white px-6 py-3 pr-10 text-gray-700 font-medium focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-200 transition-all hover:border-primary-300 shadow-sm"
 							value={filter.fuelType}
 							onChange={(e) =>
 								setFilter({ fuelType: e.currentTarget.value as FuelTypeFilter })
@@ -150,7 +148,7 @@ const FilterUI = () => {
 				{/* Clear Filters Button */}
 				<button
 					onClick={clearFilters}
-					className="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-colors flex items-center gap-2"
+					className="px-6 py-3 bg-primary-50 text-primary-700 rounded-xl font-medium hover:bg-primary-100 transition-colors flex items-center gap-2 border border-primary-200 shadow-sm"
 				>
 					<FilterIcon className="h-5 w-5" />
 					Clear
@@ -169,48 +167,40 @@ const StatusCountComponent = ({
 }) => {
 	const colorConfig = {
 		Approved: {
-			bg: "bg-green-50",
-			iconBg: "bg-green-500",
-			text: "text-green-900",
-			icon: <CircleCheck className="h-6 w-6 text-white" />,
+			iconBg: "bg-primary-100 text-primary-700",
+			icon: <CircleCheck className="h-6 w-6" />,
 		},
 		All: {
-			bg: "bg-blue-50",
-			iconBg: "bg-blue-500",
-			text: "text-blue-900",
-			icon: <LayoutGrid className="h-6 w-6 text-white" />,
+			iconBg: "bg-blue-100 text-blue-700",
+			icon: <LayoutGrid className="h-6 w-6" />,
 		},
 		Pending: {
-			bg: "bg-orange-50",
-			iconBg: "bg-orange-500",
-			text: "text-orange-900",
-			icon: <Clock className="h-6 w-6 text-white" />,
+			iconBg: "bg-orange-100 text-orange-700",
+			icon: <Clock className="h-6 w-6" />,
 		},
 		Rejected: {
-			bg: "bg-red-50",
-			iconBg: "bg-red-500",
-			text: "text-red-900",
-			icon: <CircleX className="h-6 w-6 text-white" />,
+			iconBg: "bg-red-100 text-red-700",
+			icon: <CircleX className="h-6 w-6" />,
 		},
 	};
 
 	const config = colorConfig[status as keyof typeof colorConfig];
 
 	return (
-		<div
-			className={`group rounded-2xl ${config.bg} p-6 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1`}
-		>
-			<div
-				className={`${config.iconBg} mb-4 flex h-14 w-14 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-110`}
-			>
-				{config.icon}
+		<div className="group rounded-2xl bg-white p-6 shadow-md border border-gray-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+			<div className="flex items-center justify-between">
+				<div
+					className={`rounded-xl p-3 ${config.iconBg} transition-transform duration-300 group-hover:scale-110`}
+				>
+					{config.icon}
+				</div>
 			</div>
-			<p className="text-sm font-medium text-gray-600 mb-1">
-				{status} Listings
-			</p>
-			<p className={`text-4xl font-bold ${config.text}`}>
-				{status === "All" ? cars.items.length : carFilter(cars, status)}
-			</p>
+			<div className="mt-4">
+				<p className="text-sm font-medium text-gray-600">{status} Listings</p>
+				<p className="mt-1 text-3xl font-bold text-gray-900">
+					{status === "All" ? cars.items.length : carFilter(cars, status)}
+				</p>
+			</div>
 		</div>
 	);
 };

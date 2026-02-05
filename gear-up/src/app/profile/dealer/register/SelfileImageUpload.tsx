@@ -1,5 +1,6 @@
 "use client"
 
+import { UserCheck } from "lucide-react"
 import Image from "next/image"
 import React, { useRef, useState } from "react"
 import { StepNavigation } from "./StepNavigation"
@@ -71,9 +72,9 @@ const SelfieImageUpload = () => {
 	}
 
 	return (
-		<div className="w-full max-w-2xl rounded-xl bg-gray-800 p-8">
-			<h3 className="mb-3 text-2xl font-bold text-white">Take a Selfie</h3>
-			<p className="mb-6 text-gray-400">
+		<div className="w-full max-w-2xl rounded-xl bg-white shadow-lg border-2 border-gray-200 p-8">
+			<h3 className="mb-3 text-2xl font-bold text-gray-900">Take a Selfie</h3>
+			<p className="mb-6 text-gray-600">
 				Take a clear photo of your face for identity verification
 			</p>
 
@@ -81,22 +82,10 @@ const SelfieImageUpload = () => {
 				{!preview && !useCameraMode && (
 					<div className="space-y-4">
 						{/* Upload from File */}
-						<div className="bg-gray-750 rounded-lg border-2 border-dashed border-gray-600 p-8 transition-all hover:border-gray-500">
+						<div className="rounded-lg border-2 border-dashed border-gray-300 bg-white p-8 transition-all hover:border-primary-400">
 							<label className="flex cursor-pointer flex-col items-center">
-								<svg
-									className="mb-4 h-16 w-16 text-gray-500"
-									fill="none"
-									stroke="currentColor"
-									viewBox="0 0 24 24"
-								>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth={2}
-										d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-									/>
-								</svg>
-								<span className="mb-2 text-gray-400">
+								<UserCheck className="h-10 w-10 text-primary-500 my-4" />
+								<span className="mb-2 text-gray-700">
 									Click to upload selfie
 								</span>
 								<span className="text-sm text-gray-500">
@@ -114,13 +103,13 @@ const SelfieImageUpload = () => {
 
 						{/* Or use Camera */}
 						<div className="text-center">
-							<span className="text-gray-500">or</span>
+							<span className="text-gray-500 font-medium">or</span>
 						</div>
 
 						<button
 							type="button"
 							onClick={startCamera}
-							className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 py-4 font-medium transition-colors hover:bg-blue-700"
+							className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary-600 text-white py-4 font-medium transition-colors hover:bg-primary-700"
 						>
 							<svg
 								className="h-6 w-6"
@@ -156,20 +145,20 @@ const SelfieImageUpload = () => {
 								playsInline
 								className="h-96 w-full object-cover"
 							/>
-							<div className="pointer-events-none absolute inset-0 rounded-lg border-4 border-blue-500" />
+							<div className="pointer-events-none absolute inset-0 rounded-lg border-4 border-primary-500" />
 						</div>
 						<div className="flex gap-3">
 							<button
 								type="button"
 								onClick={capturePhoto}
-								className="flex-1 rounded-lg bg-green-600 py-3 font-medium transition-colors hover:bg-green-700"
+								className="flex-1 rounded-lg bg-primary-600 text-white py-3 font-medium transition-colors hover:bg-primary-700"
 							>
 								Capture Photo
 							</button>
 							<button
 								type="button"
 								onClick={stopCamera}
-								className="rounded-lg bg-gray-700 px-6 py-3 font-medium transition-colors hover:bg-gray-600"
+								className="rounded-lg bg-white border-2 border-gray-300 text-gray-700 px-6 py-3 font-medium transition-colors hover:bg-gray-100"
 							>
 								Cancel
 							</button>
@@ -180,7 +169,7 @@ const SelfieImageUpload = () => {
 				{/* Preview */}
 				{preview && (
 					<div>
-						<div className="relative overflow-hidden rounded-lg border-2 border-green-500 bg-green-900/20 p-4">
+						<div className="relative overflow-hidden rounded-lg border-2 border-primary-500 bg-primary-50 p-4">
 							<Image
 								src={preview}
 								alt="Selfie preview"
@@ -189,11 +178,11 @@ const SelfieImageUpload = () => {
 								width={50}
 							/>
 						</div>
-						<div className="mt-4 flex items-center justify-between rounded-lg bg-gray-900 p-3">
-							<span className="flex-1 truncate text-sm text-gray-300">
+						<div className="mt-4 flex items-center justify-between rounded-lg bg-gray-100 border border-gray-200 p-3">
+							<span className="flex-1 truncate text-sm text-gray-700">
 								{file?.name || "selfie.jpg"}
 							</span>
-							<label className="ml-3 cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium transition-colors hover:bg-blue-700">
+							<label className="ml-3 cursor-pointer rounded-lg bg-primary-600 text-white px-4 py-2 text-sm font-medium transition-colors hover:bg-primary-700">
 								Retake
 								<input
 									type="file"
@@ -208,10 +197,10 @@ const SelfieImageUpload = () => {
 				)}
 			</div>
 
-			<div className="mt-6 rounded-lg border border-blue-700 bg-blue-900/30 p-4">
+			<div className="mt-6 rounded-lg border-2 border-primary-200 bg-primary-50 p-4">
 				<div className="flex items-start gap-3">
 					<svg
-						className="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-400"
+						className="mt-0.5 h-5 w-5 shrink-0 text-primary-600"
 						fill="currentColor"
 						viewBox="0 0 20 20"
 					>
@@ -222,10 +211,10 @@ const SelfieImageUpload = () => {
 						/>
 					</svg>
 					<div>
-						<p className="text-sm font-medium text-blue-200">
+						<p className="text-sm font-medium text-primary-900">
 							Selfie Requirements
 						</p>
-						<ul className="mt-1 list-inside list-disc space-y-1 text-sm text-blue-300">
+						<ul className="mt-1 list-inside list-disc space-y-1 text-sm text-primary-800">
 							<li>Face the camera directly</li>
 							<li>Remove glasses and hats</li>
 							<li>Ensure good lighting</li>

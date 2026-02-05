@@ -22,10 +22,10 @@ export const ProgressSteps = ({ Steps }: { Steps: ISteps }) => {
 								className={clsx(
 									"flex h-12 w-12 items-center justify-center rounded-full border-2 font-semibold transition-all duration-300",
 									index < stepIndex
-										? "border-green-500 bg-green-500 text-white"
+										? "border-primary-600 bg-primary-600 text-white shadow-md"
 										: stepIndex === index
-											? "border-blue-500 bg-blue-500 text-white ring-4 ring-blue-200"
-											: "border-gray-600 bg-gray-700 text-gray-400",
+											? "border-primary-500 bg-primary-500 text-white ring-4 ring-primary-200 shadow-lg"
+											: "border-gray-300 bg-white text-gray-400",
 								)}
 							>
 								{index < stepIndex ? (
@@ -48,9 +48,9 @@ export const ProgressSteps = ({ Steps }: { Steps: ISteps }) => {
 								className={clsx(
 									"mt-3 text-sm font-medium transition-colors",
 									index < stepIndex
-										? "text-green-400"
+										? "text-primary-600"
 										: stepIndex === index
-											? "text-blue-400"
+											? "text-primary-700 font-semibold"
 											: "text-gray-500",
 								)}
 							>
@@ -60,15 +60,15 @@ export const ProgressSteps = ({ Steps }: { Steps: ISteps }) => {
 
 						{/* Connector Line */}
 						{index < Steps.length - 1 && (
-							<div className="mx-4 mb-8 h-1 flex-1 rounded-full transition-all duration-300">
+							<div className="mx-4 mb-8 h-1 flex-1 rounded-full bg-gray-200 transition-all duration-300">
 								<div
 									className={clsx(
 										"h-full rounded-full transition-all duration-500",
 										index < stepIndex
-											? "bg-green-500"
+											? "bg-primary-500"
 											: stepIndex > index
-												? "bg-blue-500"
-												: "bg-gray-700",
+												? "bg-primary-400"
+												: "bg-gray-200",
 									)}
 								/>
 							</div>

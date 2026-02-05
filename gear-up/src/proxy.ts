@@ -13,6 +13,12 @@ export async function proxy(req: NextRequest) {
 		return NextResponse.next()
 	}
 
+	if (refresh_token && !access_token) {
+		// Remove the refresh token cookie & redirect to home
+		NextResponse.next().cookies.delete("refresh_token")
+		NextResponse.redirect(new URL("/", req.url))
+	}
+
 	const res = await fetch(`${API_URL}/api/v1/auth/refresh`, {
 		method: "POST",
 		headers: {

@@ -21,41 +21,41 @@ const CarDataTable = ({ cars }: { cars: AdminCarData[] }) => {
     return (
         <div className="overflow-hidden">
             <table className="min-w-full">
-                <thead className="bg-gray-50">
+                <thead className="bg-gradient-to-r from-primary-50 to-primary-100/50">
                     <tr>
                         <th
                             scope="col"
-                            className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-700"
+                            className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-primary-900"
                         >
                             No.
                         </th>
                         <th
                             scope="col"
-                            className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-700"
+                            className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-primary-900"
                         >
                             Car Name
                         </th>
                         <th
                             scope="col"
-                            className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-700"
+                            className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-primary-900"
                         >
                             Dealer Name
                         </th>
                         <th
                             scope="col"
-                            className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-700"
+                            className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-primary-900"
                         >
                             Price
                         </th>
                         <th
                             scope="col"
-                            className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-700"
+                            className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-primary-900"
                         >
                             Status
                         </th>
                         <th
                             scope="col"
-                            className="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider text-gray-700"
+                            className="px-6 py-4 text-center text-xs font-semibold uppercase tracking-wider text-primary-900"
                         >
                             Action
                         </th>
@@ -82,7 +82,7 @@ const CarDataTable = ({ cars }: { cars: AdminCarData[] }) => {
                         filteredCars.map((car: CarItems, index: number) => (
                             <tr
                                 key={car.id}
-                                className="transition-colors hover:bg-gray-50"
+                                className="transition-colors hover:bg-primary-50/30 border-b border-gray-100"
                             >
                                 <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
                                     {index + 1}
@@ -119,19 +119,19 @@ const ReviewBtn = ({ id, status }: { id: string; status: string }) => {
         <div className="flex justify-center">
             <button
                 onClick={() => router.push(`${currentPath}/cars/${id}`)}
-                className="group flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-semibold transition-all duration-200 hover:bg-gray-100"
+                className="group flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-semibold transition-all duration-200 hover:bg-primary-50"
             >
                 {status === "Pending" ? (
                     <>
-                        <span className="text-blue-600 group-hover:text-blue-700">
+                        <span className="text-primary-600 group-hover:text-primary-700">
                             View
                         </span>
-                        <ArrowUpRight className="h-4 w-4 text-blue-600 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                        <ArrowUpRight className="h-4 w-4 text-primary-600 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                     </>
                 ) : (
                     <>
-                        <span className="text-green-600">Completed</span>
-                        <div className="flex h-5 w-5 items-center justify-center rounded-full bg-green-500">
+                        <span className="text-primary-600">Completed</span>
+                        <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary-500">
                             <Check className="h-3 w-3 text-white" />
                         </div>
                     </>

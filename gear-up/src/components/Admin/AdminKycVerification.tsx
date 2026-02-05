@@ -140,46 +140,40 @@ const StatusCountComponent = ({
 }) => {
   const colorConfig = {
     Approved: {
-      bg: "bg-green-50",
-      iconBg: "bg-green-500",
-      text: "text-green-900",
-      icon: <CircleCheck className="h-6 w-6 text-white" />,
+      iconBg: "bg-green-50 text-green-600",
+      icon: <CircleCheck className="h-6 w-6" />,
     },
     All: {
-      bg: "bg-blue-50",
-      iconBg: "bg-blue-500",
-      text: "text-blue-900",
-      icon: <LayoutGrid className="h-6 w-6 text-white" />,
+      iconBg: "bg-blue-50 text-blue-600",
+      icon: <LayoutGrid className="h-6 w-6" />,
     },
     Pending: {
-      bg: "bg-orange-50",
-      iconBg: "bg-orange-500",
-      text: "text-orange-900",
-      icon: <Clock className="h-6 w-6 text-white" />,
+      iconBg: "bg-orange-50 text-orange-600",
+      icon: <Clock className="h-6 w-6" />,
     },
     Rejected: {
-      bg: "bg-red-50",
-      iconBg: "bg-red-500",
-      text: "text-red-900",
-      icon: <CircleX className="h-6 w-6 text-white" />,
+      iconBg: "bg-red-50 text-red-600",
+      icon: <CircleX className="h-6 w-6" />,
     },
   };
 
   const config = colorConfig[status as keyof typeof colorConfig];
 
   return (
-    <div
-      className={`group rounded-2xl ${config.bg} p-6 shadow-sm hover:shadow-sm transition-all duration-300 hover:-translate-y-1`}
-    >
-      <div
-        className={`${config.iconBg} mb-4 flex h-14 w-14 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-110`}
-      >
-        {config.icon}
+    <div className="group rounded-2xl bg-white p-6 shadow-sm hover:shadow-sm transition-all duration-300 hover:-translate-y-1">
+      <div className="flex items-center justify-between">
+        <div
+          className={`rounded-xl p-3 ${config.iconBg} transition-transform duration-300 group-hover:scale-110`}
+        >
+          {config.icon}
+        </div>
       </div>
-      <p className="text-sm font-medium text-gray-600 mb-1">{status} Reviews</p>
-      <p className={`text-4xl font-bold ${config.text}`}>
-        {status === "All" ? kyc.items.length : kycFilter(kyc, status)}
-      </p>
+      <div className="mt-4">
+        <p className="text-sm font-medium text-gray-600">{status} Reviews</p>
+        <p className="mt-1 text-3xl font-bold text-gray-900">
+          {status === "All" ? kyc.items.length : kycFilter(kyc, status)}
+        </p>
+      </div>
     </div>
   );
 };

@@ -50,24 +50,28 @@ const DOCUMENT_TYPES: IDocType[] = [
 const DocumentType = () => {
 	const { kycData, updateKycData } = useKycRegisterContext()
 	const [selected, setSelected] = useState<DocId>(
-		kycData.DocumentType ?? "Passport",
+		kycData.DocumentType ?? null,
 	)
-	console.log(kycData)
+
+	const handleSelect = (docId: DocId) => {
+		setSelected(docId)
+		updateKycData({ DocumentType: docId })
+	}
 
 	function onSubmit(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault()
-		updateKycData({ DocumentType: selected })
+		// Data is already saved via handleSelect
 	}
 
 	return (
 		<form
 			onSubmit={onSubmit}
-			className="w-full max-w-2xl rounded-xl bg-gray-800 p-8"
+			className="w-full max-w-2xl rounded-2xl bg-white p-8 shadow-lg border-2 border-gray-200"
 		>
-			<h3 className="mb-3 text-2xl font-bold text-white">
+			<h3 className="mb-3 text-2xl font-bold text-gray-900">
 				Select Document Type
 			</h3>
-			<p className="mb-6 text-gray-400">
+			<p className="mb-6 text-gray-600">
 				Choose the type of identification document you will be uploading
 			</p>
 
@@ -76,10 +80,10 @@ const DocumentType = () => {
 					<label
 						key={doc.id}
 						className={clsx(
-							"block cursor-pointer rounded-lg border-2 p-6 transition-all duration-200",
+							"block cursor-pointer rounded-xl border-2 p-6 transition-all duration-200 hover:shadow-md",
 							selected === doc.id
-								? "border-blue-500 bg-blue-900/30"
-								: "bg-gray-750 border-gray-700 hover:border-gray-600 hover:bg-gray-700",
+								? "border-primary-500 bg-primary-50 shadow-md ring-2 ring-primary-200"
+								: "bg-gray-50 border-gray-200 hover:border-primary-300 hover:bg-primary-50/30",
 						)}
 					>
 						<input
@@ -87,11 +91,9 @@ const DocumentType = () => {
 							name="DocumentType"
 							value={doc.id as string}
 							checked={selected === doc.id}
-							onChange={() => setSelected(doc.id)}
+							onChange={() => handleSelect(doc.id)}
 							className="hidden"
-						/>
-
-						<div className="flex items-start gap-4">
+						/>						<div className="flex items-start gap-4">
 							<Image
 								alt={doc.id as string}
 								src={doc.pathIcon}
@@ -100,10 +102,10 @@ const DocumentType = () => {
 							/>
 
 							<div className="flex-1">
-								<h4 className="text-lg font-semibold text-white">
+								<h4 className="text-lg font-semibold text-gray-900">
 									{doc.label}
 								</h4>
-								<p className="mt-1 text-sm text-gray-400">{doc.description}</p>
+								<p className="mt-1 text-sm text-gray-600">{doc.description}</p>
 							</div>
 						</div>
 					</label>

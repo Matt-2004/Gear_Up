@@ -52,14 +52,17 @@ const KycRegister = ({ step }: { step: string }) => {
 	// Passing useState to child components to get data
 
 	return (
-		<div className="flex min-h-screen flex-col items-center bg-gray-900 px-4 py-12 text-white">
+		<div className="flex min-h-screen flex-col items-center bg-gradient-to-br from-primary-50 via-white to-primary-100/30 px-4 py-12">
 			<div className="w-full max-w-6xl">
 				{/* Header */}
 				<div className="mb-12 text-center">
-					<h1 className="mb-3 text-3xl font-bold md:text-4xl">
+					<div className="mb-4 inline-block rounded-full bg-primary-100 px-4 py-2 border border-primary-200">
+						<span className="text-sm font-semibold text-primary-700">Dealer Verification</span>
+					</div>
+					<h1 className="mb-3 text-3xl font-bold md:text-4xl text-gray-900">
 						KYC Verification
 					</h1>
-					<p className="text-gray-400 md:text-lg">
+					<p className="text-gray-600 md:text-lg">
 						Complete your identity verification to access all features
 					</p>
 				</div>
@@ -80,11 +83,11 @@ const KycRegister = ({ step }: { step: string }) => {
 
 				{/* Help Text */}
 				<div className="mt-12 text-center">
-					<p className="text-sm text-gray-500">
+					<p className="text-sm text-gray-600">
 						Need help? Contact our{" "}
 						<a
 							href="/support"
-							className="text-blue-400 underline hover:text-blue-300"
+							className="text-primary-600 underline hover:text-primary-700 transition-colors font-medium"
 						>
 							support team
 						</a>

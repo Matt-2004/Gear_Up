@@ -68,11 +68,11 @@ const KycUpload = () => {
 	}
 
 	return (
-		<div className="w-full max-w-2xl rounded-xl bg-gray-800 p-8">
-			<h3 className="mb-3 text-2xl font-bold text-white">
+		<div className="w-full max-w-2xl rounded-xl bg-white shadow-lg border-2 border-gray-200 p-8">
+			<h3 className="mb-3 text-2xl font-bold text-gray-900">
 				{/* Upload {getDocumentLabel()} */}
 			</h3>
-			<p className="mb-6 text-gray-400">
+			<p className="mb-6 text-gray-600">
 				{/* Please upload clear photos of your {getDocumentLabel().toLowerCase()}. */}
 				You can add multiple documents.
 			</p>
@@ -81,21 +81,15 @@ const KycUpload = () => {
 				{fileItems.map((item) => (
 					<div
 						key={item.id}
-						className="bg-gray-750 rounded-lg border border-gray-700 p-4"
+						className="bg-gray-750 rounded-lg  shadow-md border border-gray-100	 p-4"
 					>
 						<div className="mb-3 flex items-center justify-between">
-							<div className="flex-1">
-								<label className="mb-1 block text-sm font-medium text-gray-300">
+							<div className="flex-1 ">
+								<label className=" block text-sm font-medium text-gray-700">
 									Document Label
 								</label>
-								<input
-									disabled={true}
-									type="text"
-									value={item.label}
-									onChange={(e) => handleLabelChange(item.id, e.target.value)}
-									placeholder="e.g., Front Side, Back Side"
-									className="w-full rounded-md border-gray-600 bg-gray-900 px-3 py-2 text-sm text-white focus:border-blue-500 focus:outline-none"
-								/>
+								<p className="text-xs text-gray-500">{item.label}</p>
+
 							</div>
 							{fileItems.length > 2 && (
 								<button
@@ -113,7 +107,7 @@ const KycUpload = () => {
 								"rounded-lg border-2 border-dashed p-6 transition-all duration-200",
 								item.file
 									? "border-green-500 bg-green-900/20"
-									: "border-gray-600 hover:border-gray-500",
+									: "border-gray-200 hover:border-gray-500",
 							)}
 						>
 							{item.preview ? (
@@ -174,8 +168,8 @@ const DefaultImageUpload = ({
 }) => {
 	return (
 		<label className="flex cursor-pointer flex-col items-center">
-			<ImageUp className="m-4 h-9 w-9 text-gray-400" />
-			<span className="mb-1 text-sm text-gray-400">Click to upload</span>
+			<ImageUp className="m-4 h-9 w-9 text-primary-500" />
+			<span className="mb-1 text-sm text-gray-700">Click to upload</span>
 			<span className="text-xs text-gray-500">PNG, JPG, PDF up to 10MB</span>
 			<input
 				type="file"
@@ -189,15 +183,15 @@ const DefaultImageUpload = ({
 
 const UploadSummary = ({ fileItems }: { fileItems: FileItem[] }) => {
 	return (
-		<div className="mt-6 rounded-lg border border-blue-700 bg-blue-900/30 p-4">
+		<div className="mt-6 rounded-lg border-2 border-primary-200 bg-primary-50 p-4">
 			<div className="mb-2 flex items-center justify-between">
-				<p className="text-sm font-medium text-blue-200">Upload Summary</p>
-				<span className="text-sm text-blue-300">
+				<p className="text-sm font-medium text-primary-800">Upload Summary</p>
+				<span className="text-sm text-primary-700">
 					{fileItems.filter((item) => item.file).length} / {fileItems.length}{" "}
 					uploaded
 				</span>
 			</div>
-			<p className="text-xs text-blue-300">
+			<p className="text-xs text-primary-700">
 				Total size:{" "}
 				{(
 					fileItems.reduce((sum, item) => sum + (item.file?.size || 0), 0) /
@@ -212,10 +206,10 @@ const UploadSummary = ({ fileItems }: { fileItems: FileItem[] }) => {
 
 const UploadTips = () => {
 	return (
-		<div className="mt-4 rounded-lg border border-yellow-700 bg-yellow-900/30 p-4">
+		<div className="mt-4 rounded-lg border-2 border-amber-200 bg-amber-50 p-4">
 			<div className="flex items-start gap-3">
 				<svg
-					className="mt-0.5 h-5 w-5 flex-shrink-0 text-yellow-500"
+					className="mt-0.5 h-5 w-5 flex-shrink-0 text-amber-600"
 					fill="currentColor"
 					viewBox="0 0 20 20"
 				>
@@ -226,8 +220,8 @@ const UploadTips = () => {
 					/>
 				</svg>
 				<div>
-					<p className="text-sm font-medium text-yellow-200">Upload Tips</p>
-					<ul className="mt-1 list-inside list-disc space-y-1 text-sm text-yellow-300">
+					<p className="text-sm font-medium text-amber-900">Upload Tips</p>
+					<ul className="mt-1 list-inside list-disc space-y-1 text-sm text-amber-800">
 						<li>Ensure all text is clearly readable</li>
 						<li>Avoid glare and shadows</li>
 						<li>Include all corners of the document</li>
