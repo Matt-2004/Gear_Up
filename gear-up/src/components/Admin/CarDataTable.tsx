@@ -21,7 +21,7 @@ const CarDataTable = ({ cars }: { cars: AdminCarData[] }) => {
     return (
         <div className="overflow-hidden">
             <table className="min-w-full">
-                <thead className="bg-gradient-to-r from-primary-50 to-primary-100/50">
+                <thead className="bg-primary-50">
                     <tr>
                         <th
                             scope="col"

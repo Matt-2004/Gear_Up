@@ -26,7 +26,7 @@ const DataTable = ({ kyc }: { kyc: IKycSubmissions[] }) => {
   return (
     <div className="overflow-hidden">
       <table className="min-w-full">
-        <thead className="bg-gray-50">
+        <thead className="bg-primary-50">
           <tr>
             <th
               scope="col"

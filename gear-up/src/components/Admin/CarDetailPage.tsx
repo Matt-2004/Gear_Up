@@ -51,7 +51,7 @@ const CarDetailPage = ({ carData }: { carData: AdminCarData }) => {
 const PageHeader = () => {
     const router = useRouter();
     return (
-        <div className="flex items-center justify-between rounded-2xl bg-white p-6 shadow-sm">
+        <div className="flex items-center justify-between rounded-2xl bg-white p-6 shadow-sm shadow-gray-300">
             <div className="flex items-center gap-4">
                 <button
                     className="flex items-center justify-center rounded-xl bg-gray-100 p-2.5 transition-all hover:bg-gray-200 hover:scale-105"
@@ -89,7 +89,7 @@ const CarInfoComponent = ({ carData, text }: CarInfoComponentProps) => {
     return (
         <div className="space-y-6">
             {/* Car Images Gallery */}
-            <div className="overflow-hidden rounded-2xl bg-white shadow-sm">
+            <div className="overflow-hidden rounded-2xl bg-white shadow-sm shadow-gray-300">
                 <div className="p-6">
                     <h2 className="mb-4 flex items-center gap-2 text-xl font-bold text-gray-900">
                         <Package className="h-5 w-5 text-primary-600" />
@@ -273,7 +273,7 @@ const CarInfoComponent = ({ carData, text }: CarInfoComponentProps) => {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex items-center justify-end gap-4 rounded-2xl bg-white p-6 shadow-sm">
+            <div className="flex items-center justify-end gap-4 rounded-2xl bg-white p-6 shadow-sm shadow-gray-300">
                 <RejectButton
                     id={carData.id}
                     data={{ status: "Rejected", rejectionReason: text }}

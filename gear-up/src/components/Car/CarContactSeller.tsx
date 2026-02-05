@@ -30,7 +30,7 @@ export default function CarContactSeller({ car }: CarContactSellerProps) {
             <Calendar className="h-5 w-5" />
             Get a Appointment
           </button>
-          <button className="flex w-full items-center justify-center gap-3 rounded-xl bg-white border-2 border-primary-500 py-4 font-bold text-primary-700 transition-all shadow-sm hover:bg-primary-50 hover:shadow-md hover:scale-105 active:scale-100">
+          <button className="flex w-full items-center justify-center gap-3 rounded-xl bg-white border border-primary-500 py-4 font-bold text-primary-700 transition-all shadow-sm shadow-gray-300 hover:bg-primary-50 hover:shadow-md hover:scale-105 active:scale-100">
             <Mail className="h-5 w-5" />
             Send Message
           </button>
@@ -70,11 +70,10 @@ export default function CarContactSeller({ car }: CarContactSellerProps) {
           <div className="flex justify-between items-center pb-2 border-b border-gray-100">
             <span className="text-gray-600">Validation</span>
             <span
-              className={`font-bold ${
-                car.carValidationStatus === "Approved"
-                  ? "text-green-600"
-                  : "text-yellow-600"
-              }`}
+              className={`font-bold ${car.carValidationStatus === "Approved"
+                ? "text-green-600"
+                : "text-yellow-600"
+                }`}
             >
               {car.carValidationStatus}
             </span>

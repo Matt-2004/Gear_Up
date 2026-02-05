@@ -49,12 +49,12 @@ const AdminKycVerification = ({
           </div>
 
           {/* Filter Section */}
-          <div className="rounded-2xl bg-white p-6 shadow-sm">
+          <div className="rounded-2xl bg-white p-6 shadow-sm shadow-gray-300">
             <FilterUI />
           </div>
 
           {/* Data Table */}
-          <div className="rounded-2xl bg-white shadow-sm overflow-hidden">
+          <div className="rounded-2xl bg-white shadow-sm shadow-gray-300 overflow-hidden">
             <DataTable kyc={kyc.items} />
           </div>
         </div>
@@ -73,7 +73,7 @@ const FilterUI = () => {
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
           <input
-            className="w-full rounded-xl border-2 border-gray-200 bg-white py-3 pl-12 pr-4 text-gray-900 placeholder:text-gray-400 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-200 transition-all"
+            className="w-full rounded-xl border border-gray-200 bg-white py-3 pl-12 pr-4 text-gray-900 placeholder:text-gray-400 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-200 transition-all"
             type="text"
             placeholder="Search by name, ID, or document type..."
             onChange={(e) => setFilter({ searchData: e.currentTarget.value })}
@@ -160,7 +160,7 @@ const StatusCountComponent = ({
   const config = colorConfig[status as keyof typeof colorConfig];
 
   return (
-    <div className="group rounded-2xl bg-white p-6 shadow-sm hover:shadow-sm transition-all duration-300 hover:-translate-y-1">
+    <div className="group shadow-sm rounded-2xl bg-white p-6 shadow-gray-300 hover:shadow-md hover:shadow-gray-200 transition-all duration-300 hover:-translate-y-1">
       <div className="flex items-center justify-between">
         <div
           className={`rounded-xl p-3 ${config.iconBg} transition-transform duration-300 group-hover:scale-110`}

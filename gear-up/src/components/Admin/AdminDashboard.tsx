@@ -323,7 +323,7 @@ const StatsCard = ({
   };
 
   return (
-    <div className="group rounded-2xl bg-white p-6 shadow-sm hover:shadow-sm transition-all duration-300 hover:-translate-y-1">
+    <div className="group rounded-2xl bg-white p-6 shadow-sm hover:shadow-gray-200 hover:shadow-md transition-all duration-300 hover:-translate-y-1">
       <div className="flex items-center justify-between">
         <div
           className={`rounded-xl p-3 ${colorClasses[color]} transition-transform duration-300 group-hover:scale-110`}
@@ -331,14 +331,12 @@ const StatsCard = ({
           {icon}
         </div>
         <div
-          className={`flex items-center gap-1 text-sm font-semibold ${
-            trend === "up" ? "text-green-600" : "text-red-600"
-          }`}
+          className={`flex items-center gap-1 text-sm font-semibold ${trend === "up" ? "text-green-600" : "text-red-600"
+            }`}
         >
           <TrendingUp
-            className={`h-4 w-4 ${
-              trend === "down" ? "rotate-180" : ""
-            } transition-transform`}
+            className={`h-4 w-4 ${trend === "down" ? "rotate-180" : ""
+              } transition-transform`}
           />
           {change}
         </div>

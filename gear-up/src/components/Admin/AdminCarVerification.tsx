@@ -33,7 +33,7 @@ const AdminCarVerification = ({
 	}
 	return (
 		<FilterProvider>
-			<div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-primary-100/50 p-8">
+			<div className="min-h-screen  from-primary-50 via-white to-primary-100/50 p-8">
 				<div className="mx-auto max-w-7xl space-y-8">
 					{/* Header */}
 					<div className="space-y-2">
@@ -52,12 +52,12 @@ const AdminCarVerification = ({
 					</div>
 
 					{/* Filter Section */}
-					<div className="rounded-2xl bg-white p-6 shadow-md border border-gray-100">
+					<div className="rounded-2xl bg-white p-6 shadow-sm border border-gray-100">
 						<FilterUI />
 					</div>
 
 					{/* Data Table */}
-					<div className="rounded-2xl bg-white shadow-md border border-gray-100 overflow-hidden">
+					<div className="rounded-2xl bg-white shadow-sm border border-gray-100 overflow-hidden">
 						<CarDataTable cars={cars.items} />
 					</div>
 				</div>
@@ -77,7 +77,7 @@ const FilterUI = () => {
 					<div className="relative flex-1 max-w-md">
 						<Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
 						<input
-							className="w-full rounded-xl border-2 border-gray-200 bg-white py-3 pl-12 pr-4 text-gray-900 placeholder:text-gray-400 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-200 transition-all shadow-sm"
+							className="w-full rounded-xl border border-gray-200 bg-white py-3 pl-12 pr-4 text-gray-900 placeholder:text-gray-400 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-200 transition-all shadow-gray-300"
 							type="text"
 							placeholder="Search by car name, make, model, or ID..."
 							value={filter.searchData}
@@ -90,7 +90,7 @@ const FilterUI = () => {
 						<select
 							name="status-type"
 							id="car-status"
-							className="cursor-pointer appearance-none rounded-xl border-2 border-gray-200 bg-white px-6 py-3 pr-10 text-gray-700 font-medium focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-200 transition-all hover:border-primary-300 shadow-sm"
+							className="cursor-pointer appearance-none rounded-xl border border-gray-200 bg-white px-6 py-3 pr-10 text-gray-700 font-medium focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-200 transition-all hover:border-primary-300 shadow-sm"
 							value={filter.statusType}
 							onChange={(e) =>
 								setFilter({ statusType: e.currentTarget.value as CarStatusType })
@@ -109,7 +109,7 @@ const FilterUI = () => {
 						<select
 							name="condition-type"
 							id="car-condition"
-							className="cursor-pointer appearance-none rounded-xl border-2 border-gray-200 bg-white px-6 py-3 pr-10 text-gray-700 font-medium focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-200 transition-all hover:border-primary-300 shadow-sm"
+							className="cursor-pointer appearance-none rounded-xl border border-gray-200 bg-white px-6 py-3 pr-10 text-gray-700 font-medium focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-200 transition-all hover:border-primary-300 shadow-sm"
 							value={filter.conditionType}
 							onChange={(e) =>
 								setFilter({
@@ -129,7 +129,7 @@ const FilterUI = () => {
 						<select
 							name="fuel-type"
 							id="car-fuel"
-							className="cursor-pointer appearance-none rounded-xl border-2 border-gray-200 bg-white px-6 py-3 pr-10 text-gray-700 font-medium focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-200 transition-all hover:border-primary-300 shadow-sm"
+							className="cursor-pointer appearance-none rounded-xl border border-gray-200 bg-white px-6 py-3 pr-10 text-gray-700 font-medium focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-200 transition-all hover:border-primary-300 shadow-sm"
 							value={filter.fuelType}
 							onChange={(e) =>
 								setFilter({ fuelType: e.currentTarget.value as FuelTypeFilter })
@@ -148,7 +148,7 @@ const FilterUI = () => {
 				{/* Clear Filters Button */}
 				<button
 					onClick={clearFilters}
-					className="px-6 py-3 bg-primary-50 text-primary-700 rounded-xl font-medium hover:bg-primary-100 transition-colors flex items-center gap-2 border border-primary-200 shadow-sm"
+					className="px-6 py-3 bg-primary-50 text-primary-700 rounded-xl font-medium hover:bg-primary-100 transition-colors flex items-center gap-2 border border-primary-200 shadow-sm shadow-gray-300"
 				>
 					<FilterIcon className="h-5 w-5" />
 					Clear
@@ -167,19 +167,19 @@ const StatusCountComponent = ({
 }) => {
 	const colorConfig = {
 		Approved: {
-			iconBg: "bg-primary-100 text-primary-700",
+			iconBg: "bg-primary-50 text-primary-700",
 			icon: <CircleCheck className="h-6 w-6" />,
 		},
 		All: {
-			iconBg: "bg-blue-100 text-blue-700",
+			iconBg: "bg-blue-50 text-blue-700",
 			icon: <LayoutGrid className="h-6 w-6" />,
 		},
 		Pending: {
-			iconBg: "bg-orange-100 text-orange-700",
+			iconBg: "bg-orange-50 text-orange-700",
 			icon: <Clock className="h-6 w-6" />,
 		},
 		Rejected: {
-			iconBg: "bg-red-100 text-red-700",
+			iconBg: "bg-red-50 text-red-700",
 			icon: <CircleX className="h-6 w-6" />,
 		},
 	};
@@ -187,7 +187,7 @@ const StatusCountComponent = ({
 	const config = colorConfig[status as keyof typeof colorConfig];
 
 	return (
-		<div className="group rounded-2xl bg-white p-6 shadow-md border border-gray-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+		<div className="group rounded-2xl bg-white p-6 border border-gray-100 hover:shadow-md hover:shadow-gray-200 transition-all duration-300 hover:-translate-y-1 shadow-sm">
 			<div className="flex items-center justify-between">
 				<div
 					className={`rounded-xl p-3 ${config.iconBg} transition-transform duration-300 group-hover:scale-110`}
