@@ -4,6 +4,7 @@ import { AddComment, CommentData } from "@/app/types/comment.types";
 import { addComment, addLikeToComment } from "@/utils/API/CommentAPI";
 import { diffFromNowAuto } from "@/utils/timeFormat";
 
+import { addUserPostLikes } from "@/utils/API/PostAPI";
 import { HeartFilledSVG, HeartSVG } from "@/utils/SVG";
 import clsx from "clsx";
 import { Reply } from "lucide-react";
@@ -115,6 +116,7 @@ export const Comment = ({ comment, level }: ICommnetsProps) => {
                   <div className="flex flex-col items-start gap-2">
                     <div className="flex items-center">
                       <LikeCount
+                        type="comment"
                         id={c.id}
                         isLikedByCurrentUser={c.isLikedByCurrentUser}
                         likeCount={c.likeCount}
@@ -245,25 +247,34 @@ export const ReplyBtn = ({
 };
 
 export const LikeCount = ({
+  type,
   id,
   isLikedByCurrentUser,
   likeCount,
 }: {
+  type: "comment" | "post";
   id: string;
   isLikedByCurrentUser: boolean;
   likeCount: number;
 }) => {
-  const addLikeToCommentFunc = async (commentId: string) => {
-    await addLikeToComment(commentId);
-    setCount((prev) => prev + (liked ? -1 : 1));
-    setLiked((prev) => !prev);
-  };
 
   const [liked, setLiked] = useState<boolean>(isLikedByCurrentUser);
   const [count, setCount] = useState<number>(likeCount);
+
+  const handelSubmit = async (type: string, id: string) => {
+    setCount((prev) => prev + (liked ? -1 : 1));
+    setLiked((prev) => !prev);
+    if (type === "comment") {
+      await addLikeToComment(id);
+    } else {
+      await addUserPostLikes(id);
+    }
+
+
+  };
   return (
     <button
-      onClick={() => addLikeToCommentFunc(id)}
+      onClick={() => handelSubmit(type, id)}
       className="flex cursor-pointer items-center gap-1 rounded-lg px-3  text-gray-600 transition-all duration-200 hover:bg-primary-50 hover:text-primary-600"
     >
       {/* TODO: if isLikedByCurrentUser is true, change the heart icon to a filled heart */}

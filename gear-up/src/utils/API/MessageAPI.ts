@@ -1,34 +1,34 @@
-import { CreateMessageDTO } from "@/app/types/message.types"
-import { postFetch } from "./AxiosClient"
+import { CreateMessageDTO } from "@/app/types/message.types";
+import { getFetch, postFetch, putFetch } from "./AxiosClient";
 
 export const addMessage = async (data: CreateMessageDTO) => {
-	const res = await postFetch(`/api/v1/messages`, data)
-	return res
-}
+  const res = await postFetch(`/api/v1/messages`, data);
+  return res;
+};
 
-export const getConversations = async (curosr: string) => {
-	const res = await postFetch(
-		`/api/v1/messages/conversations?cursor=${curosr}`,
-		null,
-	)
-	return res
-}
+export const getConversations = async (cursor?: string) => {
+  const url = cursor
+    ? `/api/v1/messages/conversations?cursor=${cursor}`
+    : `/api/v1/messages/conversations`;
+  const res = await getFetch(url);
+  return res;
+};
 
 export const getConversationsByConversationId = async (
-	conversationId: string,
-	cursor: string,
+  conversationId: string,
+  cursor?: string,
 ) => {
-	const res = await postFetch(
-		`/api/v1/messages/conversations/${conversationId}?cursor=${cursor}`,
-		null,
-	)
-	return res
-}
+  const url = cursor
+    ? `/api/v1/messages/conversations/${conversationId}?cursor=${cursor}`
+    : `/api/v1/messages/conversations/${conversationId}`;
+  const res = await getFetch(url);
+  return res;
+};
 
 export const readMessagesByConversationId = async (conversationId: string) => {
-	const res = await postFetch(
-		`/api/v1/messages/conversations/${conversationId}/read`,
-		null,
-	)
-	return res
-}
+  const res = await putFetch(
+    `/api/v1/messages/conversations/${conversationId}/read`,
+    "",
+  );
+  return res;
+};

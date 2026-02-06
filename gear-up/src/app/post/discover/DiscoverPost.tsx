@@ -1,21 +1,22 @@
 "use client";
 
-import { AllPostData, CarImage, PostItem } from "@/app/types/post.types";
+import { CarImage, CursorBaseDTO, PostItem } from "@/app/types/post.types";
 import { IUser } from "@/app/types/user.types";
+import { DEFAULT_API_URL } from "@/lib/config";
 import { getAllPosts } from "@/utils/API/PostAPI";
 import { timeFormat } from "@/utils/timeFormat";
 import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import {
+  ArrowRight,
   ChevronLeft,
   ChevronRight,
+  Eye,
   MessageCircleMore,
   Plus,
 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-
-import { DEFAULT_API_URL } from "@/lib/config";
 import { useEffect, useRef, useState } from "react";
 import { LikeCount } from "./Comment";
 
@@ -35,12 +36,12 @@ import { LikeCount } from "./Comment";
       only FEEDS
 */
 
-const DiscoverPost = ({ post, user }: { post: AllPostData; user: IUser }) => {
-  const { data, fetchNextPage, isFetchingNextPage, hasNextPage } =
+const DiscoverPost = ({ post, user }: { post: CursorBaseDTO; user: IUser }) => {
+  const { data, fetchNextPage, isFetchingNextPage, hasNextPage, refetch } =
     useInfiniteQuery<
-      AllPostData,
+      CursorBaseDTO,
       Error,
-      InfiniteData<AllPostData, string | undefined>,
+      InfiniteData<CursorBaseDTO, string | undefined>,
       string[],
       string | undefined
     >({
@@ -54,8 +55,12 @@ const DiscoverPost = ({ post, user }: { post: AllPostData; user: IUser }) => {
         pages: [post],
         pageParams: [undefined],
       },
-      getNextPageParam: (lastPage) =>
-        lastPage.hasMore ? lastPage.cursor : undefined,
+      getNextPageParam: (lastPage) => {
+        return lastPage.hasMore ? lastPage.nextCursor : undefined;
+      },
+      staleTime: 0,
+      refetchOnWindowFocus: true,
+      refetchOnMount: true,
     });
 
   const posts = data.pages.flatMap((page) => page.items) ?? [];
@@ -66,7 +71,7 @@ const DiscoverPost = ({ post, user }: { post: AllPostData; user: IUser }) => {
     count: hasNextPage ? posts.length + 1 : posts.length,
     estimateSize: () => 655,
     getScrollElement: () => parentRef.current,
-    overscan: 5,
+    overscan: 3,
   });
   const virtualItems = rowVirtualizer.getVirtualItems();
 
@@ -89,10 +94,15 @@ const DiscoverPost = ({ post, user }: { post: AllPostData; user: IUser }) => {
     virtualItems,
   ]);
 
+  // Refetch posts when component mounts or user navigates back
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
+
   return (
     <div
       ref={parentRef}
-      className="relative h-screen w-full overflow-y-auto bg-gradient-to-br from-gray-50 via-gray-100 to-gray-50"
+      className="relative h-screen w-full overflow-y-auto bg-linear-to-br from-gray-50 via-gray-100 to-gray-50"
       style={{ scrollbarGutter: "stable" }}
     >
       <div className="h-full w-full flex justify-center py-8">
@@ -101,6 +111,8 @@ const DiscoverPost = ({ post, user }: { post: AllPostData; user: IUser }) => {
             className="relative w-full min-h-screen"
             style={{
               height: `${rowVirtualizer.getTotalSize()}px`,
+              width: "100%",
+              position: "relative",
             }}
           >
             {virtualItems.map(({ index, start, key, size }) => {
@@ -137,7 +149,7 @@ const CreatePostButton = () => {
     <div className="fixed right-16 bottom-10 z-50">
       <button
         onClick={() => router.push("/post/create")}
-        className="flex items-center gap-3 rounded-full bg-gradient-to-r from-primary-500 to-primary-600 px-6 py-3 text-white font-semibold shadow-lg hover:shadow-xl hover:from-primary-600 hover:to-primary-700 transition-all duration-200 transform hover:scale-105"
+        className="flex items-center gap-3 rounded-full bg-linear-to-r from-primary-500 to-primary-600 px-6 py-3 text-white font-semibold shadow-lg hover:shadow-xl hover:from-primary-600 hover:to-primary-700 transition-all duration-200 transform hover:scale-105"
       >
         <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white">
           <Plus className="text-primary-600 h-4 w-4" />
@@ -158,12 +170,12 @@ const PostCard = ({ postItem }: IPostCard) => {
   if (!postItem) return null;
   return (
     <section
-      onClick={() => {
-        router.push(`${DEFAULT_API_URL}/post/${postItem.id}`);
-      }}
-      className="min-w-full max-w-full rounded-2xl bg-white shadow-md hover:shadow-2xl transition-all duration-300 cursor-pointer overflow-hidden border border-gray-200 flex flex-col"
+      className="min-w-full max-w-full rounded-2xl bg-white shadow-md hover:shadow-2xl transition-all duration-300 cursor-pointer overflow-hidden border border-gray-200 hover:border-primary-300 flex flex-col group relative"
       style={{ minHeight: "600px", maxHeight: "650px" }}
     >
+      {/* Hover indicator bar */}
+      <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-primary-500 to-primary-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left z-10"></div>
+
       {/* Header Section with Date */}
       <div className="px-6 pt-5 pb-4">
         {/* Date and Time */}
@@ -188,13 +200,27 @@ const PostCard = ({ postItem }: IPostCard) => {
       </div>
 
       {/* Actions Section */}
-      <div className="flex gap-6 px-6 py-4 border-t border-gray-200 bg-gradient-to-r from-gray-50 to-white mt-auto">
-        <LikeCount
-          id={postItem.id}
-          isLikedByCurrentUser={postItem.isLikedByCurrentUser}
-          likeCount={postItem.likeCount}
-        />
-        <CommentCount commentCount={postItem.commentCount} />
+      <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200 bg-linear-to-r from-gray-50 to-white mt-auto">
+        <div className="flex gap-6">
+          <LikeCount
+            type="post"
+            id={postItem.id}
+            isLikedByCurrentUser={postItem.isLikedByCurrentUser}
+            likeCount={postItem.likeCount}
+          />
+          <CommentCount id={postItem.id} commentCount={postItem.commentCount} />
+        </div>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            router.push(`/post/${postItem.id}`);
+          }}
+          className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 transition-all duration-200 hover:gap-3 group-hover:shadow-md"
+        >
+          <Eye className="h-4 w-4" />
+          View Details
+          <ArrowRight className="h-4 w-4 opacity-0 -ml-2 group-hover:opacity-100 group-hover:ml-0 transition-all" />
+        </button>
       </div>
       {/* Comments Section */}
       {/* If comment show... */}
@@ -317,9 +343,12 @@ export const CarouselImages = ({ images }: ICarouselPostImageProps) => {
   );
 };
 
-const CommentCount = ({ commentCount }: { commentCount: number }) => {
+const CommentCount = ({ commentCount, id }: { commentCount: number; id: string }) => {
+  const router = useRouter();
   return (
-    <button className="flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-gray-600 transition-all duration-200 hover:bg-primary-50 hover:text-primary-600">
+    <button onClick={() => {
+      router.push(`${DEFAULT_API_URL}/post/${id}`);
+    }} className="flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-gray-600 transition-all duration-200 hover:bg-primary-50 hover:text-primary-600">
       <div className="flex items-center justify-center h-4 w-4 font-light">
         <MessageCircleMore />
       </div>

@@ -41,12 +41,12 @@ export const StepNavigation = () => {
 				setTimeout(() => {
 					removeToastMessage()
 					router.push("/profile/dealer/dashboard")
-				}, 4000)
+				}, 2500)
 			} else {
 				addToastMessage("error", submitError || "Failed to submit KYC. Please try again.")
 				setTimeout(() => {
 					removeToastMessage()
-				}, 4000)
+				}, 2500)
 			}
 		} else {
 			// Otherwise, go to next step
@@ -61,7 +61,7 @@ export const StepNavigation = () => {
 		if (submitError) {
 			const timer = setTimeout(() => {
 				removeToastMessage()
-			}, 4000)
+			}, 2500)
 			return () => clearTimeout(timer)
 		}
 	}, [submitError, removeToastMessage])

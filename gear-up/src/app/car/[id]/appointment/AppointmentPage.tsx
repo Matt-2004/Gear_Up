@@ -62,7 +62,7 @@ export default function AppointmentPage({ car }: { car: CarItems }) {
         // Redirect after 2 seconds
         setTimeout(() => {
           router.push(`/car/${car.id}`);
-        }, 4000);
+        }, 2500);
       }
     } catch (err: any) {
       const errorMessage =

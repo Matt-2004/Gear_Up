@@ -18,9 +18,9 @@ export default function Navbar({ user }: { user: IUser }) {
         {isDealer ? (
           <DealerNavbarTabs />
         ) : isCustomer ? (
-          <CustomerNavbarTabs />
+          <CustomerNavbarTabs user={user} />
         ) : (
-          <CustomerNavbarTabs />
+          <CustomerNavbarTabs user={user} />
         )}
       </div>
       <NavbarUtility user={user} />

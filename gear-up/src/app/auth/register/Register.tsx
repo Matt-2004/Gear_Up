@@ -37,7 +37,7 @@ const Register = () => {
       setTimeout(() => {
         removeToastMessage();
         router.push("/");
-      }, 4000),
+      }, 2500),
     );
   }, [pending]);
 

@@ -47,7 +47,7 @@ const EmailSend = ({ variant }: { variant: EmailVariant }) => {
 
     const toastTimer = setTimeout(() => {
       removeToastMessage();
-    }, 4000);
+    }, 2500);
 
     let redirectTimer: ReturnType<typeof setTimeout> | undefined;
     if (state.ok && state.redirectTo) {

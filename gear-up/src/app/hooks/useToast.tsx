@@ -74,7 +74,7 @@ export function useToast({ toastType, message }: Toast) {
                   )}
                   initial={{ width: "100%" }}
                   animate={{ width: "0%" }}
-                  transition={{ duration: 4000 / 1000, ease: "linear" }}
+                  transition={{ duration: 2500 / 1000, ease: "linear" }}
                 />
               </div>
             </motion.div>

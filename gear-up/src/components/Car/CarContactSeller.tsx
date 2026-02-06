@@ -30,7 +30,10 @@ export default function CarContactSeller({ car }: CarContactSellerProps) {
             <Calendar className="h-5 w-5" />
             Get a Appointment
           </button>
-          <button className="flex w-full items-center justify-center gap-3 rounded-xl bg-white border border-primary-500 py-4 font-bold text-primary-700 transition-all shadow-sm shadow-gray-300 hover:bg-primary-50 hover:shadow-md hover:scale-105 active:scale-100">
+          <button
+            onClick={() => router.push(`/messages?userId=${car.dealerId}`)}
+            className="flex w-full items-center justify-center gap-3 rounded-xl bg-white border border-primary-500 py-4 font-bold text-primary-700 transition-all shadow-sm shadow-gray-300 hover:bg-primary-50 hover:shadow-md hover:scale-105 active:scale-100"
+          >
             <Mail className="h-5 w-5" />
             Send Message
           </button>

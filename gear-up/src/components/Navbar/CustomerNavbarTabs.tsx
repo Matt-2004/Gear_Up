@@ -1,10 +1,11 @@
 "use client";
 
+import { IUser } from "@/app/types/user.types";
 import clsx from "clsx";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function CustomerNavbarTabs() {
+export default function CustomerNavbarTabs({ user }: { user: IUser | null }) {
   const router = useRouter();
   const pathname = usePathname();
   const [selectedTab, setSelectedTab] = useState("home");
@@ -13,12 +14,10 @@ export default function CustomerNavbarTabs() {
     // Set active tab based on current path
     if (pathname === "/" || pathname.includes("/home")) {
       setSelectedTab("home");
-    } else if (pathname.includes("/car")) {
-      setSelectedTab("cars");
     } else if (pathname.includes("/discover") || pathname.includes("/post")) {
       setSelectedTab("discover");
-    } else if (pathname.includes("/contact")) {
-      setSelectedTab("contact");
+    } else if (pathname.includes("/profile/user/appointments")) {
+      setSelectedTab("appointments");
     }
   }, [pathname]);
 
@@ -29,9 +28,8 @@ export default function CustomerNavbarTabs() {
 
   const customerTabs = [
     { id: "home", label: "Home", path: "/" },
-    { id: "cars", label: "Cars", path: "/car" },
     { id: "discover", label: "Discover", path: "/post/discover" },
-    { id: "contact", label: "Contact", path: "/contact" },
+    ...(user ? [{ id: "appointments", label: "Appointments", path: "/profile/user/appointments" }] : []),
   ];
 
   return (

@@ -70,7 +70,7 @@ const CreatePostForm = ({ dealerCars }: CreatePostFormProps) => {
         addToastMessage("success", "Post published successfully!");
         setTimeout(() => {
           router.push("/post/discover");
-        }, 4000);
+        }, 2500);
       }
     } catch (error) {
       addToastMessage("error", "Failed to publish post. Please try again.");
@@ -108,28 +108,25 @@ const CreatePostForm = ({ dealerCars }: CreatePostFormProps) => {
                       className="flex flex-col items-center"
                     >
                       <div
-                        className={`flex h-12 w-12 items-center justify-center rounded-full border-2 transition-all duration-200 ${
-                          isCompleted
+                        className={`flex h-12 w-12 items-center justify-center rounded-full border-2 transition-all duration-200 ${isCompleted
                             ? "bg-primary-500 border-primary-500"
                             : isCurrent
                               ? "bg-white border-primary-500"
                               : "bg-white border-gray-300"
-                        }`}
+                          }`}
                       >
                         {isCompleted ? (
                           <Check className="h-6 w-6 text-white" />
                         ) : (
                           <StepIcon
-                            className={`h-6 w-6 ${
-                              isCurrent ? "text-primary-600" : "text-gray-400"
-                            }`}
+                            className={`h-6 w-6 ${isCurrent ? "text-primary-600" : "text-gray-400"
+                              }`}
                           />
                         )}
                       </div>
                       <span
-                        className={`mt-2 text-sm font-medium whitespace-nowrap ${
-                          isCurrent ? "text-primary-600" : "text-gray-600"
-                        }`}
+                        className={`mt-2 text-sm font-medium whitespace-nowrap ${isCurrent ? "text-primary-600" : "text-gray-600"
+                          }`}
                       >
                         {step.name}
                       </span>
@@ -139,11 +136,10 @@ const CreatePostForm = ({ dealerCars }: CreatePostFormProps) => {
                     {index < steps.length - 1 && (
                       <div
                         key={`bar-${step.number}`}
-                        className={`h-0.5 w-40 mx-4 transition-all duration-200 ${
-                          currentStep > step.number
+                        className={`h-0.5 w-40 mx-4 transition-all duration-200 ${currentStep > step.number
                             ? "bg-primary-500"
                             : "bg-gray-300"
-                        }`}
+                          }`}
                         style={{ marginTop: "-20px" }}
                       />
                     )}
@@ -167,11 +163,10 @@ const CreatePostForm = ({ dealerCars }: CreatePostFormProps) => {
                       <div
                         key={car.id}
                         onClick={() => updatePostData({ carId: car.id })}
-                        className={`relative rounded-xl border-2 transition-all duration-200 cursor-pointer ${
-                          postData.carId === car.id
+                        className={`relative rounded-xl border-2 transition-all duration-200 cursor-pointer ${postData.carId === car.id
                             ? "border-primary-500 shadow-lg ring-2 ring-primary-200"
                             : "border-transparent hover:border-gray-300"
-                        }`}
+                          }`}
                       >
                         {postData.carId === car.id && (
                           <div className="absolute top-2 right-2 z-10 bg-primary-500 rounded-full p-1.5 shadow-lg">
