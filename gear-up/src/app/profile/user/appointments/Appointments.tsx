@@ -6,7 +6,6 @@ import { useState } from "react";
 import AppointmentCard from "./components/AppointmentCard";
 import EmptyState from "./components/EmptyState";
 import FilterDropdown from "./components/FilterDropdown";
-import StatsCard from "./components/StatsCard";
 
 interface AppointmentsProps {
   appointments: IAppointment[];
@@ -85,37 +84,6 @@ const Appointments = ({
             }}
           />
         </div>
-
-        {/* Stats Cards */}
-        <div className="mb-8 grid gap-4 md:grid-cols-6">
-          <StatsCard label="Total" value={appointmentCounts.total} />
-          <StatsCard
-            label="Pending"
-            value={appointmentCounts.pending}
-            variant="yellow"
-          />
-          <StatsCard
-            label="Confirmed"
-            value={appointmentCounts.confirmed}
-            variant="blue"
-          />
-          <StatsCard
-            label="Completed"
-            value={appointmentCounts.completed}
-            variant="green"
-          />
-          <StatsCard
-            label="Cancelled"
-            value={appointmentCounts.cancelled}
-            variant="gray"
-          />
-          <StatsCard
-            label="Rejected"
-            value={appointmentCounts.rejected}
-            variant="red"
-          />
-        </div>
-
         {/* Appointments List */}
         <div className="space-y-4">
           {(filteredAppointments || []).length === 0 ? (

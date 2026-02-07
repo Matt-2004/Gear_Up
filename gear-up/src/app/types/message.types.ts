@@ -1,61 +1,54 @@
+import { DefaultResponse } from "./Default_Response";
+
 export interface CreateMessageDTO {
   receiverId: string;
   text?: string;
   imageUrls?: string;
 }
 
-export interface IMessage {
+export interface IMessage<T> extends DefaultResponse<T> {}
+
+export interface IMessageCursor {
+  items: IMessageListData[];
+  nextCursor?: string;
+  hasMore: boolean;
+}
+
+export interface IMessageListData {
   id: string;
-  senderId: string;
-  receiverId: string;
-  text: string;
-  imageUrls?: string[];
-  isRead: boolean;
-  createdAt: string;
-  updatedAt: string;
-  sender?: {
-    id: string;
-    name: string;
-    username: string;
-    avatarUrl?: string;
-  };
-  receiver?: {
-    id: string;
-    name: string;
-    username: string;
-    avatarUrl?: string;
-  };
-}
-
-export interface IConversation {
-  userId: string;
-  user: {
-    id: string;
-    name: string;
-    username: string;
-    avatarUrl?: string;
-  };
-  lastMessage: IMessage;
+  otherUserId: string;
+  otherUserName: string;
+  otherUserAvatarUrl?: string;
+  lastMessageText: string;
+  lastMessageAt: string;
   unreadCount: number;
+  createdAt: string;
 }
 
-export interface SendMessageRes {
-  isSuccess: boolean;
-  message: string;
-  data: IMessage;
-  status: number;
+type F = IMessageData[] | null;
+export interface IMessageDetail extends DefaultResponse<
+  IMessageDetailData<F>
+> {}
+
+export interface IMessageDetailData<T> {
+  conversationId: string;
+  otherUserId: string;
+  otherUserName: string;
+  otherUserAvatarUrl: string;
+  messages: T;
+  nextCursor: string | null;
+  hasMore: boolean;
 }
 
-export interface GetMessagesRes {
-  isSuccess: boolean;
-  message: string;
-  data: IMessage[];
-  status: number;
-}
-
-export interface GetConversationsRes {
-  isSuccess: boolean;
-  message: string;
-  data: IConversation[];
-  status: number;
+export interface IMessageData {
+  id: string;
+  conversationId: string;
+  senderId: string;
+  senderName: string;
+  senderAvatarUrl: string;
+  text: string;
+  imageUrl: string;
+  sentAt: string;
+  editedAt: string | null;
+  isMine: boolean;
 }

@@ -1,5 +1,5 @@
 import { CreateMessageDTO } from "@/app/types/message.types";
-import { getFetch, postFetch, putFetch } from "./AxiosClient";
+import { getFetch, postFetch } from "./AxiosClient";
 
 export const addMessage = async (data: CreateMessageDTO) => {
   const res = await postFetch(`/api/v1/messages`, data);
@@ -25,10 +25,17 @@ export const getConversationsByConversationId = async (
   return res;
 };
 
+export const getConversationByOtherUserId = async (otherUserId: string) => {
+  const res = await getFetch(
+    `/api/v1/messages/conversations/with/${otherUserId}`,
+  );
+  return res;
+};
+
 export const readMessagesByConversationId = async (conversationId: string) => {
-  const res = await putFetch(
+  const res = await postFetch(
     `/api/v1/messages/conversations/${conversationId}/read`,
-    "",
+    null,
   );
   return res;
 };

@@ -351,6 +351,7 @@ const RejectButton = ({ id, data }: IDecision) => {
 const ApprovedButton = ({ id, data }: IDecision) => {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
+    console.log("Approve data id: ", id);
 
     const onSubmit = async () => {
         setIsLoading(true);
@@ -360,7 +361,6 @@ const ApprovedButton = ({ id, data }: IDecision) => {
             if (response?.isSuccess) {
                 router.replace("/profile/admin?tab=car-verification");
             } else {
-
                 setIsLoading(false);
             }
         } catch (error: any) {

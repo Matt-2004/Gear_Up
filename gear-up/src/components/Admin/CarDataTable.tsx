@@ -91,7 +91,7 @@ const CarDataTable = ({ cars }: { cars: AdminCarData[] }) => {
                                     {car.title}
                                 </td>
                                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-600">
-                                    {car.dealerId}
+                                    {car.id}
                                 </td>
                                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-600">
                                     ${car.price.toLocaleString()}

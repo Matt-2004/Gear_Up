@@ -12,7 +12,6 @@ import { useState } from "react";
 import AppointmentCard from "./components/AppointmentCard";
 import EmptyState from "./components/EmptyState";
 import FilterDropdown from "./components/FilterDropdown";
-import StatsCard from "./components/StatsCard";
 
 interface AppointmentsProps {
   appointments: Omit<CursorBaseDTO, "items"> & { items: IAppointment[] };
@@ -47,6 +46,7 @@ const Appointments = ({
 
   const handleAccept = async (appointmentId: string) => {
     setLoading(appointmentId);
+    console.log("Accepting appointment with ID:", appointmentId);
     try {
       await acceptAppointmentById(appointmentId);
       setAppointments((prev) => ({
@@ -62,17 +62,24 @@ const Appointments = ({
     }
   };
 
-  const handleReject = async (appointmentId: string) => {
+  const handleReject = async (
+    appointmentId: string,
+    rejectionReason: string,
+  ) => {
     setLoading(appointmentId);
+    console.log("handleReject called with:", appointmentId, rejectionReason);
     try {
-      await rejectAppointmentById(appointmentId);
+      const result = await rejectAppointmentById(appointmentId, {
+        rejectionReason,
+      });
       setAppointments((prev) => ({
         ...prev,
         items: prev.items.map((apt) =>
           apt.id === appointmentId ? { ...apt, status: "Rejected" } : apt,
         ),
       }));
-    } catch (error) {
+      alert("Appointment rejected successfully");
+    } catch (error: any) {
       console.error("Failed to reject appointment:", error);
     } finally {
       setLoading(null);
@@ -140,36 +147,6 @@ const Appointments = ({
               setFilter(newFilter);
               setDropdownOpen(false);
             }}
-          />
-        </div>
-
-        {/* Stats Cards */}
-        <div className="mb-8 grid gap-4 md:grid-cols-6">
-          <StatsCard label="Total" value={appointmentCounts.total} />
-          <StatsCard
-            label="Pending"
-            value={appointmentCounts.pending}
-            variant="yellow"
-          />
-          <StatsCard
-            label="Confirmed"
-            value={appointmentCounts.confirmed}
-            variant="blue"
-          />
-          <StatsCard
-            label="Completed"
-            value={appointmentCounts.completed}
-            variant="green"
-          />
-          <StatsCard
-            label="Cancelled"
-            value={appointmentCounts.cancelled}
-            variant="gray"
-          />
-          <StatsCard
-            label="Rejected"
-            value={appointmentCounts.rejected}
-            variant="red"
           />
         </div>
 

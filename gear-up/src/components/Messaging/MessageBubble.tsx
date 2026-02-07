@@ -1,99 +1,114 @@
-"use client"
+"use client";
 
-import { IMessage } from "@/app/types/message.types"
-import { format, isToday, isYesterday } from "date-fns"
-import Image from "next/image"
+import { IMessageData } from "@/app/types/message.types";
+import { format, isToday, isYesterday } from "date-fns";
+import { Check, CheckCheck } from "lucide-react";
+import Image from "next/image";
+import { useEffect } from "react";
 
 interface MessageBubbleProps {
-    message: IMessage
-    isCurrentUser: boolean
+  message: IMessageData;
+  isCurrentUser: boolean;
+  onReadMessage: () => void;
+  messagesRead: boolean;
 }
 
 export default function MessageBubble({
-    message,
-    isCurrentUser,
+  message,
+  isCurrentUser,
+  onReadMessage,
+  messagesRead,
 }: MessageBubbleProps) {
-    const formatMessageTime = (date: string) => {
-        const messageDate = new Date(date)
-        if (isToday(messageDate)) {
-            return format(messageDate, "h:mm a")
-        } else if (isYesterday(messageDate)) {
-            return `Yesterday ${format(messageDate, "h:mm a")}`
-        } else {
-            return format(messageDate, "MMM d, h:mm a")
-        }
+  const formatMessageTime = (date: string) => {
+    const messageDate = new Date(date);
+    if (isToday(messageDate)) {
+      return format(messageDate, "h:mm a");
+    } else if (isYesterday(messageDate)) {
+      return `Yesterday ${format(messageDate, "h:mm a")}`;
+    } else {
+      return format(messageDate, "MMM d, h:mm a");
     }
+  };
 
-    return (
+  useEffect(() => {
+    if (!isCurrentUser && !message.isMine) {
+      onReadMessage();
+    }
+  }, [message.id, isCurrentUser, message.isMine]);
+
+  return (
+    <div
+      className={`flex ${isCurrentUser ? "justify-end" : "justify-start"} mb-4`}
+    >
+      <div
+        className={`flex gap-2 max-w-[70%] ${
+          isCurrentUser ? "flex-row-reverse" : "flex-row"
+        }`}
+      >
+        {/* Avatar */}
+        {!isCurrentUser && (
+          <div className="flex-shrink-0">
+            {message.senderAvatarUrl ? (
+              <Image
+                src={message.senderAvatarUrl}
+                alt={message.senderName}
+                width={32}
+                height={32}
+                className="rounded-full object-cover"
+              />
+            ) : (
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-semibold text-sm">
+                {message.senderName.charAt(0).toUpperCase()}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Message Content */}
         <div
-            className={`flex ${isCurrentUser ? "justify-end" : "justify-start"} mb-4`}
+          className={`flex flex-col ${
+            isCurrentUser ? "items-end" : "items-start"
+          }`}
         >
-            <div
-                className={`flex gap-2 max-w-[70%] ${isCurrentUser ? "flex-row-reverse" : "flex-row"
-                    }`}
-            >
-                {/* Avatar */}
-                {!isCurrentUser && message.sender && (
-                    <div className="flex-shrink-0">
-                        {message.sender.avatarUrl ? (
-                            <Image
-                                src={message.sender.avatarUrl}
-                                alt={message.sender.name}
-                                width={32}
-                                height={32}
-                                className="rounded-full object-cover"
-                            />
-                        ) : (
-                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-semibold text-sm">
-                                {message.sender.name.charAt(0).toUpperCase()}
-                            </div>
-                        )}
-                    </div>
+          {/* Message Bubble */}
+          <div
+            className={`px-4 py-2 rounded-2xl ${
+              isCurrentUser
+                ? "bg-blue-500 text-white rounded-br-sm"
+                : "bg-gray-100 text-gray-900 rounded-bl-sm"
+            }`}
+          >
+            {message.imageUrl && message.imageUrl.trim() !== "" && (
+              <div className="mb-2">
+                <img
+                  src={message.imageUrl}
+                  alt="Message attachment"
+                  className="rounded-lg object-cover max-w-[200px] max-h-[200px]"
+                />
+              </div>
+            )}
+            {message.text && (
+              <p className="text-sm whitespace-pre-wrap break-words">
+                {message.text}
+              </p>
+            )}
+          </div>
+
+          {/* Timestamp and Read Status */}
+          <div className="flex items-center gap-1 text-xs text-gray-500 mt-1 px-1">
+            <span>{formatMessageTime(message.sentAt)}</span>
+            {isCurrentUser && (
+              <span className="flex items-center">
+                {messagesRead ? (
+                  <CheckCheck className="w-3 h-3 text-blue-500" />
+                ) : (
+                  <Check className="w-3 h-3 text-gray-400" />
                 )}
-
-                {/* Message Content */}
-                <div
-                    className={`flex flex-col ${isCurrentUser ? "items-end" : "items-start"
-                        }`}
-                >
-                    {/* Message Bubble */}
-                    <div
-                        className={`px-4 py-2 rounded-2xl ${isCurrentUser
-                                ? "bg-blue-500 text-white rounded-br-sm"
-                                : "bg-gray-100 text-gray-900 rounded-bl-sm"
-                            }`}
-                    >
-                        {message.text && (
-                            <p className="text-sm whitespace-pre-wrap break-words">
-                                {message.text}
-                            </p>
-                        )}
-
-                        {message.imageUrls && message.imageUrls.length > 0 && (
-                            <div className="mt-2 space-y-2">
-                                {message.imageUrls.map((url, index) => (
-                                    <Image
-                                        key={index}
-                                        src={url}
-                                        alt={`Message image ${index + 1}`}
-                                        width={300}
-                                        height={200}
-                                        className="rounded-lg object-cover"
-                                    />
-                                ))}
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Timestamp */}
-                    <span className="text-xs text-gray-500 mt-1 px-1">
-                        {formatMessageTime(message.createdAt)}
-                        {isCurrentUser && message.isRead && (
-                            <span className="ml-1 text-blue-500">✓✓</span>
-                        )}
-                    </span>
-                </div>
-            </div>
+              </span>
+            )}
+          </div>
         </div>
-    )
+      </div>
+    </div>
+  );
 }

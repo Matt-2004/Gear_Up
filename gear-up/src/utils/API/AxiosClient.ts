@@ -17,7 +17,6 @@ export const api = axios.create({
 
 export async function getFetch(url: string) {
   const access_token = (await cookies()).get("access_token")?.value;
-  console.log("getFetch url:", url);
 
   // url & options
   try {
@@ -101,10 +100,15 @@ export async function deleteFetch(url: string) {
   }
 }
 
-export async function patchFetch(url: string) {
+export async function patchFetch(
+  url: string,
+  data?: { rejectionReason: string },
+) {
   const access_token = (await cookies()).get("access_token")?.value;
+  console.log("patchFetch url:", url);
+  console.log("Access Token:", access_token);
   try {
-    const respones = await api.patch(url, {
+    const respones = await api.patch(url, data, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${access_token}`,

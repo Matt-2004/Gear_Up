@@ -8,23 +8,23 @@ export default function DealerNavbarTabs() {
   const router = useRouter();
   const pathname = usePathname();
   const selectedTabRef = useRef("dashboard");
-  const [, forceUpdate] = useState({});
   const [appointmentCount, setAppointmentCount] = useState(0);
 
   useEffect(() => {
     // Set active tab based on current path
     if (pathname.includes("/profile/dealer")) {
       selectedTabRef.current = "dashboard";
-    } else if (pathname.includes("/car")) {
-      selectedTabRef.current = "inventory";
-    } else if (pathname.includes("/discover")) {
+    } else if (pathname.includes("/profile/dealer/cars")) {
+      selectedTabRef.current = "cars inventory";
+    } else if (pathname.includes("/post/discover")) {
       selectedTabRef.current = "discover";
-    } else if (pathname.includes("/appointments")) {
+    } else if (pathname.includes("/profile/dealer/appointments")) {
       selectedTabRef.current = "appointments";
+    } else if (pathname.includes("/messages")) {
+      selectedTabRef.current = "message";
     } else {
       selectedTabRef.current = "dashboard";
     }
-    forceUpdate({});
   }, [pathname]);
 
   useEffect(() => {
@@ -50,19 +50,23 @@ export default function DealerNavbarTabs() {
 
   const handleTabSelection = (tabId: string, path: string) => {
     selectedTabRef.current = tabId;
-    forceUpdate({});
     router.push(path);
   };
 
   const dealerTabs = [
     { id: "dashboard", label: "Dashboard", path: "/profile/dealer" },
-    { id: "inventory", label: "Inventory", path: "/car" },
+    {
+      id: "cars inventory",
+      label: "Cars Inventory",
+      path: "/profile/dealer/cars",
+    },
     {
       id: "appointments",
       label: "Appointments",
       path: "/profile/dealer/appointments",
     },
     { id: "discover", label: "Discover", path: "/post/discover" },
+    { id: "message", label: "Messages", path: "/messages" },
   ];
 
   return (

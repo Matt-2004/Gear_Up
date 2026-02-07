@@ -27,6 +27,8 @@ export default async function RootLayout({
   const refreshToken = (await cookies()).get("refresh_token");
   const userResponse = refreshToken ? await getUserProfile() : null;
   const user = userResponse?.data || null;
+
+
   return (
     <html lang="en" className={`${roboto.className}`}>
       <body className={`antialiased`}>
