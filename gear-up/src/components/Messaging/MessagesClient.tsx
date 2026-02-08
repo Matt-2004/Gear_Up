@@ -2,11 +2,10 @@
 
 import { IMessageData, IMessageDetailData } from "@/app/types/message.types";
 import {
-  addMessage,
   getConversationsByConversationId,
   readMessagesByConversationId,
 } from "@/utils/API/MessageAPI";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ChatWindow from "./ChatWindow";
 
 interface MessagesClientProps {
@@ -25,64 +24,81 @@ export default function MessagesClient({
     messages.conversationId,
   );
   const [messagesRead, setMessagesRead] = useState(false);
-
   const [loading, setLoading] = useState(false);
+  const isFetchingRef = useRef(false);
 
-  const otherUser = userId
-    ? {
-        id: messages.otherUserId,
-        name: messages.otherUserName || "User",
-        avatarUrl: messages.otherUserAvatarUrl,
+  const otherUser = useMemo(
+    () =>
+      userId
+        ? {
+            id: messages.otherUserId,
+            name: messages.otherUserName || "User",
+            avatarUrl: messages.otherUserAvatarUrl,
+          }
+        : null,
+    [
+      userId,
+      messages.otherUserId,
+      messages.otherUserName,
+      messages.otherUserAvatarUrl,
+    ],
+  );
+
+  const currentUserId = useMemo(() => messageList[0]?.senderId, [messageList]);
+
+  const fetchMessages = useCallback(
+    async (showLoading = true) => {
+      if (!conversationId || isFetchingRef.current) {
+        if (!conversationId) setMessageList([]);
+        return;
       }
-    : null;
-  const currentUserId = messageList[0]?.senderId;
 
-  const fetchMessages = async (showLoading = true) => {
-    if (!conversationId) {
-      setMessageList([]);
-      return;
-    }
-
-    try {
-      if (showLoading) setLoading(true);
-      const data = await getConversationsByConversationId(conversationId);
-      const messageData = data?.data?.messages ?? [];
-      setMessageList(messageData);
-      await readMessagesByConversationId(conversationId);
-    } catch (error) {
-      console.error("Failed to fetch messages:", error);
-    } finally {
-      if (showLoading) setLoading(false);
-    }
-  };
+      try {
+        isFetchingRef.current = true;
+        if (showLoading) setLoading(true);
+        const data = await getConversationsByConversationId(conversationId);
+        const messageData = data?.data?.messages ?? [];
+        setMessageList(messageData);
+        await readMessagesByConversationId(conversationId);
+      } catch (error) {
+        console.error("Failed to fetch messages:", error);
+      } finally {
+        isFetchingRef.current = false;
+        if (showLoading) setLoading(false);
+      }
+    },
+    [conversationId],
+  );
 
   useEffect(() => {
     fetchMessages();
-  }, [conversationId]);
+  }, [fetchMessages]);
 
-  const handleSendMessage = async (text: string) => {
-    if (!userId) return;
+  const handleSendMessage = useCallback(
+    async (text: string) => {
+      if (!userId || isFetchingRef.current) return;
 
-    try {
-      setLoading(true);
-      await addMessage({ receiverId: userId, text });
-      await fetchMessages(false);
-    } catch (error) {
-      console.error("Failed to send message:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+      try {
+        setLoading(true);
+        await fetchMessages(false);
+      } catch (error) {
+        console.error("Failed to send message:", error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [userId, fetchMessages],
+  );
 
-  const handleReadMessage = async () => {
-    if (!conversationId) return;
+  const handleReadMessage = useCallback(async () => {
+    if (!conversationId || messagesRead) return;
     try {
       await readMessagesByConversationId(conversationId);
       setMessagesRead(true);
     } catch (error) {
       console.error("Failed to mark messages as read:", error);
     }
-  };
+  }, [conversationId, messagesRead]);
 
   return (
     <div className="h-screen bg-gray-50">

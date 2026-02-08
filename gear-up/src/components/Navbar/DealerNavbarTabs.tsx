@@ -20,8 +20,6 @@ export default function DealerNavbarTabs() {
       selectedTabRef.current = "discover";
     } else if (pathname.includes("/profile/dealer/appointments")) {
       selectedTabRef.current = "appointments";
-    } else if (pathname.includes("/messages")) {
-      selectedTabRef.current = "message";
     } else {
       selectedTabRef.current = "dashboard";
     }
@@ -66,7 +64,6 @@ export default function DealerNavbarTabs() {
       path: "/profile/dealer/appointments",
     },
     { id: "discover", label: "Discover", path: "/post/discover" },
-    { id: "message", label: "Messages", path: "/messages" },
   ];
 
   return (
@@ -75,24 +72,28 @@ export default function DealerNavbarTabs() {
         "border-gray-300 mt-12 border-t transition-all duration-300 ease-in-out sm:m-0 sm:border-none md:flex",
       )}
     >
-      <div className="flex h-screen w-full font-normal sm:h-16 sm:flex-row md:px-1 md:py-1">
-        <ol className="flex w-full flex-col gap-0 sm:gap-2 md:flex-row md:gap-2 lg:gap-4">
+      <div className="flex h-screen w-full font-normal sm:h-16 sm:flex-row">
+        <ol className="flex w-full flex-col gap-0 sm:gap-1 md:flex-row md:gap-1">
           {dealerTabs.map((tab) => (
             <li
               key={tab.id}
               onClick={() => handleTabSelection(tab.id, tab.path)}
               className={clsx(
-                "flex cursor-pointer items-center justify-center border-b-2 px-4 py-2 text-center transition-all duration-300 ease-in-out hover:border-primary-600 hover:text-primary-600 sm:border-none relative",
+                "relative flex cursor-pointer items-center justify-center border-b-2 px-5 py-2 text-sm font-medium text-center transition-all duration-200 ease-in-out sm:border-none sm:rounded-lg",
+                "hover:bg-gray-100 hover:text-primary-600",
                 selectedTabRef.current === tab.id
-                  ? "border-primary-600 text-primary-600 font-medium"
+                  ? "border-primary-600 text-primary-600"
                   : "border-transparent text-gray-600",
               )}
             >
-              {tab.label}
+              <span>{tab.label}</span>
               {tab.id === "appointments" && appointmentCount > 0 && (
-                <span className="ml-1.5 inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold leading-none text-white bg-red-500 rounded-full">
+                <span className="ml-1.5 inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-bold leading-none text-white bg-red-500 rounded-full animate-pulse">
                   {appointmentCount}
                 </span>
+              )}
+              {selectedTabRef.current === tab.id && (
+                <span className="hidden sm:block absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-0.5 bg-primary-600 rounded-full"></span>
               )}
             </li>
           ))}

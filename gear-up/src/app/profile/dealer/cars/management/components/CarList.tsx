@@ -14,14 +14,15 @@ export default function CarList({ cars, onDelete, onEdit }: CarListProps) {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 animate-in fade-in duration-150">
       {cars.map((car: CarItems, index: number) => (
-        <DealerCarCard
+        <div
           key={car.id || index}
-          car={car}
-          onDelete={onDelete}
-          onEdit={onEdit}
-        />
+          className="animate-in fade-in slide-in-from-bottom duration-150"
+          style={{ animationDelay: `${index * 50}ms` }}
+        >
+          <DealerCarCard car={car} onDelete={onDelete} onEdit={onEdit} />
+        </div>
       ))}
     </div>
   );

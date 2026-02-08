@@ -36,21 +36,21 @@ async function getAllStatusCars(): Promise<
         ...rejectedData?.items,
       ],
       hasMore: false,
-      cursor: "",
+      nextCursor: "",
     };
     console.log("All cars combined:", allCars);
     // Return in CursorBaseDTO format
     return {
       items: allCars.items,
       hasMore: false,
-      cursor: "",
+      nextCursor: "",
     };
   } catch (error) {
     console.error("Error fetching all status cars:", error);
     return {
       items: [],
       hasMore: false,
-      cursor: "",
+      nextCursor: "",
     };
   }
 }

@@ -4,7 +4,7 @@ import { IMessageData } from "@/app/types/message.types";
 import { format, isToday, isYesterday } from "date-fns";
 import { Check, CheckCheck } from "lucide-react";
 import Image from "next/image";
-import { useEffect } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 interface MessageBubbleProps {
   message: IMessageData;
@@ -19,8 +19,10 @@ export default function MessageBubble({
   onReadMessage,
   messagesRead,
 }: MessageBubbleProps) {
-  const formatMessageTime = (date: string) => {
-    const messageDate = new Date(date);
+  const hasCalledReadRef = useRef(false);
+
+  const formattedTime = useMemo(() => {
+    const messageDate = new Date(message.sentAt);
     if (isToday(messageDate)) {
       return format(messageDate, "h:mm a");
     } else if (isYesterday(messageDate)) {
@@ -28,13 +30,14 @@ export default function MessageBubble({
     } else {
       return format(messageDate, "MMM d, h:mm a");
     }
-  };
+  }, [message.sentAt]);
 
   useEffect(() => {
-    if (!isCurrentUser && !message.isMine) {
+    if (!isCurrentUser && !message.isMine && !hasCalledReadRef.current) {
+      hasCalledReadRef.current = true;
       onReadMessage();
     }
-  }, [message.id, isCurrentUser, message.isMine]);
+  }, [message.id, isCurrentUser, message.isMine, onReadMessage]);
 
   return (
     <div
@@ -96,7 +99,7 @@ export default function MessageBubble({
 
           {/* Timestamp and Read Status */}
           <div className="flex items-center gap-1 text-xs text-gray-500 mt-1 px-1">
-            <span>{formatMessageTime(message.sentAt)}</span>
+            <span>{formattedTime}</span>
             {isCurrentUser && (
               <span className="flex items-center">
                 {messagesRead ? (

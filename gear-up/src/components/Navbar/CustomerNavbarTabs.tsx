@@ -29,7 +29,15 @@ export default function CustomerNavbarTabs({ user }: { user: IUser | null }) {
   const customerTabs = [
     { id: "home", label: "Home", path: "/" },
     { id: "discover", label: "Discover", path: "/post/discover" },
-    ...(user ? [{ id: "appointments", label: "Appointments", path: "/profile/user/appointments" }] : []),
+    ...(user
+      ? [
+          {
+            id: "appointments",
+            label: "Appointments",
+            path: "/profile/user/appointments",
+          },
+        ]
+      : []),
   ];
 
   return (
@@ -38,20 +46,24 @@ export default function CustomerNavbarTabs({ user }: { user: IUser | null }) {
         "border-gray-300 mt-12 border-t transition-all duration-300 ease-in-out sm:m-0 sm:border-none md:flex",
       )}
     >
-      <div className="flex h-screen w-full font-normal sm:h-16 sm:flex-row md:px-1 md:py-1">
-        <ol className="flex w-full flex-col gap-0 sm:gap-2 md:flex-row md:gap-2 lg:gap-4">
+      <div className="flex h-screen w-full font-normal sm:h-16 sm:flex-row">
+        <ol className="flex w-full flex-col gap-0 sm:gap-1 md:flex-row md:gap-1">
           {customerTabs.map((tab) => (
             <li
               key={tab.id}
               onClick={() => handleTabSelection(tab.id, tab.path)}
               className={clsx(
-                "flex cursor-pointer items-center justify-center border-b-2 px-4 py-2 text-center transition-all duration-300 ease-in-out hover:border-primary-600 hover:text-primary-600 sm:border-none",
+                "relative flex cursor-pointer items-center justify-center border-b-2 px-5 py-2 text-sm font-medium text-center transition-all duration-200 ease-in-out sm:border-none sm:rounded-lg",
+                "hover:bg-gray-100 hover:text-primary-600",
                 selectedTab === tab.id
-                  ? "border-primary-600 text-primary-600 font-medium"
+                  ? "border-primary-600 text-primary-600 sm:bg-blue-50"
                   : "border-transparent text-gray-600",
               )}
             >
               {tab.label}
+              {selectedTab === tab.id && (
+                <span className="hidden sm:block absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-0.5 bg-primary-600 rounded-full"></span>
+              )}
             </li>
           ))}
         </ol>

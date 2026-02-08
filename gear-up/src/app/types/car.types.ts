@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 export interface CarRoot {
   isSuccess: boolean;
   message: string;
@@ -29,6 +31,7 @@ export interface CarImages {
 }
 
 export interface CarItems {
+  name: ReactNode;
   dealerId: string;
   id: string;
   title: string;

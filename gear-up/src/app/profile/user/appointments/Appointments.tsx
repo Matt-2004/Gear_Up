@@ -40,8 +40,6 @@ const Appointments = ({
   };
 
   const handleCancel = async (appointmentId: string) => {
-    if (!confirm("Are you sure you want to cancel this appointment?")) return;
-
     setLoading(appointmentId);
     try {
       await cancelAppointmentById(appointmentId);
@@ -52,7 +50,6 @@ const Appointments = ({
       );
     } catch (error) {
       console.error("Failed to cancel appointment:", error);
-      alert("Failed to cancel appointment. Please try again.");
     } finally {
       setLoading(null);
     }

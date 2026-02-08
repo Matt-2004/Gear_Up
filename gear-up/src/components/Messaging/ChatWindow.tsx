@@ -3,6 +3,7 @@
 import { IMessageData } from "@/app/types/message.types";
 import { MoreVertical } from "lucide-react";
 import Image from "next/image";
+import { memo } from "react";
 import MessageInput from "./MessageInput";
 import MessageList from "./MessageList";
 
@@ -20,7 +21,7 @@ interface ChatWindowProps {
   loading?: boolean;
 }
 
-export default function ChatWindow({
+const ChatWindow = memo(function ChatWindow({
   messages,
   currentUserId,
   otherUserId,
@@ -29,7 +30,6 @@ export default function ChatWindow({
   messagesRead,
   loading = false,
 }: ChatWindowProps) {
-  console.log("otherUser:: ", otherUserId);
   if (!otherUserId) {
     return <div>User id is not provide</div>;
   }
@@ -80,4 +80,6 @@ export default function ChatWindow({
       />
     </div>
   );
-}
+});
+
+export default ChatWindow;

@@ -1,7 +1,7 @@
 "use client";
 
 import { IMessageData } from "@/app/types/message.types";
-import { useEffect, useRef } from "react";
+import { memo, useEffect, useRef } from "react";
 import MessageBubble from "./MessageBubble";
 
 interface MessageListProps {
@@ -11,21 +11,25 @@ interface MessageListProps {
   messagesRead: boolean;
 }
 
-export default function MessageList({
+const MessageList = memo(function MessageList({
   messages,
   currentUserId,
   onReadMessage,
   messagesRead,
 }: MessageListProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const prevMessagesLengthRef = useRef(messages.length);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    if (messages.length > prevMessagesLengthRef.current) {
+      scrollToBottom();
+    }
+    prevMessagesLengthRef.current = messages.length;
+  }, [messages.length]);
 
   return (
     <div className="flex-1 overflow-y-auto p-4 space-y-2">
@@ -51,4 +55,6 @@ export default function MessageList({
       )}
     </div>
   );
-}
+});
+
+export default MessageList;

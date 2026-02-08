@@ -18,10 +18,13 @@ export function Logo() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
 
   return (
-    <div className="z-20 flex h-full w-32 items-center">
-      <div className="cursor-pointer rounded-md p-1 hover:bg-gray-300 active:bg-gray-200">
+    <div className="z-20 flex h-full items-center gap-2 shrink-0">
+      <button
+        className="cursor-pointer rounded-lg p-2 hover:bg-gray-100 active:bg-gray-200 transition-colors md:hidden"
+        aria-label="Toggle menu"
+      >
         <Menu
-          className="text-primary h-7 w-7 text-2xl md:hidden"
+          className="text-primary h-6 w-6"
           onClick={() => setIsMobileMenuOpen((prev) => !prev)}
         />
 
@@ -30,17 +33,20 @@ export function Logo() {
             <MobileMenu setIsMobileMenuOpen={setIsMobileMenuOpen} />
           </div>
         )}
-      </div>
-      <div className="flex h-16 w-32 -translate-x-2 items-center">
+      </button>
+      <Link
+        href="/"
+        className="flex h-14 w-28 items-center transition-transform hover:scale-105"
+      >
         <Image
-          src={"/logo.png"}
+          src="/logo.png"
           priority
-          alt="Logo"
+          alt="Gear Up Logo"
           width={150}
           height={150}
           className="object-contain"
         />
-      </div>
+      </Link>
     </div>
   );
 }
@@ -52,19 +58,29 @@ export function MobileMenu({
 }) {
   return (
     <>
-      <div className="bg-background fixed top-0 left-0 z-40 flex h-screen w-[75%] flex-col text-white">
-        <div className="relative flex flex-col gap-8">
-          <button className="absolute top-3 right-4 rounded-full active:bg-gray-300">
-            <X
-              onClick={() => setIsMobileMenuOpen((prev) => !prev)}
-              className="text-primary"
-            />
-          </button>
-
-          <NavbarTabs />
+      <div className="bg-background fixed top-0 left-0 z-50 flex h-screen w-[85%] max-w-sm flex-col text-white shadow-2xl animate-in slide-in-from-left duration-300">
+        <div className="relative flex flex-col">
+          <div className="flex items-center justify-between p-4 border-b border-gray-200">
+            <h2 className="text-primary text-lg font-semibold">Menu</h2>
+            <button
+              className="rounded-lg p-2 hover:bg-gray-100 active:bg-gray-200 transition-colors"
+              aria-label="Close menu"
+            >
+              <X
+                onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+                className="text-primary h-5 w-5"
+              />
+            </button>
+          </div>
+          <div className="p-4">
+            <NavbarTabs />
+          </div>
         </div>
       </div>
-      <div className="fixed inset-0 z-30 bg-linear-to-r from-gray-900/60 to-black/80" />
+      <div
+        className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm animate-in fade-in duration-300"
+        onClick={() => setIsMobileMenuOpen(false)}
+      />
     </>
   );
 }
@@ -77,7 +93,7 @@ export function User({ user }: { user: IUser }) {
 
   return (
     <div
-      className="relative flex h-full cursor-pointer items-center justify-end gap-2"
+      className="relative flex h-full items-center justify-end gap-3 group"
       onMouseEnter={() => {
         setIsOpenUserProfileMenu(true);
       }}
@@ -85,26 +101,30 @@ export function User({ user }: { user: IUser }) {
         setIsOpenUserProfileMenu(false);
       }}
     >
-      <Image
-        src={avatarUrl || "/default_profile.jpg"}
-        alt="Profile Picture"
-        width={40}
-        height={40}
-        className="h-10 w-10 rounded-full border border-gray-300"
-      ></Image>
-      <h1 className="hidden md:block">
-        <span className="text-primary whitespace-nowrap font-medium">
-          {username &&
-            username.toLowerCase().charAt(0).toUpperCase() +
-              username.substring(1, username.length)}
-        </span>
-        {role === "Dealer" && (
-          <div className="bg-primary flex items-center gap-1 rounded-full px-2 text-center text-sm text-white">
-            <Cog className="h-4 w-4" />
-            {role}
-          </div>
-        )}
-      </h1>
+      <div className="flex items-center gap-2 cursor-pointer px-2 py-1.5 rounded-lg hover:bg-gray-100 transition-colors">
+        <div className="relative">
+          <Image
+            src={avatarUrl || "/default_profile.jpg"}
+            alt="Profile Picture"
+            width={40}
+            height={40}
+            className="h-9 w-9 rounded-full border-2 border-gray-200 object-cover group-hover:border-blue-400 transition-colors"
+          />
+          <div className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-green-500 border-2 border-white"></div>
+        </div>
+        <div className="hidden md:flex md:flex-col items-start">
+          <span className="text-sm text-gray-900 font-medium whitespace-nowrap">
+            {username &&
+              username.charAt(0).toUpperCase() + username.substring(1)}
+          </span>
+          {role === "Dealer" && (
+            <div className="flex items-center gap-1 text-xs text-blue-600">
+              <Cog className="h-3 w-3" />
+              <span>{role}</span>
+            </div>
+          )}
+        </div>
+      </div>
       {isOpenUserProfileMenu && <ProfileDropDown user={user} />}
     </div>
   );
@@ -112,42 +132,48 @@ export function User({ user }: { user: IUser }) {
 
 export function SearchBar() {
   const [isSearchBarActive, setIsSearchBarActive] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   return (
-    <div className=" relative h-full w-full transition-all duration-150 ease-in">
+    <div className="relative h-full w-full max-w-md transition-all duration-200 ease-in-out">
       <input
         type="text"
-        placeholder="Search..."
+        placeholder="Search cars, posts, dealers..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
         className={clsx(
           isSearchBarActive ? "block" : "hidden",
-          "focus:ring-primary placeholder:text-primary-500 text-primary w-full rounded-md bg-primary-100 py-1.5 pl-10 focus:ring-1 focus:outline-none md:block",
+          "w-full rounded-lg bg-gray-50 border border-gray-200 py-2 pl-10 pr-10 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all md:block hover:bg-gray-100",
         )}
       />
-      <div
+      <button
         onClick={() => setIsSearchBarActive(true)}
         className={clsx(
           isSearchBarActive
-            ? "left-3 "
-            : "rounded-full p-2 md:bg-transparent md:p-0",
-          "absolute top-1/2 -left-8 -translate-y-1/2 transform md:left-3",
+            ? "left-3"
+            : "rounded-lg p-2 hover:bg-gray-100 md:bg-transparent md:p-0",
+          "absolute top-1/2 -translate-y-1/2 transform transition-colors md:left-3",
         )}
+        aria-label="Search"
       >
         <Search
           className={clsx(
-            isSearchBarActive
-              ? "text-primary md:text-gray-400"
-              : "text-primary",
+            isSearchBarActive ? "text-gray-400" : "text-primary",
             "h-5 w-5",
           )}
         />
-      </div>
+      </button>
       {isSearchBarActive && (
-        <div
-          className="absolute top-1/2 right-2.5 -translate-y-1/2 transform text-white md:hidden"
-          onClick={() => setIsSearchBarActive(false)}
+        <button
+          className="absolute top-1/2 right-3 -translate-y-1/2 transform hover:bg-gray-200 rounded p-1 transition-colors md:hidden"
+          onClick={() => {
+            setIsSearchBarActive(false);
+            setSearchQuery("");
+          }}
+          aria-label="Clear search"
         >
-          <X className="h-5 w-5 text-primary-400 cursor-pointer hover:text-primary-" />
-        </div>
+          <X className="h-4 w-4 text-gray-500" />
+        </button>
       )}
     </div>
   );
@@ -159,10 +185,10 @@ export function Chat() {
 
 export function Login() {
   return (
-    <Link href="/auth/login" className="opacity-100 cursor-pointer">
-      <div className="bg-primary-500 text-primary-100 hover:bg-primary-200 hover:shadow-sm hover:shadow-primary-200 transition-colors duration-75 ease-in hover:text-primary-500  rounded-sm px-5 py-1.5">
-        <button className="font-semibold">Login</button>
-      </div>
+    <Link href="/auth/login" className="shrink-0">
+      <button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold px-6 py-2 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 active:scale-95">
+        Login
+      </button>
     </Link>
   );
 }

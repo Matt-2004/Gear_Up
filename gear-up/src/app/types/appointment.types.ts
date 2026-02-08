@@ -11,7 +11,8 @@ export type AppointmentStatus =
   | "Confirmed"
   | "Completed"
   | "Cancelled"
-  | "Rejected";
+  | "Rejected"
+  | "Scheduled";
 
 export interface IAppointment {
   id: string;

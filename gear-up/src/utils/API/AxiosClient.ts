@@ -7,6 +7,7 @@ import { AddComment } from "@/app/types/comment.types";
 import { IAdminUpdateStatus } from "@/app/types/kyc.types";
 import { CreateMessageDTO } from "@/app/types/message.types";
 import { CreatePostData } from "@/app/types/post.types";
+import { IReviewSubmissionDTO } from "@/app/types/review.types";
 import { API_URL } from "@/lib/config";
 import axios from "axios";
 import { cookies } from "next/headers";
@@ -34,19 +35,20 @@ export async function getFetch(url: string) {
   }
 }
 
-export async function postFetch(
-  url: string,
-  data:
-    | INewPassword
-    | IAdminLogin
-    | FormData
-    | null
-    | AddComment
-    | createAppointmentDTO
-    | CreatePostData
-    | Omit<CreatePostData, "carId">
-    | CreateMessageDTO,
-) {
+type PostFetchAvaliableType =
+  | INewPassword
+  | IAdminLogin
+  | FormData
+  | null
+  | AddComment
+  | createAppointmentDTO
+  | CreatePostData
+  | Omit<CreatePostData, "carId">
+  | CreateMessageDTO
+  | IReviewSubmissionDTO
+  | Omit<IReviewSubmissionDTO, "dealerId">;
+
+export async function postFetch(url: string, data: PostFetchAvaliableType) {
   const access_token = (await cookies()).get("access_token")?.value;
 
   // url & options
@@ -65,7 +67,11 @@ export async function postFetch(
 
 export async function putFetch(
   url: string,
-  data: FormData | IAdminUpdateStatus | string,
+  data:
+    | FormData
+    | IAdminUpdateStatus
+    | string
+    | Omit<IReviewSubmissionDTO, "dealerId">,
 ) {
   const access_token = (await cookies()).get("access_token")?.value;
   // url & options

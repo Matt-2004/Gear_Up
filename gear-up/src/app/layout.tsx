@@ -1,5 +1,6 @@
 import StoreProvider from "@/app/hooks/StoreProvider";
 import ConditionalNavbar from "@/components/Navbar/ConditionalNavbar";
+import NotificationProvider from "@/Context/NotificationContext";
 import NextAuthSessionProvider from "@/provider/NextAuthSessionProvider";
 import ReactQueryProvider from "@/provider/ReactQueryProvider";
 import { getUserProfile } from "@/utils/API/UserAPI";
@@ -28,15 +29,16 @@ export default async function RootLayout({
   const userResponse = refreshToken ? await getUserProfile() : null;
   const user = userResponse?.data || null;
 
-
   return (
     <html lang="en" className={`${roboto.className}`}>
       <body className={`antialiased`}>
         <NextAuthSessionProvider>
           <StoreProvider>
             <ReactQueryProvider>
-              <ConditionalNavbar user={user} />
-              {children}
+              <NotificationProvider>
+                <ConditionalNavbar user={user} />
+                {children}
+              </NotificationProvider>
             </ReactQueryProvider>
           </StoreProvider>
         </NextAuthSessionProvider>
