@@ -30,7 +30,7 @@ export default function CarSpecifications({ car }: CarSpecificationsProps) {
   ];
 
   return (
-    <div className="rounded-xl bg-white p-6 shadow-lg border border-primary-100">
+    <div className="rounded-xl bg-white p-6 shadow-sm">
       <h2 className="mb-6 text-2xl font-bold text-gray-900 flex items-center gap-2">
         <div className="h-1 w-10 bg-primary-500 rounded"></div>
         Key Specifications
@@ -39,9 +39,9 @@ export default function CarSpecifications({ car }: CarSpecificationsProps) {
         {specs.map((spec, index) => (
           <div
             key={index}
-            className="flex flex-col items-center rounded-xl  p-5 transition-all hover:shadow-md hover:scale-105"
+            className="flex flex-col items-center rounded-xl p-5 transition-all"
           >
-            <spec.icon className="mb-2 h-8 w-8 text-primary-600" />
+            <spec.icon className="mb-2 h-7 w-7 text-gray-400" />
             <div className="text-sm text-gray-600 font-medium">
               {spec.label}
             </div>

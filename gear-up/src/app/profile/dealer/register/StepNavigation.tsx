@@ -86,7 +86,7 @@ export const StepNavigation = () => {
 						className={clsx("rounded-xl px-6 py-3 font-medium transition-all duration-200 border-2",
 							step === 1 || isSubmitting
 								? "cursor-not-allowed bg-gray-100 border-gray-200 text-gray-400"
-								: "bg-white text-gray-700 cursor-pointer border-gray-100 hover:border-gray-200 shadow-sm shadow-gray-300 ",)}
+								: "bg-white text-gray-700 cursor-pointer border-gray-100 hover:border-gray-200 shadow-sm shadow-gray-100 ",)}
 					>
 						<span className="flex items-center justify-center gap-2">
 							<ChevronLeft />
@@ -101,7 +101,7 @@ export const StepNavigation = () => {
 						className={clsx(
 							"rounded-xl px-8 py-3 font-medium transition-all duration-200 border-2",
 							isButtonDisabled
-								? "bg-gray-300 text-gray-500 cursor-not-allowed border-gray-300 shadow-sm shadow-gray-300"
+								? "bg-gray-300 text-gray-500 cursor-not-allowed border-gray-300 shadow-sm shadow-gray-100"
 								: "bg-primary-600 text-white cursor-pointer hover:bg-primary-700 border-primary-600 hover:border-primary-700 shadow-md hover:shadow-lg",
 						)}
 					>

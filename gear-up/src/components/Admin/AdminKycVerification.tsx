@@ -49,12 +49,12 @@ const AdminKycVerification = ({
           </div>
 
           {/* Filter Section */}
-          <div className="rounded-2xl bg-white p-6 shadow-sm shadow-gray-300">
+          <div className="rounded-2xl bg-white p-6 shadow-sm shadow-gray-100">
             <FilterUI />
           </div>
 
           {/* Data Table */}
-          <div className="rounded-2xl bg-white shadow-sm shadow-gray-300 overflow-hidden">
+          <div className="rounded-2xl bg-white shadow-sm shadow-gray-100 overflow-hidden">
             <DataTable kyc={kyc.items} />
           </div>
         </div>
@@ -160,7 +160,7 @@ const StatusCountComponent = ({
   const config = colorConfig[status as keyof typeof colorConfig];
 
   return (
-    <div className="group shadow-sm rounded-2xl bg-white p-6 shadow-gray-300 hover:shadow-md hover:shadow-gray-200 transition-all duration-300 hover:-translate-y-1">
+    <div className="group shadow-sm rounded-2xl bg-white p-6 shadow-gray-100 hover:shadow-md hover:shadow-gray-200 transition-all duration-300 hover:-translate-y-1">
       <div className="flex items-center justify-between">
         <div
           className={`rounded-xl p-3 ${config.iconBg} transition-transform duration-300 group-hover:scale-110`}

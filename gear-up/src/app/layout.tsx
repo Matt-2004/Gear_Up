@@ -1,9 +1,12 @@
 import StoreProvider from "@/app/hooks/StoreProvider";
+import { IUser } from "@/app/types/user.types";
+import CookieSetter from "@/components/CookieSetter";
 import ConditionalNavbar from "@/components/Navbar/ConditionalNavbar";
 import NotificationProvider from "@/Context/NotificationContext";
+import { UserDataProvider } from "@/Context/UserDataContext";
+import { DEFAULT_API_URL } from "@/lib/config";
 import NextAuthSessionProvider from "@/provider/NextAuthSessionProvider";
 import ReactQueryProvider from "@/provider/ReactQueryProvider";
-import { getUserProfile } from "@/utils/API/UserAPI";
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import { cookies } from "next/headers";
@@ -25,9 +28,32 @@ export default async function RootLayout({
 }: Readonly<{
   children: ReactNode;
 }>) {
-  const refreshToken = (await cookies()).get("refresh_token");
-  const userResponse = refreshToken ? await getUserProfile() : null;
-  const user = userResponse?.data || null;
+  let user = null;
+
+  try {
+    const cookieStore = await cookies();
+    const access_token = cookieStore.get("access_token")?.value;
+
+    if (access_token) {
+      const res = await fetch(`${DEFAULT_API_URL}/api/user`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Cookie: `access_token=${access_token}`,
+        },
+        credentials: "include",
+      });
+      if (res.ok) {
+        const response = await res.json() as IUser;
+        user = response?.data || null;
+
+      } else {
+        console.error("Failed to fetch user:", res.status, res.statusText);
+      }
+    }
+  } catch (error) {
+    console.error("Failed to fetch user in layout:", error);
+  }
 
   return (
     <html lang="en" className={`${roboto.className}`}>
@@ -35,10 +61,13 @@ export default async function RootLayout({
         <NextAuthSessionProvider>
           <StoreProvider>
             <ReactQueryProvider>
-              <NotificationProvider>
-                <ConditionalNavbar user={user} />
-                {children}
-              </NotificationProvider>
+              <UserDataProvider initialUser={user}>
+                <NotificationProvider>
+                  <CookieSetter userId={user?.id || null} />
+                  <ConditionalNavbar />
+                  {children}
+                </NotificationProvider>
+              </UserDataProvider>
             </ReactQueryProvider>
           </StoreProvider>
         </NextAuthSessionProvider>

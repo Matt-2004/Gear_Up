@@ -8,8 +8,20 @@ import PostManagement from "@/components/Dealer/Post/PostManagement"
 import RevenueManagement from "@/components/Dealer/Revenue/RevenueManagement"
 import Setting from "@/components/Dealer/Setting"
 import TestDriveManagement from "@/components/Dealer/TestDrive/TestDriveManagement"
+import { getReviewByDealerIdWithSummary } from "@/utils/API/ReviewAPI"
+import { cookies } from "next/headers"
+
 
 export default async function Page() {
+
+	const userId = (await cookies()).get("user_id")?.value as string
+	const fetchAll = async () => {
+		Promise.all([getReviewByDealerIdWithSummary(userId)])
+		// Rating summary
+		// My cars
+		// Appointment summary
+	}
+
 	const tabs = [
 		{ name: "Dashboard", path: "?tab=dashboard" },
 		{ name: "Car Management", path: "?tab=car-management" },
@@ -30,8 +42,8 @@ export default async function Page() {
 
 	return (
 		<div className={"flex h-screen w-full text-white"}>
-			<div className={"mx-auto w-1/6 p-2 shadow-md"}>
-				<Tabs tabs={tabs} />
+			<div className={"mx-auto w-1/5 p-2 shadow-md"}>
+				<Tabs name="Dealer" tabs={tabs} />
 			</div>
 			<div className={"w-5/6"}>
 				<PageSwitcher pages={pages} />
@@ -39,3 +51,5 @@ export default async function Page() {
 		</div>
 	)
 }
+
+

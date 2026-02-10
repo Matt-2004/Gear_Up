@@ -1,7 +1,7 @@
 "use client";
 
 import { CarImage, CursorBaseDTO, PostItem } from "@/app/types/post.types";
-import { IUser } from "@/app/types/user.types";
+import { useUserData } from "@/Context/UserDataContext";
 import { DEFAULT_API_URL } from "@/lib/config";
 import { getAllPosts } from "@/utils/API/PostAPI";
 import { timeFormat } from "@/utils/timeFormat";
@@ -36,7 +36,14 @@ import { LikeCount } from "./Comment";
       only FEEDS
 */
 
-const DiscoverPost = ({ post, user }: { post: CursorBaseDTO; user: IUser }) => {
+const DiscoverPost = ({ post }: { post: CursorBaseDTO; }) => {
+
+  const { user } = useUserData();
+
+  if (!user) {
+    return <div>User data not exist!</div>
+  }
+
   const { data, fetchNextPage, isFetchingNextPage, hasNextPage, refetch } =
     useInfiniteQuery<
       CursorBaseDTO,

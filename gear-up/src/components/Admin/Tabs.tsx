@@ -15,6 +15,11 @@ interface ITab {
   path: string;
 }
 
+interface ITabProps {
+  name: string;
+  tabs: ITab[];
+}
+
 const tabIcons: Record<string, React.ReactNode> = {
   Dashboard: <LayoutDashboard className="h-5 w-5" />,
   "Kyc Verification": <UserRoundCheck className="h-5 w-5" />,
@@ -22,7 +27,8 @@ const tabIcons: Record<string, React.ReactNode> = {
   "Generate Report": <BarChart3 className="h-5 w-5" />,
 };
 
-export const Tabs = ({ tabs }: { tabs: ITab[] }) => {
+
+export const Tabs = ({ name, tabs }: ITabProps) => {
   const router = useRouter();
   const path = usePathname();
   const [selectedTab, setSelectedtab] = useState<string>("dashboard");
@@ -43,7 +49,7 @@ export const Tabs = ({ tabs }: { tabs: ITab[] }) => {
   return (
     <div className="h-full bg-white shadow-sm rounded-2xl p-4">
       <div className="mb-8 p-4">
-        <h2 className="text-xl font-bold text-gray-900">Admin Panel</h2>
+        <h2 className="text-xl font-bold text-gray-900">{name} Panel</h2>
         <p className="text-sm text-gray-600 mt-1">Manage your platform</p>
       </div>
       <nav className="space-y-2">

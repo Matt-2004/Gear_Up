@@ -1,29 +1,25 @@
 "use client";
 
-import { IUser } from "@/app/types/user.types";
+import { useUserData } from "@/Context/UserDataContext";
 import NavbarUtility from "@/components/Navbar/NavbarUtility";
 import CustomerNavbarTabs from "./CustomerNavbarTabs";
-import DealerNavbarTabs from "./DealerNavbarTabs";
+
 import { Logo } from "./NavUtils";
 import NavbarContainer from "./NavbarContainer";
 
-export default function Navbar({ user }: { user: IUser }) {
-  const isDealer = user?.role === "Dealer";
+export default function Navbar() {
+  const { user } = useUserData();
   const isCustomer = user?.role === "Customer";
 
   return (
     <NavbarContainer>
       <Logo />
       <div className="hidden md:block">
-        {isDealer ? (
-          <DealerNavbarTabs />
-        ) : isCustomer ? (
-          <CustomerNavbarTabs user={user} />
-        ) : (
-          <CustomerNavbarTabs user={user} />
-        )}
+        {isCustomer &&
+          <CustomerNavbarTabs />
+        }
       </div>
-      <NavbarUtility user={user} />
+      <NavbarUtility />
     </NavbarContainer>
   );
 }

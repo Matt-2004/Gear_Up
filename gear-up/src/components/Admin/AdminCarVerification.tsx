@@ -77,7 +77,7 @@ const FilterUI = () => {
 					<div className="relative flex-1 max-w-md">
 						<Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
 						<input
-							className="w-full rounded-xl border border-gray-200 bg-white py-3 pl-12 pr-4 text-gray-900 placeholder:text-gray-400 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-200 transition-all shadow-gray-300"
+							className="w-full rounded-xl border border-gray-200 bg-white py-3 pl-12 pr-4 text-gray-900 placeholder:text-gray-400 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-200 transition-all shadow-gray-100"
 							type="text"
 							placeholder="Search by car name, make, model, or ID..."
 							value={filter.searchData}
@@ -148,7 +148,7 @@ const FilterUI = () => {
 				{/* Clear Filters Button */}
 				<button
 					onClick={clearFilters}
-					className="px-6 py-3 bg-primary-50 text-primary-700 rounded-xl font-medium hover:bg-primary-100 transition-colors flex items-center gap-2 border border-primary-200 shadow-sm shadow-gray-300"
+					className="px-6 py-3 bg-primary-50 text-primary-700 rounded-xl font-medium hover:bg-primary-100 transition-colors flex items-center gap-2 border border-primary-200 shadow-sm shadow-gray-100"
 				>
 					<FilterIcon className="h-5 w-5" />
 					Clear

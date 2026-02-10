@@ -8,7 +8,7 @@ import Link from "next/link";
 export function CarCard({ carItem }: { carItem: CarItems }) {
   return (
     <Link href={`/car/${carItem.id}`}>
-      <article className="group flex flex-col overflow-hidden rounded-xl bg-white shadow-sm transition-all duration-300 hover:shadow-sm shadow-white hover:-translate-y-1 w-full h-[400px]">
+      <article className="group flex flex-col overflow-hidden rounded-xl bg-white shadow-sm transition-all duration-300 hover:shadow-sm shadow-white hover:-translate-y-0.5 w-full h-[390px]">
         <div className="relative h-44 w-full overflow-hidden flex-shrink-0">
           <Image
             src={carItem?.carImages[0]?.url ?? "/carPlaceholderImage.jpg"}
@@ -21,7 +21,7 @@ export function CarCard({ carItem }: { carItem: CarItems }) {
         <div className="flex flex-1 flex-col p-4">
           <div className="mb-2 flex justify-between items-start gap-2">
             <div className="flex-1 min-w-0">
-              <h3 className="text-lg font-bold text-gray-900 line-clamp-1 group-hover:text-orange-600 transition-colors">
+              <h3 className="text-lg font-bold text-gray-900 line-clamp-1 transition-colors">
                 {carItem.title}
               </h3>
               <p className="flex items-baseline text-sm text-gray-500 mt-1 gap-1">
@@ -60,19 +60,17 @@ export function CarCard({ carItem }: { carItem: CarItems }) {
           </div>
           <div className="my-3 h-px w-full bg-gray-200" />
           <div className="mt-3">
-            <div className="flex items-center justify-between gap-3">
-              <div className="shrink-0">
-                <p className="text-xs text-gray-500">Price</p>
-                <p className="flex items-baseline gap-1">
-                  <span className="text-orange-500">฿</span>
-                  <span className="text-xl font-bold text-orange-600">
-                    {formatNumber(carItem.price)}
-                  </span>
-                </p>
-              </div>
-              <button className="rounded-lg bg-primary-500 px-4 py-2 text-sm text-white transition-colors hover:bg-orange-600 whitespace-nowrap">
-                View Details
-              </button>
+            <div className="flex items-center gap-1">
+
+              <p className="text-xs text-gray-500">Price</p>
+              <p className="flex items-baseline gap-1">
+                <span className="text-orange-500">฿</span>
+                <span className="text-xl font-bold text-orange-600">
+                  {formatNumber(carItem.price)}
+                </span>
+              </p>
+
+
             </div>
           </div>
         </div>

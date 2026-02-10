@@ -16,7 +16,7 @@ export default function CarAdditionalDetails({
   ];
 
   return (
-    <div className="rounded-xl bg-white p-6 shadow-lg border border-primary-100">
+    <div className="rounded-xl bg-white p-6 shadow-sm">
       <h2 className="mb-6 text-2xl font-bold text-gray-900 flex items-center gap-2">
         <div className="h-1 w-10 bg-primary-500 rounded"></div>
         Additional Details
@@ -25,15 +25,12 @@ export default function CarAdditionalDetails({
         {details.map((detail, index) => (
           <div
             key={index}
-            className={`flex justify-between items-center p-3 bg-primary-50 rounded-lg border border-primary-100 ${
-              detail.fullWidth ? "md:col-span-2" : ""
-            }`}
+            className={`flex justify-between items-center p-3 rounded-lg border border-primary-100 ${detail.fullWidth ? "md:col-span-2" : ""
+              }`}
           >
             <span className="text-gray-700 font-medium">{detail.label}</span>
             <span
-              className={`font-bold text-primary-700 ${
-                detail.mono ? "font-mono" : ""
-              }`}
+              className={`font-semibold`}
             >
               {detail.value}
             </span>

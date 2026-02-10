@@ -1,8 +1,8 @@
-import { IUser } from "@/app/types/user.types"
+import { IUserData } from "@/app/types/user.types"
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 
 interface userState {
-	user: IUser | null
+	user: IUserData | null
 }
 
 const initialState = {
@@ -13,7 +13,7 @@ const userSlice = createSlice({
 	name: "user",
 	initialState,
 	reducers: {
-		addUser: (state: userState, action: PayloadAction<IUser>) => {
+		addUser: (state: userState, action: PayloadAction<IUserData>) => {
 			state.user = action.payload
 		},
 

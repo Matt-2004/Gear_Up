@@ -89,8 +89,8 @@ export default function CarImageGallery({
   }, []);
 
   return (
-    <div className="overflow-hidden rounded-xl bg-white shadow-lg border border-primary-100">
-      <div className="relative bg-gradient-to-br from-gray-900 to-gray-800">
+    <div className="overflow-hidden rounded-xl bg-white shadow-sm border border-gray-100">
+      <div className="relative">
         <div
           ref={scrollRef}
           className="flex snap-x snap-mandatory items-center overflow-x-scroll scroll-smooth"
@@ -144,11 +144,7 @@ export default function CarImageGallery({
               // Reset interval when clicking thumbnail
               startAutoScroll();
             }}
-            className={`aspect-video overflow-hidden rounded-lg border-2 transition-all hover:scale-105 ${
-              currentIndex === idx
-                ? "border-primary-500 shadow-md"
-                : "border-gray-200 hover:border-primary-300"
-            }`}
+            className={`aspect-video overflow-hidden rounded-lg transition-all  ${currentIndex === idx ? "scale-105" : ""}`}
           >
             <img src={img.url} alt="" className="h-full w-full object-cover" />
           </button>

@@ -1,9 +1,9 @@
 "use client";
 
 import { useNotificationContext } from "@/Context/NotificationContext";
+import { useUserData } from "@/Context/UserDataContext";
 import { IMessageData } from "@/app/types/message.types";
 import { INotificationData } from "@/app/types/notification.types";
-import { IUser } from "@/app/types/user.types";
 import { Login, SearchBar, User } from "@/components/Navbar/NavUtils";
 import * as signalR from "@microsoft/signalr";
 import { formatDistanceToNow } from "date-fns";
@@ -12,20 +12,23 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-export default function NavbarUtility({ user }: { user: IUser }) {
+export default function NavbarUtility() {
+  const { user } = useUserData();
+
   return (
     <div className="flex items-center gap-2 md:gap-3 shrink-0">
       <div className="hidden sm:flex items-center flex-1 max-w-md">
         <SearchBar />
       </div>
 
-      {user && <NotificationBell user={user} />}
-      {user ? <User user={user} /> : <Login />}
+      {user && <NotificationBell />}
+      {user ? <User /> : <Login />}
     </div>
   );
 }
 
-export const NotificationBell = ({ user }: { user: IUser }) => {
+export const NotificationBell = () => {
+  const { user } = useUserData();
   const [token, setToken] = useState<string>("");
   const [isOpen, setIsOpen] = useState(false);
   const connectionRef = useRef<signalR.HubConnection | null>(null);
@@ -59,7 +62,7 @@ export const NotificationBell = ({ user }: { user: IUser }) => {
     setIsOpen(false);
 
     const notifType = notif.notificationType as unknown as number;
-    const isDealer = user.role === "Dealer";
+    const isDealer = user?.role === "Dealer";
 
     let targetUrl = "";
 
@@ -205,9 +208,8 @@ export const NotificationBell = ({ user }: { user: IUser }) => {
               <div
                 key={chat.id}
                 onClick={() => handleChatClick(chat)}
-                className={`p-3 hover:bg-gray-50 cursor-pointer transition-colors ${
-                  !chat.isMine ? "bg-blue-50/50" : ""
-                }`}
+                className={`p-3 hover:bg-gray-50 cursor-pointer transition-colors ${!chat.isMine ? "bg-blue-50/50" : ""
+                  }`}
               >
                 <div className="flex items-center gap-3">
                   <div className="relative shrink-0">
@@ -250,9 +252,8 @@ export const NotificationBell = ({ user }: { user: IUser }) => {
               <div
                 key={notif.id}
                 onClick={() => handleNotificationClick(notif)}
-                className={`p-3 hover:bg-gray-50 cursor-pointer transition-colors ${
-                  !notif.isRead ? "bg-orange-50/50" : ""
-                }`}
+                className={`p-3 hover:bg-gray-50 cursor-pointer transition-colors ${!notif.isRead ? "bg-orange-50/50" : ""
+                  }`}
               >
                 <div className="flex items-center gap-3">
                   <div className="shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center">

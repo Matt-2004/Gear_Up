@@ -28,7 +28,7 @@ export default function HomeCarDetailPage({ car }: { car: CarItems }) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-primary-50">
+    <div className="min-h-screen">
       <div className="mx-auto max-w-7xl px-4 py-8">
         <CarHeader
           car={car}

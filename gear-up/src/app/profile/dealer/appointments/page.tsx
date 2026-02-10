@@ -1,11 +1,10 @@
 import { IAppointment } from "@/app/types/appointment.types";
 import { CursorBaseDTO } from "@/app/types/post.types";
 import { dealerAppointments } from "@/utils/API/AppointmentAPI";
-import { getUserProfile } from "@/utils/API/UserAPI";
+
 import Appointments from "./Appointments";
 
 async function getData() {
-  const user = await getUserProfile();
 
   try {
     const res = await dealerAppointments();

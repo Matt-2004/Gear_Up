@@ -1,6 +1,6 @@
 "use client";
 
-import { IUser } from "@/app/types/user.types";
+import { IUserData } from "@/app/types/user.types";
 import Input from "@/components/Common/Input";
 
 import { Camera, Save, X } from "lucide-react";
@@ -8,10 +8,10 @@ import Image from "next/image";
 import { ChangeEvent, useEffect, useState } from "react";
 import { updateProfile } from "./action";
 
-const ProfilePage = ({ data }: { data: IUser }) => {
+const ProfilePage = ({ data }: { data: IUserData }) => {
   const [isDataChange, setIsDataChange] = useState<boolean>(false);
-  const [input, setInput] = useState<Partial<IUser>>();
-  const [originalInput, setOriginalInput] = useState<Partial<IUser>>();
+  const [input, setInput] = useState<Partial<IUserData>>();
+  const [originalInput, setOriginalInput] = useState<Partial<IUserData>>();
   const formData = new FormData();
 
   const handleInput = (e: ChangeEvent<HTMLInputElement>) => {

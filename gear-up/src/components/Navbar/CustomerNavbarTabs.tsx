@@ -1,11 +1,12 @@
 "use client";
 
-import { IUser } from "@/app/types/user.types";
+import { useUserData } from "@/Context/UserDataContext";
 import clsx from "clsx";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function CustomerNavbarTabs({ user }: { user: IUser | null }) {
+export default function CustomerNavbarTabs() {
+  const { user } = useUserData();
   const router = useRouter();
   const pathname = usePathname();
   const [selectedTab, setSelectedTab] = useState("home");
@@ -31,12 +32,12 @@ export default function CustomerNavbarTabs({ user }: { user: IUser | null }) {
     { id: "discover", label: "Discover", path: "/post/discover" },
     ...(user
       ? [
-          {
-            id: "appointments",
-            label: "Appointments",
-            path: "/profile/user/appointments",
-          },
-        ]
+        {
+          id: "appointments",
+          label: "Appointments",
+          path: "/profile/user/appointments",
+        },
+      ]
       : []),
   ];
 
@@ -54,9 +55,9 @@ export default function CustomerNavbarTabs({ user }: { user: IUser | null }) {
               onClick={() => handleTabSelection(tab.id, tab.path)}
               className={clsx(
                 "relative flex cursor-pointer items-center justify-center border-b-2 px-5 py-2 text-sm font-medium text-center transition-all duration-200 ease-in-out sm:border-none sm:rounded-lg",
-                "hover:bg-gray-100 hover:text-primary-600",
+                " hover:text-primary-600",
                 selectedTab === tab.id
-                  ? "border-primary-600 text-primary-600 sm:bg-blue-50"
+                  ? "border-primary-600 text-primary-600"
                   : "border-transparent text-gray-600",
               )}
             >

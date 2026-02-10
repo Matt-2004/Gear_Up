@@ -1,11 +1,12 @@
 "use client";
 
-import { IUser } from "@/app/types/user.types";
+import { useUserData } from "@/Context/UserDataContext";
 import clsx from "clsx";
 import { Cog, Menu, Search, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { Dispatch, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Dispatch, useEffect, useRef, useState } from "react";
 import { ChatIcon } from "../Common/SVGs";
 import { ProfileDropDown } from "./NavbarDropDown";
 import NavbarTabs from "./NavbarTabs";
@@ -63,11 +64,12 @@ export function MobileMenu({
           <div className="flex items-center justify-between p-4 border-b border-gray-200">
             <h2 className="text-primary text-lg font-semibold">Menu</h2>
             <button
+              onClick={() => setIsMobileMenuOpen((prev) => !prev)}
               className="rounded-lg p-2 hover:bg-gray-100 active:bg-gray-200 transition-colors"
               aria-label="Close menu"
             >
               <X
-                onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+
                 className="text-primary h-5 w-5"
               />
             </button>
@@ -85,11 +87,14 @@ export function MobileMenu({
   );
 }
 
-export function User({ user }: { user: IUser }) {
+export function User() {
+  const { user } = useUserData();
   const [isOpenUserProfileMenu, setIsOpenUserProfileMenu] =
     useState<boolean>(false);
 
-  const { avatarUrl, username, role }: Partial<IUser> = user;
+  if (!user) return null;
+
+  const { avatarUrl, username, role } = user;
 
   return (
     <div
@@ -125,28 +130,101 @@ export function User({ user }: { user: IUser }) {
           )}
         </div>
       </div>
-      {isOpenUserProfileMenu && <ProfileDropDown user={user} />}
+      {isOpenUserProfileMenu && <ProfileDropDown />}
     </div>
   );
 }
 
 export function SearchBar() {
+  const router = useRouter();
   const [isSearchBarActive, setIsSearchBarActive] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
+  const [carSuggestions, setCarSuggestions] = useState<string[]>([]);
+  const searchRef = useRef<HTMLFormElement>(null);
+
+  // Load car suggestions on mount
+  useEffect(() => {
+    const loadSuggestions = async () => {
+      try {
+        const response = await fetch('/car-suggestions.json');
+        const data = await response.json();
+        setCarSuggestions(data);
+      } catch (error) {
+        console.error("Error loading car suggestions:", error);
+      }
+    };
+    loadSuggestions();
+  }, []);
+
+  // Debounce effect for search
+  useEffect(() => {
+    const delayTimer = setTimeout(() => {
+      if (searchQuery.trim() === "") {
+        setSuggestions([]);
+        setShowSuggestions(false);
+        return;
+      }
+
+      // Filter suggestions based on search query
+      const filtered = carSuggestions.filter(car =>
+        car.toLowerCase().includes(searchQuery.toLowerCase())
+      ).slice(0, 8); // Limit to 8 suggestions
+
+      setSuggestions(filtered);
+      setShowSuggestions(filtered.length > 0);
+    }, 300); // 300ms debounce delay
+
+    return () => clearTimeout(delayTimer);
+  }, [searchQuery, carSuggestions]);
+
+  // Close suggestions when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setShowSuggestions(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setSearchQuery(suggestion);
+    setShowSuggestions(false);
+    router.push(`/car/search?query=${encodeURIComponent(suggestion)}`);
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      setShowSuggestions(false);
+      router.push(`/car/search?query=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
 
   return (
-    <div className="relative h-full w-full max-w-md transition-all duration-200 ease-in-out">
+    <form onSubmit={handleSearchSubmit} ref={searchRef} className="relative h-full w-full max-w-md transition-all duration-200 ease-in-out">
       <input
         type="text"
         placeholder="Search cars, posts, dealers..."
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
+        onFocus={() => searchQuery && setShowSuggestions(true)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            handleSearchSubmit(e);
+          }
+        }}
         className={clsx(
           isSearchBarActive ? "block" : "hidden",
-          "w-full rounded-lg bg-gray-50 border border-gray-200 py-2 pl-10 pr-10 text-sm text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all md:block hover:bg-gray-100",
+          "w-full rounded-lg bg-gray-50 border border-gray-300 py-2 pl-10 pr-10 text-sm text-gray-900 placeholder-gray-500 focus:border-primary-500 focus:outline-none transition-all md:block hover:bg-gray-100",
         )}
       />
       <button
+        type="submit"
         onClick={() => setIsSearchBarActive(true)}
         className={clsx(
           isSearchBarActive
@@ -169,13 +247,39 @@ export function SearchBar() {
           onClick={() => {
             setIsSearchBarActive(false);
             setSearchQuery("");
+            setShowSuggestions(false);
           }}
           aria-label="Clear search"
         >
           <X className="h-4 w-4 text-gray-500" />
         </button>
       )}
-    </div>
+
+      {/* Search Suggestions Dropdown */}
+      {showSuggestions && suggestions.length > 0 && (
+        <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-lg border border-gray-200 max-h-96 overflow-y-auto z-50">
+          <div className="p-2">
+            <p className="text-xs text-gray-500 font-medium p-1.5">
+              {suggestions.length} {suggestions.length === 1 ? 'suggestion' : 'suggestions'}
+            </p>
+            {suggestions.map((suggestion, index) => (
+              <button
+                key={index}
+                type="button"
+                onClick={() => handleSuggestionClick(suggestion)}
+                className="w-full flex items-center gap-3 p-1.5 hover:bg-gray-100 transition-colors text-left group"
+              >
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-gray-900">
+                    {suggestion}
+                  </p>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </form>
   );
 }
 
@@ -186,7 +290,7 @@ export function Chat() {
 export function Login() {
   return (
     <Link href="/auth/login" className="shrink-0">
-      <button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold px-6 py-2 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 active:scale-95">
+      <button className="bg-primary-500 hover:bg-primary-600 cursor-pointer text-white font-semibold px-6 py-2 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 active:scale-95">
         Login
       </button>
     </Link>

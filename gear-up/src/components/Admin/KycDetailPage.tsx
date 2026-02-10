@@ -137,7 +137,7 @@ const PersonalInfoComponent = ({
 							<h1>KYC documents</h1>
 							<div
 								className={
-									"grid h-80 w-full grid-cols-2 gap-4 rounded-lg border-gray-400 shadow-sm shadow-gray-300"
+									"grid h-80 w-full grid-cols-2 gap-4 rounded-lg border-gray-400 shadow-sm shadow-gray-100"
 								}
 							>
 								{kycData.documentUrls.map((items: string, i: number) => {
