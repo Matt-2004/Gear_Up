@@ -28,7 +28,7 @@ const KycDetailPage = ({ kycById }: { kycById: IKycSubmissions }) => {
 				<div className={"grid w-full grid-cols-3 grid-rows-4 gap-4"}>
 					<PersonalInfoComponent kycData={kycById} text={text} />
 					<div
-						className={"bg-foreground w-96 rounded-lg border border-gray-600"}
+						className={"bg-white w-96 rounded-lg border border-gray-200"}
 					>
 						01
 					</div>
@@ -45,16 +45,16 @@ const PageHeader = () => {
 	return (
 		<div className={"flex items-center gap-6 py-4 pr-4"}>
 			<div
-				className={"cursor-pointer rounded-full p-2 hover:bg-gray-600"}
+				className={"cursor-pointer rounded-full p-2 hover:bg-blue-50"}
 				onClick={() => router.back()}
 			>
-				<ArrowLeft className={"h-7 w-7 text-gray-500"} />
+				<ArrowLeft className={"h-7 w-7 text-blue-600"} />
 			</div>
 			<div className={"flex flex-col"}>
-				<h1 className={"text-2xl font-semibold text-gray-600"}>
+				<h1 className={"text-2xl font-semibold text-gray-900"}>
 					User Detail Review
 				</h1>
-				<h3 className={"text-gray-400"}>
+				<h3 className={"text-gray-600"}>
 					Review and approve user verification
 				</h3>
 			</div>
@@ -72,14 +72,14 @@ const PersonalInfoComponent = ({
 	text,
 }: PersonalInfoComponentProps) => {
 	return (
-		<div className={"bg-foreground col-span-2 row-span-4 mb-4 rounded-lg p-10"}>
+		<div className={"bg-white col-span-2 row-span-4 mb-4 rounded-lg border border-gray-200 p-10"}>
 			<div className={"mb-4 flex flex-col justify-center"}>
 				<h1
 					className={
-						"mb-4 flex items-center gap-2 py-2 text-xl font-semibold text-white"
+						"mb-4 flex items-center gap-2 py-2 text-xl font-semibold text-gray-900"
 					}
 				>
-					<UserCheck className={"text-gray-300"} />
+					<UserCheck className={"text-blue-600"} />
 					Personal Information
 				</h1>
 				<div className={"grid grid-flow-col grid-cols-2 grid-rows-3 gap-4"}>
@@ -88,11 +88,9 @@ const PersonalInfoComponent = ({
 							<>
 								{item[0] === "status" ? (
 									<div className={""}>
-										<label className={"font-normal text-gray-300"}>
+										<label className={"font-normal text-gray-600"}>
 											Status
-										</label>
-
-										<StatusUI status={item[1]} />
+										</label>										<StatusUI status={item[1]} />
 									</div>
 								) : (
 									(item[0] === "email" ||
@@ -100,7 +98,7 @@ const PersonalInfoComponent = ({
 										item[0] === "phoneNumber" ||
 										item[0] === "dateOfBirth") && (
 										<div key={i} className={""}>
-											<label className={"font-normal text-gray-300"}>
+											<label className={"font-normal text-gray-600"}>
 												{(item[0] === "email" && "Email") ||
 													(item[0] === "fullName" && "Full Name") ||
 													(item[0] === "phoneNumber" && "Phone Number") ||
@@ -108,7 +106,7 @@ const PersonalInfoComponent = ({
 											</label>
 											<div
 												className={clsx(
-													item[1] === "" ? "text-red-400" : "text-white",
+													item[1] === "" ? "text-red-500" : "text-gray-900",
 													"w-[200px] font-medium",
 												)}
 											>
@@ -123,12 +121,12 @@ const PersonalInfoComponent = ({
 					;
 				</div>
 			</div>
-			<div id={"spacer"} className={"my-8 h-1 border-b border-gray-600"} />
-			<div className={"flex flex-col justify-center text-white"}>
+			<div id={"spacer"} className={"my-8 h-1 border-b border-gray-200"} />
+			<div className={"flex flex-col justify-center text-gray-900"}>
 				<h1
 					className={"mb-4 flex items-center gap-2 py-2 text-xl font-semibold"}
 				>
-					<FileCheck className={"text-gray-300"} />
+					<FileCheck className={"text-blue-600"} />
 					Documents Review
 				</h1>
 				<div className={"w-full gap-7"}>
@@ -137,7 +135,7 @@ const PersonalInfoComponent = ({
 							<h1>KYC documents</h1>
 							<div
 								className={
-									"grid h-80 w-full grid-cols-2 gap-4 rounded-lg border-gray-400 shadow-sm shadow-gray-100"
+									"grid h-80 w-full grid-cols-2 gap-4 rounded-lg border border-gray-200"
 								}
 							>
 								{kycData.documentUrls.map((items: string, i: number) => {
@@ -273,7 +271,7 @@ const RejectReasonComponent = ({ text, setText }: ITextArea) => {
 	return (
 		<div
 			className={
-				"bg-foreground row-span-2 flex w-96 flex-col gap-2 rounded-lg border border-gray-600 p-4 text-white"
+				"bg-white row-span-2 flex w-96 flex-col gap-2 rounded-lg border border-gray-200 p-4 text-gray-900"
 			}
 		>
 			<h1 className={"text-xl font-semibold"}>Reject Reasons</h1>
@@ -281,15 +279,15 @@ const RejectReasonComponent = ({ text, setText }: ITextArea) => {
 				value={text}
 				onChange={handleChange}
 				className={
-					"h-full w-full rounded-md border border-gray-600 bg-gray-700 p-4 placeholder:text-gray-300"
+					"h-full w-full rounded-md border border-gray-200 bg-gray-50 p-4 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
 				}
 				name={"reject-textarea"}
 				id={"reject-textarea"}
 				placeholder={"Type your message here..."}
 			></textarea>
 			<div className={"flex justify-between"}>
-				<label className={"text-gray-400"}>{wordCount} /150 words </label>
-				<button className={"cursor-pointer text-blue-400"}>Save Draft</button>
+				<label className={"text-gray-600"}>{wordCount} /150 words </label>
+				<button className={"cursor-pointer text-blue-600 hover:text-blue-700"}>Save Draft</button>
 			</div>
 		</div>
 	)
@@ -299,15 +297,15 @@ const HistoryComponent = ({ submittedAt }: { submittedAt: string }) => {
 	return (
 		<div
 			className={
-				"bg-foreground flex w-96 flex-col gap-4 rounded-lg border border-gray-600 p-4 text-white"
+				"bg-white flex w-96 flex-col gap-4 rounded-lg border border-gray-200 p-4 text-gray-900"
 			}
 		>
 			<h1 className={"text-xl font-semibold"}>History</h1>
 			<div className={"flex gap-4"}>
-				<div className={"h-full w-1 bg-yellow-500"} />
+				<div className={"h-full w-1 bg-blue-500"} />
 				<div>
 					<h2 className={"font-semibold"}>Initial Submission</h2>
-					<h3 className={"text-sm text-gray-400"}>
+					<h3 className={"text-sm text-gray-600"}>
 						{timeFormat(submittedAt, "Hour")}
 					</h3>
 				</div>

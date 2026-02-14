@@ -1,6 +1,12 @@
 import { CarItems } from "@/app/types/car.types";
+import { Metadata } from "next";
 import { CreatePostProvider } from "./CreatePostContext";
 import CreatePostForm from "./CreatePostForm";
+
+export const metadata: Metadata = {
+  title: "Create Post - Gear Up",
+  description: "Share your automotive experiences and stories with the Gear Up community.",
+}
 
 const CreatePostPage = async () => {
   // Mock dealer cars data - replace with actual API call

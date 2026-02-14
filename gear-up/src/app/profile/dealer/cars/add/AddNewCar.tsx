@@ -1,7 +1,7 @@
 "use client";
 
 import Button from "@/components/Common/Button";
-import Input, {
+import {
   RadioInput,
   RadioInputContainer,
 } from "@/components/Common/Input";
@@ -15,6 +15,11 @@ import { ISteps } from "../../register/KycRegister";
 import { ProgressSteps } from "../../register/ProgressSteps";
 import { useVehicleContext } from "./AddNewCarContext";
 import Review from "./Review";
+
+interface CarSuggestion {
+  make: string;
+  model: string[];
+}
 
 export const AddNewCarSteps: ISteps = [
   {
@@ -74,8 +79,162 @@ const FillDetails = () => {
   const searchParams = useSearchParams();
   const currentStep = Number(searchParams.get("step") ?? 1);
 
-  // Format year for month input (YYYY-MM format)
-  const formattedYear = addedCar?.year ? `${addedCar.year}-01` : "";
+  // Car suggestions state
+  const [carSuggestions, setCarSuggestions] = useState<CarSuggestion[]>([]);
+  const [makeInput, setMakeInput] = useState(addedCar?.make || "");
+  const [modelInput, setModelInput] = useState(addedCar?.model || "");
+  const [showMakeSuggestions, setShowMakeSuggestions] = useState(false);
+  const [showModelSuggestions, setShowModelSuggestions] = useState(false);
+  const makeInputRef = useRef<HTMLInputElement>(null);
+  const modelInputRef = useRef<HTMLInputElement>(null);
+
+  // Price formatting state
+  const [priceInput, setPriceInput] = useState(
+    addedCar?.price ? addedCar.price.toLocaleString() : ""
+  );
+  const priceInputRef = useRef<HTMLInputElement>(null);
+
+  // Mileage formatting state
+  const [mileageInput, setMileageInput] = useState(
+    addedCar?.mileage ? addedCar.mileage.toLocaleString() : ""
+  );
+  const mileageInputRef = useRef<HTMLInputElement>(null);
+
+  // Year input state
+  const [yearInput, setYearInput] = useState(
+    addedCar?.year ? addedCar.year.toString() : ""
+  );
+  const [showYearDropdown, setShowYearDropdown] = useState(false);
+  const yearDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Title and Description character count
+  const [titleLength, setTitleLength] = useState(addedCar?.title?.length || 0);
+  const [descriptionLength, setDescriptionLength] = useState(addedCar?.description?.length || 0);
+  const MAX_TITLE_LENGTH = 100;
+  const MAX_DESCRIPTION_LENGTH = 500;
+
+  // Refs for all inputs for auto-focus
+  const titleInputRef = useRef<HTMLInputElement>(null);
+  const descriptionInputRef = useRef<HTMLTextAreaElement>(null);
+  const yearInputRef = useRef<HTMLInputElement>(null);
+  const colorInputRef = useRef<HTMLInputElement>(null);
+  const engineCapacityInputRef = useRef<HTMLInputElement>(null);
+  const vinInputRef = useRef<HTMLInputElement>(null);
+  const licensePlateInputRef = useRef<HTMLInputElement>(null);
+
+  // Fetch car suggestions
+  useEffect(() => {
+    fetch("/car-suggestions.json")
+      .then((res) => res.json())
+      .then((data: CarSuggestion[]) => setCarSuggestions(data))
+      .catch((err) => console.error("Failed to load car suggestions:", err));
+  }, []);
+
+  // Initialize inputs from context when available
+  useEffect(() => {
+    if (addedCar?.make) setMakeInput(addedCar.make);
+    if (addedCar?.model) setModelInput(addedCar.model);
+    if (addedCar?.price) setPriceInput(addedCar.price.toLocaleString());
+    if (addedCar?.mileage) setMileageInput(addedCar.mileage.toLocaleString());
+    if (addedCar?.year) setYearInput(addedCar.year.toString());
+  }, [addedCar?.make, addedCar?.model, addedCar?.price, addedCar?.mileage, addedCar?.year]);
+
+  // Get filtered make suggestions
+  const getFilteredMakes = () => {
+    if (!makeInput.trim()) return carSuggestions.map((s) => s.make);
+    return carSuggestions
+      .map((s) => s.make)
+      .filter((make) => make.toLowerCase().includes(makeInput.toLowerCase()))
+      .slice(0, 8);
+  };
+
+  // Get filtered model suggestions based on selected make
+  const getFilteredModels = () => {
+    if (!makeInput.trim()) return [];
+    const selectedMake = carSuggestions.find(
+      (s) => s.make.toLowerCase() === makeInput.toLowerCase(),
+    );
+    if (!selectedMake) return [];
+    if (!modelInput.trim()) return selectedMake.model.slice(0, 8);
+    return selectedMake.model
+      .filter((model) =>
+        model.toLowerCase().includes(modelInput.toLowerCase()),
+      )
+      .slice(0, 8);
+  };
+
+  const handleMakeSelect = (make: string) => {
+    setMakeInput(make);
+    setShowMakeSuggestions(false);
+    setModelInput(""); // Reset model when make changes
+    if (makeInputRef.current) {
+      makeInputRef.current.value = make;
+    }
+    // Auto-focus to model input
+    setTimeout(() => {
+      if (modelInputRef.current) {
+        modelInputRef.current.focus();
+      }
+    }, 100);
+  };
+
+  const handleModelSelect = (model: string) => {
+    setModelInput(model);
+    setShowModelSuggestions(false);
+    if (modelInputRef.current) {
+      modelInputRef.current.value = model;
+    }
+    // Auto-focus to year input
+    setTimeout(() => {
+      if (yearInputRef.current) {
+        yearInputRef.current.focus();
+      }
+    }, 100);
+  };
+
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/,/g, ""); // Remove commas
+    if (value === "" || /^\d+$/.test(value)) {
+      // Only allow digits
+      const numericValue = value === "" ? "" : parseInt(value, 10);
+      setPriceInput(
+        numericValue === "" ? "" : numericValue.toLocaleString()
+      );
+      if (priceInputRef.current) {
+        priceInputRef.current.value = value; // Store raw value for form submission
+      }
+      // Auto-focus to color input when price has reasonable length (e.g., 6+ digits)
+      if (value.length >= 5) {
+        setTimeout(() => {
+          if (colorInputRef.current) {
+            colorInputRef.current.focus();
+          }
+        }, 100);
+      }
+    }
+  };
+
+  const handleMileageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/,/g, ""); // Remove commas
+    if (value === "" || /^\d+$/.test(value)) {
+      // Only allow digits
+      const numericValue = value === "" ? "" : parseInt(value, 10);
+      setMileageInput(
+        numericValue === "" ? "" : numericValue.toLocaleString()
+      );
+      if (mileageInputRef.current) {
+        mileageInputRef.current.value = value; // Store raw value for form submission
+      }
+      // Auto-focus to engine capacity when mileage has reasonable length (e.g., 4+ digits)
+      if (value.length >= 4) {
+        setTimeout(() => {
+          if (engineCapacityInputRef.current) {
+            engineCapacityInputRef.current.focus();
+          }
+        }, 100);
+      }
+    }
+  };
 
   const submit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -87,14 +246,14 @@ const FillDetails = () => {
 
       model: formData.get("Model") as string,
       make: formData.get("Make") as string,
-      year: parseInt((formData.get("Year") as string).split("-")[0]),
+      year: parseInt(formData.get("Year") as string),
 
       carStatus: "Available",
       carValidationStatus: "Available",
 
-      price: Number(formData.get("Price")),
+      price: Number(formData.get("PriceValue")),
       color: formData.get("Color") as string,
-      mileage: Number(formData.get("Mileage")) as number,
+      mileage: Number(formData.get("MileageValue")) as number,
 
       seatingCapacity: Number(formData.get("SeatingCapacity")) as 2 | 4 | 6 | 8,
       engineCapacity: Number(formData.get("EngineCapacity")) as number,
@@ -120,25 +279,61 @@ const FillDetails = () => {
           title={"Basic Information"}
           description="Provide a compelling title and description"
         >
-          <Input
-            name="Title"
-            type="text"
-            placeholder="e.g., 2024 Toyota Camry - Excellent Condition"
-            defaultValue={addedCar?.title || ""}
-            required
-          >
-            Title
-          </Input>
+          <div className="flex w-full max-w-[25rem] min-w-[10rem] flex-col gap-1">
+            <label className="text-sm font-semibold text-gray-500 flex items-center justify-between">
+              <span>Title <span className="text-red-500">*</span></span>
+              <span className={`text-xs ${titleLength > MAX_TITLE_LENGTH ? 'text-red-500' : 'text-gray-400'}`}>
+                {titleLength}/{MAX_TITLE_LENGTH}
+              </span>
+            </label>
+            <input
+              ref={titleInputRef}
+              name="Title"
+              type="text"
+              placeholder="e.g., 2024 Toyota Camry - Excellent Condition"
+              defaultValue={addedCar?.title || ""}
+              maxLength={MAX_TITLE_LENGTH}
+              onChange={(e) => {
+                setTitleLength(e.target.value.length);
+                // Auto-focus to description when title reaches reasonable length
+                if (e.target.value.length >= 20) {
+                  setTimeout(() => {
+                    if (descriptionInputRef.current) {
+                      descriptionInputRef.current.focus();
+                    }
+                  }, 500);
+                }
+              }}
+              required
+              className="focus:ring-primary focus:text-primary rounded-lg border border-gray-200 px-4 py-1.5 text-black placeholder:text-sm placeholder:text-gray-400 focus:bg-[#BAFFAF] focus:ring-1 focus:outline-none transition-all"
+            />
+          </div>
           <div className="col-span-2">
-            <label className="text-sm font-semibold text-gray-500 mb-1 block">
-              Description
+            <label className="text-sm font-semibold text-gray-500 mb-1 flex items-center justify-between">
+              <span>Description <span className="text-red-500">*</span></span>
+              <span className={`text-xs ${descriptionLength > MAX_DESCRIPTION_LENGTH ? 'text-red-500' : 'text-gray-400'}`}>
+                {descriptionLength}/{MAX_DESCRIPTION_LENGTH}
+              </span>
             </label>
             <textarea
+              ref={descriptionInputRef}
               name="Description"
               rows={4}
               placeholder="Describe the vehicle's key features, condition, and any recent maintenance or upgrades..."
               defaultValue={addedCar?.description || ""}
-              className="w-full rounded-lg border border-gray-200 px-4 py-2 text-black placeholder:text-sm placeholder:text-gray-400 focus:bg-[#BAFFAF] focus:ring-1 focus:outline-none focus:ring-primary"
+              maxLength={MAX_DESCRIPTION_LENGTH}
+              onChange={(e) => {
+                setDescriptionLength(e.target.value.length);
+                // Auto-focus to make input when description reaches reasonable length
+                if (e.target.value.length >= 50) {
+                  setTimeout(() => {
+                    if (makeInputRef.current) {
+                      makeInputRef.current.focus();
+                    }
+                  }, 500);
+                }
+              }}
+              className="w-full rounded-lg border border-gray-200 px-4 py-2 text-black placeholder:text-sm placeholder:text-gray-400 focus:bg-[#BAFFAF] focus:ring-1 focus:outline-none focus:ring-primary transition-all resize-none"
               required
             />
           </div>
@@ -147,178 +342,396 @@ const FillDetails = () => {
           title="Vehicle Specification"
           description="Enter detailed vehicle specifications"
         >
-          <Input
-            name="Make"
-            type="text"
-            placeholder="e.g., Toyota, Honda, Tesla"
-            defaultValue={addedCar?.make || ""}
-            required
-          >
-            Make
-          </Input>
-          <Input
-            name="Model"
-            type="text"
-            placeholder="e.g., Camry, Civic, Model 3"
-            defaultValue={addedCar?.model || ""}
-            required
-          >
-            Model
-          </Input>
-          <Input
-            name="Year"
-            type="month"
-            min={1990}
-            max={2026}
-            placeholder="Select year"
-            defaultValue={formattedYear}
-            required
-          >
-            Year
-          </Input>
-          <Input
-            name="Price"
-            type="number"
-            placeholder="e.g., 850000"
-            min={0}
-            defaultValue={addedCar?.price || ""}
-            required
-          >
-            Price (฿)
-          </Input>
-          <Input
-            name="Color"
-            type="text"
-            placeholder="e.g., Black, White, Silver"
-            defaultValue={addedCar?.color || ""}
-            required
-          >
-            Color
-          </Input>
-          <Input
-            name="Mileage"
-            type="number"
-            placeholder="e.g., 45000"
-            min={0}
-            defaultValue={addedCar?.mileage || ""}
-            required
-          >
-            Mileage (km)
-          </Input>
-          <Input
-            name="EngineCapacity"
-            type="number"
-            step="0.1"
-            placeholder="e.g., 2.0"
-            min={0}
-            defaultValue={addedCar?.engineCapacity || ""}
-            required
-          >
-            Engine Capacity (L)
-          </Input>
+          {/* Make Input with Suggestions */}
+          <div className="relative flex w-full max-w-[25rem] min-w-[10rem] flex-col gap-1">
+            <label className="text-sm font-semibold text-gray-500 flex items-center gap-1">
+              Make <span className="text-red-500">*</span>
+              <span className="text-xs text-gray-400 font-normal">(Start typing)</span>
+            </label>
+            <input
+              ref={makeInputRef}
+              name="Make"
+              autoComplete="off"
+              type="text"
+              placeholder="e.g., Toyota, Honda, Tesla"
+              value={makeInput}
+              onChange={(e) => {
+                setMakeInput(e.target.value);
+                setShowMakeSuggestions(true);
+              }}
+              onFocus={() => setShowMakeSuggestions(true)}
+              onBlur={() => setTimeout(() => setShowMakeSuggestions(false), 200)}
+              required
+              className="focus:ring-primary focus:text-primary rounded-lg border border-gray-200 px-4 py-1.5 text-black placeholder:text-sm placeholder:text-gray-400 focus:bg-[#BAFFAF] focus:ring-1 focus:outline-none focus:placeholder:text-gray-500 transition-all"
+            />
+            {showMakeSuggestions && getFilteredMakes().length > 0 && (
+              <div className="absolute top-full left-0 z-50 mt-1 w-full max-w-[25rem] rounded-lg border border-gray-200 bg-white shadow-xl animate-in fade-in slide-in-from-top-2 duration-200">
+                <ul className="max-h-60 overflow-y-auto py-1">
+                  {getFilteredMakes().map((make, index) => (
+                    <li
+                      key={index}
+                      onClick={() => handleMakeSelect(make)}
+                      className="cursor-pointer px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors border-l-2 border-transparent hover:border-blue-500 flex items-center justify-between group"
+                    >
+                      <span>{make}</span>
+                      <svg className="h-4 w-4 text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+
+          {/* Model Input with Suggestions */}
+          <div className="relative flex w-full max-w-[25rem] min-w-[10rem] flex-col gap-1">
+            <label className="text-sm font-semibold text-gray-500 flex items-center gap-1">
+              Model <span className="text-red-500">*</span>
+              {!makeInput && <span className="text-xs text-amber-500 font-normal">(Select make first)</span>}
+            </label>
+            <input
+              ref={modelInputRef}
+              name="Model"
+              type="text"
+              autoComplete="off"
+              placeholder="e.g., Camry, Civic, Model 3"
+              value={modelInput}
+              onChange={(e) => {
+                setModelInput(e.target.value);
+                setShowModelSuggestions(true);
+              }}
+              onFocus={() => setShowModelSuggestions(true)}
+              onBlur={() =>
+                setTimeout(() => setShowModelSuggestions(false), 200)
+              }
+              required
+              disabled={!makeInput}
+              className="focus:ring-primary focus:text-primary rounded-lg border border-gray-200 px-4 py-1.5 text-black placeholder:text-sm placeholder:text-gray-400 focus:bg-[#BAFFAF] focus:ring-1 focus:outline-none focus:placeholder:text-gray-500 transition-all disabled:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-400"
+            />
+            {showModelSuggestions && getFilteredModels().length > 0 && (
+              <div className="absolute top-full left-0 z-50 mt-1 w-full max-w-[25rem] rounded-lg border border-gray-200 bg-white shadow-xl animate-in fade-in slide-in-from-top-2 duration-200">
+                <ul className="max-h-60 overflow-y-auto py-1">
+                  {getFilteredModels().map((model, index) => (
+                    <li
+                      key={index}
+                      onClick={() => handleModelSelect(model)}
+                      className="cursor-pointer px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors border-l-2 border-transparent hover:border-blue-500 flex items-center justify-between group"
+                    >
+                      <span>{model}</span>
+                      <svg className="h-4 w-4 text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+
+          {/* Year Select with Grid */}
+          <div className="relative flex w-full max-w-[25rem] min-w-[10rem] flex-col gap-1" ref={yearDropdownRef}>
+            <label className="text-sm font-semibold text-gray-500">
+              Year <span className="text-red-500">*</span>
+            </label>
+            <div className="relative">
+              <input
+                ref={yearInputRef}
+                type="text"
+                value={yearInput || ""}
+                placeholder="Select year"
+                onClick={() => setShowYearDropdown(!showYearDropdown)}
+                onFocus={() => setShowYearDropdown(true)}
+                onBlur={() => setTimeout(() => setShowYearDropdown(false), 200)}
+                readOnly
+                required
+                className="w-full cursor-pointer focus:ring-primary focus:text-primary rounded-lg border border-gray-200 px-4 py-1.5 pr-10 text-black placeholder:text-gray-400 focus:bg-[#BAFFAF] focus:ring-1 focus:outline-none transition-all"
+              />
+              <svg
+                className={`absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 transition-transform duration-200 ${showYearDropdown ? "rotate-180" : ""
+                  }`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+            <input type="hidden" name="Year" value={yearInput} />
+            {showYearDropdown && (
+              <div className="absolute top-full left-0 z-50 mt-1 w-full max-w-[25rem] rounded-lg border border-gray-200 bg-white shadow-xl max-h-60 overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className="grid grid-cols-4 gap-1 p-2">
+                  {Array.from({ length: 2026 - 1990 + 1 }, (_, i) => 2026 - i).map((year) => (
+                    <button
+                      key={year}
+                      type="button"
+                      onClick={() => {
+                        setYearInput(year.toString());
+                        setShowYearDropdown(false);
+                        // Auto-focus to price input after year selection
+                        setTimeout(() => {
+                          const priceInput = document.querySelector('input[name="Price"]') as HTMLInputElement;
+                          if (priceInput) {
+                            priceInput.focus();
+                          }
+                        }, 100);
+                      }}
+                      className={`px-2 py-1.5 text-sm rounded-md hover:bg-blue-50 active:scale-95 transition-all ${yearInput === year.toString()
+                        ? "bg-blue-500 text-white font-semibold shadow-sm"
+                        : "text-gray-700 hover:text-blue-600"
+                        }`}
+                    >
+                      {year}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Price Input with Digit Formatting */}
+          <div className="flex w-full max-w-[25rem] min-w-[10rem] flex-col gap-1">
+            <label className="text-sm font-semibold text-gray-500 flex items-center gap-1">
+              Price (฿) <span className="text-red-500">*</span>
+            </label>
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-medium">฿</span>
+              <input
+                name="Price"
+                type="text"
+                placeholder="850,000"
+                value={priceInput}
+                onChange={handlePriceChange}
+                required
+                className="w-full focus:ring-primary focus:text-primary rounded-lg border border-gray-200 pl-8 pr-4 py-1.5 text-black placeholder:text-sm placeholder:text-gray-400 focus:bg-[#BAFFAF] focus:ring-1 focus:outline-none focus:placeholder:text-gray-500 transition-all"
+              />
+            </div>
+            <input
+              ref={priceInputRef}
+              type="hidden"
+              name="PriceValue"
+              value={priceInput.replace(/,/g, "")}
+            />
+            {priceInput && (
+              <span className="text-xs text-gray-500">฿ {priceInput}</span>
+            )}
+          </div>
+
+          <div className="flex w-full max-w-[25rem] min-w-[10rem] flex-col gap-1">
+            <label className="text-sm font-semibold text-gray-500">
+              Color <span className="text-red-500">*</span>
+            </label>
+            <div className="relative">
+              <svg className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+              </svg>
+              <input
+                ref={colorInputRef}
+                name="Color"
+                type="text"
+                placeholder="e.g., Black, White, Silver"
+                defaultValue={addedCar?.color || ""}
+                onChange={(e) => {
+                  // Auto-focus to mileage when color is entered
+                  if (e.target.value.length >= 3) {
+                    setTimeout(() => {
+                      const mileageInput = document.querySelector('input[name="Mileage"]') as HTMLInputElement;
+                      if (mileageInput) {
+                        mileageInput.focus();
+                      }
+                    }, 500);
+                  }
+                }}
+                required
+                className="w-full focus:ring-primary focus:text-primary rounded-lg border border-gray-200 pl-9 pr-4 py-1.5 text-black placeholder:text-sm placeholder:text-gray-400 focus:bg-[#BAFFAF] focus:ring-1 focus:outline-none transition-all"
+              />
+            </div>
+          </div>
+
+          {/* Mileage Input with Digit Formatting */}
+          <div className="flex w-full max-w-[25rem] min-w-[10rem] flex-col gap-1">
+            <label className="text-sm font-semibold text-gray-500 flex items-center gap-1">
+              Mileage (km) <span className="text-red-500">*</span>
+            </label>
+            <div className="relative">
+              <svg className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              <input
+                name="Mileage"
+                type="text"
+                placeholder="45,000"
+                value={mileageInput}
+                onChange={handleMileageChange}
+                required
+                className="w-full focus:ring-primary focus:text-primary rounded-lg border border-gray-200 pl-9 pr-4 py-1.5 text-black placeholder:text-sm placeholder:text-gray-400 focus:bg-[#BAFFAF] focus:ring-1 focus:outline-none focus:placeholder:text-gray-500 transition-all"
+              />
+            </div>
+            <input
+              ref={mileageInputRef}
+              type="hidden"
+              name="MileageValue"
+              value={mileageInput.replace(/,/g, "")}
+            />
+            {mileageInput && (
+              <span className="text-xs text-gray-500">{mileageInput} kilometers</span>
+            )}
+          </div>
+
+          <div className="flex w-full max-w-[25rem] min-w-[10rem] flex-col gap-1">
+            <label className="text-sm font-semibold text-gray-500">
+              Engine Capacity (L) <span className="text-red-500">*</span>
+            </label>
+            <div className="relative">
+              <svg className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+              </svg>
+              <input
+                ref={engineCapacityInputRef}
+                name="EngineCapacity"
+                type="number"
+                step="0.1"
+                placeholder="e.g., 2.0"
+                min={0}
+                defaultValue={addedCar?.engineCapacity || ""}
+                onChange={(e) => {
+                  // Auto-focus to VIN when engine capacity is entered
+                  if (e.target.value.length >= 1) {
+                    setTimeout(() => {
+                      if (vinInputRef.current) {
+                        vinInputRef.current.focus();
+                      }
+                    }, 1000);
+                  }
+                }}
+                required
+                className="w-full focus:ring-primary focus:text-primary rounded-lg border border-gray-200 pl-9 pr-4 py-1.5 text-black placeholder:text-sm placeholder:text-gray-400 focus:bg-[#BAFFAF] focus:ring-1 focus:outline-none transition-all"
+              />
+            </div>
+          </div>
           <div className="col-span-2">
-            <RadioInputContainer title="Seating Capacity">
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-semibold text-gray-500">
+                Seating Capacity <span className="text-red-500">*</span>
+              </label>
+              <RadioInputContainer title="">
+                <RadioInput
+                  name="SeatingCapacity"
+                  value={2}
+                  defaultChecked={addedCar?.seatingCapacity === 2}
+                >
+                  2 Seats
+                </RadioInput>
+                <RadioInput
+                  name="SeatingCapacity"
+                  value={4}
+                  defaultChecked={addedCar?.seatingCapacity === 4}
+                >
+                  4 Seats
+                </RadioInput>
+                <RadioInput
+                  name="SeatingCapacity"
+                  value={6}
+                  defaultChecked={addedCar?.seatingCapacity === 6}
+                >
+                  6 Seats
+                </RadioInput>
+                <RadioInput
+                  name="SeatingCapacity"
+                  value={8}
+                  defaultChecked={addedCar?.seatingCapacity === 8}
+                >
+                  8 Seats
+                </RadioInput>
+              </RadioInputContainer>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-semibold text-gray-500">
+              Fuel Type <span className="text-red-500">*</span>
+            </label>
+            <RadioInputContainer title="">
               <RadioInput
-                name="SeatingCapacity"
-                value={2}
-                defaultChecked={addedCar?.seatingCapacity === 2}
+                name="FuelType"
+                value={"Petrol"}
+                defaultChecked={addedCar?.fuelType === "Petrol"}
               >
-                2 Seats
+                Petrol
               </RadioInput>
               <RadioInput
-                name="SeatingCapacity"
-                value={4}
-                defaultChecked={addedCar?.seatingCapacity === 4}
+                name="FuelType"
+                value={"Diesel"}
+                defaultChecked={addedCar?.fuelType === "Diesel"}
               >
-                4 Seats
+                Diesel
               </RadioInput>
               <RadioInput
-                name="SeatingCapacity"
-                value={6}
-                defaultChecked={addedCar?.seatingCapacity === 6}
+                name="FuelType"
+                value={"Electric"}
+                defaultChecked={addedCar?.fuelType === "Electric"}
               >
-                6 Seats
+                Electric
               </RadioInput>
               <RadioInput
-                name="SeatingCapacity"
-                value={8}
-                defaultChecked={addedCar?.seatingCapacity === 8}
+                name="FuelType"
+                value={"Hybrid"}
+                defaultChecked={addedCar?.fuelType === "Hybrid"}
               >
-                8 Seats
+                Hybrid
               </RadioInput>
             </RadioInputContainer>
           </div>
-
-          <RadioInputContainer title="Fuel Type">
-            <RadioInput
-              name="FuelType"
-              value={"Petrol"}
-              defaultChecked={addedCar?.fuelType === "Petrol"}
-            >
-              Petrol
-            </RadioInput>
-            <RadioInput
-              name="FuelType"
-              value={"Diesel"}
-              defaultChecked={addedCar?.fuelType === "Diesel"}
-            >
-              Diesel
-            </RadioInput>
-            <RadioInput
-              name="FuelType"
-              value={"Electric"}
-              defaultChecked={addedCar?.fuelType === "Electric"}
-            >
-              Electric
-            </RadioInput>
-            <RadioInput
-              name="FuelType"
-              value={"Hybrid"}
-              defaultChecked={addedCar?.fuelType === "Hybrid"}
-            >
-              Hybrid
-            </RadioInput>
-          </RadioInputContainer>
-          <RadioInputContainer title="Condition">
-            <RadioInput
-              name="CarCondition"
-              value={"New"}
-              defaultChecked={addedCar?.carCondition === "New"}
-            >
-              Brand New
-            </RadioInput>
-            <RadioInput
-              name="CarCondition"
-              value={"Used"}
-              defaultChecked={addedCar?.carCondition === "Used"}
-            >
-              Pre-Owned
-            </RadioInput>
-          </RadioInputContainer>
-          <div className="col-span-2">
-            <RadioInputContainer title="Transmission Type">
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-semibold text-gray-500">
+              Condition <span className="text-red-500">*</span>
+            </label>
+            <RadioInputContainer title="">
               <RadioInput
-                name="TransmissionType"
-                value={"Automatic"}
-                defaultChecked={addedCar?.transmissionType === "Automatic"}
+                name="CarCondition"
+                value={"New"}
+                defaultChecked={addedCar?.carCondition === "New"}
               >
-                Automatic
+                Brand New
               </RadioInput>
               <RadioInput
-                name="TransmissionType"
-                value={"Manual"}
-                defaultChecked={addedCar?.transmissionType === "Manual"}
+                name="CarCondition"
+                value={"Used"}
+                defaultChecked={addedCar?.carCondition === "Used"}
               >
-                Manual
-              </RadioInput>
-              <RadioInput
-                name="TransmissionType"
-                value={"SemiAutomatic"}
-                defaultChecked={addedCar?.transmissionType === "SemiAutomatic"}
-              >
-                Semi-Automatic
+                Pre-Owned
               </RadioInput>
             </RadioInputContainer>
+          </div>
+          <div className="col-span-2">
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-semibold text-gray-500">
+                Transmission Type <span className="text-red-500">*</span>
+              </label>
+              <RadioInputContainer title="">
+                <RadioInput
+                  name="TransmissionType"
+                  value={"Automatic"}
+                  defaultChecked={addedCar?.transmissionType === "Automatic"}
+                >
+                  Automatic
+                </RadioInput>
+                <RadioInput
+                  name="TransmissionType"
+                  value={"Manual"}
+                  defaultChecked={addedCar?.transmissionType === "Manual"}
+                >
+                  Manual
+                </RadioInput>
+                <RadioInput
+                  name="TransmissionType"
+                  value={"SemiAutomatic"}
+                  defaultChecked={addedCar?.transmissionType === "SemiAutomatic"}
+                >
+                  Semi-Automatic
+                </RadioInput>
+              </RadioInputContainer>
+            </div>
           </div>
         </GroupInputForm>
 
@@ -326,31 +739,64 @@ const FillDetails = () => {
           title="Identification"
           description="Vehicle identification numbers"
         >
-          <Input
-            name="VIN"
-            type="text"
-            placeholder="e.g., 1HGBH41JXMN109186"
-            maxLength={17}
-            defaultValue={addedCar?.vin || ""}
-            required
-          >
-            VIN Number
-          </Input>
-          <Input
-            name="LicensePlate"
-            type="text"
-            placeholder="e.g., ABC-1234"
-            defaultValue={addedCar?.licensePlate || ""}
-            required
-          >
-            License Plate
-          </Input>
+          <div className="flex w-full max-w-[25rem] min-w-[10rem] flex-col gap-1">
+            <label className="text-sm font-semibold text-gray-500">
+              VIN Number <span className="text-red-500">*</span>
+              <span className="text-xs text-gray-400 font-normal ml-1">(17 characters)</span>
+            </label>
+            <div className="relative">
+              <svg className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <input
+                ref={vinInputRef}
+                name="VIN"
+                type="text"
+                autoComplete="off"
+                placeholder="e.g., 1HGBH41JXMN109186"
+                maxLength={17}
+                defaultValue={addedCar?.vin || ""}
+                onChange={(e) => {
+                  // Auto-focus to license plate when VIN is complete (17 characters)
+                  if (e.target.value.length === 17) {
+                    setTimeout(() => {
+                      if (licensePlateInputRef.current) {
+                        licensePlateInputRef.current.focus();
+                      }
+                    }, 100);
+                  }
+                }}
+                required
+                className="w-full focus:ring-primary focus:text-primary rounded-lg border border-gray-200 pl-9 pr-4 py-1.5 text-black placeholder:text-sm placeholder:text-gray-400 focus:bg-[#BAFFAF] focus:ring-1 focus:outline-none transition-all uppercase"
+              />
+            </div>
+          </div>
+          <div className="flex w-full max-w-[25rem] min-w-[10rem] flex-col gap-1">
+            <label className="text-sm font-semibold text-gray-500">
+              License Plate <span className="text-red-500">*</span>
+            </label>
+            <div className="relative">
+              <svg className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+              </svg>
+              <input
+                ref={licensePlateInputRef}
+                name="LicensePlate"
+                type="text"
+                autoComplete="off"
+                placeholder="e.g., ABC-1234"
+                defaultValue={addedCar?.licensePlate || ""}
+                required
+                className="w-full focus:ring-primary focus:text-primary rounded-lg border border-gray-200 pl-9 pr-4 py-1.5 text-black placeholder:text-sm placeholder:text-gray-400 focus:bg-[#BAFFAF] focus:ring-1 focus:outline-none transition-all uppercase"
+              />
+            </div>
+          </div>
         </GroupInputForm>
         <div className="flex justify-end border-t border-gray-200 pt-6 mt-8">
           <StepNavigation isSubmitForm={true} />
         </div>
       </main>
-    </form>
+    </form >
   );
 };
 

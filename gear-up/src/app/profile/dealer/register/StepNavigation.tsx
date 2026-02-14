@@ -40,7 +40,7 @@ export const StepNavigation = () => {
 				addToastMessage("success", "KYC submitted successfully! Redirecting...")
 				setTimeout(() => {
 					removeToastMessage()
-					router.push("/profile/dealer/dashboard")
+					router.push("/")
 				}, 2500)
 			} else {
 				addToastMessage("error", submitError || "Failed to submit KYC. Please try again.")

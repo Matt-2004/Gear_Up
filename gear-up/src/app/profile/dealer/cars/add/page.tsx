@@ -1,5 +1,11 @@
+import { Metadata } from "next"
 import AddNewCar from "./AddNewCar"
 import VehicleContextProvider from "./AddNewCarContext"
+
+export const metadata: Metadata = {
+	title: "Add New Vehicle - Gear Up",
+	description: "List a new vehicle for sale on Gear Up.",
+}
 
 const Page = async ({
 	searchParams,

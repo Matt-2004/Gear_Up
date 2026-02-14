@@ -19,15 +19,26 @@ export async function proxy(req: NextRequest) {
 		NextResponse.redirect(new URL("/", req.url))
 	}
 
-	const res = await fetch(`${API_URL}/api/v1/auth/refresh`, {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify(refresh_token),
-	})
+	try {
+		const res = await fetch(`${API_URL}/api/v1/auth/refresh`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(refresh_token),
+		})
 
-	if (res.ok) {
+		if (!res.ok) {
+			console.error(`Failed to refresh token: ${res.status} ${res.statusText}`)
+
+			// Clear invalid refresh token and redirect to home
+			const response = NextResponse.redirect(new URL("/", req.url))
+			response.cookies.delete("refresh_token")
+			response.cookies.delete("access_token")
+
+			return response
+		}
+
 		const data = await res.json()
 
 		const { accessToken, refreshToken } = data.data
@@ -45,6 +56,18 @@ export async function proxy(req: NextRequest) {
 			sameSite: "none",
 			maxAge: 60 * 60 * 24 * 7, // 7 days
 		})
+
+		return response
+	} catch (error) {
+		console.error(
+			"Error fetching refresh token:",
+			error instanceof Error ? error.message : "Unknown error",
+		)
+
+		// Clear tokens and redirect to home on network/fetch error
+		const response = NextResponse.redirect(new URL("/", req.url))
+		response.cookies.delete("refresh_token")
+		response.cookies.delete("access_token")
 
 		return response
 	}

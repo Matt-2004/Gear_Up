@@ -32,7 +32,7 @@ const DealerCarDashboard = ({
   return (
     <div
       id="car-main-container"
-      className="min-h-screen bg-linear-to-br from-gray-50 via-blue-50/30 to-purple-50/30 px-4 py-8 sm:px-6 lg:px-8"
+      className="min-h-screen bg-gray-50 px-4 py-8 sm:px-6 lg:px-8"
     >
       <div className="mx-auto max-w-7xl">
         <DashboardHeader />
@@ -64,7 +64,7 @@ const DealerCarDashboard = ({
           >
             <div
               id="header"
-              className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-gray-200/70 p-6 bg-linear-to-r from-gray-50/50 to-transparent"
+              className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-gray-200/70 p-6 bg-gray-50"
             >
               <div>
                 <h2 className="text-2xl font-bold text-gray-900">
@@ -97,7 +97,7 @@ const DealerCarDashboard = ({
             {isFilterOpen && (
               <div
                 id="conditionalFilter"
-                className="w-full bg-linear-to-br from-gray-50 to-blue-50/30 border-b border-gray-200/70 p-6 animate-in slide-in-from-top duration-150"
+                className="w-full bg-blue-50 border-b border-gray-200/70 p-6 animate-in slide-in-from-top duration-150"
               >
                 <ConditionalCarFilter />
               </div>

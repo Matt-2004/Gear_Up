@@ -8,6 +8,11 @@ import { ArrowLeft, Loader2, Search, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
+interface CarSuggestion {
+    make: string;
+    model: string[];
+}
+
 interface SearchPageProps {
     query: string;
     searchResults: ICar;
@@ -20,7 +25,7 @@ export default function SearchPage({ query, searchResults: initialData, error: i
     const parentRef = useRef<HTMLDivElement>(null);
     const [suggestions, setSuggestions] = useState<string[]>([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
-    const [allSuggestions, setAllSuggestions] = useState<string[]>([]);
+    const [allSuggestions, setAllSuggestions] = useState<CarSuggestion[]>([]);
     const searchContainerRef = useRef<HTMLDivElement>(null);
 
     // Sync searchQuery with URL query parameter
@@ -73,11 +78,30 @@ export default function SearchPage({ query, searchResults: initialData, error: i
         }
 
         const timeoutId = setTimeout(() => {
-            const filtered = allSuggestions.filter(suggestion =>
-                suggestion.toLowerCase().includes(searchQuery.toLowerCase())
-            ).slice(0, 5);
-            console.log('Search query:', searchQuery, 'Filtered suggestions:', filtered);
-            setSuggestions(filtered);
+            const filtered: string[] = [];
+            const lowerQuery = searchQuery.toLowerCase();
+
+            for (const carGroup of allSuggestions) {
+                // Check if make matches
+                if (carGroup.make.toLowerCase().includes(lowerQuery)) {
+                    // Add all models from this make
+                    filtered.push(...carGroup.model.map(model => `${carGroup.make} ${model}`));
+                } else {
+                    // Check individual models
+                    for (const model of carGroup.model) {
+                        const fullName = `${carGroup.make} ${model}`;
+                        if (fullName.toLowerCase().includes(lowerQuery)) {
+                            filtered.push(fullName);
+                        }
+                    }
+                }
+
+                // Stop if we have enough suggestions
+                if (filtered.length >= 5) break;
+            }
+
+            console.log('Search query:', searchQuery, 'Filtered suggestions:', filtered.slice(0, 5));
+            setSuggestions(filtered.slice(0, 5));
             setShowSuggestions(filtered.length > 0);
         }, 300);
 

@@ -10,13 +10,13 @@ const StatsCard = ({ label, value, variant = "default" }: StatsCardProps) => {
   const getVariantClasses = () => {
     switch (variant) {
       case "yellow":
-        return "bg-gradient-to-br from-yellow-50 to-orange-50 border-yellow-200 text-yellow-800 hover:shadow-yellow-200/50";
+        return "bg-yellow-50 border-yellow-200 text-yellow-800";
       case "green":
-        return "bg-gradient-to-br from-green-50 to-emerald-50 border-green-200 text-green-800 hover:shadow-green-200/50";
+        return "bg-green-50 border-green-200 text-green-800";
       case "red":
-        return "bg-gradient-to-br from-red-50 to-rose-50 border-red-200 text-red-800 hover:shadow-red-200/50";
+        return "bg-red-50 border-red-200 text-red-800";
       default:
-        return "bg-gradient-to-br from-white to-gray-50 border-gray-200 text-gray-600 hover:shadow-blue-200/50";
+        return "bg-white border-gray-200 text-gray-600";
     }
   };
 

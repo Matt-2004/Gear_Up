@@ -11,6 +11,11 @@ import { ChatIcon } from "../Common/SVGs";
 import { ProfileDropDown } from "./NavbarDropDown";
 import NavbarTabs from "./NavbarTabs";
 
+interface CarSuggestion {
+  make: string;
+  model: string[];
+}
+
 // Be a server side
 // pass data through props
 // use getServerSideProps to fetch data before render and pass through data
@@ -40,11 +45,11 @@ export function Logo() {
         className="flex h-14 w-28 items-center transition-transform hover:scale-105"
       >
         <Image
-          src="/logo.png"
+          src="/logo_dark.png"
           priority
           alt="Gear Up Logo"
-          width={150}
-          height={150}
+          width={100}
+          height={100}
           className="object-contain"
         />
       </Link>
@@ -138,7 +143,7 @@ export function SearchBar() {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
-  const [carSuggestions, setCarSuggestions] = useState<string[]>([]);
+  const [carSuggestions, setCarSuggestions] = useState<CarSuggestion[]>([]);
   const searchRef = useRef<HTMLFormElement>(null);
 
   // Load car suggestions on mount
@@ -165,11 +170,29 @@ export function SearchBar() {
       }
 
       // Filter suggestions based on search query
-      const filtered = carSuggestions
-        .filter((car) => car.toLowerCase().includes(searchQuery.toLowerCase()))
-        .slice(0, 8); // Limit to 8 suggestions
+      const filtered: string[] = [];
+      const lowerQuery = searchQuery.toLowerCase();
 
-      setSuggestions(filtered);
+      for (const carGroup of carSuggestions) {
+        // Check if make matches
+        if (carGroup.make.toLowerCase().includes(lowerQuery)) {
+          // Add all models from this make
+          filtered.push(...carGroup.model.map(model => `${carGroup.make} ${model}`));
+        } else {
+          // Check individual models
+          for (const model of carGroup.model) {
+            const fullName = `${carGroup.make} ${model}`;
+            if (fullName.toLowerCase().includes(lowerQuery)) {
+              filtered.push(fullName);
+            }
+          }
+        }
+
+        // Stop if we have enough suggestions
+        if (filtered.length >= 8) break;
+      }
+
+      setSuggestions(filtered.slice(0, 8));
       setShowSuggestions(filtered.length > 0);
     }, 300); // 300ms debounce delay
 

@@ -1,79 +1,94 @@
 [
-	"Honda Civic",
-	"Honda Accord",
-	"Honda CR-V",
-	"Honda Pilot",
-	"Honda Odyssey",
-	"Toyota Camry",
-	"Toyota Corolla",
-	"Toyota RAV4",
-	"Toyota Highlander",
-	"Toyota Tacoma",
-	"Toyota Tundra",
-	"Ford F-150",
-	"Ford Mustang",
-	"Ford Explorer",
-	"Ford Escape",
-	"Ford Ranger",
-	"Chevrolet Silverado",
-	"Chevrolet Camaro",
-	"Chevrolet Equinox",
-	"Chevrolet Malibu",
-	"Chevrolet Tahoe",
-	"BMW 3 Series",
-	"BMW 5 Series",
-	"BMW X3",
-	"BMW X5",
-	"Mercedes-Benz C-Class",
-	"Mercedes-Benz E-Class",
-	"Mercedes-Benz GLC",
-	"Mercedes-Benz GLE",
-	"Audi A4",
-	"Audi A6",
-	"Audi Q5",
-	"Audi Q7",
-	"Tesla Model 3",
-	"Tesla Model S",
-	"Tesla Model X",
-	"Tesla Model Y",
-	"Nissan Altima",
-	"Nissan Maxima",
-	"Nissan Rogue",
-	"Nissan Pathfinder",
-	"Mazda CX-5",
-	"Mazda CX-9",
-	"Mazda3",
-	"Mazda6",
-	"Subaru Outback",
-	"Subaru Forester",
-	"Subaru Crosstrek",
-	"Hyundai Elantra",
-	"Hyundai Sonata",
-	"Hyundai Tucson",
-	"Hyundai Santa Fe",
-	"Kia Optima",
-	"Kia Sorento",
-	"Kia Sportage",
-	"Jeep Wrangler",
-	"Jeep Grand Cherokee",
-	"Jeep Cherokee",
-	"Ram 1500",
-	"Dodge Charger",
-	"Dodge Durango",
-	"Volkswagen Jetta",
-	"Volkswagen Passat",
-	"Volkswagen Tiguan",
-	"Porsche 911",
-	"Porsche Cayenne",
-	"Lexus ES",
-	"Lexus RX",
-	"Lexus NX",
-	"Acura TLX",
-	"Acura MDX",
-	"Infiniti Q50",
-	"Infiniti QX60",
-	"Volvo XC90",
-	"Volvo S60",
-	"Land Rover Range Rover",
-	"Land Rover Discovery"
+	{
+		"make": "Honda",
+		"model": ["Civic", "Accord", "CR-V", "Pilot", "Odyssey"]
+	},
+	{
+		"make": "Toyota",
+		"model": ["Camry", "Corolla", "RAV4", "Highlander", "Tacoma", "Tundra"]
+	},
+	{
+		"make": "Ford",
+		"model": ["F-150", "Mustang", "Explorer", "Escape", "Ranger"]
+	},
+	{
+		"make": "Chevrolet",
+		"model": ["Silverado", "Camaro", "Equinox", "Malibu", "Tahoe"]
+	},
+	{
+		"make": "BMW",
+		"model": ["3 Series", "5 Series", "X3", "X5"]
+	},
+	{
+		"make": "Mercedes-Benz",
+		"model": ["C-Class", "E-Class", "GLC", "GLE"]
+	},
+	{
+		"make": "Audi",
+		"model": ["A4", "A6", "Q5", "Q7"]
+	},
+	{
+		"make": "Tesla",
+		"model": ["Model 3", "Model S", "Model X", "Model Y"]
+	},
+	{
+		"make": "Nissan",
+		"model": ["Altima", "Maxima", "Rogue", "Pathfinder"]
+	},
+	{
+		"make": "Mazda",
+		"model": ["CX-5", "CX-9", "Mazda3", "Mazda6"]
+	},
+	{
+		"make": "Subaru",
+		"model": ["Outback", "Forester", "Crosstrek"]
+	},
+	{
+		"make": "Hyundai",
+		"model": ["Elantra", "Sonata", "Tucson", "Santa Fe"]
+	},
+	{
+		"make": "Kia",
+		"model": ["Optima", "Sorento", "Sportage"]
+	},
+	{
+		"make": "Jeep",
+		"model": ["Wrangler", "Grand Cherokee", "Cherokee"]
+	},
+	{
+		"make": "Ram",
+		"model": ["1500"]
+	},
+	{
+		"make": "Dodge",
+		"model": ["Charger", "Durango"]
+	},
+	{
+		"make": "Volkswagen",
+		"model": ["Jetta", "Passat", "Tiguan"]
+	},
+	{
+		"make": "Porsche",
+		"model": ["911", "Cayenne"]
+	},
+	{
+		"make": "Lexus",
+		"model": ["ES", "RX", "NX"]
+	},
+	{
+		"make": "Acura",
+		"model": ["TLX", "MDX"]
+	},
+	{
+		"make": "Infiniti",
+		"model": ["Q50", "QX60"]
+	},
+	{
+		"make": "Volvo",
+		"model": ["XC90", "S60"]
+	},
+	{
+		"make": "Land Rover",
+		"model": ["Range Rover", "Discovery"]
+	}
 ]

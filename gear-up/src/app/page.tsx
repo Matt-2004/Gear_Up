@@ -1,6 +1,12 @@
 import { CarGrid } from "@/components/Car/CarGrid";
 import { getAllCars } from "@/utils/API/CarAPI";
+import { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Gear Up - Your Ultimate Car Marketplace",
+  description: "Discover, buy, and sell amazing vehicles on Gear Up. Find your dream car today!",
+}
 
 export default async function HOME() {
   let cars = [];

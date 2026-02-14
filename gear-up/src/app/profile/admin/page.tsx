@@ -7,6 +7,12 @@ import AdminKycVerification from "@/components/Admin/AdminKycVerification";
 import { PageSwitcher } from "@/components/Admin/PageSwitcher";
 import { Tabs } from "@/components/Admin/Tabs";
 import { getAllCars, getAllKyc } from "@/utils/API/AdminAPI";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Admin Dashboard - Gear Up",
+  description: "Manage users, dealers, and platform settings.",
+}
 
 const getKycData = async () => {
   const res = await getAllKyc();

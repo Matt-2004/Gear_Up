@@ -6,6 +6,12 @@ import {
 	FormContainer,
 } from "@/components/Navbar/common"
 import { authCookieIntegration } from "@/lib/authCookieIntegration"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+	title: "Admin Login - Gear Up",
+	description: "Admin portal login for Gear Up.",
+}
 
 import { redirect, RedirectType } from "next/navigation"
 

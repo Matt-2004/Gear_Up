@@ -9,8 +9,13 @@ import RevenueManagement from "@/components/Dealer/Revenue/RevenueManagement"
 import Setting from "@/components/Dealer/Setting"
 import TestDriveManagement from "@/components/Dealer/TestDrive/TestDriveManagement"
 import { getReviewByDealerIdWithSummary } from "@/utils/API/ReviewAPI"
+import { Metadata } from "next"
 import { cookies } from "next/headers"
 
+export const metadata: Metadata = {
+	title: "Dealer Dashboard - Gear Up",
+	description: "Manage your dealership, listings, and appointments from your dashboard.",
+}
 
 export default async function Page() {
 

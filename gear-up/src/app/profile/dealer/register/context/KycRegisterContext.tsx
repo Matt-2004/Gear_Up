@@ -1,6 +1,7 @@
 "use client"
 
 import { IKycFormData } from "@/app/types/kycRegister.types"
+import { kycRegister } from "@/utils/API/UserAPI"
 
 import {
 	createContext,
@@ -101,23 +102,20 @@ export default function KycRegisterFormProvider({
 				formData.append("SelfieImage", kycData.SelfieImage)
 			}
 
-			// TODO: Replace with your actual API endpoint
-			const response = await fetch("/api/v1/users/kyc", {
-				method: "POST",
-				body: formData,
-			})
+			console.log("Submitting KYC data:", Object.fromEntries(formData.entries()))
 
-			if (!response.ok) {
-				const error = await response.json()
-				throw new Error(error.message || "Failed to submit KYC data")
+			const response = await kycRegister(formData)
+
+			console.log("KYC submission response:", response)
+
+			// Check if response indicates an error
+			if (response.isSuccess === false || response.status >= 400) {
+				throw new Error(response.message || "Failed to submit KYC data")
 			}
 
-			const result = await response.json()
-
-			// Clear localStorage on successful submission
 			localStorage.removeItem("kyc_verficiation")
-
 			return true
+
 		} catch (error) {
 			const errorMessage = error instanceof Error ? error.message : "Failed to submit KYC data"
 			setSubmitError(errorMessage)
