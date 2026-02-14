@@ -5,17 +5,20 @@ import {
   getConversationsByConversationId,
   readMessagesByConversationId,
 } from "@/utils/API/MessageAPI";
+import * as signalR from "@microsoft/signalr";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ChatWindow from "./ChatWindow";
 
 interface MessagesClientProps {
   userId?: string;
   messages: IMessageDetailData<IMessageData[]>;
+  access_token: string;
 }
 
 export default function MessagesClient({
   userId,
   messages,
+  access_token
 }: MessagesClientProps) {
   const [messageList, setMessageList] = useState<IMessageData[]>(
     messages.messages || [],
@@ -31,10 +34,10 @@ export default function MessagesClient({
     () =>
       userId
         ? {
-            id: messages.otherUserId,
-            name: messages.otherUserName || "User",
-            avatarUrl: messages.otherUserAvatarUrl,
-          }
+          id: messages.otherUserId,
+          name: messages.otherUserName || "User",
+          avatarUrl: messages.otherUserAvatarUrl,
+        }
         : null,
     [
       userId,
@@ -69,6 +72,16 @@ export default function MessagesClient({
     },
     [conversationId],
   );
+
+  useEffect(() => {
+    const conn = new signalR.HubConnectionBuilder()
+      .withUrl("http://localhost:5255/hubs/chat", {
+        accessTokenFactory: () => access_token,
+      })
+      .withAutomaticReconnect()
+      .configureLogging(signalR.LogLevel.Information)
+      .build();
+  })
 
   useEffect(() => {
     fetchMessages();

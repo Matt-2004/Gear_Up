@@ -5,6 +5,11 @@ import { useUserData } from "@/Context/UserDataContext";
 import { IMessageData } from "@/app/types/message.types";
 import { INotificationData } from "@/app/types/notification.types";
 import { Login, SearchBar, User } from "@/components/Navbar/NavUtils";
+import {
+  getNotification,
+  readAllNotification,
+  readNotificationById,
+} from "@/utils/API/NotificationAPI";
 import * as signalR from "@microsoft/signalr";
 import { formatDistanceToNow } from "date-fns";
 import { Bell, MessageCircle } from "lucide-react";
@@ -42,6 +47,8 @@ export const NotificationBell = () => {
     unreadNotificationCount,
     chatNotifications,
     otherNotifications,
+    setOtherNotifications,
+    markAllNotificationsAsRead,
     markNotificationAsRead,
     markChatAsRead,
   } = useNotificationContext();
@@ -57,7 +64,13 @@ export const NotificationBell = () => {
   };
 
   // Handle other notification click - redirect based on type
-  const handleNotificationClick = (notif: INotificationData) => {
+  const handleNotificationClick = async (notif: INotificationData) => {
+    try {
+      await readNotificationById(notif.id);
+    } catch (error) {
+      console.error("Failed to mark notification as read:", error);
+    }
+
     markNotificationAsRead(notif.id);
     setIsOpen(false);
 
@@ -91,6 +104,15 @@ export const NotificationBell = () => {
     }
   };
 
+  const handleMarkAllAsRead = async () => {
+    try {
+      await readAllNotification();
+      markAllNotificationsAsRead();
+    } catch (error) {
+      console.error("Failed to mark all notifications as read:", error);
+    }
+  };
+
   useEffect(() => {
     const fetchToken = async () => {
       const response = await fetch("/api/token/access_token_get");
@@ -100,6 +122,23 @@ export const NotificationBell = () => {
 
     fetchToken();
   }, []);
+
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const response = await getNotification(null, 20);
+        const notifications =
+          (response as { data?: INotificationData[] })?.data ??
+          (Array.isArray(response) ? (response as INotificationData[]) : []);
+
+        setOtherNotifications(notifications);
+      } catch (error) {
+        console.error("Failed to load notifications:", error);
+      }
+    };
+
+    fetchNotifications();
+  }, [setOtherNotifications]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -208,8 +247,9 @@ export const NotificationBell = () => {
               <div
                 key={chat.id}
                 onClick={() => handleChatClick(chat)}
-                className={`p-3 hover:bg-gray-50 cursor-pointer transition-colors ${!chat.isMine ? "bg-blue-50/50" : ""
-                  }`}
+                className={`p-3 hover:bg-gray-50 cursor-pointer transition-colors ${
+                  !chat.isMine ? "bg-blue-50/50" : ""
+                }`}
               >
                 <div className="flex items-center gap-3">
                   <div className="relative shrink-0">
@@ -252,8 +292,9 @@ export const NotificationBell = () => {
               <div
                 key={notif.id}
                 onClick={() => handleNotificationClick(notif)}
-                className={`p-3 hover:bg-gray-50 cursor-pointer transition-colors ${!notif.isRead ? "bg-orange-50/50" : ""
-                  }`}
+                className={`p-3 hover:bg-gray-50 cursor-pointer transition-colors ${
+                  !notif.isRead ? "bg-orange-50/50" : ""
+                }`}
               >
                 <div className="flex items-center gap-3">
                   <div className="shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center">
@@ -293,7 +334,10 @@ export const NotificationBell = () => {
           {/* View All Footer */}
           {totalUnreadCount > 0 && (
             <div className="border-t border-gray-200 p-2">
-              <button className="w-full py-2 text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors">
+              <button
+                onClick={handleMarkAllAsRead}
+                className="w-full py-2 text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"
+              >
                 View all notifications
               </button>
             </div>

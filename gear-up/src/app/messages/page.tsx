@@ -3,6 +3,7 @@ import {
   getConversationByOtherUserId,
   getConversationsByConversationId,
 } from "@/utils/API/MessageAPI";
+import { cookies } from "next/headers";
 import {
   IMessage,
   IMessageData,
@@ -31,6 +32,7 @@ export default async function MessagesPage({
   const searchparam = await searchParams;
   const userId = searchparam.userId;
   const messages = await getData(userId);
+  const access_token = (await cookies()).get("access_token")?.value!;
 
-  return <MessagesClient userId={userId} messages={messages} />;
+  return <MessagesClient userId={userId} messages={messages} access_token={access_token} />;
 }

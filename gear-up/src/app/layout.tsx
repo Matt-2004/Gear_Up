@@ -4,7 +4,6 @@ import CookieSetter from "@/components/CookieSetter";
 import ConditionalNavbar from "@/components/Navbar/ConditionalNavbar";
 import NotificationProvider from "@/Context/NotificationContext";
 import { UserDataProvider } from "@/Context/UserDataContext";
-import { DEFAULT_API_URL } from "@/lib/config";
 import NextAuthSessionProvider from "@/provider/NextAuthSessionProvider";
 import ReactQueryProvider from "@/provider/ReactQueryProvider";
 import type { Metadata } from "next";
@@ -35,18 +34,15 @@ export default async function RootLayout({
     const access_token = cookieStore.get("access_token")?.value;
 
     if (access_token) {
-      const res = await fetch(`${DEFAULT_API_URL}/api/user`, {
+      const res = await fetch("/api/user", {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Cookie: `access_token=${access_token}`,
-        },
+        headers: { Cookie: `access_token=${access_token}` },
         credentials: "include",
+        cache: "no-store",
       });
       if (res.ok) {
-        const response = await res.json() as IUser;
+        const response = (await res.json()) as IUser;
         user = response?.data || null;
-
       } else {
         console.error("Failed to fetch user:", res.status, res.statusText);
       }

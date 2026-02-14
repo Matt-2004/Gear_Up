@@ -68,10 +68,7 @@ export function MobileMenu({
               className="rounded-lg p-2 hover:bg-gray-100 active:bg-gray-200 transition-colors"
               aria-label="Close menu"
             >
-              <X
-
-                className="text-primary h-5 w-5"
-              />
+              <X className="text-primary h-5 w-5" />
             </button>
           </div>
           <div className="p-4">
@@ -148,7 +145,7 @@ export function SearchBar() {
   useEffect(() => {
     const loadSuggestions = async () => {
       try {
-        const response = await fetch('/car-suggestions.json');
+        const response = await fetch("/car-suggestions.json");
         const data = await response.json();
         setCarSuggestions(data);
       } catch (error) {
@@ -168,9 +165,9 @@ export function SearchBar() {
       }
 
       // Filter suggestions based on search query
-      const filtered = carSuggestions.filter(car =>
-        car.toLowerCase().includes(searchQuery.toLowerCase())
-      ).slice(0, 8); // Limit to 8 suggestions
+      const filtered = carSuggestions
+        .filter((car) => car.toLowerCase().includes(searchQuery.toLowerCase()))
+        .slice(0, 8); // Limit to 8 suggestions
 
       setSuggestions(filtered);
       setShowSuggestions(filtered.length > 0);
@@ -182,7 +179,10 @@ export function SearchBar() {
   // Close suggestions when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+      if (
+        searchRef.current &&
+        !searchRef.current.contains(event.target as Node)
+      ) {
         setShowSuggestions(false);
       }
     };
@@ -201,12 +201,18 @@ export function SearchBar() {
     e.preventDefault();
     if (searchQuery.trim()) {
       setShowSuggestions(false);
-      router.push(`/car/search?query=${encodeURIComponent(searchQuery.trim())}`);
+      router.push(
+        `/car/search?query=${encodeURIComponent(searchQuery.trim())}`,
+      );
     }
   };
 
   return (
-    <form onSubmit={handleSearchSubmit} ref={searchRef} className="relative h-full w-full max-w-md transition-all duration-200 ease-in-out">
+    <form
+      onSubmit={handleSearchSubmit}
+      ref={searchRef}
+      className="relative h-full w-full max-w-md transition-all duration-200 ease-in-out"
+    >
       <input
         type="text"
         placeholder="Search cars, posts, dealers..."
@@ -260,7 +266,8 @@ export function SearchBar() {
         <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-lg border border-gray-200 max-h-96 overflow-y-auto z-50">
           <div className="p-2">
             <p className="text-xs text-gray-500 font-medium p-1.5">
-              {suggestions.length} {suggestions.length === 1 ? 'suggestion' : 'suggestions'}
+              {suggestions.length}{" "}
+              {suggestions.length === 1 ? "suggestion" : "suggestions"}
             </p>
             {suggestions.map((suggestion, index) => (
               <button

@@ -3,7 +3,7 @@
 import { CircleCheck, CircleXMark, XIcon } from "@/components/Common/SVGs";
 import clsx from "clsx";
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 export type ToastType = "success" | "error" | "info";
 
@@ -18,13 +18,16 @@ export function useToast({ toastType, message }: Toast) {
     message: message,
   });
 
-  const addToastMessage = (toastType: ToastType, message: string) => {
-    setToast({ toastType, message });
-  };
+  const addToastMessage = useCallback(
+    (toastType: ToastType, message: string) => {
+      setToast({ toastType, message });
+    },
+    [],
+  );
 
-  const removeToastMessage = () => {
+  const removeToastMessage = useCallback(() => {
     setToast({ toastType: null, message: null });
-  };
+  }, []);
 
   const ToastComponent = () => {
     if (toast?.toastType !== null && toast?.message !== null) {

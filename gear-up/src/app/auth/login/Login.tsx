@@ -86,13 +86,24 @@ const Login = () => {
     if (!state?.message) return;
 
     addToastMessage(state.toastType, state.message);
-    new Promise((res) =>
-      setTimeout(() => {
-        removeToastMessage();
-        router.push("/");
-      }, 2500),
-    );
-  }, [pending]);
+    const timeout = setTimeout(() => {
+      removeToastMessage();
+      if (state.ok) {
+        router.push(state.redirectTo || "/");
+        router.refresh();
+      }
+    }, 2500);
+
+    return () => clearTimeout(timeout);
+  }, [
+    state?.message,
+    state?.toastType,
+    state?.ok,
+    state?.redirectTo,
+    addToastMessage,
+    removeToastMessage,
+    router,
+  ]);
 
   return (
     <AuthPageContainer>
