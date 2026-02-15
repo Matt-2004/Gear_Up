@@ -1,26 +1,40 @@
 "use client";
 
+import { useUserData } from "@/Context/UserDataContext";
 import { useEffect } from "react";
 
-interface CookieSetterProps {
-    userId: string | null;
-}
+export default function CookieSetter() {
+    const { user } = useUserData();
 
-export default function CookieSetter({ userId }: CookieSetterProps) {
     useEffect(() => {
-        if (userId) {
+        if (user?.id && user?.role) {
+            console.log("Setting cookie with userId:", user.id, "role:", user.role);
             // Set cookie via API route
             fetch("/api/set-user-cookie", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ userId }),
-            }).catch((error) => {
-                console.error("Failed to set user_id cookie:", error);
-            });
+                body: JSON.stringify({ userId: user.id, role: user.role }),
+            })
+                .then((response) => {
+                    if (!response.ok) {
+                        return response.json().then((data) => {
+                            throw new Error(data.message || "Failed to set cookie");
+                        });
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    console.log("Cookie set successfully:", data);
+                })
+                .catch((error) => {
+                    console.error("Failed to set user_id cookie:", error);
+                });
+        } else {
+            console.log("CookieSetter: userId or role is missing", { userId: user?.id, role: user?.role });
         }
-    }, [userId]);
+    }, [user?.id, user?.role]);
 
     return null;
 }

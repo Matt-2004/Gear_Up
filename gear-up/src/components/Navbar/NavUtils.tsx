@@ -9,7 +9,6 @@ import { useRouter } from "next/navigation";
 import { Dispatch, useEffect, useRef, useState } from "react";
 import { ChatIcon } from "../Common/SVGs";
 import { ProfileDropDown } from "./NavbarDropDown";
-import NavbarTabs from "./NavbarTabs";
 
 interface CarSuggestion {
   make: string;
@@ -35,9 +34,9 @@ export function Logo() {
         />
 
         {isMobileMenuOpen && (
-          <div className="">
-            <MobileMenu setIsMobileMenuOpen={setIsMobileMenuOpen} />
-          </div>
+
+          <MobileMenu setIsMobileMenuOpen={setIsMobileMenuOpen} />
+
         )}
       </button>
       <Link
@@ -62,29 +61,166 @@ export function MobileMenu({
 }: {
   setIsMobileMenuOpen: Dispatch<React.SetStateAction<boolean>>;
 }) {
+  const { user } = useUserData();
+  const router = useRouter();
+
+  const handleNavigation = (path: string) => {
+    router.push(path);
+    setIsMobileMenuOpen(false);
+  };
+
   return (
     <>
-      <div className="bg-background fixed top-0 left-0 z-50 flex h-screen w-[85%] max-w-sm flex-col text-white shadow-2xl animate-in slide-in-from-left duration-300">
-        <div className="relative flex flex-col">
-          <div className="flex items-center justify-between p-4 border-b border-gray-200">
-            <h2 className="text-primary text-lg font-semibold">Menu</h2>
+      {/* Backdrop - covers entire screen with blur */}
+      <div
+        className="fixed min-h-screen inset-0 z-60 bg-white/30 backdrop-blur-sm animate-in fade-in duration-300"
+        onClick={() => setIsMobileMenuOpen(false)}
+      />
+
+      {/* Mobile Menu - appears above everything */}
+      <div className="bg-white min-h-screen fixed top-0 left-0 z-70 flex h-screen w-[85%] max-w-sm flex-col shadow-2xl animate-in slide-in-from-left duration-300">
+        <div className="relative flex flex-col h-full">
+          {/* Header */}
+          <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white">
+            <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center">
+              <Image
+                src="/logo_dark.png"
+                alt="Gear Up Logo"
+                width={80}
+                height={80}
+                className="object-contain"
+              />
+            </Link>
             <button
-              onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+              onClick={() => setIsMobileMenuOpen(false)}
               className="rounded-lg p-2 hover:bg-gray-100 active:bg-gray-200 transition-colors"
               aria-label="Close menu"
             >
-              <X className="text-primary h-5 w-5" />
+              <X className="text-gray-700 h-6 w-6" />
             </button>
           </div>
-          <div className="p-4">
-            <NavbarTabs />
+
+          {/* User Profile Section */}
+          {user && (
+            <div className="p-4 bg-gray-50 border-b border-gray-200">
+              <div className="flex items-center gap-3">
+                <div className="relative">
+                  <Image
+                    src={user.avatarUrl || "/default_profile.jpg"}
+                    alt="Profile"
+                    width={48}
+                    height={48}
+                    className="h-12 w-12 rounded-full border-2 border-gray-200 object-cover"
+                  />
+                  <div className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-500 border-2 border-white"></div>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-gray-900 truncate">
+                    {user.username && user.username.charAt(0).toUpperCase() + user.username.substring(1)}
+                  </p>
+                  <p className="text-xs text-gray-600 truncate">{user.email}</p>
+                  {user.role && (
+                    <span className="inline-flex mt-1 items-center gap-1 rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">
+                      {user.role}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Navigation Links */}
+          <nav className="flex-1 overflow-y-auto p-4">
+            <div className="space-y-1">
+              <button
+                onClick={() => handleNavigation("/")}
+                className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
+              >
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+                Home
+              </button>
+
+              <button
+                onClick={() => handleNavigation("/car/search")}
+                className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
+              >
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                Browse Cars
+              </button>
+
+              <button
+                onClick={() => handleNavigation("/post/discover")}
+                className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
+              >
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                </svg>
+                Discover Posts
+              </button>
+
+              {user && (
+                <>
+                  <div className="my-4 border-t border-gray-200"></div>
+
+                  <button
+                    onClick={() => handleNavigation(user.role === "Dealer" ? "/profile/dealer" : "/profile/user")}
+                    className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
+                  >
+                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    My Profile
+                  </button>
+
+                  <button
+                    onClick={() => handleNavigation("/chat")}
+                    className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
+                  >
+                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                    Messages
+                  </button>
+                </>
+              )}
+            </div>
+          </nav>
+
+          {/* Bottom Section */}
+          <div className="p-4 border-t border-gray-200 bg-gray-50">
+            {user ? (
+              <button
+                onClick={() => handleNavigation("/auth/logout")}
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-3 text-sm font-semibold text-white hover:bg-red-700 transition-colors"
+              >
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                Log Out
+              </button>
+            ) : (
+              <div className="space-y-2">
+                <button
+                  onClick={() => handleNavigation("/auth/login")}
+                  className="flex w-full items-center justify-center rounded-lg bg-primary-600 px-4 py-3 text-sm font-semibold text-white hover:bg-primary-700 transition-colors"
+                >
+                  Log In
+                </button>
+                <button
+                  onClick={() => handleNavigation("/auth/register")}
+                  className="flex w-full items-center justify-center rounded-lg border border-gray-300 px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-100 transition-colors"
+                >
+                  Sign Up
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
-      <div
-        className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm animate-in fade-in duration-300"
-        onClick={() => setIsMobileMenuOpen(false)}
-      />
     </>
   );
 }

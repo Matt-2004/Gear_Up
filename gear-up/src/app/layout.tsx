@@ -23,10 +23,21 @@ export const metadata: Metadata = {
     template: "%s | Gear Up",
   },
   description: "Discover, buy, and sell amazing vehicles on Gear Up. Your trusted platform for automotive excellence.",
-  icons: {
-    icon: "/browser_tab_logo.png",
-    apple: "/browser_tab_logo.png",
-  },
+  icons: [
+    {
+      rel: "icon",
+      type: "image/x-icon",
+      url: "/favicon.ico",
+    },
+    {
+      rel: "shortcut icon",
+      url: "/favicon.ico",
+    },
+    {
+      rel: "apple-touch-icon",
+      url: "/favicon.ico",
+    },
+  ],
   openGraph: {
     title: "Gear Up - Your Ultimate Car Marketplace",
     description: "Discover, buy, and sell amazing vehicles on Gear Up. Your trusted platform for automotive excellence.",
@@ -85,7 +96,7 @@ export default async function RootLayout({
             <ReactQueryProvider>
               <UserDataProvider initialUser={user}>
                 <NotificationProvider>
-                  <CookieSetter userId={user?.id || null} />
+                  <CookieSetter />
                   {/* TODO: Navbar not tested yet - needs testing before production */}
                   <ConditionalNavbar />
                   {children}

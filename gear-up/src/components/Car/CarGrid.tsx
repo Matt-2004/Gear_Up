@@ -1,32 +1,92 @@
+"use client"
+
 import { CarItems } from "@/app/types/car.types"
+import { useState } from "react"
 import { CarCard } from "./CarCard"
 
 export function CarGrid({ cars }: { cars: CarItems[] }) {
+    const [showAll, setShowAll] = useState(false)
+
+    // Show 4 cars on mobile when not expanded, 10 when expanded or on desktop
+    const displayedCars = showAll ? cars : cars.slice(0, 4)
+
     return (
-        <section className="container mx-auto px-4 py-8">
-            <div className="mb-8">
-                <h2 className="text-3xl font-bold text-gray-900">Featured Cars</h2>
-                <p className="mt-2 text-gray-600">
-                    Discover our latest collection of quality vehicles
-                </p>
-            </div>
-
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
-                {cars.slice(0, 10).map((car) => (
-                    <CarCard key={car.id} carItem={car} />
-                ))}
-            </div>
-
-            {cars.length === 0 && (
-                <div className="flex min-h-100 items-center justify-center">
-                    <div className="text-center">
-                        <p className="text-xl text-gray-500">No cars available</p>
-                        <p className="mt-2 text-sm text-gray-400">
-                            Check back later for new listings
-                        </p>
-                    </div>
+        <section className="w-full flex justify-center py-8">
+            <div className="w-full lg:w-[90%] xl:w-[75%] px-4">
+                <div className="mb-8">
+                    <h2 className="text-3xl font-bold text-gray-900">Featured Cars</h2>
+                    <p className="mt-2 text-gray-600">
+                        Discover our latest collection of quality vehicles
+                    </p>
                 </div>
-            )}
+
+                <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+                    {displayedCars.map((car) => (
+                        <CarCard key={car.id} carItem={car} />
+                    ))}
+                </div>
+
+                {/* Show More link - only visible on mobile when there are more than 4 cars */}
+                {cars.length > 4 && !showAll && (
+                    <div className="mt-6 flex justify-center lg:hidden">
+                        <button
+                            onClick={() => setShowAll(true)}
+                            className="group flex items-center gap-2 text-gray-600 hover:text-primary-600 cursor-pointer transition-colors"
+                        >
+                            <span className="text-sm font-medium">Show more cars</span>
+                            <svg
+                                className="h-4 w-4 transition-transform group-hover:translate-y-0.5"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M19 9l-7 7-7-7"
+                                />
+                            </svg>
+                        </button>
+                    </div>
+                )}
+
+                {/* Show Less link - only visible on mobile when expanded */}
+                {showAll && (
+                    <div className="mt-6 flex justify-center lg:hidden">
+                        <button
+                            onClick={() => setShowAll(false)}
+                            className="group flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+                        >
+                            <span className="text-sm font-medium">Show less</span>
+                            <svg
+                                className="h-4 w-4 transition-transform group-hover:-translate-y-0.5"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M5 15l7-7 7 7"
+                                />
+                            </svg>
+                        </button>
+                    </div>
+                )}
+
+                {cars.length === 0 && (
+                    <div className="flex min-h-100 items-center justify-center">
+                        <div className="text-center">
+                            <p className="text-xl text-gray-500">No cars available</p>
+                            <p className="mt-2 text-sm text-gray-400">
+                                Check back later for new listings
+                            </p>
+                        </div>
+                    </div>
+                )}
+            </div>
         </section>
     )
 }

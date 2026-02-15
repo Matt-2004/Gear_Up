@@ -1,14 +1,14 @@
 import { decrypt } from "./encryption"
 
-export function getDecryptedUserId(
-	encryptedUserId: string | undefined,
-): string | null {
-	if (!encryptedUserId) {
+export async function getDecryptedUserData(
+	encryptedData: string | undefined,
+): Promise<{ userId: string; role: string } | null> {
+	if (!encryptedData) {
 		return null
 	}
 
 	try {
-		return decrypt(encryptedUserId)
+		return await decrypt(encryptedData)
 	} catch (error) {
 		console.error("Failed to decrypt user_id cookie:", error)
 		return null

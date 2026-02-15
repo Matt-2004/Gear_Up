@@ -1,5 +1,3 @@
-"use server"
-
 import { PageSwitcher } from "@/components/Admin/PageSwitcher"
 import { Tabs } from "@/components/Admin/Tabs"
 import CarManagement from "@/components/Dealer/Car/CarManagement"
@@ -46,11 +44,13 @@ export default async function Page() {
 	]
 
 	return (
-		<div className={"flex h-screen w-full text-white"}>
-			<div className={"mx-auto w-1/5 p-2 shadow-md"}>
+		<div className={"flex flex-col lg:flex-row min-h-screen w-full text-white"}>
+			{/* Sidebar - Hidden on mobile, shown as drawer or full width on small screens */}
+			<div className={"w-full lg:w-1/5 lg:min-w-64 p-2 lg:shadow-md lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto"}>
 				<Tabs name="Dealer" tabs={tabs} />
 			</div>
-			<div className={"w-5/6"}>
+			{/* Main content area */}
+			<div className={"w-full lg:w-4/5 p-2 lg:p-4 overflow-x-hidden"}>
 				<PageSwitcher pages={pages} />
 			</div>
 		</div>

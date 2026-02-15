@@ -1,44 +1,80 @@
-import crypto from "crypto"
-
 // Use environment variable for encryption key, fallback to a default for development
 const ENCRYPTION_KEY =
 	process.env.COOKIE_ENCRYPTION_KEY || "default-32-character-secret-key"
-const ALGORITHM = "aes-256-cbc"
 
 // Ensure key is 32 bytes for AES-256
-const getKey = () => {
-	const key = Buffer.from(ENCRYPTION_KEY)
-	if (key.length < 32) {
-		// Pad the key if it's too short
-		return Buffer.concat([key, Buffer.alloc(32 - key.length)], 32)
-	}
-	return key.slice(0, 32)
+async function getKey() {
+	const encoder = new TextEncoder()
+	const keyData = encoder.encode(ENCRYPTION_KEY)
+
+	// Pad or truncate to 32 bytes
+	const keyBuffer = new Uint8Array(32)
+	keyBuffer.set(keyData.slice(0, 32))
+
+	return await crypto.subtle.importKey(
+		"raw",
+		keyBuffer,
+		{ name: "AES-GCM" },
+		false,
+		["encrypt", "decrypt"],
+	)
 }
 
-export function encrypt(text: string): string {
-	const iv = crypto.randomBytes(16)
-	const cipher = crypto.createCipheriv(ALGORITHM, getKey(), iv)
+export async function encrypt(data: {
+	userId: string
+	role: string
+}): Promise<string> {
+	const key = await getKey()
+	const iv = crypto.getRandomValues(new Uint8Array(12)) // 12 bytes for GCM
 
-	let encrypted = cipher.update(text, "utf8", "hex")
-	encrypted += cipher.final("hex")
+	const encoder = new TextEncoder()
+	const text = JSON.stringify(data)
+	const encodedText = encoder.encode(text)
 
-	// Return IV + encrypted data (separated by :)
-	return iv.toString("hex") + ":" + encrypted
+	const encryptedData = await crypto.subtle.encrypt(
+		{ name: "AES-GCM", iv },
+		key,
+		encodedText,
+	)
+
+	// Convert to hex and return IV + encrypted data (separated by :)
+	const ivHex = Array.from(iv)
+		.map((b) => b.toString(16).padStart(2, "0"))
+		.join("")
+	const encryptedHex = Array.from(new Uint8Array(encryptedData))
+		.map((b) => b.toString(16).padStart(2, "0"))
+		.join("")
+
+	return ivHex + ":" + encryptedHex
 }
 
-export function decrypt(encryptedData: string): string {
+export async function decrypt(encryptedData: string): Promise<{
+	userId: string
+	role: string
+}> {
 	const parts = encryptedData.split(":")
 	if (parts.length !== 2) {
 		throw new Error("Invalid encrypted data format")
 	}
 
-	const iv = Buffer.from(parts[0], "hex")
-	const encrypted = parts[1]
+	// Convert hex strings back to Uint8Array
+	const iv = new Uint8Array(
+		parts[0].match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16)),
+	)
+	const encrypted = new Uint8Array(
+		parts[1].match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16)),
+	)
 
-	const decipher = crypto.createDecipheriv(ALGORITHM, getKey(), iv)
+	const key = await getKey()
 
-	let decrypted = decipher.update(encrypted, "hex", "utf8")
-	decrypted += decipher.final("utf8")
+	const decryptedData = await crypto.subtle.decrypt(
+		{ name: "AES-GCM", iv },
+		key,
+		encrypted,
+	)
 
-	return decrypted
+	const decoder = new TextDecoder()
+	const decryptedText = decoder.decode(decryptedData)
+
+	return JSON.parse(decryptedText)
 }

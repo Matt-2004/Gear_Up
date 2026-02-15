@@ -1,9 +1,27 @@
 import { NextRequest, NextResponse } from "next/server"
 import { API_URL } from "./lib/config"
+import { getDecryptedUserData } from "./utils/cookieHelper"
 
 export async function proxy(req: NextRequest) {
 	const access_token = req.cookies.get("access_token")?.value
 	const refresh_token = req.cookies.get("refresh_token")?.value
+	const user_id_cookie = req.cookies.get("user_id")?.value
+	console.log("user_id_cookie:", user_id_cookie)
+
+	// Check if user is a dealer and redirect to dealer profile if not already there
+	if (user_id_cookie) {
+		const userData = await getDecryptedUserData(user_id_cookie)
+		console.log("Decrypted user data:", userData)
+		if (userData && userData.role === "Dealer") {
+			const currentPath = req.nextUrl.pathname
+			const dealerProfilePath = "/profile/dealer"
+
+			// Only redirect if not already on dealer profile page
+			if (!currentPath.startsWith(dealerProfilePath)) {
+				return NextResponse.redirect(new URL(dealerProfilePath, req.url))
+			}
+		}
+	}
 
 	if (access_token) {
 		return NextResponse.next()
