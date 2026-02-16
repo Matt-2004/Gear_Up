@@ -8,7 +8,6 @@ import {
   AuthPageContainer,
   FormContainer,
 } from "@/components/Navbar/common";
-import { useUserData } from "@/Context/UserDataContext";
 import { AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -39,7 +38,6 @@ const loginSchema = z.object({
 
 const Login = () => {
   const router = useRouter();
-  const { refreshUser } = useUserData();
   const [state, formAction, pending] = useActionState(submit, initialState);
   const [formData, setFormData] = useState({
     usernameOrEmail: "",
@@ -91,17 +89,17 @@ const Login = () => {
 
     if (state.ok) {
       // Refresh user data after successful login
-      refreshUser();
+      const timeout = setTimeout(() => {
+        removeToastMessage();
+        if (state.ok) {
+          // Force server components to re-render with new cookies
+          router.refresh();
+          router.push(state.redirectTo || "/");
+        }
+      }, 2500);
+      return () => clearTimeout(timeout);
     }
 
-    const timeout = setTimeout(() => {
-      removeToastMessage();
-      if (state.ok) {
-        router.push(state.redirectTo || "/");
-      }
-    }, 2500);
-
-    return () => clearTimeout(timeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     state?.message,

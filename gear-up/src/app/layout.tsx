@@ -1,11 +1,11 @@
 import StoreProvider from "@/app/hooks/StoreProvider";
-import { IUser } from "@/app/types/user.types";
 import CookieSetter from "@/components/CookieSetter";
 import ConditionalNavbar from "@/components/Navbar/ConditionalNavbar";
 import NotificationProvider from "@/Context/NotificationContext";
 import { UserDataProvider } from "@/Context/UserDataContext";
 import NextAuthSessionProvider from "@/provider/NextAuthSessionProvider";
 import ReactQueryProvider from "@/provider/ReactQueryProvider";
+import { getDecryptedFullUserData } from "@/utils/cookieHelper";
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import { cookies } from "next/headers";
@@ -65,27 +65,18 @@ export default async function RootLayout({
   children: ReactNode;
 }>) {
   let user = null;
+  const cookieStore = await cookies();
+  const user_data_cookie = cookieStore.get("user_data")?.value;
 
-  try {
-    const cookieStore = await cookies();
-    const access_token = cookieStore.get("access_token")?.value;
+  // Get user data from cached cookie instead of making API call
+  if (user_data_cookie) {
+    console.log("User data cookie found in layout, decrypting...");
+    try {
+      user = await getDecryptedFullUserData(user_data_cookie);
 
-    if (access_token) {
-      const res = await fetch("/api/user", {
-        method: "GET",
-        headers: { Cookie: `access_token=${access_token}` },
-        credentials: "include",
-        cache: "no-store",
-      });
-      if (res.ok) {
-        const response = (await res.json()) as IUser;
-        user = response?.data || null;
-      } else {
-        console.error("Failed to fetch user:", res.status, res.statusText);
-      }
+    } catch (error) {
+      console.error("Failed to decrypt user data in layout:", error);
     }
-  } catch (error) {
-    console.error("Failed to fetch user in layout:", error);
   }
 
   return (

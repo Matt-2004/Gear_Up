@@ -8,7 +8,7 @@ export default function CookieSetter() {
 
     useEffect(() => {
         if (user?.id && user?.role) {
-            console.log("Setting cookie with userId:", user.id, "role:", user.role);
+
             // Set cookie via API route
             fetch("/api/set-user-cookie", {
                 method: "POST",
@@ -31,8 +31,6 @@ export default function CookieSetter() {
                 .catch((error) => {
                     console.error("Failed to set user_id cookie:", error);
                 });
-        } else {
-            console.log("CookieSetter: userId or role is missing", { userId: user?.id, role: user?.role });
         }
     }, [user?.id, user?.role]);
 

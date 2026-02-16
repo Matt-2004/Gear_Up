@@ -33,13 +33,18 @@ const Register = () => {
     if (!state?.message) return;
 
     addToastMessage(state.toastType, state.message);
-    new Promise((res) =>
-      setTimeout(() => {
+
+    if (state.ok) {
+      const timeout = setTimeout(() => {
         removeToastMessage();
-        router.push("/");
-      }, 2500),
-    );
-  }, [pending]);
+        // Force server components to re-render with new cookies
+        router.refresh();
+        router.push(state.redirectTo || "/");
+      }, 2500);
+      return () => clearTimeout(timeout);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state?.message, state?.toastType, state?.ok, state?.redirectTo]);
 
   return (
     <AuthPageContainer>

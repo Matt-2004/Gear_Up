@@ -12,7 +12,7 @@ import {
 interface UserDataContextType {
     user: IUserData | null;
     setUser: (user: IUserData | null) => void;
-    refreshUser: () => Promise<void>;
+    loading: boolean;
 }
 
 const UserDataContext = createContext<UserDataContextType | undefined>(
@@ -27,60 +27,44 @@ export function UserDataProvider({
     initialUser: IUserData | null;
 }) {
     const [user, setUser] = useState<IUserData | null>(initialUser);
-
-    const refreshUser = async () => {
-        try {
-            const res = await fetch("/api/user", {
-                method: "GET",
-                credentials: "include",
-                cache: "no-store",
-            });
-
-            if (!res.ok) {
-                setUser(null);
-                return;
-            }
-
-            const response = (await res.json()) as IUser;
-            if (response?.data) {
-                setUser(response.data);
-            }
-        } catch {
-            // no-op: keep current state when request fails
-        }
-    };
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         setUser(initialUser);
     }, [initialUser]);
 
+    // Fallback: Fetch user data if not provided but cookies exist
     useEffect(() => {
-        if (user) return;
-
-        const hydrateUser = async () => {
-            try {
-                const res = await fetch("/api/user", {
-                    method: "GET",
-                    credentials: "include",
-                    cache: "no-store",
+        if (!initialUser && !user && !loading) {
+            setLoading(true);
+            fetch("/api/user", {
+                method: "GET",
+                credentials: "include",
+                cache: "no-store",
+            })
+                .then((res) => {
+                    if (res.ok) {
+                        return res.json();
+                    }
+                    return null;
+                })
+                .then((response: IUser | null) => {
+                    if (response?.data) {
+                        setUser(response.data);
+                        console.log("User data fetched via fallback:", response.data);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Failed to fetch user data in fallback:", error);
+                })
+                .finally(() => {
+                    setLoading(false);
                 });
-
-                if (!res.ok) return;
-
-                const response = (await res.json()) as IUser;
-                if (response?.data) {
-                    setUser(response.data);
-                }
-            } catch {
-                // no-op: keep unauthenticated state when request fails
-            }
-        };
-
-        hydrateUser();
-    }, [user]);
+        }
+    }, [initialUser, user]);
 
     return (
-        <UserDataContext.Provider value={{ user, setUser, refreshUser }}>
+        <UserDataContext.Provider value={{ user, setUser, loading }}>
             {children}
         </UserDataContext.Provider>
     );
