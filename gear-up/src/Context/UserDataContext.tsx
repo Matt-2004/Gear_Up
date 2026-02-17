@@ -13,61 +13,72 @@ interface UserDataContextType {
     user: IUserData | null;
     setUser: (user: IUserData | null) => void;
     loading: boolean;
+    refreshUser: () => Promise<IUserData | null>;
 }
 
 const UserDataContext = createContext<UserDataContextType | undefined>(
     undefined,
 );
 
-export function UserDataProvider({
+export function UserDataContextProvider({
     children,
-    initialUser,
 }: {
     children: ReactNode;
-    initialUser: IUserData | null;
 }) {
-    const [user, setUser] = useState<IUserData | null>(initialUser);
+    const [user, setUser] = useState<IUserData | null>(null);
     const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        setUser(initialUser);
-    }, [initialUser]);
-
-    // Fallback: Fetch user data if not provided but cookies exist
-    useEffect(() => {
-        if (!initialUser && !user && !loading) {
-            setLoading(true);
-            fetch("/api/user", {
+    // Function to manually refresh user data from API
+    const refreshUser = async (): Promise<IUserData | null> => {
+        setLoading(true);
+        try {
+            const res = await fetch("/api/user", {
                 method: "GET",
                 credentials: "include",
                 cache: "no-store",
-            })
-                .then((res) => {
-                    if (res.ok) {
-                        return res.json();
-                    }
-                    return null;
-                })
-                .then((response: IUser | null) => {
-                    if (response?.data) {
-                        setUser(response.data);
-                        console.log("User data fetched via fallback:", response.data);
-                    }
-                })
-                .catch((error) => {
-                    console.error("Failed to fetch user data in fallback:", error);
-                })
-                .finally(() => {
-                    setLoading(false);
-                });
+            });
+            if (res.ok) {
+                const response: IUser = await res.json();
+                if (response?.data) {
+                    setUser(response.data);
+                    return response.data;
+                }
+            }
+            setUser(null);
+            return null;
+        } catch (error) {
+            console.error("Failed to refresh user data:", error);
+            setUser(null);
+            return null;
+        } finally {
+            setLoading(false);
         }
-    }, [initialUser, user]);
+    };
+
+    // Check if tokens exist in cookies
+    const hasTokens = () => {
+        if (typeof document === "undefined") return false;
+        const cookies = document.cookie;
+        return cookies.includes("access_token") && cookies.includes("refresh_token");
+    };
+
+    // Fetch user data on mount only if tokens exist
+    useEffect(() => {
+        if (!user && !loading && hasTokens()) {
+            refreshUser();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     return (
-        <UserDataContext.Provider value={{ user, setUser, loading }}>
+        <UserDataContext.Provider value={{ user, setUser, loading, refreshUser }}>
             {children}
         </UserDataContext.Provider>
     );
+}
+
+export function UserDataProvider({ children }: { children: ReactNode }) {
+    return <UserDataContextProvider>{children}</UserDataContextProvider>;
 }
 
 export function useUserData() {

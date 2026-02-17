@@ -125,9 +125,21 @@ const FillDetails = () => {
   // Fetch car suggestions
   useEffect(() => {
     fetch("/car-suggestions.json")
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        const contentType = res.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          throw new Error("Response is not JSON");
+        }
+        return res.json();
+      })
       .then((data: CarSuggestion[]) => setCarSuggestions(data))
-      .catch((err) => console.error("Failed to load car suggestions:", err));
+      .catch((err) => {
+        console.error("Failed to load car suggestions:", err);
+        setCarSuggestions([]);
+      });
   }, []);
 
   // Initialize inputs from context when available

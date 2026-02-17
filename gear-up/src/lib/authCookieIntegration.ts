@@ -4,7 +4,6 @@ import { IAdminLogin } from "@/app/types/admin.types"
 import { ILogin, IRegister } from "@/app/types/auth.types"
 import { authResponse } from "@/app/types/data.types"
 import { cookies } from "next/dist/server/request/cookies"
-import { NextResponse } from "next/server"
 import { DEFAULT_API_URL } from "./config"
 
 export async function authCookieIntegration(
@@ -24,20 +23,25 @@ export async function authCookieIntegration(
 		const response = (await res.json()) as authResponse
 
 		// cookie integration
-		cookieStore.set("access_token", response.data.accessToken, {
-			httpOnly: true,
-			secure: true,
-			sameSite: "none",
-			maxAge: 60 * 5, // 5 minutes
-		})
-		cookieStore.set("refresh_token", response.data.refreshToken, {
-			httpOnly: true,
-			secure: true,
-			sameSite: "none",
-			maxAge: 60 * 60 * 24 * 7, // 7 days
-		})
-		return res
+		if (response?.data?.accessToken && response?.data?.refreshToken) {
+			cookieStore.set("access_token", response.data.accessToken, {
+				httpOnly: true,
+				secure: true,
+				sameSite: "none",
+				maxAge: 60 * 5, // 5 minutes
+			})
+			cookieStore.set("refresh_token", response.data.refreshToken, {
+				httpOnly: true,
+				secure: true,
+				sameSite: "none",
+				maxAge: 60 * 60 * 24 * 7, // 7 days
+			})
+		}
+
+		// Return both status and parsed response
+		return { ok: res.ok, status: res.status, data: response }
 	} catch (error: any) {
-		return NextResponse.json({ error }, { status: error.status })
+		console.error("Auth cookie integration error:", error)
+		return { ok: false, status: error.status || 500, data: null }
 	}
 }

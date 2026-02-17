@@ -1,6 +1,7 @@
 import { CarGrid } from "@/components/Car/CarGrid";
 import ActionButtons from "@/components/Home/ActionButtons";
 import { getAllCars } from "@/utils/API/CarAPI";
+import { Plus } from "lucide-react";
 import { Metadata } from "next";
 import Link from "next/link";
 
@@ -113,17 +114,17 @@ export default async function HOME() {
           <div className="rounded-2xl bg-primary-700 p-6 md:p-10 text-white flex flex-col md:flex-row md:items-center md:justify-between gap-5">
             <div>
               <h2 className="text-2xl md:text-3xl font-bold">
-                Ready to sell your car?
+                List your vehicle today
               </h2>
               <p className="mt-2 text-primary-100">
-                List your vehicle in minutes and reach buyers across the platform.
+                Reach thousands of potential buyers and sell faster with our platform.
               </p>
             </div>
             <Link
               href="/profile/dealer/cars/add"
               className="inline-flex items-center justify-center rounded-lg bg-white px-5 py-3 text-sm font-semibold text-primary-700 hover:bg-gray-100 transition-colors"
             >
-              Add New Car
+              <Plus className="mr-1 h-4 w-4" />Add New Car
             </Link>
           </div>
         </div>

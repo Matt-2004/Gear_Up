@@ -7,9 +7,6 @@ import { CarCard } from "./CarCard"
 export function CarGrid({ cars }: { cars: CarItems[] }) {
     const [showAll, setShowAll] = useState(false)
 
-    // Show 4 cars on mobile when not expanded, 10 when expanded or on desktop
-    const displayedCars = showAll ? cars : cars.slice(0, 4)
-
     return (
         <section className="w-full flex justify-center py-8">
             <div className="w-full lg:w-[90%] xl:w-[75%] px-4">
@@ -20,9 +17,16 @@ export function CarGrid({ cars }: { cars: CarItems[] }) {
                     </p>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
-                    {displayedCars.map((car) => (
-                        <CarCard key={car.id} carItem={car} />
+                <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-5 xl:grid-cols-5 2xl:grid-cols-5">
+                    {cars.map((car, index) => (
+                        <CarCard
+                            key={car.id}
+                            carItem={car}
+                            className={`
+                                ${!showAll && index >= 4 ? 'hidden lg:block' : ''}
+                                ${!showAll && index >= 10 ? 'lg:hidden' : ''}
+                            `}
+                        />
                     ))}
                 </div>
 

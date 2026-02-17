@@ -8,6 +8,7 @@ import {
   AuthPageContainer,
   FormContainer,
 } from "@/components/Navbar/common";
+import { useUserData } from "@/Context/UserDataContext";
 import { AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -38,6 +39,7 @@ const loginSchema = z.object({
 
 const Login = () => {
   const router = useRouter();
+  const { refreshUser } = useUserData();
   const [state, formAction, pending] = useActionState(submit, initialState);
   const [formData, setFormData] = useState({
     usernameOrEmail: "",
@@ -88,13 +90,20 @@ const Login = () => {
     addToastMessage(state.toastType, state.message);
 
     if (state.ok) {
-      // Refresh user data after successful login
-      const timeout = setTimeout(() => {
+      const timeout = setTimeout(async () => {
         removeToastMessage();
         if (state.ok) {
+          // Fetch user data from API into context
+          const userData = await refreshUser();
           // Force server components to re-render with new cookies
           router.refresh();
-          router.push(state.redirectTo || "/");
+
+          // Redirect based on user role
+          const redirectPath = userData?.role === "Dealer"
+            ? "/profile/dealer?tab=dashboard"
+            : "/";
+
+          router.push(redirectPath);
         }
       }, 2500);
       return () => clearTimeout(timeout);

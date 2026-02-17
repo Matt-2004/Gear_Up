@@ -1,6 +1,7 @@
 "use client";
 
 import { useUserData } from "@/Context/UserDataContext";
+import { signOut } from "@/lib/SignOut";
 import clsx from "clsx";
 import { Cog, Menu, Search, X } from "lucide-react";
 import Image from "next/image";
@@ -27,18 +28,11 @@ export function Logo() {
       <button
         className="cursor-pointer rounded-lg p-2 hover:bg-gray-100 active:bg-gray-200 transition-colors md:hidden"
         aria-label="Toggle menu"
+        onClick={() => setIsMobileMenuOpen((prev) => !prev)}
       >
-        <Menu
-          className="text-primary h-6 w-6"
-          onClick={() => setIsMobileMenuOpen((prev) => !prev)}
-        />
-
-        {isMobileMenuOpen && (
-
-          <MobileMenu setIsMobileMenuOpen={setIsMobileMenuOpen} />
-
-        )}
+        <Menu className="text-primary h-6 w-6" />
       </button>
+      {isMobileMenuOpen && <MobileMenu setIsMobileMenuOpen={setIsMobileMenuOpen} />}
       <Link
         href="/"
         className="flex h-14 w-28 items-center transition-transform hover:scale-105"
@@ -63,6 +57,7 @@ export function MobileMenu({
 }) {
   const { user } = useUserData();
   const router = useRouter();
+  console.log("NavUtils: user data:: ", user)
 
   const handleNavigation = (path: string) => {
     router.push(path);
@@ -116,7 +111,7 @@ export function MobileMenu({
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-gray-900 truncate">
-                    {user.username && user.username.charAt(0).toUpperCase() + user.username.substring(1)}
+                    {user.username ? user.username.charAt(0).toUpperCase() + user.username.substring(1) : "User"}
                   </p>
                   <p className="text-xs text-gray-600 truncate">{user.email}</p>
                   {user.role && (
@@ -194,7 +189,7 @@ export function MobileMenu({
           <div className="p-4 border-t border-gray-200 bg-gray-50">
             {user ? (
               <button
-                onClick={() => handleNavigation("/auth/logout")}
+                onClick={() => signOut()}
                 className="flex w-full items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-3 text-sm font-semibold text-white hover:bg-red-700 transition-colors"
               >
                 <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -287,10 +282,18 @@ export function SearchBar() {
     const loadSuggestions = async () => {
       try {
         const response = await fetch("/car-suggestions.json");
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          throw new Error("Response is not JSON");
+        }
         const data = await response.json();
         setCarSuggestions(data);
       } catch (error) {
         console.error("Error loading car suggestions:", error);
+        setCarSuggestions([]);
       }
     };
     loadSuggestions();

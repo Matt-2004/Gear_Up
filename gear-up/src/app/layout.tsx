@@ -1,14 +1,12 @@
 import StoreProvider from "@/app/hooks/StoreProvider";
-import CookieSetter from "@/components/CookieSetter";
+
 import ConditionalNavbar from "@/components/Navbar/ConditionalNavbar";
 import NotificationProvider from "@/Context/NotificationContext";
 import { UserDataProvider } from "@/Context/UserDataContext";
 import NextAuthSessionProvider from "@/provider/NextAuthSessionProvider";
 import ReactQueryProvider from "@/provider/ReactQueryProvider";
-import { getDecryptedFullUserData } from "@/utils/cookieHelper";
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
-import { cookies } from "next/headers";
 import { ReactNode } from "react";
 import "./globals.css";
 
@@ -64,20 +62,10 @@ export default async function RootLayout({
 }: Readonly<{
   children: ReactNode;
 }>) {
-  let user = null;
-  const cookieStore = await cookies();
-  const user_data_cookie = cookieStore.get("user_data")?.value;
 
-  // Get user data from cached cookie instead of making API call
-  if (user_data_cookie) {
-    console.log("User data cookie found in layout, decrypting...");
-    try {
-      user = await getDecryptedFullUserData(user_data_cookie);
-
-    } catch (error) {
-      console.error("Failed to decrypt user data in layout:", error);
-    }
-  }
+  // check access and refresh token
+  // if exist, fetch user data 
+  // add data in UserDataContext
 
   return (
     <html lang="en" className={`${roboto.className}`}>
@@ -85,9 +73,8 @@ export default async function RootLayout({
         <NextAuthSessionProvider>
           <StoreProvider>
             <ReactQueryProvider>
-              <UserDataProvider initialUser={user}>
+              <UserDataProvider>
                 <NotificationProvider>
-                  <CookieSetter />
                   {/* TODO: Navbar not tested yet - needs testing before production */}
                   <ConditionalNavbar />
                   {children}

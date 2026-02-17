@@ -1,29 +1,18 @@
 "use client";
 
 import { useUserData } from "@/Context/UserDataContext";
+import { signOut } from "@/lib/SignOut";
 import clsx from "clsx";
 import { Calendar, Car, LogOut, Settings, User, UserPlus } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { HTMLAttributes, ReactNode } from "react";
 
 export function ProfileDropDown() {
   const { user } = useUserData();
-  const router = useRouter();
 
   if (!user) return null;
 
-  const signOut = async () => {
-    try {
-      await fetch("/api/token/remove", {
-        method: "POST",
-      });
-    } finally {
-      // Full reload clears all client-side state (useState, caches, etc.)
-      window.location.reload();
-      router.push("/");
-    }
-  };
+  
   return (
     <div className="text-primary absolute top-10 right-0 z-30 w-52 rounded-md border-gray-800 bg-white shadow-sm shadow-gray-100">
       <ul className="p-1">

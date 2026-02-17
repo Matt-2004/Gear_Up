@@ -5,11 +5,11 @@ import { formatNumber } from "@/lib/numberFormatter";
 import Image from "next/image";
 import Link from "next/link";
 
-export function CarCard({ carItem }: { carItem: CarItems }) {
+export function CarCard({ carItem, className = "" }: { carItem: CarItems; className?: string }) {
   return (
-    <Link href={`/car/${carItem.id}`}>
-      <article className="group flex flex-col overflow-hidden rounded-xl bg-white shadow-sm transition-all duration-300 hover:shadow-sm shadow-white hover:-translate-y-0.5 w-full h-[390px]">
-        <div className="relative h-44 w-full overflow-hidden flex-shrink-0">
+    <Link href={`/car/${carItem.id}`} className={className}>
+      <article className="group flex flex-col overflow-hidden rounded-xl bg-white shadow-sm transition-all duration-300 hover:shadow-sm shadow-white hover:-translate-y-0.5 w-full h-97.5">
+        <div className="relative h-44 w-full overflow-hidden shrink-0">
           <Image
             src={carItem?.carImages[0]?.url ?? "/carPlaceholderImage.jpg"}
             fill
@@ -32,7 +32,7 @@ export function CarCard({ carItem }: { carItem: CarItems }) {
               </p>
             </div>
             {carItem.carStatus === "Available" && (
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <span className="whitespace-nowrap rounded-full bg-primary-100 text-primary-500 px-3 py-1 text-xs font-semibold">
                   For Sale
                 </span>
