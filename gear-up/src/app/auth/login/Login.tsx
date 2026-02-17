@@ -16,8 +16,6 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 
-
-
 const loginSchema = z.object({
   usernameOrEmail: z.email({
     message: "Invalid email format, end with @gmail.com, @yahoo.com, etc.",
@@ -78,7 +76,7 @@ const Login = () => {
     }
   }, [formData]);
 
-  const handleSubmit = (formDataObj: FormData) => {
+  const handleSubmit = async (formDataObj: FormData) => {
     const rawData = {
       usernameOrEmail: formDataObj.get("usernameOrEmail") as string,
       password: formDataObj.get("password") as string,
@@ -91,23 +89,27 @@ const Login = () => {
     }
 
     try {
-      submit(formDataObj)
-        .then((res) => {
-          addToastMessage(
-            res.ok ? "success" : "error",
-            res.ok ? "Login successful! Redirecting..." : "Login failed. Please check your credentials and try again.",
-          );
-        }).then(() => {
-          refreshUser()
-        }).then(() => {
-          router.push("/")
-        })
-        .catch((error) => {
-          addToastMessage(
-            "error",
-            error.message || "Login failed.",
-          );
-        });
+      const res = await submit(formDataObj);
+
+      if (!res.ok) {
+        addToastMessage("error", res.data?.message || "Login failed. Please check your credentials.");
+        return;
+      }
+      setFormData({ usernameOrEmail: "", password: "" })
+      addToastMessage("success", "Login successful! Redirecting...");
+
+      // Fetch user data into context
+      const userData = await refreshUser();
+
+      // Wait for the toast to be visible before redirecting
+      setTimeout(() => {
+        removeToastMessage();
+        router.refresh();
+
+        const redirectPath =
+          userData?.role === "Dealer" ? "/profile/dealer?tab=dashboard" : "/";
+        router.push(redirectPath);
+      }, 2500);
     } catch (error) {
       addToastMessage(
         "error",
@@ -115,7 +117,6 @@ const Login = () => {
       );
     }
   };
-
 
   return (
     <AuthPageContainer>

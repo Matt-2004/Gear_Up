@@ -9,9 +9,15 @@ import {
 	CheckCircle,
 	Clock,
 	Eye,
+	LayoutDashboard,
+	MessageSquare,
+	Plus,
+	RefreshCw,
 	Star,
-	XCircle
+	TrendingUp,
+	XCircle,
 } from "lucide-react"
+import Link from "next/link"
 import { useEffect, useState } from "react"
 
 interface DashboardStats {
@@ -41,6 +47,7 @@ const Dashboard = () => {
 		totalReviews: 0,
 	})
 	const [loading, setLoading] = useState(true)
+	const [refreshing, setRefreshing] = useState(false)
 	const [recentCars, setRecentCars] = useState<any[]>([])
 	const [recentAppointments, setRecentAppointments] = useState<any[]>([])
 
@@ -50,9 +57,8 @@ const Dashboard = () => {
 
 	const fetchDashboardData = async () => {
 		try {
-			setLoading(true)
+			if (!loading) setRefreshing(true)
 
-			// Fetch all cars data
 			const [approvedRes, pendingRes, rejectedRes] = await Promise.all([
 				getMyCars("approved", null),
 				getMyCars("pending", null),
@@ -63,16 +69,14 @@ const Dashboard = () => {
 			const pendingCars = pendingRes?.items || []
 			const rejectedCars = rejectedRes?.items || []
 
-			// Fetch appointments
 			const appointmentsRes = await dealerAppointments()
 			const appointments = appointmentsRes?.items || []
 
-			// Fetch reviews
 			const reviewsRes = await getUserReviews()
 			const reviews = reviewsRes || []
 
-			// Calculate stats
-			const totalCars = approvedCars.length + pendingCars.length + rejectedCars.length
+			const totalCars =
+				approvedCars.length + pendingCars.length + rejectedCars.length
 
 			const appointmentStats = appointments.reduce(
 				(acc: any, apt: any) => {
@@ -81,12 +85,17 @@ const Dashboard = () => {
 					if (apt.status === "cancelled") acc.cancelled++
 					return acc
 				},
-				{ pending: 0, completed: 0, cancelled: 0 }
+				{ pending: 0, completed: 0, cancelled: 0 },
 			)
 
-			const avgRating = reviews.length > 0
-				? reviews.reduce((sum: number, review: any) => sum + (review.rating || 0), 0) / reviews.length
-				: 0
+			const avgRating =
+				reviews.length > 0
+					? reviews.reduce(
+						(sum: number, review: any) =>
+							sum + (review.rating || 0),
+						0,
+					) / reviews.length
+					: 0
 
 			setStats({
 				totalCars,
@@ -101,238 +110,403 @@ const Dashboard = () => {
 				totalReviews: reviews.length,
 			})
 
-			// Set recent items
 			setRecentCars(approvedCars.slice(0, 5))
 			setRecentAppointments(appointments.slice(0, 5))
-
 		} catch (error) {
 			console.error("Error fetching dashboard data:", error)
 		} finally {
 			setLoading(false)
+			setRefreshing(false)
 		}
 	}
 
 	if (loading) {
 		return (
 			<div className="flex h-screen items-center justify-center">
-				<div className="h-12 w-12 animate-spin rounded-full border-4 border-primary-600 border-t-transparent"></div>
+				<div className="relative">
+					<div className="absolute inset-0 rounded-full bg-primary-400 blur-xl opacity-30 animate-pulse" />
+					<div className="relative h-12 w-12 animate-spin rounded-full border-4 border-primary-600 border-t-transparent" />
+				</div>
 			</div>
 		)
 	}
 
 	return (
-		<div className="min-h-screen p-8">
-			<div className="mx-auto max-w-7xl space-y-8">
+		<div className="min-h-screen bg-gray-50 px-4 py-8 sm:px-6 lg:px-8">
+			<div className="mx-auto max-w-7xl">
 				{/* Header */}
-				<div className="flex items-center justify-between">
-					<div>
-						<h1 className="text-3xl font-bold text-gray-900">Dealer Dashboard</h1>
-						<p className="mt-1 text-gray-600">Welcome back! Here's your business overview</p>
+				<div className="mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+					<div className="space-y-3">
+						<div className="flex items-center gap-3">
+							<div className="flex h-12 w-12 items-center justify-center rounded-xl border border-gray-300">
+								<LayoutDashboard className="h-6 w-6 text-black" />
+							</div>
+							<div>
+								<h1 className="text-3xl font-bold tracking-tight text-gray-900 md:text-4xl">
+									Dealer Dashboard
+								</h1>
+							</div>
+						</div>
+						<p className="ml-15 text-base text-gray-600">
+							Welcome back! Here&apos;s your business overview at a
+							glance.
+						</p>
 					</div>
 					<button
 						onClick={fetchDashboardData}
-						className="rounded-xl bg-primary-600 px-6 py-3 text-white font-medium hover:bg-primary-700 transition-colors shadow-md"
+						disabled={refreshing}
+						className="group flex shrink-0 items-center gap-2 rounded-xl border border-gray-300 bg-white px-6 py-3.5 font-semibold text-gray-700 transition-all hover:border-blue-400 hover:bg-gray-50 hover:text-blue-600 active:scale-95 disabled:opacity-50"
 					>
-						Refresh Data
+						<RefreshCw
+							className={`h-5 w-5 transition-transform duration-150 ${refreshing ? "animate-spin" : "group-hover:rotate-45"}`}
+						/>
+						{refreshing ? "Refreshing..." : "Refresh"}
 					</button>
 				</div>
 
-				{/* Stats Grid */}
-				<div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-					{/* Total Cars */}
-					<StatCard
-						icon={<Car className="h-6 w-6" />}
-						title="Total Cars"
+				{/* Stats Cards */}
+				<div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+					<StatsCard
+						label="Total Cars"
 						value={stats.totalCars}
-						subtitle={`${stats.activeCars} active`}
-						color="bg-blue-500"
-						bgColor="bg-blue-50"
+						icon={<Car className="h-5 w-5" />}
 					/>
-
-					{/* Appointments */}
-					<StatCard
-						icon={<Calendar className="h-6 w-6" />}
-						title="Appointments"
-						value={stats.totalAppointments}
-						subtitle={`${stats.pendingAppointments} pending`}
-						color="bg-primary-600"
-						bgColor="bg-primary-50"
-					/>
-
-					{/* Reviews */}
-					<StatCard
-						icon={<Star className="h-6 w-6 text-amber-500" />}
-						title="Rating"
-						value={stats.averageRating.toFixed(1)}
-						subtitle={`${stats.totalReviews} reviews`}
-						color="bg-amber-500"
-						bgColor="bg-amber-50"
-					/>
-
-					{/* Pending Cars */}
-					<StatCard
-						icon={<Clock className="h-6 w-6" />}
-						title="Pending Review"
+					<StatsCard
+						label="Pending Review"
 						value={stats.pendingCars}
-						subtitle="Cars awaiting approval"
-						color="bg-orange-500"
-						bgColor="bg-orange-50"
+						variant="yellow"
+						icon={<Clock className="h-5 w-5" />}
+					/>
+					<StatsCard
+						label="Approved"
+						value={stats.activeCars}
+						variant="green"
+						icon={<CheckCircle className="h-5 w-5" />}
+					/>
+					<StatsCard
+						label="Rejected"
+						value={stats.rejectedCars}
+						variant="red"
+						icon={<XCircle className="h-5 w-5" />}
 					/>
 				</div>
 
-				{/* Car Status Overview */}
-				<div className="rounded-2xl bg-white p-6 hover:shadow-sm transition-all">
-					<h2 className="mb-4 text-xl font-bold text-gray-900">Car Status Overview</h2>
-					<div className="grid gap-4 md:grid-cols-3">
-						<StatusItem
-							icon={<CheckCircle className="h-5 w-5 text-green-600" />}
-							label="Approved Cars"
-							value={stats.activeCars}
-							bgColor="bg-green-50"
-						/>
-						<StatusItem
-							icon={<Clock className="h-5 w-5 text-orange-600" />}
-							label="Pending Review"
-							value={stats.pendingCars}
-							bgColor="bg-orange-50"
-						/>
-						<StatusItem
-							icon={<XCircle className="h-5 w-5 text-red-600" />}
-							label="Rejected"
-							value={stats.rejectedCars}
-							bgColor="bg-red-50"
-						/>
-					</div>
+				{/* Appointments & Reviews Stats */}
+				<div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+					<StatsCard
+						label="Total Appointments"
+						value={stats.totalAppointments}
+						icon={<Calendar className="h-5 w-5" />}
+					/>
+					<StatsCard
+						label="Average Rating"
+						value={Number(stats.averageRating.toFixed(1))}
+						variant="yellow"
+						icon={<Star className="h-5 w-5" />}
+					/>
+					<StatsCard
+						label="Total Reviews"
+						value={stats.totalReviews}
+						variant="green"
+						icon={<MessageSquare className="h-5 w-5" />}
+					/>
 				</div>
 
-				{/* Two Column Layout */}
+				{/* Two Column Layout — Recent Cars & Appointments */}
 				<div className="grid gap-6 lg:grid-cols-2">
 					{/* Recent Cars */}
-					<div className="rounded-2xl bg-white p-6 hover:shadow-sm transition-all">
-						<div className="mb-4 flex items-center justify-between">
-							<h2 className="text-xl font-bold text-gray-900">Recent Cars</h2>
-							<Car className="h-5 w-5 text-primary-600" />
+					<div className="rounded-2xl border border-gray-200/50 bg-white/80 shadow-sm backdrop-blur-sm">
+						<div className="flex items-center justify-between border-b border-gray-200/70 bg-gray-50 p-6">
+							<div>
+								<h2 className="text-2xl font-bold text-gray-900">
+									Recent Cars
+								</h2>
+								<p className="mt-1 text-sm text-gray-600">
+									Your latest vehicle listings
+								</p>
+							</div>
+							<Link
+								href="?tab=car-management"
+								className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-semibold text-blue-600 transition-all hover:bg-blue-50"
+							>
+								View All
+							</Link>
 						</div>
-						{recentCars.length > 0 ? (
-							<div className="space-y-3">
-								{recentCars.map((car, index) => (
-									<div
-										key={index}
-										className="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 p-3 hover:bg-primary-50 transition-colors"
-									>
-										<div className="flex-1">
-											<p className="font-semibold text-gray-900">
-												{car.make} {car.model}
-											</p>
-											<p className="text-sm text-gray-600">{car.year}</p>
-										</div>
-										<div className="text-right">
-											<p className="font-bold text-primary-600">${car.price?.toLocaleString()}</p>
-											<div className="flex items-center gap-1 text-xs text-gray-500">
-												<Eye className="h-3 w-3" />
-												{car.views || 0} views
+						<div className="p-6">
+							{recentCars.length > 0 ? (
+								<div className="space-y-3">
+									{recentCars.map((car, index) => (
+										<div
+											key={car.id || index}
+											className="group flex items-center justify-between rounded-xl border border-gray-200 bg-gray-50/50 p-4 transition-all hover:border-blue-300 hover:bg-blue-50/30"
+											style={{
+												animationDelay: `${index * 50}ms`,
+											}}
+										>
+											<div className="flex-1">
+												<p className="font-semibold text-gray-900">
+													{car.make} {car.model}
+												</p>
+												<p className="text-sm text-gray-600">
+													{car.year}
+												</p>
+											</div>
+											<div className="text-right">
+												<p className="font-bold text-primary-600">
+													฿
+													{car.price?.toLocaleString()}
+												</p>
+												<div className="flex items-center gap-1 text-xs text-gray-500">
+													<Eye className="h-3 w-3" />
+													{car.views || 0} views
+												</div>
 											</div>
 										</div>
-									</div>
-								))}
-							</div>
-						) : (
-							<p className="text-center text-gray-500 py-8">No cars listed yet</p>
-						)}
+									))}
+								</div>
+							) : (
+								<EmptySection
+									message="No cars listed yet"
+									actionLabel="Add Vehicle"
+									actionHref="/profile/dealer/cars/add?step=1"
+								/>
+							)}
+						</div>
 					</div>
 
 					{/* Recent Appointments */}
-					<div className="rounded-2xl bg-white p-6 hover:shadow-sm transition-all">
-						<div className="mb-4 flex items-center justify-between">
-							<h2 className="text-xl font-bold text-gray-900">Recent Appointments</h2>
-							<Calendar className="h-5 w-5 text-primary-600" />
-						</div>
-						{recentAppointments.length > 0 ? (
-							<div className="space-y-3">
-								{recentAppointments.map((apt, index) => (
-									<div
-										key={index}
-										className="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 p-3 hover:bg-primary-50 transition-colors"
-									>
-										<div className="flex-1">
-											<p className="font-semibold text-gray-900">
-												{apt.userName || "User"}
-											</p>
-											<p className="text-sm text-gray-600">
-												{new Date(apt.schedule).toLocaleDateString()}
-											</p>
-										</div>
-										<span
-											className={`rounded-full px-3 py-1 text-xs font-medium ${apt.status === "pending"
-												? "bg-orange-100 text-orange-700"
-												: apt.status === "completed"
-													? "bg-green-100 text-green-700"
-													: "bg-red-100 text-red-700"
-												}`}
-										>
-											{apt.status}
-										</span>
-									</div>
-								))}
+					<div className="rounded-2xl border border-gray-200/50 bg-white/80 shadow-sm backdrop-blur-sm">
+						<div className="flex items-center justify-between border-b border-gray-200/70 bg-gray-50 p-6">
+							<div>
+								<h2 className="text-2xl font-bold text-gray-900">
+									Recent Appointments
+								</h2>
+								<p className="mt-1 text-sm text-gray-600">
+									Latest test drive requests
+								</p>
 							</div>
-						) : (
-							<p className="text-center text-gray-500 py-8">No appointments yet</p>
-						)}
+							<Link
+								href="?tab=test-drive-management"
+								className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-semibold text-blue-600 transition-all hover:bg-blue-50"
+							>
+								View All
+							</Link>
+						</div>
+						<div className="p-6">
+							{recentAppointments.length > 0 ? (
+								<div className="space-y-3">
+									{recentAppointments.map((apt, index) => (
+										<div
+											key={apt.id || index}
+											className="group flex items-center justify-between rounded-xl border border-gray-200 bg-gray-50/50 p-4 transition-all hover:border-blue-300 hover:bg-blue-50/30"
+											style={{
+												animationDelay: `${index * 50}ms`,
+											}}
+										>
+											<div className="flex-1">
+												<p className="font-semibold text-gray-900">
+													{apt.userName || "User"}
+												</p>
+												<p className="text-sm text-gray-600">
+													{new Date(
+														apt.schedule,
+													).toLocaleDateString()}
+												</p>
+											</div>
+											<span
+												className={`rounded-full border px-3 py-1.5 text-xs font-bold backdrop-blur-sm ${getAppointmentStatusColor(apt.status)}`}
+											>
+												{apt.status?.charAt(0).toUpperCase() +
+													apt.status?.slice(1)}
+											</span>
+										</div>
+									))}
+								</div>
+							) : (
+								<EmptySection message="No appointments yet" />
+							)}
+						</div>
 					</div>
 				</div>
 
 				{/* Quick Actions */}
-				<div className="rounded-2xl bg-gradient-to-r from-primary-600 to-primary-700 p-6 text-white hover:shadow-sm transition-all">
-					<h2 className="mb-4 text-xl font-bold">Quick Actions</h2>
-					<div className="grid gap-4 md:grid-cols-4">
-						<QuickActionButton label="Add New Car" href="?tab=car-management" />
-						<QuickActionButton label="View Appointments" href="?tab=test-drive-management" />
-						<QuickActionButton label="Manage Posts" href="?tab=post-management" />
-						<QuickActionButton label="View Revenue" href="?tab=revenue-management" />
-					</div>
+				<div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+					<QuickActionCard
+						icon={
+							<Plus className="h-6 w-6 text-blue-600 group-hover:rotate-90 transition-transform duration-150" />
+						}
+						label="Add New Car"
+						description="List a new vehicle"
+						href="/profile/dealer/cars/add?step=1"
+						gradient="from-blue-50 to-white"
+						borderColor="border-blue-100 hover:border-blue-300"
+						iconBg="bg-blue-100 group-hover:bg-blue-200"
+					/>
+					<QuickActionCard
+						icon={
+							<Calendar className="h-6 w-6 text-purple-600" />
+						}
+						label="Appointments"
+						description="Manage test drives"
+						href="?tab=test-drive-management"
+						gradient="from-purple-50 to-white"
+						borderColor="border-purple-100 hover:border-purple-300"
+						iconBg="bg-purple-100 group-hover:bg-purple-200"
+					/>
+					<QuickActionCard
+						icon={
+							<MessageSquare className="h-6 w-6 text-green-600" />
+						}
+						label="Manage Posts"
+						description="Create & edit posts"
+						href="?tab=post-management"
+						gradient="from-green-50 to-white"
+						borderColor="border-green-100 hover:border-green-300"
+						iconBg="bg-green-100 group-hover:bg-green-200"
+					/>
+					<QuickActionCard
+						icon={
+							<TrendingUp className="h-6 w-6 text-amber-600" />
+						}
+						label="Revenue"
+						description="View earnings & reports"
+						href="?tab=revenue-management"
+						gradient="from-amber-50 to-white"
+						borderColor="border-amber-100 hover:border-amber-300"
+						iconBg="bg-amber-100 group-hover:bg-amber-200"
+					/>
 				</div>
 			</div>
 		</div>
 	)
 }
 
-// Stat Card Component
-const StatCard = ({ icon, title, value, subtitle, color, bgColor }: any) => (
-	<div className="rounded-2xl bg-white p-6 hover:shadow-sm transition-all">
-		<div className="flex items-center justify-between">
-			<div className={`rounded-full ${bgColor} p-3 ${color.replace("bg-", "text-")}`}>
-				{icon}
+// ─── Sub-components ──────────────────────────────────────────────────
+
+interface StatsCardProps {
+	label: string
+	value: number
+	variant?: "default" | "yellow" | "green" | "red"
+	icon?: React.ReactNode
+}
+
+const StatsCard = ({
+	label,
+	value,
+	variant = "default",
+	icon,
+}: StatsCardProps) => {
+	const styles = {
+		default: {
+			border: "border-l-blue-500",
+			iconColor: "text-blue-600",
+		},
+		yellow: {
+			border: "border-l-yellow-500",
+			iconColor: "text-yellow-600",
+		},
+		green: {
+			border: "border-l-green-500",
+			iconColor: "text-green-600",
+		},
+		red: {
+			border: "border-l-red-500",
+			iconColor: "text-red-600",
+		},
+	}
+
+	const s = styles[variant]
+
+	return (
+		<div
+			className={`rounded-xl border border-gray-200 border-l-4 ${s.border} bg-white p-5`}
+		>
+			<div className="flex items-start justify-between">
+				<div>
+					<p className="text-sm font-medium text-gray-500">{label}</p>
+					<p className="mt-1.5 text-3xl font-bold text-gray-900">
+						{value}
+					</p>
+				</div>
+				{icon && (
+					<div
+						className={`flex h-10 w-10 items-center justify-center rounded-lg bg-white ${s.iconColor}`}
+					>
+						{icon}
+					</div>
+				)}
 			</div>
 		</div>
-		<div className="mt-4">
-			<p className="text-sm font-medium text-gray-600">{title}</p>
-			<p className="mt-2 text-3xl font-bold text-gray-900">{value}</p>
-			<p className="mt-1 text-sm text-gray-500">{subtitle}</p>
-		</div>
+	)
+}
+
+const getAppointmentStatusColor = (status: string) => {
+	switch (status?.toLowerCase()) {
+		case "pending":
+			return "bg-yellow-100 text-yellow-800 border-yellow-300"
+		case "completed":
+			return "bg-green-100 text-green-800 border-green-300"
+		case "cancelled":
+			return "bg-red-100 text-red-800 border-red-300"
+		case "accepted":
+			return "bg-blue-100 text-blue-800 border-blue-300"
+		default:
+			return "bg-gray-100 text-gray-800 border-gray-300"
+	}
+}
+
+const EmptySection = ({
+	message,
+	actionLabel,
+	actionHref,
+}: {
+	message: string
+	actionLabel?: string
+	actionHref?: string
+}) => (
+	<div className="flex flex-col items-center justify-center py-10 text-center">
+		<p className="text-gray-500">{message}</p>
+		{actionLabel && actionHref && (
+			<Link
+				href={actionHref}
+				className="mt-4 flex items-center gap-2 rounded-xl bg-primary-600 px-5 py-2.5 text-sm font-semibold text-white transition-all hover:bg-blue-700 hover:scale-105 active:scale-95"
+			>
+				<Plus className="h-4 w-4" />
+				{actionLabel}
+			</Link>
+		)}
 	</div>
 )
 
-// Status Item Component
-const StatusItem = ({ icon, label, value, bgColor }: any) => (
-	<div className={`rounded-xl ${bgColor} p-4 border border-transparent hover:border-gray-200 transition-all`}>
-		<div className="flex items-center gap-3">
-			{icon}
-			<div>
-				<p className="text-sm font-medium text-gray-600">{label}</p>
-				<p className="text-2xl font-bold text-gray-900">{value}</p>
-			</div>
-		</div>
-	</div>
-)
-
-// Quick Action Button Component
-const QuickActionButton = ({ label, href }: { label: string; href: string }) => (
-	<a
+const QuickActionCard = ({
+	icon,
+	label,
+	description,
+	href,
+	gradient,
+	borderColor,
+	iconBg,
+}: {
+	icon: React.ReactNode
+	label: string
+	description: string
+	href: string
+	gradient: string
+	borderColor: string
+	iconBg: string
+}) => (
+	<Link
 		href={href}
-		className="rounded-xl bg-white/20 p-4 text-center font-medium hover:bg-white/30 transition-all backdrop-blur-sm border border-white/30"
+		className={`group flex flex-col items-center rounded-xl border bg-linear-to-br ${gradient} ${borderColor} p-6 text-center transition-all hover:shadow-sm`}
 	>
-		{label}
-	</a>
+		<div
+			className={`mb-3 flex h-12 w-12 items-center justify-center rounded-xl ${iconBg} transition-colors duration-150`}
+		>
+			{icon}
+		</div>
+		<h4 className="font-bold text-gray-900">{label}</h4>
+		<p className="mt-1 text-sm text-gray-600">{description}</p>
+	</Link>
 )
 
 export default Dashboard

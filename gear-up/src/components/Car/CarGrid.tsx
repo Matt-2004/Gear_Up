@@ -17,12 +17,12 @@ export function CarGrid({ cars }: { cars: CarItems[] }) {
                     </p>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-5 xl:grid-cols-5 2xl:grid-cols-5">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:gap-2 gap-4 sm:gap-6 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-5">
                     {cars.map((car, index) => (
                         <CarCard
                             key={car.id}
                             carItem={car}
-                            className={`
+                            className={`md:nth-4:hidden lg:nth-9:hidden lg:nth-10:hidden
                                 ${!showAll && index >= 4 ? 'hidden lg:block' : ''}
                                 ${!showAll && index >= 10 ? 'lg:hidden' : ''}
                             `}

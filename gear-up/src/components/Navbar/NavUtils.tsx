@@ -1,7 +1,7 @@
 "use client";
 
 import { useUserData } from "@/Context/UserDataContext";
-import { signOut } from "@/lib/SignOut";
+
 import clsx from "clsx";
 import { Cog, Menu, Search, X } from "lucide-react";
 import Image from "next/image";
@@ -63,6 +63,18 @@ export function MobileMenu({
     router.push(path);
     setIsMobileMenuOpen(false);
   };
+
+  const signOut = async () => {
+    try {
+      await fetch("/api/token/remove", {
+        method: "POST",
+      }).then(() => {
+        router.push("/")
+      })
+    } catch (err) {
+      console.error("Error signing out:", err)
+    }
+  }
 
   return (
     <>

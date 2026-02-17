@@ -1,5 +1,7 @@
+import CarManagement from "@/components/Dealer/Car/CarManagement";
+
 const Page = async () => {
-  return <div>Car Management Page</div>;
+  return <CarManagement />;
 };
 
 export default Page;
