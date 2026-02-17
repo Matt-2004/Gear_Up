@@ -9,19 +9,14 @@ import {
   FormContainer,
 } from "@/components/Navbar/common";
 import { useUserData } from "@/Context/UserDataContext";
+import { authCookieIntegration } from "@/lib/authCookieIntegration";
 import { AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useActionState, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
-import { submit, type LoginActionState } from "./action";
 
-const initialState: LoginActionState = {
-  ok: false,
-  toastType: "info",
-  message: null,
-  redirectTo: null,
-};
+
 
 const loginSchema = z.object({
   usernameOrEmail: z.email({
@@ -40,7 +35,7 @@ const loginSchema = z.object({
 const Login = () => {
   const router = useRouter();
   const { refreshUser } = useUserData();
-  const [state, formAction, pending] = useActionState(submit, initialState);
+
   const [formData, setFormData] = useState({
     usernameOrEmail: "",
     password: "",
@@ -53,6 +48,20 @@ const Login = () => {
     toastType: "success",
     message: null,
   });
+
+  async function submit(formData: FormData) {
+
+    const usernameOrEmail = formData.get("usernameOrEmail") as string;
+    const password = formData.get("password") as string;
+
+    // 1. Authenticate and set access_token / refresh_token cookies
+    const res = await authCookieIntegration(`/api/auth/login`, {
+      usernameOrEmail,
+      password,
+    });
+
+    return res;
+  }
 
   // Validate on input change with useEffect
   useEffect(() => {
@@ -81,41 +90,32 @@ const Login = () => {
       return;
     }
 
-    formAction(formDataObj);
+    try {
+      submit(formDataObj)
+        .then((res) => {
+          addToastMessage(
+            res.ok ? "success" : "error",
+            res.ok ? "Login successful! Redirecting..." : "Login failed. Please check your credentials and try again.",
+          );
+        }).then(() => {
+          refreshUser()
+        }).then(() => {
+          router.push("/")
+        })
+        .catch((error) => {
+          addToastMessage(
+            "error",
+            error.message || "Login failed.",
+          );
+        });
+    } catch (error) {
+      addToastMessage(
+        "error",
+        "An unexpected error occurred. Please try again later.",
+      );
+    }
   };
 
-  useEffect(() => {
-    if (!state?.message) return;
-
-    addToastMessage(state.toastType, state.message);
-
-    if (state.ok) {
-      const timeout = setTimeout(async () => {
-        removeToastMessage();
-        if (state.ok) {
-          // Fetch user data from API into context
-          const userData = await refreshUser();
-          // Force server components to re-render with new cookies
-          router.refresh();
-
-          // Redirect based on user role
-          const redirectPath = userData?.role === "Dealer"
-            ? "/profile/dealer?tab=dashboard"
-            : "/";
-
-          router.push(redirectPath);
-        }
-      }, 2500);
-      return () => clearTimeout(timeout);
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    state?.message,
-    state?.toastType,
-    state?.ok,
-    state?.redirectTo,
-  ]);
 
   return (
     <AuthPageContainer>
@@ -187,8 +187,6 @@ const Login = () => {
           </div>
           <Button
             provider={"manual"}
-            loading={pending}
-            disabled={pending}
             width="full"
           >
             Login

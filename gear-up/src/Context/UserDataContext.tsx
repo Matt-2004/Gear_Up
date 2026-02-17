@@ -5,8 +5,7 @@ import {
     createContext,
     ReactNode,
     useContext,
-    useEffect,
-    useState,
+    useState
 } from "react";
 
 interface UserDataContextType {
@@ -54,21 +53,6 @@ export function UserDataContextProvider({
             setLoading(false);
         }
     };
-
-    // Check if tokens exist in cookies
-    const hasTokens = () => {
-        if (typeof document === "undefined") return false;
-        const cookies = document.cookie;
-        return cookies.includes("access_token") && cookies.includes("refresh_token");
-    };
-
-    // Fetch user data on mount only if tokens exist
-    useEffect(() => {
-        if (!user && !loading && hasTokens()) {
-            refreshUser();
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
 
     return (
         <UserDataContext.Provider value={{ user, setUser, loading, refreshUser }}>
