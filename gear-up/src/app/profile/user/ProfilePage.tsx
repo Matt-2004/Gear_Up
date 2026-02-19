@@ -1,32 +1,48 @@
 "use client";
 
+import { useToast } from "@/app/hooks/useToast";
 import { IUserData } from "@/app/types/user.types";
 import Input from "@/components/Common/Input";
+
+import { useUserData } from "@/Context/UserDataContext";
+import { updateUserProfile } from "@/utils/API/UserAPI";
+import { AnimatePresence } from "framer-motion";
 
 import { Camera, Save, X } from "lucide-react";
 import Image from "next/image";
 import { ChangeEvent, useEffect, useState } from "react";
-import { updateProfile } from "./action";
 
-const ProfilePage = ({ data }: { data: IUserData }) => {
+const ProfilePage = () => {
+  const { user } = useUserData();
   const [isDataChange, setIsDataChange] = useState<boolean>(false);
-  const [input, setInput] = useState<Partial<IUserData>>();
-  const [originalInput, setOriginalInput] = useState<Partial<IUserData>>();
+  const [input, setInput] = useState<IUserData>();
+  const [originalInput, setOriginalInput] = useState<IUserData>();
   const formData = new FormData();
+
+  const { ToastComponent, addToastMessage, removeToastMessage } = useToast({
+    toastType: "success",
+    message: null,
+  });
+
+  // original data
+  // when user change data, set to input and compare with original data to check if there is any change
 
   const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.currentTarget;
 
-    setInput((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setInput((prev) => {
+      if (!prev) return undefined;
+      return {
+        ...prev,
+        [name]: value,
+      };
+    });
   };
 
   useEffect(() => {
-    if (!data) return;
-    setInput(data);
-    setOriginalInput(data);
+    if (!user) return;
+    setInput(user);
+    setOriginalInput(user);
   }, []);
 
   useEffect(() => {
@@ -46,8 +62,27 @@ const ProfilePage = ({ data }: { data: IUserData }) => {
     });
   }, [input]);
 
+  async function updateProfile(formData: FormData) {
+    try {
+      const res = await updateUserProfile(formData);
+      if (res?.isSuccess) {
+        setIsDataChange(false);
+        setOriginalInput(input);
+        addToastMessage("success", res.message);
+      }
+      setTimeout(() => {
+        removeToastMessage();
+      }, 2500);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 px-4 py-8">
+    <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 px-4 py-8">
+      <AnimatePresence>
+        <ToastComponent />
+      </AnimatePresence>
       <div className="mx-auto max-w-4xl">
         {/* Header */}
         <div className="mb-8">
@@ -64,13 +99,13 @@ const ProfilePage = ({ data }: { data: IUserData }) => {
           className="bg-white rounded-2xl shadow-sm overflow-hidden"
         >
           {/* Profile Header Section */}
-          <div className="bg-gradient-to-r from-primary-500 to-primary-600 px-8 py-12 relative">
+          <div className="bg-linear-to-r from-primary-500 to-primary-600 px-8 py-12 relative">
             <div className="absolute inset-0 bg-black opacity-5"></div>
             <div className="relative flex flex-col items-center gap-4">
               <div className="relative group">
                 <Image
-                  src={data.avatarUrl || "/default_profile.jpg"}
-                  alt={data.name || "User Avatar"}
+                  src={input?.avatarUrl || "/default_profile.jpg"}
+                  alt={input?.name || "User Avatar"}
                   width={120}
                   height={120}
                   className="h-32 w-32 rounded-full object-cover border-4 border-white shadow-lg"
@@ -83,9 +118,9 @@ const ProfilePage = ({ data }: { data: IUserData }) => {
                 </button>
               </div>
               <div className="text-center text-white">
-                <h2 className="text-2xl font-bold">{data.name}</h2>
+                <h2 className="text-2xl font-bold">{input?.name}</h2>
                 <p className="text-white/90 font-medium mt-1 px-3 py-1 bg-white/20 rounded-full inline-block">
-                  {data.role}
+                  {input?.role}
                 </p>
               </div>
             </div>
@@ -164,7 +199,7 @@ const ProfilePage = ({ data }: { data: IUserData }) => {
                 <button
                   type="submit"
                   disabled={!isDataChange}
-                  className="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-gradient-to-r from-primary-500 to-primary-600 text-white font-semibold hover:from-primary-600 hover:to-primary-700 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed transition-all shadow-sm disabled:shadow-none"
+                  className="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-linear-to-r from-primary-500 to-primary-600 text-white font-semibold hover:from-primary-600 hover:to-primary-700 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed transition-all shadow-sm disabled:shadow-none"
                 >
                   <Save className="h-4 w-4" />
                   Save Changes

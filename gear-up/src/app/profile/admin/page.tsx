@@ -1,5 +1,3 @@
-"use server";
-
 import AdminCarVerification from "@/components/Admin/AdminCarVerification";
 import AdminDashboard from "@/components/Admin/AdminDashboard";
 import AdminGenerateReport from "@/components/Admin/AdminGenerateReport";
@@ -12,7 +10,7 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Admin Dashboard - Gear Up",
   description: "Manage users, dealers, and platform settings.",
-}
+};
 
 const getKycData = async () => {
   const res = await getAllKyc();
@@ -71,7 +69,7 @@ export default async function Page() {
   return (
     <div className="flex min-h-screen bg-linear-to-br from-gray-50 to-gray-100">
       <div className="w-64 p-4">
-        <Tabs tabs={tabs} />
+        <Tabs name="Admin" tabs={tabs} />
       </div>
       <div className="flex-1">
         <PageSwitcher pages={pages} />
