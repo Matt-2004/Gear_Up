@@ -2,12 +2,17 @@
 
 import { CarItems } from "@/app/types/car.types";
 import Button from "@/components/Common/Button";
-import Input from "@/components/Common/Input";
+import { RadioInput, RadioInputContainer } from "@/components/Common/Input";
 import { updateCar } from "@/utils/API/CarAPI";
 import { ArrowLeft, ImageUp, Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { FormEvent, ReactNode, useState } from "react";
+import { FormEvent, ReactNode, useEffect, useRef, useState } from "react";
+
+interface CarSuggestion {
+  make: string;
+  model: string[];
+}
 
 interface EditCarFormProps {
   initialData: CarItems;
@@ -24,24 +29,159 @@ const EditCarForm = ({ initialData }: EditCarFormProps) => {
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState<FileWithId[]>([]);
 
-  // Initialize form data with existing car data
-  const [formData, setFormData] = useState({
-    title: initialData.title,
-    description: initialData.description,
-    make: initialData.make,
-    model: initialData.model,
-    year: initialData.year,
-    price: initialData.price,
-    color: initialData.color,
-    mileage: initialData.mileage,
-    engineCapacity: initialData.engineCapacity,
-    seatingCapacity: initialData.seatingCapacity,
-    fuelType: initialData.fuelType,
-    transmissionType: initialData.transmissionType,
-    carCondition: initialData.carCondition,
-    vin: initialData.vin,
-    licensePlate: initialData.licensePlate,
-  });
+  // Car suggestions state
+  const [carSuggestions, setCarSuggestions] = useState<CarSuggestion[]>([]);
+  const [makeInput, setMakeInput] = useState(initialData.make || "");
+  const [modelInput, setModelInput] = useState(initialData.model || "");
+  const [showMakeSuggestions, setShowMakeSuggestions] = useState(false);
+  const [showModelSuggestions, setShowModelSuggestions] = useState(false);
+  const makeInputRef = useRef<HTMLInputElement>(null);
+  const modelInputRef = useRef<HTMLInputElement>(null);
+
+  // Price formatting state
+  const [priceInput, setPriceInput] = useState(
+    initialData.price ? initialData.price.toLocaleString() : "",
+  );
+  const priceInputRef = useRef<HTMLInputElement>(null);
+
+  // Mileage formatting state
+  const [mileageInput, setMileageInput] = useState(
+    initialData.mileage ? initialData.mileage.toLocaleString() : "",
+  );
+  const mileageInputRef = useRef<HTMLInputElement>(null);
+
+  // Year input state
+  const [yearInput, setYearInput] = useState(
+    initialData.year ? initialData.year.toString() : "",
+  );
+  const [showYearDropdown, setShowYearDropdown] = useState(false);
+  const yearDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Character count state
+  const [titleLength, setTitleLength] = useState(
+    initialData.title?.length || 0,
+  );
+  const [descriptionLength, setDescriptionLength] = useState(
+    initialData.description?.length || 0,
+  );
+  const MAX_TITLE_LENGTH = 100;
+  const MAX_DESCRIPTION_LENGTH = 500;
+
+  // Refs for auto-focus
+  const titleInputRef = useRef<HTMLInputElement>(null);
+  const descriptionInputRef = useRef<HTMLTextAreaElement>(null);
+  const yearInputRef = useRef<HTMLInputElement>(null);
+  const colorInputRef = useRef<HTMLInputElement>(null);
+  const engineCapacityInputRef = useRef<HTMLInputElement>(null);
+  const vinInputRef = useRef<HTMLInputElement>(null);
+  const licensePlateInputRef = useRef<HTMLInputElement>(null);
+
+  // FormData ref — initialized with all initial values; each onChange sets the updated field
+  const formDataRef = useRef<FormData>(new FormData());
+
+  useEffect(() => {
+    const fd = formDataRef.current;
+    fd.set("Title", initialData.title || "");
+    fd.set("Description", initialData.description || "");
+    fd.set("Make", initialData.make || "");
+    fd.set("Model", initialData.model || "");
+    fd.set("Year", initialData.year?.toString() || "");
+    fd.set("PriceValue", initialData.price?.toString() || "");
+    fd.set("Color", initialData.color || "");
+    fd.set("MileageValue", initialData.mileage?.toString() || "");
+    fd.set("EngineCapacity", initialData.engineCapacity?.toString() || "");
+    fd.set("SeatingCapacity", initialData.seatingCapacity?.toString() || "");
+    fd.set("FuelType", initialData.fuelType || "");
+    fd.set("CarCondition", initialData.carCondition || "");
+    fd.set("TransmissionType", initialData.transmissionType || "");
+    fd.set("VIN", initialData.vin || "");
+    fd.set("LicensePlate", initialData.licensePlate || "");
+  }, []);
+
+  // Fetch car suggestions
+  useEffect(() => {
+    fetch("/car-suggestions.json")
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        return res.json();
+      })
+      .then((data: CarSuggestion[]) => setCarSuggestions(data))
+      .catch((err) => {
+        console.error("Failed to load car suggestions:", err);
+        setCarSuggestions([]);
+      });
+  }, []);
+
+  const getFilteredMakes = () => {
+    if (!makeInput.trim()) return carSuggestions.map((s) => s.make);
+    return carSuggestions
+      .map((s) => s.make)
+      .filter((make) => make.toLowerCase().includes(makeInput.toLowerCase()))
+      .slice(0, 8);
+  };
+
+  const getFilteredModels = () => {
+    if (!makeInput.trim()) return [];
+    const selectedMake = carSuggestions.find(
+      (s) => s.make.toLowerCase() === makeInput.toLowerCase(),
+    );
+    if (!selectedMake) return [];
+    if (!modelInput.trim()) return selectedMake.model.slice(0, 8);
+    return selectedMake.model
+      .filter((model) => model.toLowerCase().includes(modelInput.toLowerCase()))
+      .slice(0, 8);
+  };
+
+  const handleMakeSelect = (make: string) => {
+    setMakeInput(make);
+    setShowMakeSuggestions(false);
+    setModelInput("");
+    formDataRef.current.set("Make", make);
+    formDataRef.current.set("Model", "");
+    if (makeInputRef.current) makeInputRef.current.value = make;
+    setTimeout(() => {
+      if (modelInputRef.current) modelInputRef.current.focus();
+    }, 100);
+  };
+
+  const handleModelSelect = (model: string) => {
+    setModelInput(model);
+    setShowModelSuggestions(false);
+    formDataRef.current.set("Model", model);
+    if (modelInputRef.current) modelInputRef.current.value = model;
+    setTimeout(() => {
+      if (yearInputRef.current) yearInputRef.current.focus();
+    }, 100);
+  };
+
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/,/g, "");
+    if (value === "" || /^\d+$/.test(value)) {
+      const numericValue = value === "" ? "" : parseInt(value, 10);
+      setPriceInput(numericValue === "" ? "" : numericValue.toLocaleString());
+      formDataRef.current.set("PriceValue", value);
+      if (value.length >= 5) {
+        setTimeout(() => {
+          if (colorInputRef.current) colorInputRef.current.focus();
+        }, 100);
+      }
+    }
+  };
+
+  const handleMileageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/,/g, "");
+    if (value === "" || /^\d+$/.test(value)) {
+      const numericValue = value === "" ? "" : parseInt(value, 10);
+      setMileageInput(numericValue === "" ? "" : numericValue.toLocaleString());
+      formDataRef.current.set("MileageValue", value);
+      if (value.length >= 4) {
+        setTimeout(() => {
+          if (engineCapacityInputRef.current)
+            engineCapacityInputRef.current.focus();
+        }, 100);
+      }
+    }
+  };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(event.target.files || []);
@@ -63,23 +203,12 @@ const EditCarForm = ({ initialData }: EditCarFormProps) => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-
     try {
-      const formDataToSend = new FormData();
-
-      // Append all form fields
-      Object.entries(formData).forEach(([key, value]) => {
-        formDataToSend.append(key, value.toString());
-      });
-
-      // Append new images if any
+      const fd = formDataRef.current;
       files.forEach((fileObj) => {
-        formDataToSend.append("images", fileObj.file);
+        fd.append("images", fileObj.file);
       });
-
-      await updateCar(initialData.id, formDataToSend);
-
-      // Success - redirect to dashboard
+      await updateCar(initialData.id, fd);
       router.push("/profile/dealer/cars");
     } catch (error: any) {
       console.error("Error updating vehicle:", error);
@@ -87,16 +216,6 @@ const EditCarForm = ({ initialData }: EditCarFormProps) => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
   };
 
   return (
@@ -126,30 +245,70 @@ const EditCarForm = ({ initialData }: EditCarFormProps) => {
               {/* Basic Information */}
               <GroupInputForm
                 title="Basic Information"
-                description="Update title and description"
+                description="Provide a compelling title and description"
               >
-                <Input
-                  name="title"
-                  type="text"
-                  placeholder="e.g., 2024 Toyota Camry - Excellent Condition"
-                  required
-                  value={formData.title}
-                  onChange={handleInputChange}
-                >
-                  Title
-                </Input>
+                <div className="flex w-full max-w-[25rem] min-w-[10rem] flex-col gap-1">
+                  <label className="text-sm font-semibold text-gray-500 flex items-center justify-between">
+                    <span>
+                      Title <span className="text-red-500">*</span>
+                    </span>
+                    <span
+                      className={`text-xs ${titleLength > MAX_TITLE_LENGTH ? "text-red-500" : "text-gray-400"}`}
+                    >
+                      {titleLength}/{MAX_TITLE_LENGTH}
+                    </span>
+                  </label>
+                  <input
+                    ref={titleInputRef}
+                    name="Title"
+                    type="text"
+                    placeholder="e.g., 2024 Toyota Camry - Excellent Condition"
+                    defaultValue={initialData.title || ""}
+                    maxLength={MAX_TITLE_LENGTH}
+                    onChange={(e) => {
+                      setTitleLength(e.target.value.length);
+                      formDataRef.current.set("Title", e.target.value);
+                      if (e.target.value.length >= 20) {
+                        setTimeout(() => {
+                          if (descriptionInputRef.current)
+                            descriptionInputRef.current.focus();
+                        }, 500);
+                      }
+                    }}
+                    required
+                    className="focus:ring-primary focus:text-primary rounded-lg border border-gray-200 px-4 py-1.5 text-black placeholder:text-sm placeholder:text-gray-400 focus:bg-[#BAFFAF] focus:ring-1 focus:outline-none transition-all"
+                  />
+                </div>
                 <div className="col-span-2">
-                  <label className="text-sm font-semibold text-gray-500 mb-1 block">
-                    Description
+                  <label className="text-sm font-semibold text-gray-500 mb-1 flex items-center justify-between">
+                    <span>
+                      Description <span className="text-red-500">*</span>
+                    </span>
+                    <span
+                      className={`text-xs ${descriptionLength > MAX_DESCRIPTION_LENGTH ? "text-red-500" : "text-gray-400"}`}
+                    >
+                      {descriptionLength}/{MAX_DESCRIPTION_LENGTH}
+                    </span>
                   </label>
                   <textarea
-                    name="description"
+                    ref={descriptionInputRef}
+                    name="Description"
                     rows={4}
-                    placeholder="Describe the vehicle's key features..."
-                    className="w-full rounded-lg border border-gray-200 px-4 py-2 text-black placeholder:text-sm placeholder:text-gray-400 focus:bg-[#BAFFAF] focus:ring-1 focus:outline-none focus:ring-primary"
+                    placeholder="Describe the vehicle's key features, condition, and any recent maintenance or upgrades..."
+                    defaultValue={initialData.description || ""}
+                    maxLength={MAX_DESCRIPTION_LENGTH}
+                    onChange={(e) => {
+                      setDescriptionLength(e.target.value.length);
+                      formDataRef.current.set("Description", e.target.value);
+                      if (e.target.value.length >= 50) {
+                        setTimeout(() => {
+                          if (makeInputRef.current)
+                            makeInputRef.current.focus();
+                        }, 500);
+                      }
+                    }}
+                    className="w-full rounded-lg border border-gray-200 px-4 py-2 text-black placeholder:text-sm placeholder:text-gray-400 focus:bg-[#BAFFAF] focus:ring-1 focus:outline-none focus:ring-primary transition-all resize-none"
                     required
-                    value={formData.description}
-                    onChange={handleInputChange}
                   />
                 </div>
               </GroupInputForm>
@@ -157,251 +316,608 @@ const EditCarForm = ({ initialData }: EditCarFormProps) => {
               {/* Vehicle Specification */}
               <GroupInputForm
                 title="Vehicle Specification"
-                description="Update vehicle specifications"
+                description="Enter detailed vehicle specifications"
               >
-                <Input
-                  name="make"
-                  type="text"
-                  placeholder="e.g., Toyota, Honda, Tesla"
-                  required
-                  value={formData.make}
-                  onChange={handleInputChange}
-                >
-                  Make
-                </Input>
-                <Input
-                  name="model"
-                  type="text"
-                  placeholder="e.g., Camry, Civic, Model 3"
-                  required
-                  value={formData.model}
-                  onChange={handleInputChange}
-                >
-                  Model
-                </Input>
-                <Input
-                  name="year"
-                  type="number"
-                  min={1990}
-                  max={2026}
-                  placeholder="Select year"
-                  required
-                  value={formData.year}
-                  onChange={handleInputChange}
-                >
-                  Year
-                </Input>
-                <Input
-                  name="price"
-                  type="number"
-                  placeholder="e.g., 850000"
-                  min={0}
-                  required
-                  value={formData.price}
-                  onChange={handleInputChange}
-                >
-                  Price (฿)
-                </Input>
-                <Input
-                  name="color"
-                  type="text"
-                  placeholder="e.g., Black, White, Silver"
-                  required
-                  value={formData.color}
-                  onChange={handleInputChange}
-                >
-                  Color
-                </Input>
-                <Input
-                  name="mileage"
-                  type="number"
-                  placeholder="e.g., 45000"
-                  min={0}
-                  required
-                  value={formData.mileage}
-                  onChange={handleInputChange}
-                >
-                  Mileage (km)
-                </Input>
-                <Input
-                  name="engineCapacity"
-                  type="number"
-                  step="0.1"
-                  placeholder="e.g., 2.0"
-                  min={0}
-                  required
-                  value={formData.engineCapacity}
-                  onChange={handleInputChange}
-                >
-                  Engine Capacity (L)
-                </Input>
-                <div className="col-span-2">
-                  <label className="text-sm font-semibold text-gray-500 mb-2 block">
-                    Seating Capacity
+                {/* Make Input with Suggestions */}
+                <div className="relative flex w-full max-w-[25rem] min-w-[10rem] flex-col gap-1">
+                  <label className="text-sm font-semibold text-gray-500 flex items-center gap-1">
+                    Make <span className="text-red-500">*</span>
+                    <span className="text-xs text-gray-400 font-normal">
+                      (Start typing)
+                    </span>
                   </label>
-                  <div className="flex gap-2 flex-wrap">
-                    {[2, 4, 5, 7].map((seats) => (
-                      <label
-                        key={seats}
-                        className={`flex-1 min-w-[100px] cursor-pointer rounded-lg border px-4 py-2 text-center transition-all ${formData.seatingCapacity === seats
-                            ? "border-primary-500 bg-green-200 text-primary-700 font-semibold"
-                            : "border-gray-300 text-gray-400 hover:border-gray-400"
-                          }`}
-                      >
-                        <input
-                          type="radio"
-                          name="seatingCapacity"
-                          value={seats}
-                          checked={formData.seatingCapacity === seats}
-                          onChange={(e) =>
-                            setFormData((prev) => ({
-                              ...prev,
-                              seatingCapacity: parseInt(e.target.value),
-                            }))
-                          }
-                          className="sr-only"
-                        />
-                        {seats === 7 ? "7+ Seats" : `${seats} Seats`}
-                      </label>
-                    ))}
-                  </div>
+                  <input
+                    ref={makeInputRef}
+                    name="Make"
+                    autoComplete="off"
+                    type="text"
+                    placeholder="e.g., Toyota, Honda, Tesla"
+                    value={makeInput}
+                    onChange={(e) => {
+                      setMakeInput(e.target.value);
+                      setShowMakeSuggestions(true);
+                      formDataRef.current.set("Make", e.target.value);
+                    }}
+                    onFocus={() => setShowMakeSuggestions(true)}
+                    onBlur={() =>
+                      setTimeout(() => setShowMakeSuggestions(false), 200)
+                    }
+                    required
+                    className="focus:ring-primary focus:text-primary rounded-lg border border-gray-200 px-4 py-1.5 text-black placeholder:text-sm placeholder:text-gray-400 focus:bg-[#BAFFAF] focus:ring-1 focus:outline-none focus:placeholder:text-gray-500 transition-all"
+                  />
+                  {showMakeSuggestions && getFilteredMakes().length > 0 && (
+                    <div className="absolute top-full left-0 z-50 mt-1 w-full max-w-[25rem] rounded-lg border border-gray-200 bg-white shadow-xl animate-in fade-in slide-in-from-top-2 duration-200">
+                      <ul className="max-h-60 overflow-y-auto py-1">
+                        {getFilteredMakes().map((make, index) => (
+                          <li
+                            key={index}
+                            onClick={() => handleMakeSelect(make)}
+                            className="cursor-pointer px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors border-l-2 border-transparent hover:border-blue-500 flex items-center justify-between group"
+                          >
+                            <span>{make}</span>
+                            <svg
+                              className="h-4 w-4 text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M9 5l7 7-7 7"
+                              />
+                            </svg>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
-              </GroupInputForm>
 
-              {/* Fuel Type */}
-              <GroupInputForm
-                title="Fuel Type"
-                description="Select the fuel type"
-              >
-                <div className="col-span-2">
-                  <div className="flex gap-2 flex-wrap">
-                    {["Petrol", "Diesel", "Electric", "Hybrid"].map((fuel) => (
-                      <label
-                        key={fuel}
-                        className={`flex-1 min-w-[100px] cursor-pointer rounded-lg border px-4 py-2 text-center transition-all ${formData.fuelType === fuel
-                            ? "border-primary-500 bg-green-200 text-primary-700 font-semibold"
-                            : "border-gray-300 text-gray-400 hover:border-gray-400"
-                          }`}
-                      >
-                        <input
-                          type="radio"
-                          name="fuelType"
-                          value={fuel}
-                          checked={formData.fuelType === fuel}
-                          onChange={(e) =>
-                            setFormData((prev) => ({
-                              ...prev,
-                              fuelType: e.target.value,
-                            }))
-                          }
-                          className="sr-only"
-                        />
-                        {fuel}
-                      </label>
-                    ))}
-                  </div>
+                {/* Model Input with Suggestions */}
+                <div className="relative flex w-full max-w-[25rem] min-w-[10rem] flex-col gap-1">
+                  <label className="text-sm font-semibold text-gray-500 flex items-center gap-1">
+                    Model <span className="text-red-500">*</span>
+                    {!makeInput && (
+                      <span className="text-xs text-amber-500 font-normal">
+                        (Select make first)
+                      </span>
+                    )}
+                  </label>
+                  <input
+                    ref={modelInputRef}
+                    name="Model"
+                    type="text"
+                    autoComplete="off"
+                    placeholder="e.g., Camry, Civic, Model 3"
+                    value={modelInput}
+                    onChange={(e) => {
+                      setModelInput(e.target.value);
+                      setShowModelSuggestions(true);
+                      formDataRef.current.set("Model", e.target.value);
+                    }}
+                    onFocus={() => setShowModelSuggestions(true)}
+                    onBlur={() =>
+                      setTimeout(() => setShowModelSuggestions(false), 200)
+                    }
+                    required
+                    disabled={!makeInput}
+                    className="focus:ring-primary focus:text-primary rounded-lg border border-gray-200 px-4 py-1.5 text-black placeholder:text-sm placeholder:text-gray-400 focus:bg-[#BAFFAF] focus:ring-1 focus:outline-none focus:placeholder:text-gray-500 transition-all disabled:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-400"
+                  />
+                  {showModelSuggestions && getFilteredModels().length > 0 && (
+                    <div className="absolute top-full left-0 z-50 mt-1 w-full max-w-[25rem] rounded-lg border border-gray-200 bg-white shadow-xl animate-in fade-in slide-in-from-top-2 duration-200">
+                      <ul className="max-h-60 overflow-y-auto py-1">
+                        {getFilteredModels().map((model, index) => (
+                          <li
+                            key={index}
+                            onClick={() => handleModelSelect(model)}
+                            className="cursor-pointer px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors border-l-2 border-transparent hover:border-blue-500 flex items-center justify-between group"
+                          >
+                            <span>{model}</span>
+                            <svg
+                              className="h-4 w-4 text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M9 5l7 7-7 7"
+                              />
+                            </svg>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
-              </GroupInputForm>
 
-              {/* Transmission Type */}
-              <GroupInputForm
-                title="Transmission Type"
-                description="Select the transmission type"
-              >
-                <div className="col-span-2">
-                  <div className="flex gap-2 flex-wrap">
-                    {["Manual", "Automatic"].map((transmission) => (
-                      <label
-                        key={transmission}
-                        className={`flex-1 min-w-[120px] cursor-pointer rounded-lg border px-4 py-2 text-center transition-all ${formData.transmissionType === transmission
-                            ? "border-primary-500 bg-green-200 text-primary-700 font-semibold"
-                            : "border-gray-300 text-gray-400 hover:border-gray-400"
-                          }`}
-                      >
-                        <input
-                          type="radio"
-                          name="transmissionType"
-                          value={transmission}
-                          checked={formData.transmissionType === transmission}
-                          onChange={(e) =>
-                            setFormData((prev) => ({
-                              ...prev,
-                              transmissionType: e.target.value,
-                            }))
-                          }
-                          className="sr-only"
-                        />
-                        {transmission}
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              </GroupInputForm>
-
-              {/* Car Condition */}
-              <GroupInputForm
-                title="Car Condition"
-                description="Select the condition of the vehicle"
-              >
-                <div className="col-span-2">
-                  <div className="flex gap-2 flex-wrap">
-                    {[
-                      { value: "New", label: "New" },
-                      { value: "Used", label: "Used" },
-                      { value: "Certified", label: "Certified Pre-Owned" },
-                    ].map((condition) => (
-                      <label
-                        key={condition.value}
-                        className={`flex-1 min-w-[140px] cursor-pointer rounded-lg border px-4 py-2 text-center transition-all ${formData.carCondition === condition.value
-                            ? "border-primary-500 bg-green-200 text-primary-700 font-semibold"
-                            : "border-gray-300 text-gray-400 hover:border-gray-400"
-                          }`}
-                      >
-                        <input
-                          type="radio"
-                          name="carCondition"
-                          value={condition.value}
-                          checked={formData.carCondition === condition.value}
-                          onChange={(e) =>
-                            setFormData((prev) => ({
-                              ...prev,
-                              carCondition: e.target.value,
-                            }))
-                          }
-                          className="sr-only"
-                        />
-                        {condition.label}
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              </GroupInputForm>
-
-              {/* Vehicle Identification */}
-              <GroupInputForm
-                title="Vehicle Identification"
-                description="Update VIN and license plate"
-              >
-                <Input
-                  name="vin"
-                  type="text"
-                  placeholder="Vehicle Identification Number"
-                  required
-                  value={formData.vin}
-                  onChange={handleInputChange}
+                {/* Year Select with Grid */}
+                <div
+                  className="relative flex w-full max-w-[25rem] min-w-[10rem] flex-col gap-1"
+                  ref={yearDropdownRef}
                 >
-                  VIN
-                </Input>
-                <Input
-                  name="licensePlate"
-                  type="text"
-                  placeholder="License Plate Number"
-                  required
-                  value={formData.licensePlate}
-                  onChange={handleInputChange}
-                >
-                  License Plate
-                </Input>
+                  <label className="text-sm font-semibold text-gray-500">
+                    Year <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <input
+                      ref={yearInputRef}
+                      type="text"
+                      value={yearInput || ""}
+                      placeholder="Select year"
+                      onClick={() => setShowYearDropdown(!showYearDropdown)}
+                      onFocus={() => setShowYearDropdown(true)}
+                      onBlur={() =>
+                        setTimeout(() => setShowYearDropdown(false), 200)
+                      }
+                      readOnly
+                      required
+                      className="w-full cursor-pointer focus:ring-primary focus:text-primary rounded-lg border border-gray-200 px-4 py-1.5 pr-10 text-black placeholder:text-gray-400 focus:bg-[#BAFFAF] focus:ring-1 focus:outline-none transition-all"
+                    />
+                    <svg
+                      className={`absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 transition-transform duration-200 ${showYearDropdown ? "rotate-180" : ""}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </div>
+                  <input type="hidden" name="Year" value={yearInput} />
+                  {showYearDropdown && (
+                    <div className="absolute top-full left-0 z-50 mt-1 w-full max-w-[25rem] rounded-lg border border-gray-200 bg-white shadow-xl max-h-60 overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-200">
+                      <div className="grid grid-cols-4 gap-1 p-2">
+                        {Array.from(
+                          { length: 2026 - 1990 + 1 },
+                          (_, i) => 2026 - i,
+                        ).map((year) => (
+                          <button
+                            key={year}
+                            type="button"
+                            onClick={() => {
+                              setYearInput(year.toString());
+                              setShowYearDropdown(false);
+                              formDataRef.current.set("Year", year.toString());
+                              setTimeout(() => {
+                                const priceInput = document.querySelector(
+                                  'input[name="Price"]',
+                                ) as HTMLInputElement;
+                                if (priceInput) priceInput.focus();
+                              }, 100);
+                            }}
+                            className={`px-2 py-1.5 text-sm rounded-md hover:bg-blue-50 active:scale-95 transition-all ${
+                              yearInput === year.toString()
+                                ? "bg-blue-500 text-white font-semibold shadow-sm"
+                                : "text-gray-700 hover:text-blue-600"
+                            }`}
+                          >
+                            {year}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Price Input with Digit Formatting */}
+                <div className="flex w-full max-w-[25rem] min-w-[10rem] flex-col gap-1">
+                  <label className="text-sm font-semibold text-gray-500 flex items-center gap-1">
+                    Price (฿) <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-medium">
+                      ฿
+                    </span>
+                    <input
+                      name="Price"
+                      type="text"
+                      placeholder="850,000"
+                      value={priceInput}
+                      onChange={handlePriceChange}
+                      required
+                      className="w-full focus:ring-primary focus:text-primary rounded-lg border border-gray-200 pl-8 pr-4 py-1.5 text-black placeholder:text-sm placeholder:text-gray-400 focus:bg-[#BAFFAF] focus:ring-1 focus:outline-none focus:placeholder:text-gray-500 transition-all"
+                    />
+                  </div>
+                  <input
+                    ref={priceInputRef}
+                    type="hidden"
+                    name="PriceValue"
+                    value={priceInput.replace(/,/g, "")}
+                  />
+                  {priceInput && (
+                    <span className="text-xs text-gray-500">
+                      ฿ {priceInput}
+                    </span>
+                  )}
+                </div>
+
+                {/* Color */}
+                <div className="flex w-full max-w-[25rem] min-w-[10rem] flex-col gap-1">
+                  <label className="text-sm font-semibold text-gray-500">
+                    Color <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <svg
+                      className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
+                      />
+                    </svg>
+                    <input
+                      ref={colorInputRef}
+                      name="Color"
+                      type="text"
+                      placeholder="e.g., Black, White, Silver"
+                      defaultValue={initialData.color || ""}
+                      onChange={(e) => {
+                        formDataRef.current.set("Color", e.target.value);
+                        if (e.target.value.length >= 3) {
+                          setTimeout(() => {
+                            const mileageInput = document.querySelector(
+                              'input[name="Mileage"]',
+                            ) as HTMLInputElement;
+                            if (mileageInput) mileageInput.focus();
+                          }, 500);
+                        }
+                      }}
+                      required
+                      className="w-full focus:ring-primary focus:text-primary rounded-lg border border-gray-200 pl-9 pr-4 py-1.5 text-black placeholder:text-sm placeholder:text-gray-400 focus:bg-[#BAFFAF] focus:ring-1 focus:outline-none transition-all"
+                    />
+                  </div>
+                </div>
+
+                {/* Mileage Input with Digit Formatting */}
+                <div className="flex w-full max-w-[25rem] min-w-[10rem] flex-col gap-1">
+                  <label className="text-sm font-semibold text-gray-500 flex items-center gap-1">
+                    Mileage (km) <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <svg
+                      className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13 10V3L4 14h7v7l9-11h-7z"
+                      />
+                    </svg>
+                    <input
+                      name="Mileage"
+                      type="text"
+                      placeholder="45,000"
+                      value={mileageInput}
+                      onChange={handleMileageChange}
+                      required
+                      className="w-full focus:ring-primary focus:text-primary rounded-lg border border-gray-200 pl-9 pr-4 py-1.5 text-black placeholder:text-sm placeholder:text-gray-400 focus:bg-[#BAFFAF] focus:ring-1 focus:outline-none focus:placeholder:text-gray-500 transition-all"
+                    />
+                  </div>
+                  <input
+                    ref={mileageInputRef}
+                    type="hidden"
+                    name="MileageValue"
+                    value={mileageInput.replace(/,/g, "")}
+                  />
+                  {mileageInput && (
+                    <span className="text-xs text-gray-500">
+                      {mileageInput} kilometers
+                    </span>
+                  )}
+                </div>
+
+                {/* Engine Capacity */}
+                <div className="flex w-full max-w-[25rem] min-w-[10rem] flex-col gap-1">
+                  <label className="text-sm font-semibold text-gray-500">
+                    Engine Capacity (L) <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <svg
+                      className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"
+                      />
+                    </svg>
+                    <input
+                      ref={engineCapacityInputRef}
+                      name="EngineCapacity"
+                      type="number"
+                      step="0.1"
+                      placeholder="e.g., 2.0"
+                      min={0}
+                      defaultValue={initialData.engineCapacity || ""}
+                      onChange={(e) => {
+                        formDataRef.current.set(
+                          "EngineCapacity",
+                          e.target.value,
+                        );
+                        if (e.target.value.length >= 1) {
+                          setTimeout(() => {
+                            if (vinInputRef.current)
+                              vinInputRef.current.focus();
+                          }, 1000);
+                        }
+                      }}
+                      required
+                      className="w-full focus:ring-primary focus:text-primary rounded-lg border border-gray-200 pl-9 pr-4 py-1.5 text-black placeholder:text-sm placeholder:text-gray-400 focus:bg-[#BAFFAF] focus:ring-1 focus:outline-none transition-all"
+                    />
+                  </div>
+                </div>
+
+                {/* Seating Capacity */}
+                <div className="col-span-2">
+                  <div className="flex flex-col gap-2">
+                    <label className="text-sm font-semibold text-gray-500">
+                      Seating Capacity <span className="text-red-500">*</span>
+                    </label>
+                    <div
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        formDataRef.current.set(
+                          "SeatingCapacity",
+                          e.target.value,
+                        )
+                      }
+                    >
+                      <RadioInputContainer title="">
+                        <RadioInput
+                          name="SeatingCapacity"
+                          value={2}
+                          defaultChecked={initialData.seatingCapacity === 2}
+                        >
+                          2 Seats
+                        </RadioInput>
+                        <RadioInput
+                          name="SeatingCapacity"
+                          value={4}
+                          defaultChecked={initialData.seatingCapacity === 4}
+                        >
+                          4 Seats
+                        </RadioInput>
+                        <RadioInput
+                          name="SeatingCapacity"
+                          value={6}
+                          defaultChecked={initialData.seatingCapacity === 6}
+                        >
+                          6 Seats
+                        </RadioInput>
+                        <RadioInput
+                          name="SeatingCapacity"
+                          value={8}
+                          defaultChecked={initialData.seatingCapacity === 8}
+                        >
+                          8 Seats
+                        </RadioInput>
+                      </RadioInputContainer>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Fuel Type */}
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm font-semibold text-gray-500">
+                    Fuel Type <span className="text-red-500">*</span>
+                  </label>
+                  <div
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      formDataRef.current.set("FuelType", e.target.value)
+                    }
+                  >
+                    <RadioInputContainer title="">
+                      <RadioInput
+                        name="FuelType"
+                        value={"Petrol"}
+                        defaultChecked={initialData.fuelType === "Petrol"}
+                      >
+                        Petrol
+                      </RadioInput>
+                      <RadioInput
+                        name="FuelType"
+                        value={"Diesel"}
+                        defaultChecked={initialData.fuelType === "Diesel"}
+                      >
+                        Diesel
+                      </RadioInput>
+                      <RadioInput
+                        name="FuelType"
+                        value={"Electric"}
+                        defaultChecked={initialData.fuelType === "Electric"}
+                      >
+                        Electric
+                      </RadioInput>
+                      <RadioInput
+                        name="FuelType"
+                        value={"Hybrid"}
+                        defaultChecked={initialData.fuelType === "Hybrid"}
+                      >
+                        Hybrid
+                      </RadioInput>
+                    </RadioInputContainer>
+                  </div>
+                </div>
+
+                {/* Car Condition */}
+                <div className="flex flex-col gap-2">
+                  <label className="text-sm font-semibold text-gray-500">
+                    Condition <span className="text-red-500">*</span>
+                  </label>
+                  <div
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      formDataRef.current.set("CarCondition", e.target.value)
+                    }
+                  >
+                    <RadioInputContainer title="">
+                      <RadioInput
+                        name="CarCondition"
+                        value={"New"}
+                        defaultChecked={initialData.carCondition === "New"}
+                      >
+                        Brand New
+                      </RadioInput>
+                      <RadioInput
+                        name="CarCondition"
+                        value={"Used"}
+                        defaultChecked={initialData.carCondition === "Used"}
+                      >
+                        Pre-Owned
+                      </RadioInput>
+                    </RadioInputContainer>
+                  </div>
+                </div>
+
+                {/* Transmission Type */}
+                <div className="col-span-2">
+                  <div className="flex flex-col gap-2">
+                    <label className="text-sm font-semibold text-gray-500">
+                      Transmission Type <span className="text-red-500">*</span>
+                    </label>
+                    <div
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        formDataRef.current.set(
+                          "TransmissionType",
+                          e.target.value,
+                        )
+                      }
+                    >
+                      <RadioInputContainer title="">
+                        <RadioInput
+                          name="TransmissionType"
+                          value={"Automatic"}
+                          defaultChecked={
+                            initialData.transmissionType === "Automatic"
+                          }
+                        >
+                          Automatic
+                        </RadioInput>
+                        <RadioInput
+                          name="TransmissionType"
+                          value={"Manual"}
+                          defaultChecked={
+                            initialData.transmissionType === "Manual"
+                          }
+                        >
+                          Manual
+                        </RadioInput>
+                        <RadioInput
+                          name="TransmissionType"
+                          value={"SemiAutomatic"}
+                          defaultChecked={
+                            initialData.transmissionType === "SemiAutomatic"
+                          }
+                        >
+                          Semi-Automatic
+                        </RadioInput>
+                      </RadioInputContainer>
+                    </div>
+                  </div>
+                </div>
+              </GroupInputForm>
+
+              {/* Identification */}
+              <GroupInputForm
+                title="Identification"
+                description="Vehicle identification numbers"
+              >
+                <div className="flex w-full max-w-[25rem] min-w-[10rem] flex-col gap-1">
+                  <label className="text-sm font-semibold text-gray-500">
+                    VIN Number <span className="text-red-500">*</span>
+                    <span className="text-xs text-gray-400 font-normal ml-1">
+                      (17 characters)
+                    </span>
+                  </label>
+                  <div className="relative">
+                    <svg
+                      className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                      />
+                    </svg>
+                    <input
+                      ref={vinInputRef}
+                      name="VIN"
+                      type="text"
+                      autoComplete="off"
+                      placeholder="e.g., 1HGBH41JXMN109186"
+                      maxLength={17}
+                      defaultValue={initialData.vin || ""}
+                      onChange={(e) => {
+                        formDataRef.current.set("VIN", e.target.value);
+                        if (e.target.value.length === 17) {
+                          setTimeout(() => {
+                            if (licensePlateInputRef.current)
+                              licensePlateInputRef.current.focus();
+                          }, 100);
+                        }
+                      }}
+                      required
+                      className="w-full focus:ring-primary focus:text-primary rounded-lg border border-gray-200 pl-9 pr-4 py-1.5 text-black placeholder:text-sm placeholder:text-gray-400 focus:bg-[#BAFFAF] focus:ring-1 focus:outline-none transition-all uppercase"
+                    />
+                  </div>
+                </div>
+                <div className="flex w-full max-w-[25rem] min-w-[10rem] flex-col gap-1">
+                  <label className="text-sm font-semibold text-gray-500">
+                    License Plate <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <svg
+                      className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+                      />
+                    </svg>
+                    <input
+                      ref={licensePlateInputRef}
+                      name="LicensePlate"
+                      type="text"
+                      autoComplete="off"
+                      placeholder="e.g., ABC-1234"
+                      defaultValue={initialData.licensePlate || ""}
+                      onChange={(e) =>
+                        formDataRef.current.set("LicensePlate", e.target.value)
+                      }
+                      required
+                      className="w-full focus:ring-primary focus:text-primary rounded-lg border border-gray-200 pl-9 pr-4 py-1.5 text-black placeholder:text-sm placeholder:text-gray-400 focus:bg-[#BAFFAF] focus:ring-1 focus:outline-none transition-all uppercase"
+                    />
+                  </div>
+                </div>
               </GroupInputForm>
 
               {/* Existing Images */}
@@ -565,16 +1081,18 @@ const GroupInputForm = ({
   children,
 }: {
   title: string;
-  description: string;
+  description?: string;
   children: ReactNode;
 }) => {
   return (
-    <div className="space-y-4">
+    <div id="basic-information" className="space-y-4">
       <div className="border-l-4 border-primary-500 pl-4">
         <h2 className="text-xl font-bold text-gray-900">{title}</h2>
-        <p className="text-sm text-gray-600">{description}</p>
+        {description && (
+          <p className="text-sm text-gray-600 mt-1">{description}</p>
+        )}
       </div>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">{children}</div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">{children}</div>
     </div>
   );
 };
