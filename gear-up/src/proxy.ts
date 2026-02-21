@@ -92,19 +92,34 @@ export async function proxy(req: NextRequest) {
     return response;
   }
 
+  const userData = await getDecryptedFullUserData(user_data_cookie);
+
+  // redirect dealer routes - if user is a dealer, redirect to dealer profile page when accessing any protected route except dealer profile page
+  if (
+    userData?.role === "Dealer" &&
+    currentPath !== "/profile/dealer" &&
+    !currentPath.startsWith("/profile/dealer/")
+  ) {
+    return NextResponse.redirect(
+      new URL("/profile/dealer?tab=dashboard", req.url),
+    );
+  }
+
+  // Redirect admin routes - only allow users with Admin role to access /profile/admin routes, else redirect to "Unauthorized" page or home
+  if (
+    userData?.role === "Admin" &&
+    !currentPath.startsWith("/profile/admin") &&
+    currentPath !== "/profile/admin"
+  ) {
+    return NextResponse.redirect(
+      new URL("/profile/admin?tab=dashboard", req.url),
+    );
+  }
+
   // Protect admin routes
   if (currentPath.startsWith("/profile/admin")) {
     if (!user_data_cookie) {
       return NextResponse.redirect(new URL("/", req.url));
-    }
-
-    const userData = await getDecryptedFullUserData(user_data_cookie);
-    console.log("Decrypted user data in proxy:", userData);
-
-    if (userData && userData?.role === "Dealer") {
-      return NextResponse.redirect(
-        new URL("/profile/dealer?tab=dashboard", req.url),
-      );
     }
 
     if (userData && userData?.role === "Admin") {
@@ -131,8 +146,8 @@ export async function proxy(req: NextRequest) {
     return NextResponse.next();
   }
 
+  // If refresh token exists but no access token, attempt to refresh
   if (refresh_token && !access_token) {
-    console.log("Refreshing access token using refresh token in proxy");
     try {
       const res = await fetch(`${API_URL}/api/v1/auth/refresh`, {
         method: "POST",
