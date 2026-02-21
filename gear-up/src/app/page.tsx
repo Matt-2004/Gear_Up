@@ -121,7 +121,7 @@ export default async function HOME() {
               </p>
             </div>
             <Link
-              href="/profile/dealer/cars/add"
+              href="/profile/dealer/register?step=1"
               className="inline-flex items-center justify-center rounded-lg bg-white px-5 py-3 text-sm font-semibold text-primary-700 hover:bg-gray-100 transition-colors"
             >
               <Plus className="mr-1 h-4 w-4" />Add New Car

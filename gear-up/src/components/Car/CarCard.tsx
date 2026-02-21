@@ -2,18 +2,19 @@
 
 import { CarItems } from "@/app/types/car.types";
 import { formatNumber } from "@/lib/numberFormatter";
-import Image from "next/image";
 import Link from "next/link";
+import CarImage from "../Common/Image";
 
 export function CarCard({ carItem, className = "" }: { carItem: CarItems; className?: string }) {
   return (
     <Link href={`/car/${carItem.id}`} className={className}>
       <article className="group flex flex-col overflow-hidden rounded-xl bg-white shadow-sm transition-all duration-300 hover:shadow-sm shadow-white hover:-translate-y-0.5 w-full h-97.5">
         <div className="relative h-44 w-full overflow-hidden shrink-0">
-          <Image
-            src={carItem?.carImages[0]?.url ?? "/carPlaceholderImage.jpg"}
-            fill
+          <CarImage
+            src={carItem?.carImages[0]?.url}
             alt={carItem.title || "Car image"}
+            width={600}
+            height={600}
             className="object-cover transition-transform duration-300 group-hover:scale-110"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />

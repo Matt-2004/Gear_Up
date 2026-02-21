@@ -293,14 +293,16 @@ export function SearchBar() {
   useEffect(() => {
     const loadSuggestions = async () => {
       try {
-        const response = await fetch("/car-suggestions.json");
+        const response = await fetch("/car-suggestions.json", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json"
+          }
+        });
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const contentType = response.headers.get("content-type");
-        if (!contentType || !contentType.includes("application/json")) {
-          throw new Error("Response is not JSON");
-        }
+        console.log("Car suggestions loaded successfully", response);
         const data = await response.json();
         setCarSuggestions(data);
       } catch (error) {

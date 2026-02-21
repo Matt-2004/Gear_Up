@@ -20,9 +20,9 @@ import {
     Settings,
     X,
 } from "lucide-react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
+import CarImage from "../Common/Image";
 
 const CarDetailPage = ({ carData }: { carData: AdminCarData }) => {
     const [text, setText] = useState("");
@@ -102,10 +102,9 @@ const CarInfoComponent = ({ carData, text }: CarInfoComponentProps) => {
                                     key={i}
                                     className="group relative aspect-video overflow-hidden rounded-xl bg-gray-100"
                                 >
-                                    <Image
+                                    <CarImage
                                         className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
                                         src={image.url}
-                                        alt={`Car image ${i + 1}`}
                                         width={400}
                                         height={300}
                                     />

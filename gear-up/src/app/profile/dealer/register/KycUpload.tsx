@@ -1,8 +1,8 @@
 "use client"
 
+import CarImage from "@/components/Common/Image"
 import clsx from "clsx"
 import { ImageUp } from "lucide-react"
-import Image from "next/image"
 import { useState } from "react"
 import { StepNavigation } from "./StepNavigation"
 import { useKycRegisterContext } from "./context/KycRegisterContext"
@@ -112,7 +112,7 @@ const KycUpload = () => {
 						>
 							{item.preview ? (
 								<div className="relative">
-									<Image
+									<CarImage
 										src={item.preview}
 										alt={`${item.label} preview`}
 										className="h-48 w-full rounded-lg object-contain"
