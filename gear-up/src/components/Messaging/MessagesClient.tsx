@@ -18,7 +18,7 @@ interface MessagesClientProps {
 export default function MessagesClient({
   userId,
   messages,
-  access_token
+  access_token,
 }: MessagesClientProps) {
   const [messageList, setMessageList] = useState<IMessageData[]>(
     messages.messages || [],
@@ -34,10 +34,10 @@ export default function MessagesClient({
     () =>
       userId
         ? {
-          id: messages.otherUserId,
-          name: messages.otherUserName || "User",
-          avatarUrl: messages.otherUserAvatarUrl,
-        }
+            id: messages.otherUserId,
+            name: messages.otherUserName || "User",
+            avatarUrl: messages.otherUserAvatarUrl,
+          }
         : null,
     [
       userId,
@@ -81,7 +81,35 @@ export default function MessagesClient({
       .withAutomaticReconnect()
       .configureLogging(signalR.LogLevel.Information)
       .build();
-  })
+
+    conn
+      .start()
+      .catch((err) => console.error("SignalR Connection Error: ", err));
+
+    conn.on("MessageReceived", (message: IMessageData) => {
+      if (message.conversationId === conversationId) {
+        setMessageList((prev) => [...prev, message]);
+      }
+    });
+
+    conn.on("MessageEdited", (message: IMessageData) => {
+      if (message.conversationId === conversationId) {
+        setMessageList((prev) =>
+          prev.map((msg) => (msg.id === message.id ? message : msg)),
+        );
+      }
+    });
+
+    conn.on("MessageDeleted", (messageId: string) => {
+      setMessageList((prev) => prev.filter((msg) => msg.id !== messageId));
+    });
+
+    return () => {
+      conn
+        .stop()
+        .catch((err) => console.error("SignalR Disconnection Error: ", err));
+    };
+  });
 
   useEffect(() => {
     fetchMessages();
