@@ -25,7 +25,14 @@ export async function submit(
 	const password = (formData.get("password") as string) || ""
 	const confirmPassword = (formData.get("confirmPassword") as string) || ""
 
-	if (!firstName || !lastName || !username || !email || !password || !confirmPassword) {
+	if (
+		!firstName ||
+		!lastName ||
+		!username ||
+		!email ||
+		!password ||
+		!confirmPassword
+	) {
 		return {
 			ok: false,
 			toastType: "error",
@@ -62,12 +69,7 @@ export async function submit(
 			}
 		}
 
-		let payload: any = null
-		try {
-			payload = await res.json()
-		} catch {
-			payload = null
-		}
+		let payload: any = res.data
 
 		const ok = res.ok
 		const message =
