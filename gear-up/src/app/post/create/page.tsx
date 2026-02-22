@@ -3,6 +3,8 @@ import { Metadata } from "next"
 import { CreatePostProvider } from "./CreatePostContext"
 import CreatePostForm from "./CreatePostForm"
 
+export const dynamic = "force-dynamic"
+
 export const metadata: Metadata = {
 	title: "Create Post - Gear Up",
 	description:

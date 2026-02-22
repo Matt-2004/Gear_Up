@@ -9,6 +9,8 @@ import { getReviewByDealerIdWithSummary } from "@/utils/API/ReviewAPI"
 import { Metadata } from "next"
 import { cookies } from "next/headers"
 
+export const dynamic = "force-dynamic"
+
 export const metadata: Metadata = {
 	title: "Dealer Dashboard - Gear Up",
 	description:
