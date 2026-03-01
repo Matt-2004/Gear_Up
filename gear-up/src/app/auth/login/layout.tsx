@@ -1,9 +1,10 @@
 import { Metadata } from "next"
+import { ReactNode } from "react"
 
 export default async function LoginLayout({
 	children,
 }: {
-	children: React.ReactNode
+	children: ReactNode
 }) {
 	return <div>{children}</div>
 }

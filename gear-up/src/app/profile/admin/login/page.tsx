@@ -5,7 +5,7 @@ import {
   AuthPageContainer,
   FormContainer,
 } from "@/components/Navbar/common";
-import { authCookieIntegration } from "@/lib/authCookieIntegration";
+import { authCookieIntegration } from "@/utils/Auth/authCookieIntegration";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

@@ -7,9 +7,6 @@ export const metadata: Metadata = {
 }
 
 const Page = () => {
-	// Submit
-	// Toast
-	// Redirect
 
 	return <Login />
 }

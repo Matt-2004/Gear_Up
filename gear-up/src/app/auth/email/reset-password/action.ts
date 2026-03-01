@@ -12,22 +12,12 @@ export type EmailActionState = {
 }
 
 export async function submit(
-	_prevState: EmailActionState,
 	formData: FormData,
-): Promise<EmailActionState> {
-	const email = (formData.get("email") as string) || ""
-
-	if (!email) {
-		return {
-			ok: false,
-			toastType: "error",
-			message: "Email is required",
-			redirectTo: null,
-		}
-	}
+){
+	const email = (formData.get("email") as string) 
 
 	try {
-		const res = await fetch(
+		await fetch(
 			`${API_URL}/api/v1/auth/send-password-reset-token?email=${encodeURIComponent(email)}`,
 			{
 				method: "POST",
@@ -36,35 +26,9 @@ export async function submit(
 				},
 			},
 		)
-
-		let payload: any = null
-		try {
-			payload = await res.json()
-		} catch {
-			payload = null
-		}
-
-		const ok = res.ok
-		const message =
-			(payload && typeof payload === "object" && "message" in payload
-				? String(payload.message)
-				: ok
-					? "Password reset link sent"
-					: "Failed to send reset link")
-
-		return {
-			ok,
-			toastType: ok ? "success" : "error",
-			message,
-			redirectTo: ok ? "/auth/login" : null,
-		}
-	} catch {
-		return {
-			ok: false,
-			toastType: "error",
-			message: "Unexpected error",
-			redirectTo: null,
-		}
+	} catch (error) {
+		console.error("Error during sending password reset email: ");
+		throw new Error("Failed to send password reset email");
 	}
 }
 

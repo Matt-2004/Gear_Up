@@ -1,50 +1,43 @@
 "use client";
 
-import { useToast } from "@/app/hooks/useToast";
 import Button from "@/components/Common/Button";
 import Input from "@/components/Common/Input";
 import {
   AuthPageCaption,
   AuthPageContainer,
   FormContainer,
-} from "@/components/Navbar/common";
+} from "../component";
+import { authCookieIntegration } from "@/utils/Auth/authCookieIntegration";
 import { AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useActionState, useEffect } from "react";
-import { submit, type RegisterActionState } from "./action";
-
-const initialState: RegisterActionState = {
-  ok: false,
-  toastType: "info",
-  message: null,
-  redirectTo: null,
-};
+import { RegisterSchema } from "../typeSchema";
+import { useAuthForm } from "../useAuthForm";
+import { submit } from "./action";
 
 const Register = () => {
-  const router = useRouter();
-  const [state, formAction, pending] = useActionState(submit, initialState);
-  const { ToastComponent, addToastMessage, removeToastMessage } = useToast({
-    toastType: "success",
-    message: null,
-  });
+  
 
-  useEffect(() => {
-    if (!state?.message) return;
-
-    addToastMessage(state.toastType, state.message);
-
-    if (state.ok) {
-      const timeout = setTimeout(() => {
-        removeToastMessage();
-        // Force server components to re-render with new cookies
-        router.refresh();
-        router.push(state.redirectTo || "/");
-      }, 2500);
-      return () => clearTimeout(timeout);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state?.message, state?.toastType, state?.ok, state?.redirectTo]);
+  const {
+    ToastComponent,
+    formData,
+    setFormData,
+    errors,
+    handleSubmit,
+    isButtonActive,
+    isPending,
+  } = useAuthForm(
+    {
+      firstName: "",
+      lastName: "",
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      agreeToTerms: false,
+    },
+    RegisterSchema,
+    submit
+  );
 
   return (
     <AuthPageContainer>
@@ -55,49 +48,139 @@ const Register = () => {
       <FormContainer>
         <AuthPageCaption>Create an account</AuthPageCaption>
         <form
-          action={formAction}
+          action={handleSubmit}
           id="body"
-          className="flex flex-col items-center justify-center gap-4"
+          className="mb-4 flex flex-col items-center justify-center gap-4"
         >
           <div className="flex w-full max-w-100 gap-2">
-            <Input name="firstName" type="text" placeholder="John">
-              First Name
-            </Input>
-            <Input name="lastName" type="text" placeholder="Doe">
-              Last Name
-            </Input>
+            <div className="flex-1">
+              <Input
+                name="firstName"
+                type="text"
+                placeholder="John"
+                value={formData.firstName}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, firstName: e.target.value }))
+                }
+              >
+                First Name
+              </Input>
+              {errors.firstName && (
+                <p className="mt-1 text-sm text-red-600">{errors.firstName}</p>
+              )}
+            </div>
+            <div className="flex-1">
+              <Input
+                name="lastName"
+                type="text"
+                placeholder="Doe"
+                value={formData.lastName}
+                onChange={(e) =>
+                  setFormData((prev) => ({ ...prev, lastName: e.target.value }))
+                }
+              >
+                Last Name
+              </Input>
+              {errors.lastName && (
+                <p className="mt-1 text-sm text-red-600">{errors.lastName}</p>
+              )}
+            </div>
           </div>
-          <Input name="username" type="text" placeholder="John_Doe">
-            Username
-          </Input>
-          <Input name="email" type="email" placeholder="example@gmail.com">
-            Email
-          </Input>
-          <Input
-            name="password"
-            type="password"
-            placeholder="Enter your password"
-          >
-            Password
-          </Input>
-          <Input
-            name="confirmPassword"
-            type="password"
-            placeholder="Re-enter your password"
-          >
-            Confirm Password
-          </Input>
+
+          <div className="w-full max-w-100">
+            <Input
+              name="username"
+              type="text"
+              placeholder="John_Doe"
+              value={formData.username}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, username: e.target.value }))
+              }
+            >
+              Username
+            </Input>
+            {errors.username && (
+              <p className="mt-1 text-sm text-red-600">{errors.username}</p>
+            )}
+          </div>
+
+          <div className="w-full max-w-100">
+            <Input
+              name="email"
+              type="email"
+              autoComplete="email"
+              placeholder="example@gmail.com"
+              value={formData.email}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, email: e.target.value }))
+              }
+            >
+              Email
+            </Input>
+            {errors.email && (
+              <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+            )}
+          </div>
+
+          <div className="w-full max-w-100">
+            <Input
+              name="password"
+              type="password"
+              minLength={8}
+              autoComplete="new-password"
+              placeholder="Enter your password (minimum 8 characters)"
+              value={formData.password}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, password: e.target.value }))
+              }
+            >
+              Password
+            </Input>
+            {errors.password && (
+              <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+            )}
+          </div>
+
+          <div className="w-full max-w-100">
+            <Input
+              name="confirmPassword"
+              type="password"
+              autoComplete="new-password"
+              placeholder="Re-enter your password"
+              value={formData.confirmPassword}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  confirmPassword: e.target.value,
+                }))
+              }
+            >
+              Confirm Password
+            </Input>
+            {errors.confirmPassword && (
+              <p className="mt-1 text-sm text-red-600">
+                {errors.confirmPassword}
+              </p>
+            )}
+          </div>
+
           <div className="flex w-full max-w-100 gap-2">
-            <input id="policy" type="checkbox" className="" />
+            <input required name="agreeToTerms" id="policy" type="checkbox" />
             <label htmlFor="policy" className="text-sm">
               I agree to the Terms of Service and Privacy Policy
             </label>
           </div>
-          <Button provider="manual" loading={pending} disabled={pending}>
+
+          <Button
+            provider="manual"
+            width="full"
+            loading={isPending}
+            disabled={!isButtonActive}
+          >
             Register
           </Button>
           <h1 className="text-sm">
-            Already have account?{" "}
+            Already have an account?{" "}
             <Link
               href={"/auth/login"}
               className="font-medium text-blue-600 hover:underline hover:underline-offset-4"
@@ -106,6 +189,8 @@ const Register = () => {
             </Link>
           </h1>
         </form>
+
+        
       </FormContainer>
     </AuthPageContainer>
   );

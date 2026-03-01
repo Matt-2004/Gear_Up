@@ -8,13 +8,15 @@ import {
   AuthPageContainer,
   AuthPageContent,
   FormContainer,
-} from "@/components/Navbar/common";
+} from "../component";
 import { AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useActionState, useEffect } from "react";
 import { submit as submitReset } from "./reset-password/action";
 import { submit as submitVerification } from "./verification/action";
+import { useAuthForm } from "../useAuthForm";
+import { sendEmailSchema } from "../typeSchema";
 
 type EmailVariant = "verification" | "reset-password";
 
@@ -35,32 +37,9 @@ const initialState: EmailActionState = {
 const EmailSend = ({ variant }: { variant: EmailVariant }) => {
   const router = useRouter();
   const action = variant === "verification" ? submitVerification : submitReset;
-  const [state, formAction, pending] = useActionState(action, initialState);
-  const { ToastComponent, addToastMessage, removeToastMessage } = useToast({
-    toastType: "success",
-    message: null,
-  });
+ 
 
-  useEffect(() => {
-    if (!state?.message) return;
-    addToastMessage(state.toastType, state.message);
-
-    const toastTimer = setTimeout(() => {
-      removeToastMessage();
-    }, 2500);
-
-    let redirectTimer: ReturnType<typeof setTimeout> | undefined;
-    if (state.ok && state.redirectTo) {
-      redirectTimer = setTimeout(() => {
-        router.push(state.redirectTo as string);
-      }, 800);
-    }
-
-    return () => {
-      clearTimeout(toastTimer);
-      if (redirectTimer) clearTimeout(redirectTimer);
-    };
-  }, [addToastMessage, removeToastMessage, router, state]);
+  const {ToastComponent, handleSubmit, isButtonActive, isPending} = useAuthForm({email: ""}, sendEmailSchema, action);
 
   return (
     <AuthPageContainer>
@@ -74,7 +53,7 @@ const EmailSend = ({ variant }: { variant: EmailVariant }) => {
           email with instructions to reset password
         </AuthPageContent>
         <form
-          action={formAction}
+          action={handleSubmit}
           className="flex w-full flex-col items-center justify-center gap-4"
         >
           <Input
@@ -84,7 +63,7 @@ const EmailSend = ({ variant }: { variant: EmailVariant }) => {
           >
             Email
           </Input>
-          <Button provider="manual" loading={pending} disabled={pending}>
+          <Button provider="manual" loading={isPending} disabled={!isButtonActive}>
             Send Reset Link
           </Button>
           <h1>

@@ -27,24 +27,15 @@ function Button({
 	width = "full",
 	...props
 }: Partial<ButtonProps>) {
-	function handleProviderLogin() {
-		if (provider === "google") {
-			// Handle Google login
-			return signIn("google", { callbackUrl: "/" })
-		}
-		if (provider === "facebook") {
-			// Handle Facebook login
-			return signIn("facebook", { callbackUrl: "/" })
-		}
-	}
+	
 
 	return (
 		<button
 			// onClick={handleProviderLogin}
 			type="submit"
 			className={clsx(
-				width === "full" ? "max-w-[25rem]" : "max-w-[15rem]",
-				"bg-primary-500 font-semibold active:bg-primary-600 flex w-full min-w-[10rem] items-center justify-center gap-6 rounded-md py-2 text-lg text-white transition-shadow hover:cursor-pointer hover:shadow-sm shadow-primary-200 disabled:bg-gray-400",
+				width === "full" ? "max-w-100" : "max-w-60",
+				"bg-primary-500 font-semibold active:bg-primary-600 flex w-full min-w-40 items-center justify-center gap-6 rounded-md py-2 text-lg text-white transition-shadow hover:cursor-pointer hover:shadow-sm shadow-primary-200 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:shadow-none disabled:hover:shadow-none disabled:hover:bg-gray-400",
 			)}
 			{...props}
 		>

@@ -7,116 +7,44 @@ import {
   AuthPageCaption,
   AuthPageContainer,
   FormContainer,
-} from "@/components/Navbar/common";
-import { useUserData } from "@/Context/UserDataContext";
-import { authCookieIntegration } from "@/lib/authCookieIntegration";
+} from "../component";
+import { authCookieIntegration } from "@/utils/Auth/authCookieIntegration";
 import { AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { z } from "zod";
-
-const loginSchema = z.object({
-  usernameOrEmail: z.email({
-    message: "Invalid email format, end with @gmail.com, @yahoo.com, etc.",
-  }),
-
-  password: z
-    .string()
-    .min(8, "Password must be at least 8 characters")
-    .max(20, "Password is too long")
-    .regex(/[a-z]/, "- Must Contain at least one lowercase letter")
-    .regex(/[0-9]/, "- Must contain at least one number")
-    .regex(/[^A-Za-z0-9]/, "- Must contain at least one symbol"),
-});
+import { LoginSchema } from "../typeSchema";
+import { useAuthForm } from "../useAuthForm";
 
 const Login = () => {
-  const router = useRouter();
-  const { refreshUser } = useUserData();
-
-  const [formData, setFormData] = useState({
-    usernameOrEmail: "",
-    password: "",
-  });
-  const [errors, setErrors] = useState<{
-    usernameOrEmail?: string;
-    password?: string;
-  }>({});
-  const { ToastComponent, addToastMessage, removeToastMessage } = useToast({
-    toastType: "success",
-    message: null,
-  });
-
+  
   async function submit(formData: FormData) {
-
     const usernameOrEmail = formData.get("usernameOrEmail") as string;
     const password = formData.get("password") as string;
 
     // 1. Authenticate and set access_token / refresh_token cookies
-    const res = await authCookieIntegration(`/api/auth/login`, {
-      usernameOrEmail,
-      password,
-    });
-
-    return res;
-  }
-
-  // Validate on input change with useEffect
-  useEffect(() => {
-    const validationResult = loginSchema.safeParse(formData);
-
-    if (!validationResult.success) {
-      const fieldErrors = z.flattenError(validationResult.error).fieldErrors;
-      setErrors({
-        usernameOrEmail: fieldErrors.usernameOrEmail?.[0],
-        password: fieldErrors.password?.[0],
-      });
-    } else {
-      setErrors({});
-    }
-  }, [formData]);
-
-  const handleSubmit = async (formDataObj: FormData) => {
-    const rawData = {
-      usernameOrEmail: formDataObj.get("usernameOrEmail") as string,
-      password: formDataObj.get("password") as string,
-    };
-
-    const validationResult = loginSchema.safeParse(rawData);
-
-    if (!validationResult.success) {
-      return;
-    }
-
     try {
-      const res = await submit(formDataObj);
-
-      if (!res.ok) {
-        addToastMessage("error", res.data?.message || "Login failed. Please check your credentials.");
-        return;
+      await authCookieIntegration(`/api/auth/login`, {
+          usernameOrEmail,
+          password,
+        }
+      )
+      } catch (error) {
+        console.error("fetching authCookieIntegration failed: ", error);
+        throw error;
       }
-      setFormData({ usernameOrEmail: "", password: "" })
-      addToastMessage("success", "Login successful! Redirecting...");
+  }
+  const {ToastComponent, formData, setFormData, errors, handleSubmit, isButtonActive, isPending} = useAuthForm(
+    {
+      usernameOrEmail: "",
+      password: "",
+      rememberMe: false,
+    },
+    LoginSchema,
+    submit
+  );
+  // Validate on input change with useEffect
+  
 
-      // Fetch user data into context
-      const userData = await refreshUser();
 
-      // Wait for the toast to be visible before redirecting
-      setTimeout(() => {
-        removeToastMessage();
-        router.refresh();
-
-        const redirectPath =
-          userData?.role === "Dealer" ? "/profile/dealer?tab=dashboard" : "/";
-        router.push(redirectPath);
-      }, 2500);
-    } catch (error) {
-      addToastMessage(
-        "error",
-        "An unexpected error occurred. Please try again later.",
-      );
-    }
-  };
 
   return (
     <AuthPageContainer>
@@ -174,7 +102,7 @@ const Login = () => {
           </div>
           <div className="mb-4 flex w-full max-w-100 items-center justify-between">
             <div className="flex h-full items-center gap-2">
-              <input required id="rememberMe" type="checkbox" />
+              <input required id="rememberMe" type="checkbox" checked={formData.rememberMe} onChange={(e) => setFormData((prev) => ({ ...prev, rememberMe: e.target.checked }))} />
               <label htmlFor="rememberMe" className="">
                 Remember me
               </label>
@@ -189,6 +117,8 @@ const Login = () => {
           <Button
             provider={"manual"}
             width="full"
+            disabled={!isButtonActive}
+            loading={isPending}
           >
             Login
           </Button>
@@ -202,8 +132,6 @@ const Login = () => {
             </Link>
           </h1>
         </form>
-
-        <Button provider="google">Login with Google</Button>
       </FormContainer>
     </AuthPageContainer>
   );

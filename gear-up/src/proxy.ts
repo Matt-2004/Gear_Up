@@ -32,38 +32,8 @@ function isPublicRoute(pathname: string): boolean {
 }
 
 // Helper function to fetch and cache user data
-async function fetchAndCacheUserData(
-  access_token: string,
-  response: NextResponse,
-): Promise<void> {
-  try {
-    const userRes = await fetch(`${API_URL}/api/v1/users/me`, {
-      headers: {
-        Authorization: `Bearer ${access_token}`,
-      },
-      cache: "no-store",
-    });
 
-    if (userRes.ok) {
-      const userData = (await userRes.json()) as IUser;
-      if (userData?.data) {
-        // Encrypt and store full user data in cookie
-        const encryptedUserData = await encrypt(userData.data);
-        response.cookies.set("user_data", encryptedUserData, {
-          httpOnly: true,
-          secure: true,
-          sameSite: "none",
-          maxAge: 60 * 60 * 24 * 7, // 7 days
-        });
-        console.log("User data cached successfully in proxy");
-      }
-    } else {
-      console.error("Failed to fetch user data in proxy:", userRes.status);
-    }
-  } catch (error) {
-    console.error("Error fetching user data in proxy:", error);
-  }
-}
+  
 
 export async function proxy(req: NextRequest) {
   const access_token = req.cookies.get("access_token")?.value;
@@ -132,16 +102,6 @@ export async function proxy(req: NextRequest) {
     }
   }
 
-  if (access_token) {
-    const response = NextResponse.next();
-
-    // Fetch and cache user data if not already cached
-    if (!user_data_cookie) {
-      await fetchAndCacheUserData(access_token, response);
-    }
-    return response;
-  }
-
   if (!refresh_token) {
     return NextResponse.next();
   }
@@ -189,9 +149,6 @@ export async function proxy(req: NextRequest) {
         sameSite: "none",
         maxAge: 60 * 60 * 24 * 7, // 7 days
       });
-
-      // Fetch and cache user data after token refresh
-      await fetchAndCacheUserData(accessToken, response);
 
       return response;
     } catch (error) {

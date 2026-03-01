@@ -1,5 +1,10 @@
 import { getFetch, postFetch, putFetch } from "./AxiosClient"
 
+export async function getUserProfile() {
+	const res = await getFetch("/api/v1/users/me")
+	return res
+}
+
 export async function updateUserProfile(formdata: FormData) {
 	const res = await putFetch("/api/v1/users/me", formdata)
 	return res
