@@ -6,10 +6,7 @@ export async function GET(req: NextRequest) {
 	const access_token = req.cookies.get("access_token")?.value
 
 	if (!access_token) {
-		return NextResponse.json(
-			{ data: null, message: "Access token not found" },
-			{ status: 401 },
-		)
+		return NextResponse.json({ data: null, message: "Access token not found" })
 	}
 
 	try {

@@ -1,7 +1,7 @@
 import { CarItems } from "@/app/types/car.types";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import CarImage from "../Common/Image";
 
 interface CarImageGalleryProps {
   car: CarItems;
@@ -13,10 +13,6 @@ interface CarImageGalleryProps {
 
 export default function CarImageGallery({
   car,
-  selectedImage,
-  onSelectImage,
-  onNextImage,
-  onPrevImage,
 }: CarImageGalleryProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
@@ -97,7 +93,7 @@ export default function CarImageGallery({
           style={{ scrollbarWidth: "none" }}
         >
           {car.carImages.map((img: { url: string }, idx: number) => (
-            <Image
+            <CarImage
               key={idx}
               src={img.url}
               alt={`${car.make} ${car.model}`}
@@ -146,7 +142,7 @@ export default function CarImageGallery({
             }}
             className={`aspect-video overflow-hidden rounded-lg transition-all  ${currentIndex === idx ? "scale-105" : ""}`}
           >
-            <img src={img.url} alt="" className="h-full w-full object-cover" />
+            <CarImage width={200} height={200} src={img.url} alt="" className="h-full w-full object-cover" />
           </button>
         ))}
       </div>

@@ -57,10 +57,10 @@ const KycRegister = ({ step }: { step: string }) => {
 				{/* Header */}
 				<div className="mb-12 text-center">
 					<div className="mb-4 inline-block rounded-full bg-primary-100 px-4 py-2 border border-primary-200">
-						<span className="text-sm font-semibold text-primary-700">Dealer Verification</span>
+						<span className="text-sm font-semibold text-primary-700">Dealer Registration</span>
 					</div>
 					<h1 className="mb-3 text-3xl font-bold md:text-4xl text-gray-900">
-						KYC Verification
+						Dealership Registration
 					</h1>
 					<p className="text-gray-600 md:text-lg">
 						Complete your identity verification to access all features
