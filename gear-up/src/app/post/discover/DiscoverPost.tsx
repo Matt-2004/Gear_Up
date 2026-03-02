@@ -190,7 +190,7 @@ const PostCard = ({ postItem }: IPostCard) => {
         </div>
         {/* Caption and Content */}
         <div className="flex w-full flex-col gap-3">
-          <h1 className="line-clamp-2 text-2xl font-bold text-gray-900 leading-tight hover:text-primary-600 transition-colors">
+          <h1 className="line-clamp-2 text-xl sm:text-2xl font-bold text-gray-900 leading-tight hover:text-primary-600 transition-colors">
             {postItem.caption}
           </h1>
           <PostContent postContent={postItem.content} />

@@ -30,13 +30,13 @@ export default function AppointmentCarSummary({
             {car.carStatus}
           </span>
         </div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
           {car.year} {car.make} {car.model}
         </h2>
         <p className="text-gray-600 mb-4">{car.title}</p>
         <div className="border-t border-gray-200 pt-4">
           <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-bold text-primary-600">
+            <span className="text-2xl sm:text-3xl font-bold text-primary-600">
               ${formatNumber(car.price)}
             </span>
             <span className="text-gray-500">Baht</span>

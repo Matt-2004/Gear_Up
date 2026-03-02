@@ -199,7 +199,7 @@ export default function MessagesClient({
 	}, [conversationId])
 
 	return (
-		<div className="flex h-screen justify-center bg-gray-50">
+		<div className="flex h-screen w-full flex-col bg-gray-50 sm:flex-row">
 			<ChatWindow
 				messages={messageList}
 				currentUserId={userId ?? ""}

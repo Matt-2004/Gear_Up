@@ -35,7 +35,7 @@ const ChatWindow = memo(function ChatWindow({
 	}
 
 	return (
-		<div className="h-/10 flex w-7/9 flex-col bg-white">
+		<div className="flex h-full w-full flex-col bg-white">
 			{/* Chat Header */}
 			<div className="flex items-center justify-between border-b border-gray-200 bg-white p-4">
 				<div className="flex items-center gap-3">

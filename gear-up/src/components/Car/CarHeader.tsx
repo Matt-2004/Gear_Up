@@ -14,7 +14,7 @@ export default function CarHeader({
   onToggleFavorite,
 }: CarHeaderProps) {
   return (
-    <div className="mb-6 rounded-xl bg-white p-6  border border-gray-100">
+    <div className="mb-6 rounded-xl bg-white p-4 sm:p-6  border border-gray-100">
       <div className="mb-4 flex items-start justify-between">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-3">
@@ -35,10 +35,10 @@ export default function CarHeader({
               {car.carCondition}
             </span>
           </div>
-          <h1 className="mb-2 text-4xl font-bold text-gray-900">
+          <h1 className="mb-2 text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">
             {car.year} {car.make} {car.model}
           </h1>
-          <p className="text-lg text-gray-600 font-medium">{car.title}</p>
+          <p className="text-base sm:text-lg text-gray-600 font-medium">{car.title}</p>
         </div>
         <div className="flex gap-3">
           <button
@@ -56,10 +56,10 @@ export default function CarHeader({
         </div>
       </div>
       <div className="flex items-baseline gap-2">
-        <span className="text-5xl font-bold text-orange-500">
+        <span className="text-3xl sm:text-4xl md:text-5xl font-bold text-orange-500">
           ฿{formatNumber(car.price)}
         </span>
-        <span className="text-gray-500 text-lg">Baht</span>
+        <span className="text-gray-500 text-base sm:text-lg">Baht</span>
       </div>
     </div>
   );

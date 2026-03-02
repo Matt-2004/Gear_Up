@@ -21,7 +21,7 @@ export default function Input({
   ...props
 }: Partial<InputProps>) {
   return (
-    <div className="flex w-full max-w-[25rem] min-w-[10rem] flex-col gap-1">
+    <div className="flex w-full flex-col gap-1">
       <label className="text-sm font-semibold text-gray-500">{children}</label>
       <input
         {...props}

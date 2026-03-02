@@ -8,7 +8,7 @@ import CarImage from "../Common/Image";
 export function CarCard({ carItem, className = "" }: { carItem: CarItems; className?: string }) {
   return (
     <Link href={`/car/${carItem.id}`} className={className}>
-      <article className="group flex flex-col overflow-hidden rounded-xl bg-white shadow-sm transition-all duration-300 hover:shadow-sm shadow-white hover:-translate-y-0.5 w-full h-97.5">
+      <article className="group flex flex-col overflow-hidden rounded-xl bg-white shadow-sm transition-all duration-300 hover:shadow-sm shadow-white hover:-translate-y-0.5 w-full h-auto min-h-[22rem] sm:h-97.5">
         <div className="relative h-44 w-full overflow-hidden shrink-0">
           <CarImage
             src={carItem?.carImages[0]?.url}

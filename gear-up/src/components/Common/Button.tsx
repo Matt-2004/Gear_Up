@@ -34,8 +34,8 @@ function Button({
 			// onClick={handleProviderLogin}
 			type="submit"
 			className={clsx(
-				width === "full" ? "max-w-100" : "max-w-60",
-				"bg-primary-500 font-semibold active:bg-primary-600 flex w-full min-w-40 items-center justify-center gap-6 rounded-md py-2 text-lg text-white transition-shadow hover:cursor-pointer hover:shadow-sm shadow-primary-200 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:shadow-none disabled:hover:shadow-none disabled:hover:bg-gray-400",
+				width === "full" ? "min-w-full" : "min-w-[50%]",
+				"bg-primary-500 font-semibold active:bg-primary-600 flex w-full items-center justify-center gap-2 sm:gap-4 md:gap-6 rounded-md py-1.5 sm:py-2 md:py-2.5 px-3 sm:px-4 md:px-6 text-sm sm:text-base md:text-lg text-white transition-shadow hover:cursor-pointer hover:shadow-sm shadow-primary-200 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:shadow-none disabled:hover:shadow-none disabled:hover:bg-gray-400",
 			)}
 			{...props}
 		>

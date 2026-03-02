@@ -14,7 +14,7 @@ export const AuthPageCaption = ({ children }: { children: ReactNode }) => {
 	return (
 		<div id="header" className="flex items-center justify-center">
 			{/* Logo */}
-			<h1 className="text-primary text-4xl font-bold md:text-5xl">
+			<h1 className="text-primary text-2xl sm:text-3xl md:text-4xl font-bold">
 				{children}
 			</h1>
 		</div>
@@ -23,7 +23,7 @@ export const AuthPageCaption = ({ children }: { children: ReactNode }) => {
 
 export const FormContainer = ({ children }: { children: ReactNode }) => {
 	return (
-		<div className="relative flex w-full flex-col items-center justify-center gap-1 space-y-10 rounded-lg bg-white py-20 sm:w-[80%] md:w-[70%] md:shadow-sm lg:w-[60%]">
+		<div className="relative flex w-full flex-col items-center justify-center gap-1 space-y-6 sm:space-y-10 rounded-lg bg-white py-8 sm:py-14 md:py-20 sm:w-[80%] md:w-[70%] md:shadow-sm lg:w-[60%]">
 			{children}
 		</div>
 	)

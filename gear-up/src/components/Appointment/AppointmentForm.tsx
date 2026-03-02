@@ -26,9 +26,9 @@ export default function AppointmentForm({
   onChange,
 }: AppointmentFormProps) {
   return (
-    <div className="bg-white rounded-xl shadow-lg border border-primary-100 p-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+    <div className="bg-white rounded-xl shadow-lg border border-primary-100 p-4 sm:p-6 md:p-8">
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
           Schedule an Appointment
         </h1>
         <p className="text-gray-600">

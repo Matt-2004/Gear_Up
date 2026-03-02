@@ -10,11 +10,11 @@ export default function CarContactSeller({ car }: CarContactSellerProps) {
   const router = useRouter();
 
   return (
-    <div className="sticky top-8 space-y-2">
+    <div className="sm:sticky sm:top-8 space-y-2">
       {/* Contact Seller Card */}
-      <div className="rounded-xl bg-white p-6 border border-gray-100">
-        <div className="mb-6">
-          <h3 className="text-2xl font-bold text-gray-900 mb-2">
+      <div className="rounded-xl bg-white p-4 sm:p-6 border border-gray-100">
+        <div className="mb-4 sm:mb-6">
+          <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
             Contact Seller
           </h3>
           <p className="text-sm text-gray-600">

@@ -253,8 +253,8 @@ const AppointmentCard = ({
   const notesLabel = mode === "dealer" ? "Customer Notes" : "Notes";
 
   return (
-    <div className="rounded-lg bg-white p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
-      <div className="flex items-start justify-between mb-4">
+    <div className="rounded-lg bg-white p-4 sm:p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+      <div className="flex flex-wrap items-start justify-between gap-2 mb-4">
         <div className="flex items-center gap-3">
           <div className="rounded-full bg-blue-100 p-3">
             <Car className="h-6 w-6 text-blue-600" />

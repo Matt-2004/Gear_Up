@@ -99,7 +99,7 @@ const ProfilePage = () => {
           className="bg-white rounded-2xl shadow-sm overflow-hidden"
         >
           {/* Profile Header Section */}
-          <div className="bg-linear-to-r from-primary-500 to-primary-600 px-8 py-12 relative">
+          <div className="bg-linear-to-r from-primary-500 to-primary-600 px-4 sm:px-8 py-8 sm:py-12 relative">
             <div className="absolute inset-0 bg-black opacity-5"></div>
             <div className="relative flex flex-col items-center gap-4">
               <div className="relative group">
@@ -127,7 +127,7 @@ const ProfilePage = () => {
           </div>
 
           {/* Form Fields Section */}
-          <div className="p-8">
+          <div className="p-4 sm:p-8">
             <div className="mb-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">
                 Personal Information
@@ -177,7 +177,7 @@ const ProfilePage = () => {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex items-center justify-between pt-6 border-t border-gray-200">
+              <div className="flex flex-wrap items-center justify-between gap-3 pt-6 border-t border-gray-200">
               <p className="text-sm text-gray-500">
                 {isDataChange ? (
                   <span className="flex items-center gap-2 text-orange-600">

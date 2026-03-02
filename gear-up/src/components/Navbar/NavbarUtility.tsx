@@ -275,7 +275,7 @@ export const NotificationBell = () => {
 			</button>
 
 			{isOpen && (
-				<div className="absolute right-0 z-50 mt-2 flex max-h-128 w-96 flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xl">
+				<div className="absolute right-0 z-50 mt-2 flex max-h-128 w-[calc(100vw-2rem)] sm:w-96 flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xl">
 					{/* header */}
 					<div className="shrink-0 border-b border-gray-200 bg-linear-to-r from-blue-50 to-purple-50 p-4">
 						<div className="mb-1 flex items-center justify-between">
