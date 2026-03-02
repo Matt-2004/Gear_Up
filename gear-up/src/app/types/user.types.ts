@@ -1,23 +1,10 @@
-export interface loginRes {
-	isSuccess: boolean
-	message: string
-	data: {
-		accessToken: string
-		refreshToken: string
-	}
-	status: number
-}
-
-export interface IUser {
-	isSuccess: boolean
-	message: string
-	data: IUserData
-	status: number
-}
+import { MainResponse } from "./data.types"
 
 type UserRole = "Customer" | "Admin" | "Dealer"
 
-export interface IUserData {
+export interface UserResponse<T> extends MainResponse<T> {}
+
+export interface UserItem {
 	id: string
 	provider: string
 	username: string

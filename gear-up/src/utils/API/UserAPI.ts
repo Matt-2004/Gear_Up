@@ -1,8 +1,9 @@
+import { UserItem, UserResponse } from "@/app/types/user.types"
 import { getFetch, postFetch, putFetch } from "./AxiosClient"
 
 export async function getUserProfile() {
 	const res = await getFetch("/api/v1/users/me")
-	return res
+	return res satisfies UserResponse<UserItem>
 }
 
 export async function updateUserProfile(formdata: FormData) {

@@ -8,7 +8,6 @@ import Spinner from "./Spinner"
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 	children: React.ReactNode
 	loading: boolean
-	provider: "google" | "facebook" | "manual"
 	width: "full" | "half"
 }
 
@@ -23,7 +22,6 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 function Button({
 	children,
 	loading,
-	provider,
 	width = "full",
 	...props
 }: Partial<ButtonProps>) {

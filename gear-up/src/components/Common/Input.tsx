@@ -10,7 +10,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
     | "tel"
     | "number"
     | "file"
-    | "month";
+    | "month" | "Checkbox";
 
   children: ReactNode;
 }

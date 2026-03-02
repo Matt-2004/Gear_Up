@@ -1,19 +1,17 @@
 "use server"
 
-import { authCookieIntegration } from "@/utils/Auth/authCookieIntegration"
+import { authAPI } from "@/utils/Auth/authAPI"
 
-export async function submit(
-	formData: FormData,
-) {
-	const username = (formData.get("username") as string) 
-	const email = (formData.get("email") as string)
-	const firstName = (formData.get("firstName") as string) 
-	const lastName = (formData.get("lastName") as string) 
-	const password = (formData.get("password") as string)
-	const confirmPassword = (formData.get("confirmPassword") as string)
+export async function submit(formData: FormData) {
+	const username = formData.get("username") as string
+	const email = formData.get("email") as string
+	const firstName = formData.get("firstName") as string
+	const lastName = formData.get("lastName") as string
+	const password = formData.get("password") as string
+	const confirmPassword = formData.get("confirmPassword") as string
 
 	try {
-		await authCookieIntegration(`/api/auth/register`, {
+		await authAPI(`/api/auth/register`, {
 			username,
 			email,
 			firstName,
@@ -21,10 +19,9 @@ export async function submit(
 			password,
 			confirmPassword,
 		})
-		
 	} catch (error) {
-		console.error("fetching authCookieIntegration failed: ", error);
-		throw error;
+		console.error("fetching authCookieIntegration failed: ", error)
+		throw error
 	}
 }
 

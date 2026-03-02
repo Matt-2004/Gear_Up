@@ -1,4 +1,6 @@
-export interface IRegister {
+import { MainResponse } from "./data.types"
+
+export interface RegisterDTO {
 	username: string
 	firstName: string
 	lastName: string
@@ -7,21 +9,21 @@ export interface IRegister {
 	confirmPassword: string
 }
 
-export interface ILogin {
+export interface LoginDTO {
 	usernameOrEmail: string
 	password: string
 }
 
-export interface IForgotPassword {
+export interface ForgetPasswordDTO {
 	email: string
 }
 
-export interface INewPassword {
+export interface NewPasswordDTO {
 	newPassword: string
 	confirmedPassword: string
 }
 
-export interface IProfileFormData {
+export interface ProfileDTO {
 	NewEmail: string
 	Name: string
 	AvatarImage: string
@@ -31,3 +33,10 @@ export interface IProfileFormData {
 	NewPassword: string
 	ConfirmedNewPassword: string
 }
+
+export interface AuthItem {
+	accessToken: string
+	refreshToken: string
+}
+
+export interface AuthResponse<T> extends MainResponse<T> {}
