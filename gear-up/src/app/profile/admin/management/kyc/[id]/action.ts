@@ -1,6 +1,6 @@
 "use server"
 
-import { IAdminUpdateStatus } from "@/app/types/kyc.types"
+import { IAdminUpdateStatus } from "@/types/kyc.types"
 import { updateKycByAdmin } from "@/utils/API/AdminAPI"
 import { revalidatePath } from "next/cache"
 

@@ -1,6 +1,6 @@
 "use client"
 
-import { DocId } from "@/app/types/kycRegister.types"
+import { DocId } from "@/types/kycRegister.types"
 import clsx from "clsx"
 import Image from "next/image"
 import { FormEvent, useState } from "react"
@@ -49,9 +49,7 @@ const DOCUMENT_TYPES: IDocType[] = [
 
 const DocumentType = () => {
 	const { kycData, updateKycData } = useKycRegisterContext()
-	const [selected, setSelected] = useState<DocId>(
-		kycData.DocumentType ?? null,
-	)
+	const [selected, setSelected] = useState<DocId>(kycData.DocumentType ?? null)
 
 	const handleSelect = (docId: DocId) => {
 		setSelected(docId)
@@ -66,7 +64,7 @@ const DocumentType = () => {
 	return (
 		<form
 			onSubmit={onSubmit}
-			className="w-full max-w-2xl rounded-2xl bg-white p-8 shadow-lg border-2 border-gray-200"
+			className="w-full max-w-2xl rounded-2xl border-2 border-gray-200 bg-white p-8 shadow-lg"
 		>
 			<h3 className="mb-3 text-2xl font-bold text-gray-900">
 				Select Document Type
@@ -82,8 +80,8 @@ const DocumentType = () => {
 						className={clsx(
 							"block cursor-pointer rounded-xl border-2 p-6 transition-all duration-200 hover:shadow-md",
 							selected === doc.id
-								? "border-primary-500 bg-primary-50 shadow-md ring-2 ring-primary-200"
-								: "bg-gray-50 border-gray-200 hover:border-primary-300 hover:bg-primary-50/30",
+								? "border-primary-500 bg-primary-50 ring-primary-200 shadow-md ring-2"
+								: "hover:border-primary-300 hover:bg-primary-50/30 border-gray-200 bg-gray-50",
 						)}
 					>
 						<input
@@ -93,7 +91,8 @@ const DocumentType = () => {
 							checked={selected === doc.id}
 							onChange={() => handleSelect(doc.id)}
 							className="hidden"
-						/>						<div className="flex items-start gap-4">
+						/>{" "}
+						<div className="flex items-start gap-4">
 							<Image
 								alt={doc.id as string}
 								src={doc.pathIcon}

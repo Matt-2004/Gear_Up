@@ -1,6 +1,6 @@
 "use client"
 
-import { UserItem } from "@/app/types/user.types"
+import { UserItem } from "@/types/user.types"
 import {
 	createContext,
 	ReactNode,

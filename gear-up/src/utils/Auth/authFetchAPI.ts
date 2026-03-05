@@ -3,10 +3,10 @@ import {
 	AuthResponse,
 	LoginDTO,
 	RegisterDTO,
-} from "@/app/types/auth.types"
+} from "@/types/auth.types"
 import { DEFAULT_API_URL } from "@/lib/config"
 import { ResponseError } from "./ResponseError"
-import { IAdminLogin } from "@/app/types/admin.types"
+import { IAdminLogin } from "@/types/admin.types"
 
 export async function authFetchAPI(
 	url: string,

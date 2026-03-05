@@ -1,5 +1,5 @@
-import { AuthResponse } from "@/app/types/auth.types"
-import { MainResponse } from "@/app/types/data.types"
+import { AuthResponse } from "@/types/auth.types"
+import { MainResponse } from "@/types/data.types"
 
 export class ResponseError extends Error implements MainResponse<null> {
 	isSuccess: boolean

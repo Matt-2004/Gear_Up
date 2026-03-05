@@ -1,22 +1,22 @@
-"use client";
+"use client"
 
-import { CarImageDTO, CursorBaseDTO, PostItem } from "@/app/types/post.types";
-import { useUserData } from "@/Context/UserDataContext";
-import { DEFAULT_API_URL } from "@/lib/config";
-import { getAllPosts } from "@/utils/API/PostAPI";
-import { timeFormat } from "@/utils/timeFormat";
-import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
-import { useVirtualizer } from "@tanstack/react-virtual";
+import { CarImageDTO, CursorBaseDTO, PostItem } from "@/types/post.types"
+import { useUserData } from "@/Context/UserDataContext"
+import { DEFAULT_API_URL } from "@/lib/config"
+import { getAllPosts } from "@/utils/API/PostAPI"
+import { timeFormat } from "@/utils/timeFormat"
+import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query"
+import { useVirtualizer } from "@tanstack/react-virtual"
 import {
-  ChevronLeft,
-  ChevronRight,
-  MessageCircleMore,
-  Plus
-} from "lucide-react";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
-import { LikeCount } from "./Comment";
+	ChevronLeft,
+	ChevronRight,
+	MessageCircleMore,
+	Plus,
+} from "lucide-react"
+import Image from "next/image"
+import { useRouter } from "next/navigation"
+import { useEffect, useRef, useState } from "react"
+import { LikeCount } from "./Comment"
 
 /* Discover post -> feeds & create post btn
 	
@@ -34,318 +34,323 @@ import { LikeCount } from "./Comment";
       only FEEDS
 */
 
-const DiscoverPost = ({ post }: { post: CursorBaseDTO; }) => {
+const DiscoverPost = ({ post }: { post: CursorBaseDTO }) => {
+	const { user } = useUserData()
 
-  const { user } = useUserData();
+	if (!user) {
+		return <div>User data not exist!</div>
+	}
 
-  if (!user) {
-    return <div>User data not exist!</div>
-  }
+	const { data, fetchNextPage, isFetchingNextPage, hasNextPage, refetch } =
+		useInfiniteQuery<
+			CursorBaseDTO,
+			Error,
+			InfiniteData<CursorBaseDTO, string | undefined>,
+			string[],
+			string | undefined
+		>({
+			queryKey: ["discover-posts"],
+			queryFn: async ({ pageParam }) => {
+				const response = await getAllPosts(pageParam)
+				return response?.data
+			},
+			initialPageParam: undefined,
+			initialData: {
+				pages: [post],
+				pageParams: [undefined],
+			},
+			getNextPageParam: (lastPage) => {
+				return lastPage.hasMore ? lastPage.nextCursor : undefined
+			},
+			staleTime: 0,
+			refetchOnWindowFocus: true,
+			refetchOnMount: true,
+		})
 
-  const { data, fetchNextPage, isFetchingNextPage, hasNextPage, refetch } =
-    useInfiniteQuery<
-      CursorBaseDTO,
-      Error,
-      InfiniteData<CursorBaseDTO, string | undefined>,
-      string[],
-      string | undefined
-    >({
-      queryKey: ["discover-posts"],
-      queryFn: async ({ pageParam }) => {
-        const response = await getAllPosts(pageParam);
-        return response?.data;
-      },
-      initialPageParam: undefined,
-      initialData: {
-        pages: [post],
-        pageParams: [undefined],
-      },
-      getNextPageParam: (lastPage) => {
-        return lastPage.hasMore ? lastPage.nextCursor : undefined;
-      },
-      staleTime: 0,
-      refetchOnWindowFocus: true,
-      refetchOnMount: true,
-    });
+	const posts = data.pages.flatMap((page) => page.items) ?? []
 
-  const posts = data.pages.flatMap((page) => page.items) ?? [];
+	const parentRef = useRef<HTMLDivElement>(null)
 
-  const parentRef = useRef<HTMLDivElement>(null);
+	const rowVirtualizer = useVirtualizer({
+		count: hasNextPage ? posts.length + 1 : posts.length,
+		estimateSize: () => 655,
+		getScrollElement: () => parentRef.current,
+		overscan: 3,
+	})
+	const virtualItems = rowVirtualizer.getVirtualItems()
 
-  const rowVirtualizer = useVirtualizer({
-    count: hasNextPage ? posts.length + 1 : posts.length,
-    estimateSize: () => 655,
-    getScrollElement: () => parentRef.current,
-    overscan: 3,
-  });
-  const virtualItems = rowVirtualizer.getVirtualItems();
+	useEffect(() => {
+		const [lastItem] = [...virtualItems].reverse()
 
-  useEffect(() => {
-    const [lastItem] = [...virtualItems].reverse();
+		if (!lastItem) {
+			return
+		}
 
-    if (!lastItem) {
-      return;
-    }
+		if (!hasNextPage || isFetchingNextPage) return
+		if (lastItem.index >= posts.length - 3) {
+			fetchNextPage()
+		}
+	}, [
+		hasNextPage,
+		fetchNextPage,
+		posts.length,
+		isFetchingNextPage,
+		virtualItems,
+	])
 
-    if (!hasNextPage || isFetchingNextPage) return;
-    if (lastItem.index >= posts.length - 3) {
-      fetchNextPage();
-    }
-  }, [
-    hasNextPage,
-    fetchNextPage,
-    posts.length,
-    isFetchingNextPage,
-    virtualItems,
-  ]);
+	// Refetch posts when component mounts or user navigates back
+	useEffect(() => {
+		refetch()
+	}, [refetch])
 
-  // Refetch posts when component mounts or user navigates back
-  useEffect(() => {
-    refetch();
-  }, [refetch]);
+	return (
+		<div
+			ref={parentRef}
+			className="relative h-screen w-full overflow-y-auto bg-linear-to-br from-gray-50 via-gray-100 to-gray-50"
+			style={{ scrollbarGutter: "stable" }}
+		>
+			<div className="flex h-full w-full justify-center py-8">
+				<div className="sm:w-[80%] md:w-[60%] lg:w-[40%]">
+					<div
+						className="relative min-h-screen w-full"
+						style={{
+							height: `${rowVirtualizer.getTotalSize()}px`,
+							width: "100%",
+							position: "relative",
+						}}
+					>
+						{virtualItems.map(({ index, start, key, size }) => {
+							const postItem = posts[index]
 
-  return (
-    <div
-      ref={parentRef}
-      className="relative h-screen w-full overflow-y-auto bg-linear-to-br from-gray-50 via-gray-100 to-gray-50"
-      style={{ scrollbarGutter: "stable" }}
-    >
-      <div className="h-full w-full flex justify-center py-8">
-        <div className="sm:w-[80%] md:w-[60%] lg:w-[40%]">
-          <div
-            className="relative w-full min-h-screen"
-            style={{
-              height: `${rowVirtualizer.getTotalSize()}px`,
-              width: "100%",
-              position: "relative",
-            }}
-          >
-            {virtualItems.map(({ index, start, key, size }) => {
-              const postItem = posts[index];
-
-              return (
-                <div
-                  className="absolute top-0 left-0 w-full"
-                  style={{
-                    transform: `translateY(${start}px)`,
-                    height: `${size}px`,
-                  }}
-                  key={key}
-                  data-index={index}
-                >
-                  <div className="px-2 pb-4">
-                    <PostCard postItem={postItem} />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-      {user.role === "Dealer" && <CreatePostButton />}
-    </div>
-  );
-};
+							return (
+								<div
+									className="absolute top-0 left-0 w-full"
+									style={{
+										transform: `translateY(${start}px)`,
+										height: `${size}px`,
+									}}
+									key={key}
+									data-index={index}
+								>
+									<div className="px-2 pb-4">
+										<PostCard postItem={postItem} />
+									</div>
+								</div>
+							)
+						})}
+					</div>
+				</div>
+			</div>
+			{user.role === "Dealer" && <CreatePostButton />}
+		</div>
+	)
+}
 
 const CreatePostButton = () => {
-  const router = useRouter();
+	const router = useRouter()
 
-  return (
-    <div className="fixed right-16 bottom-10 z-50">
-      <button
-        onClick={() => router.push("/post/create")}
-        className="flex items-center gap-3 rounded-full bg-linear-to-r from-primary-500 to-primary-600 px-6 py-3 text-white font-semibold shadow-lg hover:shadow-xl hover:from-primary-600 hover:to-primary-700 transition-all duration-200 transform hover:scale-105"
-      >
-        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white">
-          <Plus className="text-primary-600 h-4 w-4" />
-        </div>
-        Create Post
-      </button>
-    </div>
-  );
-};
+	return (
+		<div className="fixed right-16 bottom-10 z-50">
+			<button
+				onClick={() => router.push("/post/create")}
+				className="from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 flex transform items-center gap-3 rounded-full bg-linear-to-r px-6 py-3 font-semibold text-white shadow-lg transition-all duration-200 hover:scale-105 hover:shadow-xl"
+			>
+				<div className="flex h-6 w-6 items-center justify-center rounded-full bg-white">
+					<Plus className="text-primary-600 h-4 w-4" />
+				</div>
+				Create Post
+			</button>
+		</div>
+	)
+}
 
 interface IPostCard {
-  postItem: PostItem;
+	postItem: PostItem
 }
 
 const PostCard = ({ postItem }: IPostCard) => {
-  const router = useRouter();
+	const router = useRouter()
 
-  if (!postItem) return null;
-  return (
-    <section
-      className="min-w-full max-w-full rounded-2xl bg-white shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden border border-gray-200  flex flex-col group relative"
-      style={{ minHeight: "600px", maxHeight: "650px" }}
-    >
+	if (!postItem) return null
+	return (
+		<section
+			className="group relative flex max-w-full min-w-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-md transition-all duration-300 hover:shadow-xl"
+			style={{ minHeight: "600px", maxHeight: "650px" }}
+		>
+			{/* Header Section with Date */}
+			<div className="px-6 pt-5 pb-4">
+				{/* Date and Time */}
+				<div className="mb-4 flex items-center gap-2">
+					<div className="bg-primary-500 h-2 w-2 animate-pulse rounded-full"></div>
+					<h3 className="text-xs font-semibold tracking-wider text-gray-500 uppercase">
+						{timeFormat(postItem.updatedAt, "Date")}
+					</h3>
+				</div>
+				{/* Caption and Content */}
+				<div className="flex w-full flex-col gap-3">
+					<h1 className="hover:text-primary-600 line-clamp-2 text-xl leading-tight font-bold text-gray-900 transition-colors sm:text-2xl">
+						{postItem.caption}
+					</h1>
+					<PostContent postContent={postItem.content} />
+				</div>
+			</div>
 
-      {/* Header Section with Date */}
-      <div className="px-6 pt-5 pb-4">
-        {/* Date and Time */}
-        <div className="flex items-center gap-2 mb-4">
-          <div className="h-2 w-2 rounded-full bg-primary-500 animate-pulse"></div>
-          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-            {timeFormat(postItem.updatedAt, "Date")}
-          </h3>
-        </div>
-        {/* Caption and Content */}
-        <div className="flex w-full flex-col gap-3">
-          <h1 className="line-clamp-2 text-xl sm:text-2xl font-bold text-gray-900 leading-tight hover:text-primary-600 transition-colors">
-            {postItem.caption}
-          </h1>
-          <PostContent postContent={postItem.content} />
-        </div>
-      </div>
+			{/* Image Section */}
+			<div className="flex-1 overflow-hidden">
+				<CarouselImages images={postItem?.carDto?.carImages} />
+			</div>
 
-      {/* Image Section */}
-      <div className="flex-1 overflow-hidden">
-        <CarouselImages images={postItem?.carDto?.carImages} />
-      </div>
+			{/* Actions Section */}
 
-      {/* Actions Section */}
-
-      <div className="flex gap-6">
-        <LikeCount
-          type="post"
-          id={postItem.id}
-          isLikedByCurrentUser={postItem.isLikedByCurrentUser}
-          likeCount={postItem.likeCount}
-        />
-        <CommentCount id={postItem.id} commentCount={postItem.commentCount} />
-      </div>
-
-    </section>
-  );
-};
+			<div className="flex gap-6">
+				<LikeCount
+					type="post"
+					id={postItem.id}
+					isLikedByCurrentUser={postItem.isLikedByCurrentUser}
+					likeCount={postItem.likeCount}
+				/>
+				<CommentCount id={postItem.id} commentCount={postItem.commentCount} />
+			</div>
+		</section>
+	)
+}
 interface IPostContentProps {
-  postContent: string;
+	postContent: string
 }
 
 export const PostContent = ({ postContent }: IPostContentProps) => {
-  const [expanded, setExpanded] = useState(false);
+	const [expanded, setExpanded] = useState(false)
 
-  // This function is used to scroll to the current index
+	// This function is used to scroll to the current index
 
-  const LIMIT = 120;
-  const isLong = postContent.length > LIMIT;
+	const LIMIT = 120
+	const isLong = postContent.length > LIMIT
 
-  const displayText =
-    expanded || !isLong ? postContent : postContent.slice(0, LIMIT);
-  return (
-    <div className="text-base leading-relaxed text-gray-600">
-      <p className={expanded ? "" : "line-clamp-3"}>
-        {displayText}
-        {!expanded && isLong && "..."}
-      </p>
-      {!expanded && isLong && (
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            setExpanded(true);
-          }}
-          className="mt-2 font-semibold text-primary-600 hover:text-primary-700 transition-colors inline-flex items-center gap-1"
-        >
-          Read more
-          <ChevronRight className="h-4 w-4" />
-        </button>
-      )}
-    </div>
-  );
-};
+	const displayText =
+		expanded || !isLong ? postContent : postContent.slice(0, LIMIT)
+	return (
+		<div className="text-base leading-relaxed text-gray-600">
+			<p className={expanded ? "" : "line-clamp-3"}>
+				{displayText}
+				{!expanded && isLong && "..."}
+			</p>
+			{!expanded && isLong && (
+				<button
+					onClick={(e) => {
+						e.stopPropagation()
+						setExpanded(true)
+					}}
+					className="text-primary-600 hover:text-primary-700 mt-2 inline-flex items-center gap-1 font-semibold transition-colors"
+				>
+					Read more
+					<ChevronRight className="h-4 w-4" />
+				</button>
+			)}
+		</div>
+	)
+}
 interface ICarouselPostImageProps {
-  images: CarImageDTO[];
+	images: CarImageDTO[]
 }
 
 export const CarouselImages = ({ images }: ICarouselPostImageProps) => {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const imageRef = useRef<HTMLImageElement>(null);
-  const [currentIndex, setCurrentIndex] = useState<number>(0);
+	const scrollRef = useRef<HTMLDivElement>(null)
+	const imageRef = useRef<HTMLImageElement>(null)
+	const [currentIndex, setCurrentIndex] = useState<number>(0)
 
-  function scrollNext(e: React.MouseEvent<HTMLButtonElement>) {
-    e.preventDefault();
-    if (!scrollRef.current) return;
+	function scrollNext(e: React.MouseEvent<HTMLButtonElement>) {
+		e.preventDefault()
+		if (!scrollRef.current) return
 
-    scrollRef.current.scrollBy({
-      left: scrollRef.current.clientWidth,
-      behavior: "smooth",
-    });
-  }
+		scrollRef.current.scrollBy({
+			left: scrollRef.current.clientWidth,
+			behavior: "smooth",
+		})
+	}
 
-  function scrollPrevious(e: React.MouseEvent<HTMLButtonElement>) {
-    e.preventDefault();
-    if (!scrollRef.current) return;
+	function scrollPrevious(e: React.MouseEvent<HTMLButtonElement>) {
+		e.preventDefault()
+		if (!scrollRef.current) return
 
-    scrollRef.current.scrollBy({
-      left: -scrollRef.current.clientWidth,
-      behavior: "smooth",
-    });
-  }
+		scrollRef.current.scrollBy({
+			left: -scrollRef.current.clientWidth,
+			behavior: "smooth",
+		})
+	}
 
-  useEffect(() => {
-    const container = scrollRef.current;
-    if (!container) return;
+	useEffect(() => {
+		const container = scrollRef.current
+		if (!container) return
 
-    const handleScroll = () => {
-      const index = Math.round(container.scrollLeft / container.clientWidth);
-      setCurrentIndex(index);
-    };
+		const handleScroll = () => {
+			const index = Math.round(container.scrollLeft / container.clientWidth)
+			setCurrentIndex(index)
+		}
 
-    container.addEventListener("scroll", handleScroll);
+		container.addEventListener("scroll", handleScroll)
 
-    return () => container.removeEventListener("scroll", handleScroll);
-  }, []);
-  return (
-    <div className="relative z-10 bg-gray-100">
-      <div
-        ref={scrollRef}
-        className="flex snap-x snap-mandatory items-center overflow-x-scroll scroll-smooth"
-        style={{ scrollbarWidth: "none" }}
-      >
-        {images?.map((image, i) => (
-          <Image
-            key={i}
+		return () => container.removeEventListener("scroll", handleScroll)
+	}, [])
+	return (
+		<div className="relative z-10 bg-gray-100">
+			<div
+				ref={scrollRef}
+				className="flex snap-x snap-mandatory items-center overflow-x-scroll scroll-smooth"
+				style={{ scrollbarWidth: "none" }}
+			>
+				{images?.map((image, i) => (
+					<Image
+						key={i}
+						ref={imageRef}
+						src={image.url}
+						alt={image.carId}
+						width={200}
+						height={200}
+						className="block h-112 min-w-full snap-start object-cover"
+					></Image>
+				))}
+				{currentIndex !== 0 && (
+					<button
+						onClick={(e) => scrollPrevious(e)}
+						className="absolute top-1/2 left-4 z-30 -translate-y-1/2 rounded-full bg-white/90 p-3 shadow-xl backdrop-blur-sm transition-all duration-200 hover:scale-110 hover:bg-white"
+					>
+						<ChevronLeft className="text-primary-600 h-6 w-6" />
+					</button>
+				)}
+				{currentIndex < images?.length - 1 && (
+					<button
+						onClick={(e) => scrollNext(e)}
+						className="absolute top-1/2 right-4 z-30 -translate-y-1/2 rounded-full bg-white/90 p-3 shadow-xl backdrop-blur-sm transition-all duration-200 hover:scale-110 hover:bg-white"
+					>
+						<ChevronRight className="text-primary-600 h-6 w-6" />
+					</button>
+				)}
+			</div>
+		</div>
+	)
+}
 
-            ref={imageRef}
-            src={image.url}
-            alt={image.carId}
-            width={200}
-            height={200}
-            className="block h-112 min-w-full snap-start object-cover"
-          ></Image>
-        ))}
-        {currentIndex !== 0 && (
-          <button
-            onClick={(e) => scrollPrevious(e)}
-            className="absolute top-1/2 left-4 z-30 -translate-y-1/2 rounded-full bg-white/90 p-3 shadow-xl backdrop-blur-sm hover:bg-white transition-all duration-200 hover:scale-110"
-          >
-            <ChevronLeft className="text-primary-600 h-6 w-6" />
-          </button>
-        )}
-        {currentIndex < images?.length - 1 && (
-          <button
-            onClick={(e) => scrollNext(e)}
-            className="absolute top-1/2 right-4 z-30 -translate-y-1/2 rounded-full bg-white/90 p-3 shadow-xl backdrop-blur-sm hover:bg-white transition-all duration-200 hover:scale-110"
-          >
-            <ChevronRight className="text-primary-600 h-6 w-6" />
-          </button>
-        )}
-      </div>
-    </div>
-  );
-};
+const CommentCount = ({
+	commentCount,
+	id,
+}: {
+	commentCount: number
+	id: string
+}) => {
+	const router = useRouter()
+	return (
+		<button
+			onClick={() => {
+				router.push(`${DEFAULT_API_URL}/post/${id}`)
+			}}
+			className="hover:bg-primary-50 hover:text-primary-600 flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-gray-600 transition-all duration-200"
+		>
+			<div className="flex h-4 w-4 items-center justify-center font-light">
+				<MessageCircleMore />
+			</div>
+			<span className="text-sm font-medium">{commentCount}</span>
+		</button>
+	)
+}
 
-const CommentCount = ({ commentCount, id }: { commentCount: number; id: string }) => {
-  const router = useRouter();
-  return (
-    <button onClick={() => {
-      router.push(`${DEFAULT_API_URL}/post/${id}`);
-    }} className="flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-gray-600 transition-all duration-200 hover:bg-primary-50 hover:text-primary-600">
-      <div className="flex items-center justify-center h-4 w-4 font-light">
-        <MessageCircleMore />
-      </div>
-      <span className="text-sm font-medium">{commentCount}</span>
-    </button>
-  );
-};
-
-export default DiscoverPost;
+export default DiscoverPost

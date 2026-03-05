@@ -1,7 +1,7 @@
 // Dealer car inventory page
 
-import { CarItems } from "@/app/types/car.types"
-import { CursorBaseDTO } from "@/app/types/post.types"
+import { CarItems } from "@/types/car.types"
+import { CursorBaseDTO } from "@/types/post.types"
 import { getMyCars } from "@/utils/API/CarAPI"
 import DealerCarDashboard from "./DealerCarDashboard"
 

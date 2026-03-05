@@ -1,5 +1,5 @@
-import { IAppointment } from "@/app/types/appointment.types"
-import { CursorBaseDTO } from "@/app/types/post.types"
+import { IAppointment } from "@/types/appointment.types"
+import { CursorBaseDTO } from "@/types/post.types"
 import { dealerAppointments } from "@/utils/API/AppointmentAPI"
 
 import Appointments from "./Appointments"

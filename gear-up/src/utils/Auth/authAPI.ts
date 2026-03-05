@@ -1,7 +1,7 @@
 "use server"
 
-import { IAdminLogin } from "@/app/types/admin.types"
-import { LoginDTO, RegisterDTO } from "@/app/types/auth.types"
+import { IAdminLogin } from "@/types/admin.types"
+import { LoginDTO, RegisterDTO } from "@/types/auth.types"
 import { encrypt } from "../encryption"
 import { authFetchAPI } from "./authFetchAPI"
 import { token_integration, user_data_integration } from "./CookieIntegration"

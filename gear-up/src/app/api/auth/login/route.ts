@@ -1,4 +1,4 @@
-import { ILogin } from "@/app/types/auth.types"
+import { ILogin } from "@/types/auth.types"
 import { API_URL } from "@/lib/config"
 import { NextRequest, NextResponse } from "next/server"
 

@@ -1,4 +1,4 @@
-import { UserItem, UserResponse } from "@/app/types/user.types"
+import { UserItem, UserResponse } from "@/types/user.types"
 import { getFetch, postFetch, putFetch } from "./AxiosClient"
 
 export async function getUserProfile() {

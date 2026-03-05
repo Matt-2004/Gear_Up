@@ -1,4 +1,4 @@
-import { IAdminUpdateStatus } from "@/app/types/kyc.types"
+import { IAdminUpdateStatus } from "@/types/kyc.types"
 import { getFetch, putFetch } from "./AxiosClient"
 
 export async function getAllKyc(cursor?: string) {

@@ -1,6 +1,6 @@
 "use client"
 
-import { IMessageData, IMessageDetailData } from "@/app/types/message.types"
+import { IMessageData, IMessageDetailData } from "@/types/message.types"
 import {
 	getConversationsByConversationId,
 	readMessagesByConversationId,

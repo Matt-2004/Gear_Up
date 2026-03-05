@@ -1,6 +1,6 @@
 "use client"
 
-import { CarItems } from "@/app/types/car.types"
+import { CarItems } from "@/types/car.types"
 import {
 	createContext,
 	ReactNode,

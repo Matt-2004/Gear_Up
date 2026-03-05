@@ -1,4 +1,4 @@
-import { CreatePostData } from "@/app/types/post.types"
+import { CreatePostData } from "@/types/post.types"
 import { deleteFetch, getFetch, postFetch, putFetch } from "./AxiosClient"
 
 export async function getAllPosts(cursor?: string) {

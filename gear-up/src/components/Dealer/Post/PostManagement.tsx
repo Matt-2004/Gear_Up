@@ -1,8 +1,8 @@
 "use client"
 
 import { useToast } from "@/app/hooks/useToast"
-import { CarItems } from "@/app/types/car.types"
-import { CursorBaseDTO, PostItem } from "@/app/types/post.types"
+import { CarItems } from "@/types/car.types"
+import { CursorBaseDTO, PostItem } from "@/types/post.types"
 import CarImage from "@/components/Common/Image"
 import { formatNumber } from "@/lib/numberFormatter"
 import { getMyCars } from "@/utils/API/CarAPI"

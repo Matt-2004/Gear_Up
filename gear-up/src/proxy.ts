@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { IUser } from "./app/types/user.types"
+import { IUser } from "./types/user.types"
 import { API_URL } from "./lib/config"
 import { getDecryptedFullUserData } from "./utils/cookieHelper"
 import { encrypt } from "./utils/encryption"
@@ -32,8 +32,6 @@ function isPublicRoute(pathname: string): boolean {
 }
 
 // Helper function to fetch and cache user data
-
-  
 
 export async function proxy(req: NextRequest) {
 	const access_token = req.cookies.get("access_token")?.value
@@ -105,9 +103,9 @@ export async function proxy(req: NextRequest) {
 		}
 	}
 
-  if (!refresh_token) {
-    return NextResponse.next();
-  }
+	if (!refresh_token) {
+		return NextResponse.next()
+	}
 
 	// If refresh token exists but no access token, attempt to refresh
 	if (refresh_token && !access_token) {
@@ -153,13 +151,13 @@ export async function proxy(req: NextRequest) {
 				maxAge: 60 * 60 * 24 * 7, // 7 days
 			})
 
-      return response;
-    } catch (error) {
-      console.error(
-        "Error fetching refresh token:",
-        error instanceof Error ? error.message : "Unknown error",
-      );
-    }
+			return response
+		} catch (error) {
+			console.error(
+				"Error fetching refresh token:",
+				error instanceof Error ? error.message : "Unknown error",
+			)
+		}
 
 		if (!access_token && !refresh_token) {
 			const response = NextResponse.next()

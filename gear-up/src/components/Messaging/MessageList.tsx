@@ -1,6 +1,6 @@
 "use client"
 
-import { IMessageData } from "@/app/types/message.types"
+import { IMessageData } from "@/types/message.types"
 import { memo, useEffect, useRef } from "react"
 import MessageBubble from "./MessageBubble"
 

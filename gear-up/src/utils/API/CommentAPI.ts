@@ -1,4 +1,4 @@
-import { AddComment } from "@/app/types/comment.types"
+import { AddComment } from "@/types/comment.types"
 import { deleteFetch, getFetch, postFetch, putFetch } from "./AxiosClient"
 
 export async function getCommentsByPostId(postId: string) {

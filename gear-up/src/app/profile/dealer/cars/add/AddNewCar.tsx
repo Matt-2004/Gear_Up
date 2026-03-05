@@ -4,7 +4,7 @@ import Button from "@/components/Common/Button"
 import { RadioInput, RadioInputContainer } from "@/components/Common/Input"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 
-import { CarItems } from "@/app/types/car.types"
+import { CarItems } from "@/types/car.types"
 import { ImageUp, Plus, Trash2 } from "lucide-react"
 import Image from "next/image"
 import { FormEvent, ReactNode, useEffect, useRef, useState } from "react"

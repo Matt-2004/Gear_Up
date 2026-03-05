@@ -1,4 +1,4 @@
-import { INewPassword } from "@/app/types/auth.types"
+import { INewPassword } from "@/types/auth.types"
 import { getResetToken } from "../getClientCookie"
 import { postFetch } from "./AxiosClient"
 

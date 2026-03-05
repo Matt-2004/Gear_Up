@@ -1,6 +1,6 @@
-import { AuthItem, ProfileDTO } from "@/app/types/auth.types"
-import { profileItem } from "@/app/types/data.types"
-import { UserItem } from "@/app/types/user.types"
+import { AuthItem, ProfileDTO } from "@/types/auth.types"
+import { profileItem } from "@/types/data.types"
+import { UserItem } from "@/types/user.types"
 import { cookies } from "next/headers"
 
 export async function token_integration(data: AuthItem) {

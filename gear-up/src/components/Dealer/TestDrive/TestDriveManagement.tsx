@@ -1,7 +1,7 @@
 "use client"
 
-import { AppointmentStatus, IAppointment } from "@/app/types/appointment.types"
-import { CursorBaseDTO } from "@/app/types/post.types"
+import { AppointmentStatus, IAppointment } from "@/types/appointment.types"
+import { CursorBaseDTO } from "@/types/post.types"
 import SharedAppointmentCard from "@/components/Appointment/AppointmentCard"
 import {
 	acceptAppointmentById,

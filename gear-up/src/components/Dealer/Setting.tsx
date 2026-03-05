@@ -1,7 +1,7 @@
 "use client"
 
 import { useToast } from "@/app/hooks/useToast"
-import { IUserData } from "@/app/types/user.types"
+import { IUserData } from "@/types/user.types"
 import { useUserData } from "@/Context/UserDataContext"
 import { updateUserProfile } from "@/utils/API/UserAPI"
 import { AnimatePresence } from "framer-motion"

@@ -1,8 +1,8 @@
 "use client"
 
 import { useToast } from "@/app/hooks/useToast"
-import { CarItems } from "@/app/types/car.types"
-import { CreatePostData } from "@/app/types/post.types"
+import { CarItems } from "@/types/car.types"
+import { CreatePostData } from "@/types/post.types"
 import { CarCard } from "@/components/Car/CarCard"
 import { createPost } from "@/utils/API/PostAPI"
 import {

@@ -1,7 +1,7 @@
 "use client"
 
-import { CommentData } from "@/app/types/comment.types"
-import { PostItem } from "@/app/types/post.types"
+import { CommentData } from "@/types/comment.types"
+import { PostItem } from "@/types/post.types"
 import {
 	getCommentsByPostId,
 	getNestedCommentsByCommentId,

@@ -1,6 +1,6 @@
 "use client"
 
-import { IMessageData } from "@/app/types/message.types"
+import { IMessageData } from "@/types/message.types"
 import { format, isToday, isYesterday } from "date-fns"
 import { Check, CheckCheck } from "lucide-react"
 import Image from "next/image"

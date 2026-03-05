@@ -1,5 +1,5 @@
-import { MainResponse } from "@/app/types/data.types"
-import { UserItem, UserResponse } from "@/app/types/user.types"
+import { MainResponse } from "@/types/data.types"
+import { UserItem, UserResponse } from "@/types/user.types"
 import { ResponseError } from "../Auth/ResponseError"
 import { getUserProfile } from "../API/UserAPI"
 

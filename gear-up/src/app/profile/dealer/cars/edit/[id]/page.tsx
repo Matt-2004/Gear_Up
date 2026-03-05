@@ -1,4 +1,4 @@
-import { CarItems } from "@/app/types/car.types"
+import { CarItems } from "@/types/car.types"
 import { getCarById } from "@/utils/API/CarAPI"
 import { redirect } from "next/navigation"
 import EditCarForm from "./EditCarForm"

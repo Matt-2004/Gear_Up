@@ -1,4 +1,4 @@
-import { AppointmentStatus } from "@/app/types/appointment.types"
+import { AppointmentStatus } from "@/types/appointment.types"
 
 export const getStatusColor = (status: AppointmentStatus) => {
 	switch (status) {

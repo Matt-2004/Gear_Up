@@ -8,7 +8,7 @@ import {
 	IMessage,
 	IMessageData,
 	IMessageDetailData,
-} from "../types/message.types"
+} from "../../types/message.types"
 
 export const dynamic = "force-dynamic"
 

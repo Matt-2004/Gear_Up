@@ -1,6 +1,6 @@
 "use client"
 
-import { IKycFormData } from "@/app/types/kycRegister.types"
+import { IKycFormData } from "@/types/kycRegister.types"
 import { kycRegister } from "@/utils/API/UserAPI"
 
 import {
@@ -45,32 +45,35 @@ export default function KycRegisterFormProvider({
 	}, [])
 
 	// Validate if current step data is filled
-	const isStepValid = useCallback((step: number): boolean => {
-		switch (step) {
-			case 1: // Document Type
-				return kycData.DocumentType !== null
-			case 2: // KYC Upload
-				return (
-					kycData.Kyc !== null &&
-					kycData.Kyc.length === 2 &&
-					kycData.Kyc[0] !== null &&
-					kycData.Kyc[1] !== null
-				)
-			case 3: // Selfie Upload
-				return kycData.SelfieImage !== null
-			case 4: // Review - all data must be present
-				return (
-					kycData.DocumentType !== null &&
-					kycData.Kyc !== null &&
-					kycData.Kyc.length === 2 &&
-					kycData.Kyc[0] !== null &&
-					kycData.Kyc[1] !== null &&
-					kycData.SelfieImage !== null
-				)
-			default:
-				return false
-		}
-	}, [kycData])
+	const isStepValid = useCallback(
+		(step: number): boolean => {
+			switch (step) {
+				case 1: // Document Type
+					return kycData.DocumentType !== null
+				case 2: // KYC Upload
+					return (
+						kycData.Kyc !== null &&
+						kycData.Kyc.length === 2 &&
+						kycData.Kyc[0] !== null &&
+						kycData.Kyc[1] !== null
+					)
+				case 3: // Selfie Upload
+					return kycData.SelfieImage !== null
+				case 4: // Review - all data must be present
+					return (
+						kycData.DocumentType !== null &&
+						kycData.Kyc !== null &&
+						kycData.Kyc.length === 2 &&
+						kycData.Kyc[0] !== null &&
+						kycData.Kyc[1] !== null &&
+						kycData.SelfieImage !== null
+					)
+				default:
+					return false
+			}
+		},
+		[kycData],
+	)
 
 	// Submit KYC data to backend
 	const submitKycData = useCallback(async (): Promise<boolean> => {
@@ -102,7 +105,10 @@ export default function KycRegisterFormProvider({
 				formData.append("SelfieImage", kycData.SelfieImage)
 			}
 
-			console.log("Submitting KYC data:", Object.fromEntries(formData.entries()))
+			console.log(
+				"Submitting KYC data:",
+				Object.fromEntries(formData.entries()),
+			)
 
 			const response = await kycRegister(formData)
 
@@ -115,9 +121,9 @@ export default function KycRegisterFormProvider({
 
 			localStorage.removeItem("kyc_verficiation")
 			return true
-
 		} catch (error) {
-			const errorMessage = error instanceof Error ? error.message : "Failed to submit KYC data"
+			const errorMessage =
+				error instanceof Error ? error.message : "Failed to submit KYC data"
 			setSubmitError(errorMessage)
 			console.error("KYC submission error:", error)
 			return false

@@ -2,8 +2,8 @@
 
 import { useNotificationContext } from "@/Context/NotificationContext"
 import { useUserData } from "@/Context/UserDataContext"
-import { IMessageData } from "@/app/types/message.types"
-import { INotificationData } from "@/app/types/notification.types"
+import { IMessageData } from "@/types/message.types"
+import { INotificationData } from "@/types/notification.types"
 import { Login, SearchBar, User } from "@/components/Navbar/NavUtils"
 import {
 	deleteAllNotification,
@@ -275,7 +275,7 @@ export const NotificationBell = () => {
 			</button>
 
 			{isOpen && (
-				<div className="absolute right-0 z-50 mt-2 flex max-h-128 w-[calc(100vw-2rem)] sm:w-96 flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xl">
+				<div className="absolute right-0 z-50 mt-2 flex max-h-128 w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xl sm:w-96">
 					{/* header */}
 					<div className="shrink-0 border-b border-gray-200 bg-linear-to-r from-blue-50 to-purple-50 p-4">
 						<div className="mb-1 flex items-center justify-between">

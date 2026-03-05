@@ -1,5 +1,5 @@
-import { CarItems, CarStatus } from "@/app/types/car.types"
-import { CursorBaseDTO } from "@/app/types/post.types"
+import { CarItems, CarStatus } from "@/types/car.types"
+import { CursorBaseDTO } from "@/types/post.types"
 
 export const carFilter = (
 	cars: Omit<CursorBaseDTO, "items"> & { items: CarItems[] },

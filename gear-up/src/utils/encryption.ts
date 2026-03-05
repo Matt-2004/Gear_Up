@@ -1,4 +1,4 @@
-import { UserItem } from "@/app/types/user.types"
+import { UserItem } from "@/types/user.types"
 
 // Use environment variable for encryption key, fallback to a default for development
 const ENCRYPTION_KEY =

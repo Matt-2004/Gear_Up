@@ -1,4 +1,4 @@
-import { IAdminLogin } from "@/app/types/admin.types"
+import { IAdminLogin } from "@/types/admin.types"
 import { API_URL } from "@/lib/config"
 import { NextRequest, NextResponse } from "next/server"
 

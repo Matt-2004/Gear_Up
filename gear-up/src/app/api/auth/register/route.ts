@@ -1,4 +1,4 @@
-import { RegisterDTO } from "@/app/types/auth.types"
+import { RegisterDTO } from "@/types/auth.types"
 import { API_URL } from "@/lib/config"
 import { NextRequest, NextResponse } from "next/server"
 

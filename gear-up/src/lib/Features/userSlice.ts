@@ -1,4 +1,4 @@
-import { IUserData } from "@/app/types/user.types"
+import { IUserData } from "@/types/user.types"
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 
 interface userState {
