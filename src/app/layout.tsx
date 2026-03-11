@@ -16,11 +16,15 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
+  ),
   title: {
     default: "Gear Up - Your Ultimate Car Marketplace",
     template: "%s | Gear Up",
   },
-  description: "Discover, buy, and sell amazing vehicles on Gear Up. Your trusted platform for automotive excellence.",
+  description:
+    "Discover, buy, and sell amazing vehicles on Gear Up. Your trusted platform for automotive excellence.",
   icons: [
     {
       rel: "icon",
@@ -38,7 +42,8 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: "Gear Up - Your Ultimate Car Marketplace",
-    description: "Discover, buy, and sell amazing vehicles on Gear Up. Your trusted platform for automotive excellence.",
+    description:
+      "Discover, buy, and sell amazing vehicles on Gear Up. Your trusted platform for automotive excellence.",
     images: [
       {
         url: "/browser_tab_logo.png",
@@ -52,7 +57,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Gear Up - Your Ultimate Car Marketplace",
-    description: "Discover, buy, and sell amazing vehicles on Gear Up. Your trusted platform for automotive excellence.",
+    description:
+      "Discover, buy, and sell amazing vehicles on Gear Up. Your trusted platform for automotive excellence.",
     images: ["/browser_tab_logo.png"],
   },
 };
@@ -62,9 +68,8 @@ export default async function RootLayout({
 }: Readonly<{
   children: ReactNode;
 }>) {
-
   // check access and refresh token
-  // if exist, fetch user data 
+  // if exist, fetch user data
   // add data in UserDataContext
 
   return (
