@@ -1,5 +1,7 @@
 import { CarItems } from "@/types/car.types";
 import { getCarById } from "@/utils/API/CarAPI";
+
+export const dynamic = "force-dynamic";
 import { notFound } from "next/navigation";
 import AppointmentPage from "./AppointmentPage";
 

@@ -4,6 +4,8 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import HomeCarDetailPage from "./HomeCarDetailPage";
 
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({
   params,
 }: {

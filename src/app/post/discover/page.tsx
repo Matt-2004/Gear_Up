@@ -1,10 +1,12 @@
-import { getAllPosts } from "@/utils/API/PostAPI"
-import DiscoverPost from "./DiscoverPost"
+import { getAllPosts } from "@/utils/API/PostAPI";
+import DiscoverPost from "./DiscoverPost";
+
+export const dynamic = "force-dynamic";
 
 const Page = async () => {
-	const postResponse = await getAllPosts()
+  const postResponse = await getAllPosts();
 
-	return <DiscoverPost post={postResponse?.data} />
-}
+  return <DiscoverPost post={postResponse?.data} />;
+};
 
-export default Page
+export default Page;
