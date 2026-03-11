@@ -1,4 +1,4 @@
-import { DefaultResponse } from "./Default_Response";
+import { DefaultResponse } from "./default-response.types";
 
 export interface IReviewSubmissionDTO {
   dealerId: string;

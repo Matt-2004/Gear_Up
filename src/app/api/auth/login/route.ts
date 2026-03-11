@@ -1,22 +1,21 @@
-import { ILogin } from "@/types/auth.types"
-import { API_URL } from "@/lib/config"
-import { NextRequest, NextResponse } from "next/server"
+import { LoginDTO } from "@/types/auth.types";
+import { API_URL } from "@/lib/config";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
-	// integreat api function
-	const data = (await req.json()) as ILogin
+  const data = (await req.json()) as LoginDTO;
 
-	try {
-		const response = await fetch(`${API_URL}/api/v1/auth/login`, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify(data),
-		})
+  try {
+    const response = await fetch(`${API_URL}/api/v1/auth/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
 
-		return response
-	} catch (error: any) {
-		return NextResponse.json({ error }, { status: error.status })
-	}
+    return response;
+  } catch (error: any) {
+    return NextResponse.json({ error }, { status: error.status });
+  }
 }

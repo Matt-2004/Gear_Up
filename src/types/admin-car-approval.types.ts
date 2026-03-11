@@ -1,5 +1,5 @@
 import { CarItems } from "./car.types";
-import { DefaultResponse } from "./Default_Response";
+import { DefaultResponse } from "./default-response.types";
 import { CursorBaseDTO } from "./post.types";
 
 export interface AdminCarData extends CarItems {

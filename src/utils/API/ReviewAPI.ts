@@ -1,40 +1,33 @@
-import { IReviewSubmissionDTO } from "@/types/review.types"
-import { deleteFetch, getFetch, postFetch, putFetch } from "./AxiosClient"
+import { IReviewSubmissionDTO } from "@/types/review.types";
+import { apiFetch, apiDelete, apiPost, apiPut } from "./AxiosClientBrowser";
 
 export async function submitReview(reviewData: IReviewSubmissionDTO) {
-	const res = await postFetch("/api/v1/reviews", reviewData)
-	return res
+  return apiPost("/api/reviews", reviewData);
 }
 
 export async function editReview(
-	reviewId: string,
-	reviewData: Omit<IReviewSubmissionDTO, "dealerId">,
+  reviewId: string,
+  reviewData: Omit<IReviewSubmissionDTO, "dealerId">,
 ) {
-	const res = await putFetch(`/api/v1/reviews/${reviewId}`, reviewData)
-	return res
+  return apiPut(`/api/reviews/${reviewId}`, reviewData);
 }
 
 export async function deleteReview(reviewId: string) {
-	const res = await deleteFetch(`/api/v1/reviews/${reviewId}`)
-	return res
+  return apiDelete(`/api/reviews/${reviewId}`);
 }
 
 export async function getReviewsByReviewId(reviewId: string) {
-	const res = await getFetch(`/api/v1/reviews/${reviewId}`)
-	return res
+  return apiFetch(`/api/reviews/${reviewId}`);
 }
 
 export async function getReviewsByDealerId(dealerId: string) {
-	const res = await getFetch(`/api/v1/reviews/dealers/${dealerId}`)
-	return res
+  return apiFetch(`/api/reviews/dealers/${dealerId}`);
 }
 
 export async function getReviewByDealerIdWithSummary(dealerId: string) {
-	const res = await getFetch(`/api/v1/reviews/dealers/${dealerId}/summary`)
-	return res
+  return apiFetch(`/api/reviews/dealers/${dealerId}/summary`);
 }
 
 export async function getUserReviews() {
-	const res = await getFetch("/api/v1/reviews/my")
-	return res
+  return apiFetch("/api/reviews/my");
 }

@@ -1,28 +1,31 @@
-import { IAppointment } from "@/types/appointment.types"
-import SharedAppointmentCard from "@/components/Appointment/AppointmentCard"
-import { formatDate, getStatusColor } from "../utils"
+import { IAppointment } from "@/types/appointment.types";
+import SharedAppointmentCard from "@/components/Appointment/AppointmentCard";
+import {
+  formatDate,
+  getStatusColor,
+} from "@/components/Appointment/appointmentUtils";
 
 interface AppointmentCardProps {
-	appointment: IAppointment
-	loading: boolean
-	onCancel: (appointmentId: string) => void
+  appointment: IAppointment;
+  loading: boolean;
+  onCancel: (appointmentId: string) => void;
 }
 
 const AppointmentCard = ({
-	appointment,
-	loading,
-	onCancel,
+  appointment,
+  loading,
+  onCancel,
 }: AppointmentCardProps) => {
-	return (
-		<SharedAppointmentCard
-			appointment={appointment}
-			loading={loading}
-			mode="user"
-			formatDate={formatDate}
-			getStatusColor={getStatusColor}
-			onCancel={onCancel}
-		/>
-	)
-}
+  return (
+    <SharedAppointmentCard
+      appointment={appointment}
+      loading={loading}
+      mode="user"
+      formatDate={formatDate}
+      getStatusColor={getStatusColor}
+      onCancel={onCancel}
+    />
+  );
+};
 
-export default AppointmentCard
+export default AppointmentCard;

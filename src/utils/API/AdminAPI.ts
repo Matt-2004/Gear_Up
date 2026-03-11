@@ -1,73 +1,54 @@
-import { IAdminUpdateStatus } from "@/types/kyc.types"
-import { getFetch, putFetch } from "./AxiosClient"
+import { IAdminUpdateStatus } from "@/types/kyc.types";
+import { apiFetch, apiPut } from "./AxiosClientBrowser";
 
 export async function getAllKyc(cursor?: string) {
-	const url = cursor
-		? `/api/v1/admin/kyc?cursor=${cursor}`
-		: `/api/v1/admin/kyc`
-	const res = await getFetch(url)
-	return res
+  const url = cursor ? `/api/admin/kyc?cursor=${cursor}` : "/api/admin/kyc";
+  return apiFetch(url);
 }
 
 export async function getKycById(id: string) {
-	const res = await getFetch(`/api/v1/admin/kyc/${id}`)
-	return res
+  return apiFetch(`/api/admin/kyc/${id}`);
 }
 
 export async function updateKycByAdmin(data: IAdminUpdateStatus, id: string) {
-	const res = await putFetch(`/api/v1/admin/kyc/${id}`, data)
-	return res
+  return apiPut(`/api/admin/kyc/${id}`, data);
 }
 
 export async function getKycWithStatus(status: string) {
-	const res = await getFetch(`/api/v1/admin/kyc/status/${status}`)
-	return res
+  return apiFetch(`/api/admin/kyc/status/${status}`);
 }
 
 export async function getAllCars(pageNum: number, limit: number) {
-	const res = await getFetch(
-		"/api/v1/admin/cars?pageNum=" + pageNum + "&limit=" + limit,
-	)
-	return res
+  return apiFetch(`/api/admin/cars?pageNum=${pageNum}&limit=${limit}`);
 }
 
 export async function getCarById(carId: string) {
-	const res = await getFetch(`/api/v1/admin/cars/${carId}`)
-	return res
+  return apiFetch(`/api/admin/cars/${carId}`);
 }
 
 export async function updateCarByAdmin(
-	data: IAdminUpdateStatus,
-	carId: string,
+  data: IAdminUpdateStatus,
+  carId: string,
 ) {
-	const res = await putFetch(`/api/v1/admin/cars/${carId}`, data)
-	return res
+  return apiPut(`/api/admin/cars/${carId}`, data);
 }
 
 export async function getDealerCars(
-	dealerId: string,
-	pageNum: number,
-	limit: number,
+  dealerId: string,
+  pageNum: number,
+  limit: number,
 ) {
-	const res = await getFetch(
-		`/api/v1/admin/cars/dealer/${dealerId}?pageNum=` +
-			pageNum +
-			"&limit=" +
-			limit,
-	)
-	return res
+  return apiFetch(
+    `/api/admin/cars/dealer/${dealerId}?pageNum=${pageNum}&limit=${limit}`,
+  );
 }
 
 export async function carStatusData(
-	status: Omit<IAdminUpdateStatus, "rejectionReason">,
-	pageNum: number,
-	limit: number,
+  status: Omit<IAdminUpdateStatus, "rejectionReason">,
+  pageNum: number,
+  limit: number,
 ) {
-	const res = await getFetch(
-		`/api/v1/admin/cars/status/${status}?pageNum=` +
-			pageNum +
-			"&limit=" +
-			limit,
-	)
-	return res
+  return apiFetch(
+    `/api/admin/cars/status/${status}?pageNum=${pageNum}&limit=${limit}`,
+  );
 }

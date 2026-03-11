@@ -9,16 +9,18 @@ export default function CustomerNavbarTabs() {
   const { user } = useUserData();
   const router = useRouter();
   const pathname = usePathname();
-  const [selectedTab, setSelectedTab] = useState("home");
+  const [selectedTab, setSelectedTab] = useState<string | null>(null);
 
   useEffect(() => {
-    // Set active tab based on current path
+    // Set active tab based on current path — runs client-side only to avoid hydration mismatch
     if (pathname === "/" || pathname.includes("/home")) {
       setSelectedTab("home");
     } else if (pathname.includes("/discover") || pathname.includes("/post")) {
       setSelectedTab("discover");
     } else if (pathname.includes("/profile/user/appointments")) {
       setSelectedTab("appointments");
+    } else {
+      setSelectedTab("");
     }
   }, [pathname]);
 
@@ -32,12 +34,12 @@ export default function CustomerNavbarTabs() {
     { id: "discover", label: "Discover", path: "/post/discover" },
     ...(user
       ? [
-        {
-          id: "appointments",
-          label: "Appointments",
-          path: "/profile/user/appointments",
-        },
-      ]
+          {
+            id: "appointments",
+            label: "Appointments",
+            path: "/profile/user/appointments",
+          },
+        ]
       : []),
   ];
 
@@ -56,13 +58,13 @@ export default function CustomerNavbarTabs() {
               className={clsx(
                 "relative flex cursor-pointer items-center justify-center border-b-2 px-5 py-2 text-sm font-medium text-center transition-all duration-200 ease-in-out sm:border-none sm:rounded-lg",
                 " hover:text-primary-600",
-                selectedTab === tab.id
+                selectedTab !== null && selectedTab === tab.id
                   ? "border-primary-600 text-primary-600"
                   : "border-transparent text-gray-600",
               )}
             >
               {tab.label}
-              {selectedTab === tab.id && (
+              {selectedTab !== null && selectedTab === tab.id && (
                 <span className="hidden sm:block absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-0.5 bg-primary-600 rounded-full"></span>
               )}
             </li>

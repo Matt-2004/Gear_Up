@@ -1,32 +1,26 @@
-import { UserItem, UserResponse } from "@/types/user.types"
-import { getFetch, postFetch, putFetch } from "./AxiosClient"
+import { UserItem, UserResponse } from "@/types/user.types";
+import { apiFetch, apiPost, apiPut } from "./AxiosClientBrowser";
 
 export async function getUserProfile() {
-	const res = await getFetch("/api/v1/users/me")
-	return res satisfies UserResponse<UserItem>
+  return (await apiFetch("/api/users/me")) satisfies UserResponse<UserItem>;
 }
 
 export async function updateUserProfile(formdata: FormData) {
-	const res = await putFetch("/api/v1/users/me", formdata)
-	return res
+  return apiPut("/api/users/me", formdata);
 }
 
 export async function getUserByUserId(userId: string) {
-	const res = await getFetch(`/api/v1/users/${userId}`)
-	return res
+  return apiFetch(`/api/users/${userId}`);
 }
 
 export async function getPostByUserId(userId: string, cursor?: string) {
-	const res = await getFetch(`/api/v1/user/${userId}/posts?cursor=${cursor}`)
-	return res
+  return apiFetch(`/api/users/${userId}/posts?cursor=${cursor}`);
 }
 
 export async function getCarByUserId(userId: string, cursor?: string) {
-	const res = await getFetch(`/api/v1/user/${userId}/cars?cursor=${cursor}`)
-	return res
+  return apiFetch(`/api/users/${userId}/cars?cursor=${cursor}`);
 }
 
 export async function kycRegister(data: FormData) {
-	const response = await postFetch("/api/v1/users/kyc", data)
-	return response
+  return apiPost("/api/users/kyc", data);
 }

@@ -1,4 +1,4 @@
-import { getFetch, patchFetch, postFetch } from "./AxiosClient";
+import { apiFetch, apiPatch, apiPost } from "./AxiosClientBrowser";
 
 export async function createAppointment(
   agentId: string,
@@ -7,61 +7,48 @@ export async function createAppointment(
   location: string,
   notes?: string,
 ) {
-  const res = await postFetch(`/api/v1/appointments`, {
+  return apiPost("/api/appointments", {
     agentId,
     carId,
     schedule,
     location,
     notes,
   });
-  return res;
 }
 
 export async function getAppointmentById(appointmentId: string) {
-  const res = await getFetch(`/api/v1/appointments/${appointmentId}`);
-  return res;
+  return apiFetch(`/api/appointments/${appointmentId}`);
 }
 
 export async function dealerAppointments(cursor?: string) {
   const url = cursor
-    ? `/api/v1/appointments/dealer?cursor=${cursor}`
-    : `/api/v1/appointments/dealer`;
-  const res = await getFetch(url);
-  return res;
+    ? `/api/appointments/dealer?cursor=${cursor}`
+    : "/api/appointments/dealer";
+  return apiFetch(url);
 }
 
 export async function myAppointments(cursor?: string) {
   const url = cursor
-    ? `/api/v1/appointments/my?cursor=${cursor}`
-    : `/api/v1/appointments/my`;
-  const res = await getFetch(url);
-  return res;
+    ? `/api/appointments/my?cursor=${cursor}`
+    : "/api/appointments/my";
+  return apiFetch(url);
 }
 
 export async function cancelAppointmentById(appointmentId: string) {
-  const res = await patchFetch(`/api/v1/appointments/${appointmentId}/cancel`);
-  return res;
+  return apiPatch(`/api/appointments/${appointmentId}/cancel`);
 }
 
 export async function completeAppointmentById(appointmentId: string) {
-  const res = await patchFetch(
-    `/api/v1/appointments/${appointmentId}/complete`,
-  );
-  return res;
+  return apiPatch(`/api/appointments/${appointmentId}/complete`);
 }
 
 export async function acceptAppointmentById(appointmentId: string) {
-  const res = await patchFetch(`/api/v1/appointments/${appointmentId}/accept`);
-  return res;
+  return apiPatch(`/api/appointments/${appointmentId}/accept`);
 }
 
 export async function rejectAppointmentById(
   appointmentId: string,
   data: { rejectionReason: string },
 ) {
-  const res = await patchFetch(
-    `/api/v1/appointments/${appointmentId}/reject`,
-    data,
-  );
-  return res;
+  return apiPatch(`/api/appointments/${appointmentId}/reject`, data);
 }
