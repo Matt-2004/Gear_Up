@@ -6,7 +6,7 @@ export const getNotification = async (
 ) => {
   const url =
     "/api/notifications" +
-    (cursor ? `?cursor=${cursor}&limit=${limit}` : `?limit=${limit}`);
+    (cursor ? `?cursor=${cursor}&pageSize=${limit}` : `?pageSize=${limit}`);
   return apiFetch(url);
 };
 

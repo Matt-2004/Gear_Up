@@ -1,22 +1,22 @@
-"use client"
+"use client";
 
-import { useSearchParams } from "next/navigation"
-import { ReactNode } from "react"
+import { useSearchParams } from "next/navigation";
+import { ReactNode } from "react";
 
 interface IPage {
-	name: string
-	page: ReactNode
+  name: string;
+  page: ReactNode;
 }
 
 export const PageSwitcher = ({ pages }: { pages: IPage[] }) => {
-	const searchParams = useSearchParams()
-	const tab = searchParams.get("tab")
+  const searchParams = useSearchParams();
+  const tab = searchParams.get("tab") ?? pages[0]?.name;
 
-	return (
-		<>
-			{pages.map((page) => (
-				<div key={page.name}>{tab === page.name && page.page}</div>
-			))}
-		</>
-	)
-}
+  return (
+    <>
+      {pages.map((page) => (
+        <div key={page.name}>{tab === page.name && page.page}</div>
+      ))}
+    </>
+  );
+};

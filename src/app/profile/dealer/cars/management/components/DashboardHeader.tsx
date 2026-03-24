@@ -1,27 +1,20 @@
-import { Car, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import Link from "next/link";
 
 export default function DashboardHeader() {
   return (
-    <div className="mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-      <div className="space-y-3">
-        <div className="flex items-center gap-3">
-          <div className="h-12 w-12 rounded-xl border border-gray-300  flex items-center justify-center">
-            <Car className="h-6 w-6 text-black" />
-          </div>
-          <div>
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">
-              Vehicle Inventory
-            </h1>
-          </div>
-        </div>
-        <p className="text-base text-gray-600 ml-15">
-          Manage your inventory, sales, and performance all in one place.
+    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between py-2 mb-6">
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-gray-900">
+          Vehicle Inventory
+        </h1>
+        <p className="mt-1 text-sm text-gray-500">
+          Manage your listings, track approval statuses, and review vehicle performance.
         </p>
       </div>
-      <Link href="/profile/dealer/cars/add?step=1" className="shrink-0">
-        <button className="group flex items-center gap-2 rounded-xl bg-primary-600 px-6 py-3.5 font-semibold text-white hover:bg-blue-700 transition-all shadow-sm hover:scale-105 active:scale-95">
-          <Plus className="h-5 w-5 group-hover:rotate-90 transition-transform duration-150" />
+      <Link href="/profile/dealer/cars/add?step=1" className="shrink-0 w-full sm:w-auto">
+        <button className="flex w-full items-center justify-center gap-2  bg-primary-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-primary-700 hover:shadow-sm disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600">
+          <Plus className="-ml-0.5 h-4 w-4" />
           Add Vehicle
         </button>
       </Link>

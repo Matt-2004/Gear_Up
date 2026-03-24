@@ -580,7 +580,7 @@ const PostManagement = () => {
 						}}
 					/>
 				)}
-				<div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 px-4 py-8 sm:px-6 lg:px-8">
+				<div className=" bg-linear-to-br from-gray-50 to-gray-100 px-4 py-8 sm:px-6 lg:px-8">
 					<div className="mx-auto max-w-4xl">
 						{/* header */}
 						<div className="mb-8 flex items-center justify-between">
@@ -682,7 +682,7 @@ const PostManagement = () => {
 	// ── Step 1: select car ──────────────────────────────────────────────────
 	if (step === "select-car") {
 		return (
-			<div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 px-4 py-8 sm:px-6 lg:px-8">
+			<div className=" bg-linear-to-br from-gray-50 to-gray-100 px-4 py-8 sm:px-6 lg:px-8">
 				<div className="mx-auto max-w-4xl">
 					{/* back */}
 					<button
@@ -822,7 +822,7 @@ const PostManagement = () => {
 	return (
 		<>
 			<ToastComponent />
-			<div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 px-4 py-8 sm:px-6 lg:px-8">
+			<div className=" bg-linear-to-br from-gray-50 to-gray-100 px-4 py-8 sm:px-6 lg:px-8">
 				<div className="mx-auto max-w-2xl">
 					{/* back */}
 					<button

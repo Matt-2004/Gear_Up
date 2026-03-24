@@ -1,6 +1,7 @@
 "use client";
 
 import { useUserData } from "@/Context/UserDataContext";
+import { clearSessionAccessToken } from "@/utils/Auth/clientTokenUtils";
 
 import clsx from "clsx";
 import { Cog, Menu, Search, X } from "lucide-react";
@@ -73,6 +74,7 @@ export function MobileMenu({
       await fetch("/api/token/remove", {
         method: "POST",
       }).then(() => {
+        clearSessionAccessToken();
         router.push("/");
       });
     } catch (err) {

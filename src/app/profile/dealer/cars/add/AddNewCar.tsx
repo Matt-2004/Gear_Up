@@ -45,7 +45,7 @@ const AddNewCar = ({ step }: { step: string }) => {
 		<div
 			id={"car-main-container"}
 			className={
-				"min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 px-4 py-8 sm:px-6 lg:px-8"
+				"min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 px-2 py-6 sm:px-6 lg:px-8"
 			}
 		>
 			<div className="mx-auto max-w-5xl">
@@ -271,7 +271,7 @@ const FillDetails = () => {
 					title={"Basic Information"}
 					description="Provide a compelling title and description"
 				>
-					<div className="flex w-full max-w-[25rem] min-w-[10rem] flex-col gap-1">
+					<div className="flex w-full w-full flex-col gap-1">
 						<label className="flex items-center justify-between text-sm font-semibold text-gray-500">
 							<span>
 								Title <span className="text-red-500">*</span>
@@ -304,7 +304,7 @@ const FillDetails = () => {
 							className="focus:ring-primary focus:text-primary rounded-lg border border-gray-200 px-4 py-1.5 text-black transition-all placeholder:text-sm placeholder:text-gray-400 focus:bg-[#BAFFAF] focus:ring-1 focus:outline-none"
 						/>
 					</div>
-					<div className="col-span-2">
+					<div className="md:col-span-2">
 						<label className="mb-1 flex items-center justify-between text-sm font-semibold text-gray-500">
 							<span>
 								Description <span className="text-red-500">*</span>
@@ -343,7 +343,7 @@ const FillDetails = () => {
 					description="Enter detailed vehicle specifications"
 				>
 					{/* Make Input with Suggestions */}
-					<div className="relative flex w-full max-w-[25rem] min-w-[10rem] flex-col gap-1">
+					<div className="relative flex w-full w-full flex-col gap-1">
 						<label className="flex items-center gap-1 text-sm font-semibold text-gray-500">
 							Make <span className="text-red-500">*</span>
 							<span className="text-xs font-normal text-gray-400">
@@ -369,8 +369,8 @@ const FillDetails = () => {
 							className="focus:ring-primary focus:text-primary rounded-lg border border-gray-200 px-4 py-1.5 text-black transition-all placeholder:text-sm placeholder:text-gray-400 focus:bg-[#BAFFAF] focus:ring-1 focus:outline-none focus:placeholder:text-gray-500"
 						/>
 						{showMakeSuggestions && getFilteredMakes().length > 0 && (
-							<div className="animate-in fade-in slide-in-from-top-2 absolute top-full left-0 z-50 mt-1 w-full max-w-[25rem] rounded-lg border border-gray-200 bg-white shadow-xl duration-200">
-								<ul className="max-h-60 overflow-y-auto py-1">
+							<div className="animate-in fade-in slide-in-from-top-2 absolute top-full left-0 z-50 mt-1 w-full rounded-lg border border-gray-200 bg-white shadow-xl duration-200">
+								<ul className="max-h-60 overflow-y-auto max-w-full py-1">
 									{getFilteredMakes().map((make, index) => (
 										<li
 											key={index}
@@ -399,7 +399,7 @@ const FillDetails = () => {
 					</div>
 
 					{/* Model Input with Suggestions */}
-					<div className="relative flex w-full max-w-[25rem] min-w-[10rem] flex-col gap-1">
+					<div className="relative flex w-full w-full flex-col gap-1">
 						<label className="flex items-center gap-1 text-sm font-semibold text-gray-500">
 							Model <span className="text-red-500">*</span>
 							{!makeInput && (
@@ -428,8 +428,8 @@ const FillDetails = () => {
 							className="focus:ring-primary focus:text-primary rounded-lg border border-gray-200 px-4 py-1.5 text-black transition-all placeholder:text-sm placeholder:text-gray-400 focus:bg-[#BAFFAF] focus:ring-1 focus:outline-none focus:placeholder:text-gray-500 disabled:cursor-not-allowed disabled:bg-gray-100 disabled:text-gray-400"
 						/>
 						{showModelSuggestions && getFilteredModels().length > 0 && (
-							<div className="animate-in fade-in slide-in-from-top-2 absolute top-full left-0 z-50 mt-1 w-full max-w-[25rem] rounded-lg border border-gray-200 bg-white shadow-xl duration-200">
-								<ul className="max-h-60 overflow-y-auto py-1">
+							<div className="animate-in fade-in slide-in-from-top-2 absolute top-full left-0 z-50 mt-1 w-full rounded-lg border border-gray-200 bg-white shadow-xl duration-200">
+								<ul className="max-h-60 overflow-y-auto max-w-full py-1">
 									{getFilteredModels().map((model, index) => (
 										<li
 											key={index}
@@ -459,7 +459,7 @@ const FillDetails = () => {
 
 					{/* Year Select with Grid */}
 					<div
-						className="relative flex w-full max-w-[25rem] min-w-[10rem] flex-col gap-1"
+						className="relative flex w-full w-full flex-col gap-1"
 						ref={yearDropdownRef}
 					>
 						<label className="text-sm font-semibold text-gray-500">
@@ -496,8 +496,8 @@ const FillDetails = () => {
 						</div>
 						<input type="hidden" name="Year" value={yearInput} />
 						{showYearDropdown && (
-							<div className="animate-in fade-in slide-in-from-top-2 absolute top-full left-0 z-50 mt-1 max-h-60 w-full max-w-[25rem] overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-xl duration-200">
-								<div className="grid grid-cols-4 gap-1 p-2">
+							<div className="animate-in fade-in slide-in-from-top-2 absolute top-full left-0 z-50 mt-1 max-h-60 w-full overflow-y-auto max-w-full rounded-lg border border-gray-200 bg-white shadow-xl duration-200">
+								<div className="grid grid-cols-3 sm:grid-cols-4 gap-1 p-2">
 									{Array.from(
 										{ length: 2026 - 1990 + 1 },
 										(_, i) => 2026 - i,
@@ -533,7 +533,7 @@ const FillDetails = () => {
 					</div>
 
 					{/* Price Input with Digit Formatting */}
-					<div className="flex w-full max-w-[25rem] min-w-[10rem] flex-col gap-1">
+					<div className="flex w-full w-full flex-col gap-1">
 						<label className="flex items-center gap-1 text-sm font-semibold text-gray-500">
 							Price (฿) <span className="text-red-500">*</span>
 						</label>
@@ -562,7 +562,7 @@ const FillDetails = () => {
 						)}
 					</div>
 
-					<div className="flex w-full max-w-[25rem] min-w-[10rem] flex-col gap-1">
+					<div className="flex w-full w-full flex-col gap-1">
 						<label className="text-sm font-semibold text-gray-500">
 							Color <span className="text-red-500">*</span>
 						</label>
@@ -606,7 +606,7 @@ const FillDetails = () => {
 					</div>
 
 					{/* Mileage Input with Digit Formatting */}
-					<div className="flex w-full max-w-[25rem] min-w-[10rem] flex-col gap-1">
+					<div className="flex w-full w-full flex-col gap-1">
 						<label className="flex items-center gap-1 text-sm font-semibold text-gray-500">
 							Mileage (km) <span className="text-red-500">*</span>
 						</label>
@@ -647,7 +647,7 @@ const FillDetails = () => {
 						)}
 					</div>
 
-					<div className="flex w-full max-w-[25rem] min-w-[10rem] flex-col gap-1">
+					<div className="flex w-full w-full flex-col gap-1">
 						<label className="text-sm font-semibold text-gray-500">
 							Engine Capacity (L) <span className="text-red-500">*</span>
 						</label>
@@ -688,7 +688,7 @@ const FillDetails = () => {
 							/>
 						</div>
 					</div>
-					<div className="col-span-2">
+					<div className="md:col-span-2">
 						<div className="flex flex-col gap-2">
 							<label className="text-sm font-semibold text-gray-500">
 								Seating Capacity <span className="text-red-500">*</span>
@@ -782,7 +782,7 @@ const FillDetails = () => {
 							</RadioInput>
 						</RadioInputContainer>
 					</div>
-					<div className="col-span-2">
+					<div className="md:col-span-2">
 						<div className="flex flex-col gap-2">
 							<label className="text-sm font-semibold text-gray-500">
 								Transmission Type <span className="text-red-500">*</span>
@@ -820,7 +820,7 @@ const FillDetails = () => {
 					title="Identification"
 					description="Vehicle identification numbers"
 				>
-					<div className="flex w-full max-w-[25rem] min-w-[10rem] flex-col gap-1">
+					<div className="flex w-full w-full flex-col gap-1">
 						<label className="text-sm font-semibold text-gray-500">
 							VIN Number <span className="text-red-500">*</span>
 							<span className="ml-1 text-xs font-normal text-gray-400">
@@ -864,7 +864,7 @@ const FillDetails = () => {
 							/>
 						</div>
 					</div>
-					<div className="flex w-full max-w-[25rem] min-w-[10rem] flex-col gap-1">
+					<div className="flex w-full w-full flex-col gap-1">
 						<label className="text-sm font-semibold text-gray-500">
 							License Plate <span className="text-red-500">*</span>
 						</label>
@@ -928,7 +928,7 @@ const StepNavigation = ({
 	}
 
 	return (
-		<div className="flex gap-3">
+		<div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
 			<button
 				type="button"
 				onClick={onBack}
@@ -1118,7 +1118,7 @@ const CarImageUpload = () => {
 									Click image to preview
 								</span>
 							</div>
-							<div className="max-h-96 space-y-3 overflow-y-auto rounded-xl border border-gray-200 bg-gray-50 p-4">
+							<div className="max-h-96 space-y-3 overflow-y-auto max-w-full rounded-xl border border-gray-200 bg-gray-50 p-4">
 								{files.map((file, index) => {
 									const sizeInMb = (file.file.size / (1024 * 1024)).toFixed(2)
 									const preview = URL.createObjectURL(file.file)

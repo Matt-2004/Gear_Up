@@ -1,4 +1,4 @@
-import { TrendingUp } from "lucide-react";
+import { Car, Clock, CheckCircle, XCircle } from "lucide-react";
 
 interface StatsCardProps {
   label: string;
@@ -7,59 +7,41 @@ interface StatsCardProps {
 }
 
 const StatsCard = ({ label, value, variant = "default" }: StatsCardProps) => {
-  const getVariantClasses = () => {
+  const getIcon = () => {
     switch (variant) {
       case "yellow":
-        return "bg-yellow-50 border-yellow-200 text-yellow-800";
+        return <Clock className="h-5 w-5 text-yellow-600" />;
       case "green":
-        return "bg-green-50 border-green-200 text-green-800";
+        return <CheckCircle className="h-5 w-5 text-green-600" />;
       case "red":
-        return "bg-red-50 border-red-200 text-red-800";
+        return <XCircle className="h-5 w-5 text-red-600" />;
       default:
-        return "bg-white border-gray-200 text-gray-600";
+        return <Car className="h-5 w-5 text-primary-600" />;
     }
   };
 
-  const getValueClasses = () => {
+  const getTone = () => {
     switch (variant) {
       case "yellow":
-        return "text-yellow-900";
+        return "bg-yellow-50";
       case "green":
-        return "text-green-900";
+        return "bg-green-50";
       case "red":
-        return "text-red-900";
+        return "bg-red-50";
       default:
-        return "text-gray-900";
-    }
-  };
-
-  const getIconColor = () => {
-    switch (variant) {
-      case "yellow":
-        return "text-yellow-500";
-      case "green":
-        return "text-green-500";
-      case "red":
-        return "text-red-500";
-      default:
-        return "text-blue-500";
+        return "bg-primary-50";
     }
   };
 
   return (
-    <div
-      className={`group relative overflow-hidden rounded-xl p-6 border transition-all duration-150 cursor-pointer ${getVariantClasses()}`}
-    >
-      <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
-        <TrendingUp className={`h-5 w-5 ${getIconColor()}`} />
+    <div className="flex items-center gap-4 bg-white p-5 border border-gray-200  shadow-sm">
+      <div className={`flex h-12 w-12 items-center justify-center  ${getTone()}`}>
+        {getIcon()}
       </div>
-      <p className="text-sm font-medium mb-2">{label}</p>
-      <p
-        className={`text-3xl font-bold transition-all duration-150 ${getValueClasses()}`}
-      >
-        {value}
-      </p>
-      <div className="absolute bottom-0 left-0 h-1 w-0 bg-current opacity-50 group-hover:w-full transition-all duration-150"></div>
+      <div>
+        <p className="text-sm font-medium text-gray-500">{label}</p>
+        <h3 className="text-2xl font-bold tracking-tight text-gray-900">{value}</h3>
+      </div>
     </div>
   );
 };

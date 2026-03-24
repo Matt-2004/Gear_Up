@@ -1,154 +1,162 @@
 "use client"
 
 import {
-	CarList,
-	ConditionalCarFilter,
-	DashboardHeader,
-	FilterDropdown,
-	StatsCard,
+        CarList,
+        ConditionalCarFilter,
+        DashboardHeader,
+        FilterDropdown,
+        StatsCard,
 } from "@/app/profile/dealer/cars/management/components"
 import {
-	useCarActions,
-	useCarData,
-	useCarFilters,
+        useCarActions,
+        useCarData,
+        useCarFilters,
 } from "@/app/profile/dealer/cars/management/hooks"
 import { CarItems } from "@/types/car.types"
 import { getMyCars } from "@/utils/API/CarAPI"
-import { SlidersHorizontal } from "lucide-react"
+import { SlidersHorizontal, Search } from "lucide-react"
 import { useEffect, useState } from "react"
 
 const CarManagement = () => {
-	const [cars, setCars] = useState<CarItems[]>([])
-	const [loading, setLoading] = useState(true)
+        const [cars, setCars] = useState<CarItems[]>([])
+        const [loading, setLoading] = useState(true)
+        const [searchQuery, setSearchQuery] = useState("")
 
-	useEffect(() => {
-		async function fetchCars() {
-			setLoading(true)
-			try {
-				// Fetch all cars for all statuses
-				const [approved, pending, rejected] = await Promise.all([
-					getMyCars("approved", null),
-					getMyCars("pending", null),
-					getMyCars("rejected", null),
-				])
-				const allCars = [
-					...(approved?.items || []),
-					...(pending?.items || []),
-					...(rejected?.items || []),
-				]
-				setCars(allCars)
-			} catch (e) {
-				setCars([])
-			} finally {
-				setLoading(false)
-			}
-		}
-		fetchCars()
-	}, [])
+        useEffect(() => {
+                async function fetchCars() {
+                        setLoading(true)
+                        try {
+                                const [approved, pending, rejected] = await Promise.all([
+                                        getMyCars("approved", null),
+                                        getMyCars("pending", null),
+                                        getMyCars("rejected", null),
+                                ])
+                                const allCars = [
+                                        ...(approved?.items || []),
+                                        ...(pending?.items || []),
+                                        ...(rejected?.items || []),
+                                ]
+                                setCars(allCars)
+                        } catch (e) {
+                                setCars([])
+                        } finally {
+                                setLoading(false)
+                        }
+                }
+                fetchCars()
+        }, [])
 
-	const {
-		isFilterOpen,
-		statusFilter,
-		statusDropdownOpen,
-		toggleFilters,
-		toggleStatusDropdown,
-		setStatusFilter,
-	} = useCarFilters()
+        const {
+                isFilterOpen,
+                statusFilter,
+                statusDropdownOpen,
+                toggleFilters,
+                toggleStatusDropdown,
+                setStatusFilter,
+        } = useCarFilters()
 
-	const { filteredCars, carCounts } = useCarData(cars, statusFilter)
-	const { handleDelete, handleEdit } = useCarActions()
+        const { filteredCars: initialFilteredCars, carCounts } = useCarData(cars, statusFilter)
+        // Add simple search
+        const filteredCars = initialFilteredCars.filter(c => 
+            (c.make + " " + c.model + " " + c.title).toLowerCase().includes(searchQuery.toLowerCase())
+        );
 
-	if (loading) {
-		return (
-			<div className="flex h-96 items-center justify-center">
-				<div className="border-primary-600 h-12 w-12 animate-spin rounded-full border-4 border-t-transparent" />
-			</div>
-		)
-	}
+        const { handleDelete, handleEdit } = useCarActions()
 
-	return (
-		<div
-			id="car-main-container"
-			className="min-h-screen bg-gray-50 px-4 py-8 sm:px-6 lg:px-8"
-		>
-			<div className="mx-auto max-w-7xl">
-				<DashboardHeader />
-				{/* Stats Cards */}
-				<div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-					<StatsCard label="Total Cars" value={carCounts.total} />
-					<StatsCard
-						label="Pending Review"
-						value={carCounts.pending}
-						variant="yellow"
-					/>
-					<StatsCard
-						label="Approved"
-						value={carCounts.approved}
-						variant="green"
-					/>
-					<StatsCard
-						label="Rejected"
-						value={carCounts.rejected}
-						variant="red"
-					/>
-				</div>
-				<div id="car-container" className="flex w-full flex-col gap-6">
-					<div
-						id="left-side-container"
-						className="w-full rounded-2xl border border-gray-200/50 bg-white/80 shadow-sm backdrop-blur-sm"
-					>
-						<div
-							id="header"
-							className="flex flex-col items-start justify-between gap-4 border-b border-gray-200/70 bg-gray-50 p-6 sm:flex-row sm:items-center"
-						>
-							<div>
-								<h2 className="text-2xl font-bold text-gray-900">
-									Available Vehicles
-								</h2>
-								<p className="mt-1 text-sm text-gray-600">
-									Browse and manage your car listings
-								</p>
-							</div>
-							<div className="flex flex-wrap items-center gap-3">
-								<FilterDropdown
-									filter={statusFilter}
-									dropdownOpen={statusDropdownOpen}
-									carCounts={carCounts}
-									onToggleDropdown={toggleStatusDropdown}
-									onFilterChange={setStatusFilter}
-								/>
-								<button
-									onClick={toggleFilters}
-									className="flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-5 py-2.5 font-semibold text-gray-700 transition-all select-none hover:border-blue-400 hover:bg-gray-50 hover:text-blue-600"
-								>
-									<SlidersHorizontal className="h-5 w-5" />
-									<span className="hidden sm:inline">
-										{isFilterOpen ? "Hide Filters" : "Show Filters"}
-									</span>
-									<span className="sm:hidden">Filters</span>
-								</button>
-							</div>
-						</div>
-						{isFilterOpen && (
-							<div
-								id="conditionalFilter"
-								className="animate-in slide-in-from-top w-full border-b border-gray-200/70 bg-blue-50 p-6 duration-150"
-							>
-								<ConditionalCarFilter />
-							</div>
-						)}
-						<div id="cars" className="p-6">
-							<CarList
-								cars={filteredCars}
-								onDelete={handleDelete}
-								onEdit={handleEdit}
-							/>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	)
+        if (loading) {
+                return (
+                        <div className="flex flex-col gap-6 bg-transparent px-2 py-6 sm:px-0">
+                                <div className="h-20 w-1/3 animate-pulse bg-gray-200 " />
+                                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                                        {[...Array(4)].map((_, i) => (
+                                                <div key={i} className="h-24 animate-pulse bg-gray-200 " />
+                                        ))}
+                                </div>
+                                <div className="h-96 w-full animate-pulse bg-gray-200 " />
+                        </div>
+                )
+        }
+
+        return (
+                <div id="car-main-container" className="flex flex-col gap-6 bg-transparent px-2 py-6 sm:px-0 lg:px-4">
+                        <div className="mx-auto w-full max-w-7xl">
+                                <DashboardHeader />
+                                
+                                {/* Stats Cards */}
+                                <div className="mb-8 grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+                                        <StatsCard label="Total Inventory" value={carCounts.total} />
+                                        <StatsCard
+                                                label="Pending Review"
+                                                value={carCounts.pending}
+                                                variant="yellow"
+                                        />
+                                        <StatsCard
+                                                label="Active Listings"
+                                                value={carCounts.approved}
+                                                variant="green"
+                                        />
+                                        <StatsCard
+                                                label="Needs Attention"
+                                                value={carCounts.rejected}
+                                                variant="red"
+                                        />
+                                </div>
+
+                                {/* Main Car List Container */}
+                                <div className="flex w-full flex-col">
+                                        {/* Toolbar */}
+                                        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                                                <div className="relative w-full sm:max-w-md">
+                                                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5">
+                                                                <Search className="h-4 w-4 text-gray-400" />
+                                                        </div>
+                                                        <input
+                                                                type="text"
+                                                                placeholder="Search vehicles..."
+                                                                value={searchQuery}
+                                                                onChange={(e) => setSearchQuery(e.target.value)}
+                                                                className="block w-full  border-gray-300 bg-white py-2.5 pl-10 pr-3 text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-500 focus:border-primary-500 focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 focus:outline-none"
+                                                        />
+                                                </div>
+                                                
+                                                <div className="flex flex-wrap items-center gap-3">
+                                                        <FilterDropdown
+                                                                filter={statusFilter}
+                                                                dropdownOpen={statusDropdownOpen}
+                                                                carCounts={carCounts}
+                                                                onToggleDropdown={toggleStatusDropdown}
+                                                                onFilterChange={setStatusFilter}
+                                                        />
+                                                        <button
+                                                                onClick={toggleFilters}
+                                                                className={`inline-flex items-center gap-2  border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ${isFilterOpen ? "bg-gray-100 border-gray-400" : ""}`}
+                                                        >
+                                                                <SlidersHorizontal className="h-4 w-4 text-gray-500" />
+                                                                <span className="hidden sm:inline">Advanced Filters</span>
+                                                                <span className="sm:hidden">Filters</span>
+                                                        </button>
+                                                </div>
+                                        </div>
+
+                                        {/* Advanced Filters Drawer/Panel */}
+                                        {isFilterOpen && (
+                                                <div className="mb-6 animate-in slide-in-from-top-2 w-full  border border-gray-200 bg-white p-5 shadow-sm duration-150">
+                                                        <ConditionalCarFilter />
+                                                </div>
+                                        )}
+
+                                        {/* List output */}
+                                        <div id="cars" className="bg-transparent">
+                                                <CarList
+                                                        cars={filteredCars}
+                                                        onDelete={handleDelete}
+                                                        onEdit={handleEdit}
+                                                />
+                                        </div>
+                                </div>
+                        </div>
+                </div>
+        )
 }
 
 export default CarManagement

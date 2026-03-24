@@ -1,4 +1,7 @@
-import { InputHTMLAttributes, ReactNode } from "react";
+"use client";
+
+import { InputHTMLAttributes, ReactNode, forwardRef, useState } from "react";
+import { clsx } from "clsx";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   type:
@@ -10,27 +13,66 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
     | "tel"
     | "number"
     | "file"
-    | "month" | "Checkbox";
+    | "month"
+    | "Checkbox";
 
   children: ReactNode;
+  error?: string;
 }
 
-export default function Input({
-  type = "email",
-  children,
-  ...props
-}: Partial<InputProps>) {
-  return (
-    <div className="flex w-full flex-col gap-1">
-      <label className="text-sm font-semibold text-gray-500">{children}</label>
-      <input
-        {...props}
-        type={type}
-        className="focus:ring-primary focus:text-primary rounded-lg border border-gray-200 px-4 py-1.5 text-black placeholder:text-sm placeholder:text-gray-400 focus:bg-[#BAFFAF] focus:ring-1 focus:outline-none focus:placeholder:text-gray-500"
-      />
-    </div>
-  );
-}
+const Input = forwardRef<HTMLInputElement, Partial<InputProps>>(
+  (props, ref) => {
+    const { type = "email", children, error, onFocus, onBlur, ...rest } = props;
+    const [isFocused, setIsFocused] = useState(false);
+
+    // Only show error when input is focused and contains value
+    const hasValue = String(rest.value || "").length > 0;
+    const shouldShowError = error && isFocused && hasValue;
+    const hasErrorProp = "error" in props;
+
+    return (
+      <div className="flex w-full flex-col gap-1">
+        <label
+          className={clsx(
+            "text-sm font-semibold",
+            shouldShowError ? "text-red-500" : "text-gray-500",
+          )}
+        >
+          {children}
+        </label>
+        <input
+          {...rest}
+          ref={ref}
+          type={type}
+          onFocus={(e) => {
+            setIsFocused(true);
+            onFocus?.(e);
+          }}
+          onBlur={(e) => {
+            setIsFocused(false);
+            onBlur?.(e);
+          }}
+          className={clsx(
+            "focus:ring-primary focus:text-primary rounded-lg border px-4 py-2 text-black placeholder:text-sm placeholder:text-gray-400 focus:ring-1 focus:outline-none focus:placeholder:text-gray-500 transition-colors",
+            shouldShowError
+              ? "border-red-500 bg-red-50 focus:bg-red-50"
+              : "border-gray-200 focus:bg-[#BAFFAF]",
+          )}
+        />
+        {hasErrorProp && (
+          <div className="">
+            {shouldShowError && (
+              <p className="text-xs font-medium text-red-500">{error}</p>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  },
+);
+Input.displayName = "Input";
+
+export default Input;
 
 export const RadioInputContainer = ({
   title,
@@ -38,6 +80,7 @@ export const RadioInputContainer = ({
 }: {
   title: string;
   children: ReactNode;
+  error?: string;
 }) => {
   return (
     <section className="flex w-full flex-col items-start justify-center gap-2">
@@ -59,7 +102,7 @@ export const RadioInput = ({
   defaultChecked?: boolean;
 }) => {
   return (
-    <label className="has-[:checked]:border-primary has-[:checked]:text-primary flex w-full max-w-[25rem] flex-1 cursor-pointer items-center justify-center rounded-lg border border-gray-300 px-4 py-1 text-gray-400 has-[:checked]:bg-green-200">
+    <label className="has-checked:border-primary has-checked:text-primary flex w-full max-w-[25rem] flex-1 cursor-pointer items-center text-center justify-center rounded-lg border border-gray-300 px-4 py-1 text-gray-400 has-[:checked]:bg-green-200">
       <input
         name={name}
         value={value}

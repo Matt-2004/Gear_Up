@@ -10,10 +10,9 @@ import {
   FileText,
   LayoutDashboard,
   Settings,
-  UserRoundCheck
+  UserRoundCheck,
 } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 interface ITab {
   name: string;
@@ -34,14 +33,13 @@ const tabIcons: Record<string, React.ReactNode> = {
   "Post Management": <FileText className="h-4 w-4 sm:h-5 sm:w-5" />,
   "Test Drive Management": <CalendarCheck className="h-4 w-4 sm:h-5 sm:w-5" />,
   "Revenue Management": <DollarSign className="h-4 w-4 sm:h-5 sm:w-5" />,
-  "Setting": <Settings className="h-4 w-4 sm:h-5 sm:w-5" />,
+  Setting: <Settings className="h-4 w-4 sm:h-5 sm:w-5" />,
 };
-
 
 export const Tabs = ({ name, tabs }: ITabProps) => {
   const router = useRouter();
   const path = usePathname();
-  const [selectedTab, setSelectedtab] = useState<string>("dashboard");
+  const searchParams = useSearchParams();
 
   const strToUrl = (tabName: string) => {
     return (
@@ -51,24 +49,33 @@ export const Tabs = ({ name, tabs }: ITabProps) => {
     );
   };
 
-  const handleTab = (tabPath: string, tabName: string) => {
-    setSelectedtab(strToUrl(tabName));
+  const defaultTab =
+    tabs[0]?.path.replace("?", "").split("=")[1] ?? "dashboard";
+  const activeTab = searchParams.get("tab") ?? defaultTab;
+
+  const handleTab = (tabPath: string) => {
     router.replace(`${path}${tabPath}`);
   };
 
   return (
-    <div className="h-full bg-white shadow-sm rounded-2xl p-2 sm:p-4">
+    <div className="h-full bg-white p-2 sm:p-4">
       <div className="mb-4 sm:mb-8 p-2 sm:p-4">
-        <h2 className="text-lg sm:text-xl font-bold text-gray-900">{name} Panel</h2>
-        <p className="text-xs sm:text-sm text-gray-600 mt-1">Manage your platform</p>
+        <h2 className="text-lg sm:text-xl font-bold text-gray-900">
+          {name} Panel
+        </h2>
+        <p className="text-xs sm:text-sm text-gray-600 mt-1">
+          Manage your platform
+        </p>
       </div>
       <nav className="space-y-1 sm:space-y-2">
         {tabs.map((tab) => {
-          const isActive = selectedTab === strToUrl(tab.name);
+          const tabKey =
+            tab.path.replace("?", "").split("=")[1] ?? strToUrl(tab.name);
+          const isActive = activeTab === tabKey;
           return (
             <button
               key={tab.name}
-              onClick={() => handleTab(tab.path, tab.name)}
+              onClick={() => handleTab(tab.path)}
               className={clsx(
                 "group flex w-full items-center gap-2 sm:gap-3 rounded-lg sm:rounded-xl px-2 sm:px-4 py-2 sm:py-3 text-left font-medium transition-all duration-200",
                 isActive
@@ -92,4 +99,3 @@ export const Tabs = ({ name, tabs }: ITabProps) => {
     </div>
   );
 };
-

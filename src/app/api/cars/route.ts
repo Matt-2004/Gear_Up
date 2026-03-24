@@ -10,13 +10,10 @@ async function getToken() {
 // GET /api/cars?pageNum=1
 // GET /api/cars/search?...
 export async function GET(req: NextRequest) {
-  const token = await getToken();
   const search = req.nextUrl.search;
 
   try {
-    const res = await fetch(`${API_URL}/api/v1/cars${search}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const res = await fetch(`${API_URL}/api/v1/cars${search}`);
     const data = await res.json();
     return NextResponse.json(data, { status: res.status });
   } catch {

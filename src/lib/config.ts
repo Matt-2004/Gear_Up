@@ -1,8 +1,5 @@
-export const API_URL = process.env.NEXT_PUBLIC_API_KEY as string;
+export const API_URL = process.env.NEXT_Backend_URL as string;
 
 /** Base URL of this Next.js app — required for SSR fetch to /api/... routes */
-export const APP_URL =
-  process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ??
-  "http://localhost:5255";
 
-export const DEFAULT_API_URL = "http://localhost:3000";
+export const DEFAULT_API_URL = process.env.NEXT_DEFAULT_API_URL as string;

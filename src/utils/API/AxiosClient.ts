@@ -9,15 +9,15 @@ import { CreateMessageDTO } from "@/types/message.types";
 import { CreatePostData } from "@/types/post.types";
 import { IReviewSubmissionDTO } from "@/types/review.types";
 import { API_URL } from "@/lib/config";
+import { getServerAccessToken } from "@/utils/Auth/tokenUtils";
 import axios from "axios";
-import { cookies } from "next/headers";
 
 export const api = axios.create({
   baseURL: API_URL,
 });
 
 export async function getFetch(url: string) {
-  const access_token = (await cookies()).get("access_token")?.value;
+  const access_token = await getServerAccessToken();
 
   // url & options
   try {
@@ -49,7 +49,7 @@ type PostFetchAvaliableType =
   | Omit<IReviewSubmissionDTO, "dealerId">;
 
 export async function postFetch(url: string, data: PostFetchAvaliableType) {
-  const access_token = (await cookies()).get("access_token")?.value;
+  const access_token = await getServerAccessToken();
 
   // url & options
   try {
@@ -74,7 +74,7 @@ export async function putFetch(
     | Omit<IReviewSubmissionDTO, "dealerId">
     | Omit<CreatePostData, "carId">,
 ) {
-  const access_token = (await cookies()).get("access_token")?.value;
+  const access_token = await getServerAccessToken();
   // url & options
   try {
     const response = await api.put(url, data, {
@@ -91,7 +91,7 @@ export async function putFetch(
 }
 
 export async function deleteFetch(url: string) {
-  const access_token = (await cookies()).get("access_token")?.value;
+  const access_token = await getServerAccessToken();
   // url & options
   try {
     const response = await api.delete(url, {
@@ -111,7 +111,7 @@ export async function patchFetch(
   url: string,
   data?: { rejectionReason: string },
 ) {
-  const access_token = (await cookies()).get("access_token")?.value;
+  const access_token = await getServerAccessToken();
   console.log("patchFetch url:", url);
   console.log("Access Token:", access_token);
   try {

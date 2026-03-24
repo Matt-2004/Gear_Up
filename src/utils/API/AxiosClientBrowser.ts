@@ -4,15 +4,13 @@
  * The route handlers attach the auth token server-side.
  *
  * On the server (SSR/prerender) fetch requires an absolute URL, so we
- * resolve a base from NEXT_PUBLIC_APP_URL or fall back to localhost:3000.
+ * resolve a base from NEXT_Backend_URL or fall back to localhost:3000.
  */
 
 function resolveUrl(path: string): string {
   if (path.startsWith("http")) return path;
   if (typeof window !== "undefined") return path; // browser: relative is fine
-  const base =
-    process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ??
-    "http://localhost:3000";
+  const base = process.env.NEXT_DEFAULT_API_URL ?? "http://localhost:3000";
   return `${base}${path}`;
 }
 

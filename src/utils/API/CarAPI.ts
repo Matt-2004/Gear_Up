@@ -4,8 +4,8 @@ export async function addCar(data: FormData) {
   return apiPost("/api/cars", data);
 }
 
-export async function getAllCars(pageNumber: number) {
-  return apiFetch(`/api/cars?pageNum=${pageNumber}`);
+export async function getAllCars(cursor: string | null) {
+  return apiFetch(`/api/cars?cursor=${cursor ?? ""}`);
 }
 
 export async function updateCar(carId: string, data: FormData) {

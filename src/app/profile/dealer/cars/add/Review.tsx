@@ -260,7 +260,7 @@ const Review = () => {
 							</div>
 						</div>
 					</div>
-					<div className="flex justify-between border-t border-gray-200 pt-6">
+					<div className="flex flex-col-reverse sm:flex-row justify-between border-t border-gray-200 pt-6 gap-4 sm:gap-0">
 						<button
 							type="button"
 							onClick={() => router.push(window.location.pathname + "?step=2")}

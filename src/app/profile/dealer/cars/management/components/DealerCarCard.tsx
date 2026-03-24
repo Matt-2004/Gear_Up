@@ -22,7 +22,7 @@ export default function DealerCarCard({
 
 	return (
 		<div
-			className="group relative overflow-hidden rounded-xl"
+			className="group relative overflow-hidden "
 			onMouseEnter={() => setIsHovered(true)}
 			onMouseLeave={() => {
 				setIsHovered(false)
@@ -34,7 +34,7 @@ export default function DealerCarCard({
 			{/* Status Badge */}
 			{car.carValidationStatus && (
 				<div
-					className={`absolute top-3 left-3 z-10 rounded-full border px-3 py-1.5 text-xs font-bold backdrop-blur-sm ${getStatusColor(
+					className={`absolute top-3 left-3 z-10  border px-3 py-1.5 text-xs font-bold backdrop-blur-sm ${getStatusColor(
 						car.carValidationStatus.charAt(0).toUpperCase() +
 							car.carValidationStatus.slice(1),
 					)}`}
@@ -46,7 +46,7 @@ export default function DealerCarCard({
 
 			{/* Options Icon */}
 			<button
-				className={`absolute top-3 right-3 z-10 rounded-xl border border-gray-200 bg-white/95 p-2.5 backdrop-blur-md ${
+				className={`absolute top-3 right-3 z-10  border border-gray-200 bg-white/95 p-2.5 backdrop-blur-md ${
 					isHovered ? "opacity-100" : "opacity-0"
 				} hover:border-blue-400 hover:bg-gray-50`}
 				onClick={() => setShowOptions(!showOptions)}
@@ -58,12 +58,12 @@ export default function DealerCarCard({
 
 			{/* Options Menu */}
 			{showOptions && (
-				<div className="animate-in fade-in slide-in-from-top-2 absolute top-16 right-3 z-20 w-52 overflow-hidden rounded-xl border border-gray-100 bg-white py-2 shadow-sm duration-150">
+				<div className="animate-in fade-in slide-in-from-top-2 absolute top-16 right-3 z-20 w-52 overflow-hidden  border border-gray-100 bg-white py-2 shadow-sm duration-150">
 					<button
 						onClick={() => onEdit(car.id)}
 						className="group/item flex w-full items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 transition-all hover:bg-blue-50 hover:text-blue-600"
 					>
-						<div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100 transition-colors group-hover/item:bg-blue-200">
+						<div className="flex h-8 w-8 items-center justify-center  bg-blue-100 transition-colors group-hover/item:bg-blue-200">
 							<Pencil className="h-4 w-4 text-blue-600" />
 						</div>
 						<span>Edit Vehicle</span>
@@ -73,7 +73,7 @@ export default function DealerCarCard({
 						onClick={() => onDelete(car.id)}
 						className="group/item flex w-full items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 transition-all hover:bg-red-50 hover:text-red-600"
 					>
-						<div className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-100 transition-colors group-hover/item:bg-red-200">
+						<div className="flex h-8 w-8 items-center justify-center  bg-red-100 transition-colors group-hover/item:bg-red-200">
 							<Trash2 className="h-4 w-4 text-red-600" />
 						</div>
 						<span>Delete Vehicle</span>

@@ -13,7 +13,7 @@ export const ProgressSteps = ({ Steps }: { Steps: ISteps }) => {
 
 	return (
 		<form className="w-full max-w-4xl">
-			<div className="flex items-center justify-between">
+			<div className="flex items-center justify-between w-full overflow-x-auto hide-scrollbar sm:overflow-visible">
 				{Steps.map((step, index) => (
 					<Fragment key={step.id}>
 						{/* Step Circle + Label */}

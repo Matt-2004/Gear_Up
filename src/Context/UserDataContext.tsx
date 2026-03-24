@@ -1,56 +1,65 @@
-"use client"
+"use client";
 
-import { UserItem } from "@/types/user.types"
+import { UserItem } from "@/types/user.types";
 import {
-	createContext,
-	ReactNode,
-	useContext,
-	useEffect,
-	useState,
-} from "react"
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 interface UserDataContextType {
-	user: UserItem | null
-	loading: boolean
+  user: UserItem | null;
+  loading: boolean;
+  refreshUserData: () => Promise<void>;
 }
 
 const UserDataContext = createContext<UserDataContextType | undefined>(
-	undefined,
-)
+  undefined,
+);
 
 export function UserDataContextProvider({ children }: { children: ReactNode }) {
-	const [user, setUser] = useState<UserItem | null>(null)
-	const [loading, setLoading] = useState(false)
+  const [user, setUser] = useState<UserItem | null>(null);
+  const [loading, setLoading] = useState(true);
 
-	async function getEncryptedUserData() {
-		const res = await fetch("/api/user")
-		const response = await res.json()
-		return response
-	}
+  async function getEncryptedUserData() {
+    const res = await fetch("/api/user");
+    const response = await res.json();
+    return response;
+  }
 
-	useEffect(() => {
-		async function fetchUserData() {
-			const userDataDecrypted = await getEncryptedUserData()
-			setUser(userDataDecrypted.data)
-		}
-		fetchUserData()
-	}, [])
+  async function refreshUserData() {
+    setLoading(true);
+    try {
+      const userDataDecrypted = await getEncryptedUserData();
+      setUser(userDataDecrypted.data ?? null);
+    } catch {
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  }
 
-	return (
-		<UserDataContext.Provider value={{ user, loading }}>
-			{children}
-		</UserDataContext.Provider>
-	)
+  useEffect(() => {
+    refreshUserData();
+  }, []);
+
+  return (
+    <UserDataContext.Provider value={{ user, loading, refreshUserData }}>
+      {children}
+    </UserDataContext.Provider>
+  );
 }
 
 export function UserDataProvider({ children }: { children: ReactNode }) {
-	return <UserDataContextProvider>{children}</UserDataContextProvider>
+  return <UserDataContextProvider>{children}</UserDataContextProvider>;
 }
 
 export function useUserData() {
-	const context = useContext(UserDataContext)
-	if (context === undefined) {
-		throw new Error("useUserData must be used within a UserDataProvider")
-	}
-	return context
+  const context = useContext(UserDataContext);
+  if (context === undefined) {
+    throw new Error("useUserData must be used within a UserDataProvider");
+  }
+  return context;
 }
