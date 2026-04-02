@@ -57,7 +57,6 @@ const Login = () => {
     formData,
     setFormData,
     handleSubmit: handleFormSubmit,
-    isButtonActive,
     isPending,
   } = useAuthForm(
     {
@@ -102,7 +101,7 @@ const Login = () => {
         router.push("/");
       }, 2000);
     } catch (error) {
-      showErrorToast();
+      showErrorToast(error instanceof Error ? error.message : "An error occurred");
 
       hideToast();
       setFormData({
@@ -120,7 +119,13 @@ const Login = () => {
       </AnimatePresence>
 
       <FormContainer>
-        <AuthPageCaption>Login to your account</AuthPageCaption>
+        <div>
+          <AuthPageCaption>Login</AuthPageCaption>
+          <h3 className="text-gray-500 text-sm">
+            Please login to your account to continue
+          </h3>
+        </div>
+
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -190,7 +195,7 @@ const Login = () => {
             </Link>
           </div>
           <div className="mt-2 w-full">
-            <Button width="full" disabled={!isButtonActive} loading={isPending}>
+            <Button width="full" loading={isPending}>
               Login
             </Button>
           </div>

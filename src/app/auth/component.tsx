@@ -10,18 +10,15 @@ export const AuthPageContainer = ({ children }: { children: ReactNode }) => {
 
 export const AuthPageCaption = ({ children }: { children: ReactNode }) => {
   return (
-    <div className="mb-4 flex flex-col items-center justify-center text-center">
-      {/* Logo */}
-      <h1 className="text-primary text-2xl font-bold tracking-tight sm:text-3xl md:text-3xl">
-        {children}
-      </h1>
-    </div>
+    <h1 className="text-primary text-xl font-bold tracking-tight sm:text-2xl md:text-2xl">
+      {children}
+    </h1>
   );
 };
 
 export const FormContainer = ({ children }: { children: ReactNode }) => {
   return (
-    <div className="w-full max-w-md space-y-4 rounded-2xl bg-white p-6 shadow-xl ring-1 ring-gray-900/5 sm:p-10">
+    <div className="w-full max-w-md space-y-4 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-900/5 sm:p-10">
       {children}
     </div>
   );

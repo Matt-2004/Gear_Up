@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import { HTMLAttributes, ReactNode } from "react";
 
 export function ProfileDropDown() {
-  const { user } = useUserData();
+  const { user, refreshUserData } = useUserData();
   const router = useRouter();
   if (!user) return null;
 
@@ -18,10 +18,10 @@ export function ProfileDropDown() {
     try {
       await fetch("/api/token/remove", {
         method: "POST",
-      }).then(() => {
-        clearSessionAccessToken();
-        window.location.reload();
       });
+      clearSessionAccessToken();
+      await refreshUserData();
+      router.push("/");
     } catch (err) {
       console.error("Error signing out:", err);
     }

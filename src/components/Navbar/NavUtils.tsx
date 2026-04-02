@@ -4,7 +4,7 @@ import { useUserData } from "@/Context/UserDataContext";
 import { clearSessionAccessToken } from "@/utils/Auth/clientTokenUtils";
 
 import clsx from "clsx";
-import { Cog, Menu, Search, X } from "lucide-react";
+import { Cog, LogOut, Menu, Search, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -60,9 +60,8 @@ export function MobileMenu({
 }: {
   setIsMobileMenuOpen: Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const { user } = useUserData();
+  const { user, refreshUserData } = useUserData();
   const router = useRouter();
-  console.log("NavUtils: user data:: ", user);
 
   const handleNavigation = (path: string) => {
     router.push(path);
@@ -73,10 +72,11 @@ export function MobileMenu({
     try {
       await fetch("/api/token/remove", {
         method: "POST",
-      }).then(() => {
-        clearSessionAccessToken();
-        router.push("/");
       });
+      clearSessionAccessToken();
+      await refreshUserData();
+      router.push("/");
+      setIsMobileMenuOpen(false);
     } catch (err) {
       console.error("Error signing out:", err);
     }
@@ -274,19 +274,7 @@ export function MobileMenu({
                 onClick={() => signOut()}
                 className="flex w-full items-center justify-center gap-2 rounded-lg bg-red-600 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-red-700"
               >
-                <svg
-                  className="h-5 w-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                  />
-                </svg>
+                <LogOut className="size-5" />
                 Log Out
               </button>
             ) : (

@@ -29,7 +29,6 @@ const Register = () => {
     setFormData,
     errors,
     handleSubmit: handleFormSubmit,
-    isButtonActive,
     isPending,
   } = useAuthForm(
     {
@@ -61,7 +60,7 @@ const Register = () => {
         router.push("/auth/login");
       }, 2000);
     } catch (e) {
-      showErrorToast();
+      showErrorToast(e instanceof Error ? e.message : "An error occurred");
     }
   };
 
@@ -200,7 +199,7 @@ const Register = () => {
           </div>
 
           <div className="mt-2 w-full">
-            <Button width="full" loading={isPending} disabled={!isButtonActive}>
+            <Button width="full" loading={isPending}>
               Register
             </Button>
           </div>

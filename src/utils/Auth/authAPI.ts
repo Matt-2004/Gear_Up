@@ -3,7 +3,7 @@
 import { IAdminLogin } from "@/types/admin.types";
 import { LoginDTO, RegisterDTO } from "@/types/auth.types";
 import { encrypt } from "../encryption";
-import { authFetchAPI } from "./authFetchAPI";
+import { FetchAuthAPI } from "./FetchAuthAPI";
 import { token_integration, user_data_integration } from "./CookieIntegration";
 import { UserFetch } from "../User/UserFetch";
 
@@ -19,7 +19,7 @@ export async function authAPI(
   const rememberMe = options?.rememberMe ?? true;
 
   // Step 1: authenticate against the local Next.js auth route handler.
-  const res = await authFetchAPI(url, payload);
+  const res = await FetchAuthAPI(url, payload);
 
   // Step 2: persist auth tokens immediately after successful login/register.
   await token_integration(res.data, rememberMe);

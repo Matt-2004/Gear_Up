@@ -31,12 +31,12 @@ function Button({
       type="submit"
       className={clsx(
         width === "full" ? "min-w-full" : "min-w-[50%]",
-        "bg-primary-500 font-semibold active:bg-primary-600 flex w-full items-center justify-center gap-2 sm:gap-4 md:gap-6 rounded-md py-2.5 sm:py-3 md:py-3 px-4 sm:px-6 md:px-8 text-base sm:text-base md:text-lg text-white transition-shadow hover:cursor-pointer hover:shadow-sm shadow-primary-200 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:shadow-none disabled:hover:shadow-none disabled:hover:bg-gray-400",
+        "bg-primary-500 font-semibold active:bg-primary-500 flex w-full items-center justify-center gap-4 sm:gap-4 md:gap-6 rounded-md py-2.5 sm:py-3 md:py-3 px-4 sm:px-6 md:px-8 text-base sm:text-base md:text-lg text-white transition-shadow hover:cursor-pointer hover:shadow-sm shadow-primary-200 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:shadow-none disabled:hover:shadow-none disabled:hover:bg-gray-400",
       )}
       {...props}
     >
       {loading && <Spinner />}
-      {children}
+      {loading ? "Processing..." : children}
     </button>
   );
 }

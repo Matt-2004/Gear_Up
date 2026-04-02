@@ -113,7 +113,7 @@ const ResetPassword = () => {
           </div>
 
           <div className="mt-2 w-full">
-            <Button width="full" loading={isPending} disabled={!isButtonActive}>
+            <Button width="full" loading={isPending} >
               Change Password
             </Button>
           </div>

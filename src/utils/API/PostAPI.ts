@@ -2,7 +2,11 @@ import { apiFetch, apiDelete, apiPost, apiPut } from "./AxiosClientBrowser";
 import { CreatePostData } from "@/types/post.types";
 
 export async function getAllPosts(cursor?: string) {
-  const url = cursor ? `/api/posts?cursor=${cursor}` : "/api/posts";
+  const query = new URLSearchParams();
+  if (cursor) query.set("cursor", cursor);
+  const url = query.toString()
+    ? `/api/posts?${query.toString()}`
+    : "/api/posts";
   return apiFetch(url);
 }
 

@@ -2,6 +2,7 @@
 
 import { InputHTMLAttributes, ReactNode, forwardRef, useState } from "react";
 import { clsx } from "clsx";
+import { Eye, EyeOff } from "lucide-react";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   type:
@@ -24,41 +25,61 @@ const Input = forwardRef<HTMLInputElement, Partial<InputProps>>(
   (props, ref) => {
     const { type = "email", children, error, onFocus, onBlur, ...rest } = props;
     const [isFocused, setIsFocused] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     // Only show error when input is focused and contains value
     const hasValue = String(rest.value || "").length > 0;
     const shouldShowError = error && isFocused && hasValue;
     const hasErrorProp = "error" in props;
 
+    const inputType = type === "password" && showPassword ? "text" : type;
+
     return (
       <div className="flex w-full flex-col gap-1">
         <label
           className={clsx(
-            "text-sm font-semibold",
+            "text-sm",
             shouldShowError ? "text-red-500" : "text-gray-500",
           )}
         >
           {children}
         </label>
-        <input
-          {...rest}
-          ref={ref}
-          type={type}
-          onFocus={(e) => {
-            setIsFocused(true);
-            onFocus?.(e);
-          }}
-          onBlur={(e) => {
-            setIsFocused(false);
-            onBlur?.(e);
-          }}
-          className={clsx(
-            "focus:ring-primary focus:text-primary rounded-lg border px-4 py-2 text-black placeholder:text-sm placeholder:text-gray-400 focus:ring-1 focus:outline-none focus:placeholder:text-gray-500 transition-colors",
-            shouldShowError
-              ? "border-red-500 bg-red-50 focus:bg-red-50"
-              : "border-gray-200 focus:bg-[#BAFFAF]",
+        <div className="relative w-full flex items-center">
+          <input
+            {...rest}
+            ref={ref}
+            type={inputType}
+            onFocus={(e) => {
+              setIsFocused(true);
+              onFocus?.(e);
+            }}
+            onBlur={(e) => {
+              setIsFocused(false);
+              onBlur?.(e);
+            }}
+            className={clsx(
+              "w-full focus:ring-primary focus:text-primary rounded-lg border px-4 py-2 text-black placeholder:text-sm placeholder:text-gray-400 focus:ring-1 focus:outline-none focus:placeholder:text-gray-500 transition-colors",
+              type === "password" && "pr-10",
+              shouldShowError
+                ? "border-red-500 bg-red-50 focus:bg-red-50"
+                : "border-gray-200 focus:bg-green-50",
+            )}
+          />
+          {type === "password" && (
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
+              tabIndex={-1}
+            >
+              {showPassword ? (
+                <EyeOff className="h-5 w-5" />
+              ) : (
+                <Eye className="h-5 w-5" />
+              )}
+            </button>
           )}
-        />
+        </div>
         {hasErrorProp && (
           <div className="">
             {shouldShowError && (

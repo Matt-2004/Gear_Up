@@ -1,12 +1,15 @@
-import { getAllPosts } from "@/utils/API/PostAPI";
 import DiscoverPost from "./DiscoverPost";
 
 export const dynamic = "force-dynamic";
 
 const Page = async () => {
-  const postResponse = await getAllPosts();
+  const initialPostData = {
+    items: [],
+    hasMore: false,
+    nextCursor: "",
+  };
 
-  return <DiscoverPost post={postResponse?.data} />;
+  return <DiscoverPost post={initialPostData} />;
 };
 
 export default Page;

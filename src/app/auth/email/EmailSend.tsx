@@ -83,7 +83,7 @@ const EmailSend = ({ variant }: { variant: EmailVariant }) => {
             </Input>
           </div>
           <div className="mt-2 w-full">
-            <Button width="full" loading={isPending} disabled={!isButtonActive}>
+            <Button width="full" loading={isPending} >
               Send Reset Link
             </Button>
           </div>
