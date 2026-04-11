@@ -1,24 +1,21 @@
 "use client";
 
-import { useUserData } from "@/Context/UserDataContext";
 import NavbarUtility from "@/components/Navbar/NavbarUtility";
-import CustomerNavbarTabs from "./CustomerNavbarTabs";
-
-import { Logo } from "./NavUtils";
+import NavbarBrand from "./NavbarBrand";
 import NavbarContainer from "./NavbarContainer";
+import NavbarTabs from "./NavbarTabs";
 
 export default function Navbar() {
-  const { user } = useUserData();
-  const isCustomer = user?.role === "Customer";
-
   return (
     <NavbarContainer>
-      <Logo />
-      <div className="hidden md:block">
-        {isCustomer &&
-          <CustomerNavbarTabs />
-        }
+      <div className="flex h-full items-center gap-3">
+        <NavbarBrand />
       </div>
+
+      <div className="hidden min-w-0 flex-1 items-center justify-center md:flex">
+        <NavbarTabs />
+      </div>
+
       <NavbarUtility />
     </NavbarContainer>
   );

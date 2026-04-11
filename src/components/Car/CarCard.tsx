@@ -15,9 +15,9 @@ export function CarCard({
   priority?: boolean;
 }) {
   return (
-    <Link href={`/car/${carItem.id}`} className={className}>
-      <article className="group flex h-auto min-h-88 w-full flex-col overflow-hidden rounded-xl bg-white shadow-sm shadow-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-sm sm:h-97.5">
-        <div className="relative h-44 w-full shrink-0 overflow-hidden">
+    <Link href={`/car/${carItem.id}`} className={`block ${className}`.trim()}>
+      <article className="group mx-auto flex w-[340px] max-w-full flex-col overflow-hidden rounded-md bg-white shadow-sm shadow-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-sm">
+        <div className="relative w-full shrink-0 overflow-hidden aspect-16/10 sm:aspect-video">
           <CarImage
             src={carItem?.carImages[0]?.url}
             alt={carItem.title || "Car image"}
@@ -30,116 +30,67 @@ export function CarCard({
         </div>
         <div className="flex flex-1 flex-col p-4">
           <div className="mb-2 flex items-start justify-between gap-2">
-            <div className="min-w-0 flex-1">
+            <div className="min-w-0">
               <h3 className="line-clamp-1 text-lg font-bold text-gray-900 transition-colors">
                 {carItem.title}
               </h3>
-              <p className="mt-1 flex items-baseline gap-1 text-sm text-gray-500">
+              <p className="flex items-baseline gap-1 text-xs text-gray-500">
                 <span className="max-w-32 truncate">
                   {carItem.make} {carItem.model}
                 </span>
                 <span>{carItem.year}</span>
               </p>
             </div>
-            {carItem.carStatus === "Available" && (
-              <div className="shrink-0">
-                <span className="bg-primary-100 text-primary-500 rounded-full px-3 py-1 text-xs font-semibold whitespace-nowrap">
-                  For Sale
-                </span>
-              </div>
-            )}
+            <h3 className="font-semibold text-primary text-xl">
+              {carItem.price > 0
+                ? `฿${formatNumber(carItem.price)}`
+                : "Contact for Price"}
+            </h3>
           </div>
-          <div className="my-3 h-px w-full bg-gray-200" />
+
           <div className="grid grid-cols-3 gap-2 text-sm">
-            <div className="flex flex-col items-center justify-center text-center text-gray-600">
-              <CogIcon />
-              <span className="mt-1 line-clamp-1 text-xs">
-                {carItem.transmissionType}
-              </span>
-            </div>
-            <div className="flex flex-col items-center justify-center text-center text-gray-600">
-              <RoadIcon />
-              <span className="mt-1 line-clamp-1 text-xs">
-                {formatNumber(carItem.mileage)} KM
-              </span>
-            </div>
-            <div className="flex flex-col items-center justify-center text-center text-gray-600">
-              <SeatIcon />
-              <span className="mt-1 text-xs">{carItem.seatingCapacity}</span>
-            </div>
+            {/* Spacs Info */}
+            <SpacsInfoItem
+              spacFeature="Tran"
+              spacValue={
+                carItem.transmissionType === "Automatic"
+                  ? "Auto"
+                  : carItem.transmissionType === "SemiAutomatic"
+                    ? "Hybrid"
+                    : carItem.transmissionType
+              }
+            />
+            <SpacsInfoItem
+              spacFeature="Miles"
+              spacValue={formatNumber(carItem.mileage)}
+            />
+            <SpacsInfoItem
+              spacFeature="Seats"
+              spacValue={`${carItem.seatingCapacity} seats`}
+            />
           </div>
-          <div className="my-3 h-px w-full bg-gray-200" />
-          <div className="mt-3">
-            <div className="flex items-center gap-1">
-              <p className="text-xs text-gray-500">Price</p>
-              <p className="flex items-baseline gap-1">
-                <span className="text-orange-500">฿</span>
-                <span className="text-xl font-bold text-orange-600">
-                  {formatNumber(carItem.price)}
-                </span>
-              </p>
-            </div>
-          </div>
+          <button className="mt-4 w-full rounded-lg bg-white text-primary hover:text-white cursor-pointer py-2 border border-primary font-semibold hover:bg-primary">
+            View Details
+          </button>
         </div>
       </article>
     </Link>
   );
 }
 
-const CogIcon = () => {
+const SpacsInfoItem = ({
+  spacFeature,
+  spacValue,
+}: {
+  spacFeature: string;
+  spacValue: string;
+}) => {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      className="shrink-0"
-    >
-      <g
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1.5"
-      >
-        <path d="M11 10.27L7 3.34m4 10.39l-4 6.93M12 22v-2m0-18v2m2 8h8m-5 8.66l-1-1.73m1-15.59l-1 1.73M2 12h2m16.66 5l-1.73-1m1.73-9l-1.73 1M3.34 17l1.73-1M3.34 7l1.73 1" />
-        <circle cx="12" cy="12" r="2" />
-        <circle cx="12" cy="12" r="8" />
-      </g>
-    </svg>
-  );
-};
-
-const RoadIcon = () => {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width={16}
-      height={16}
-      viewBox="0 0 24 24"
-      className="shrink-0"
-    >
-      <path
-        fill="currentColor"
-        d="M5 19V5h1v14zm6.5 0v-3.077h1V19zm6.5 0V5h1v14zm-6.5-5.462v-3.076h1v3.077zm0-5.461V5h1v3.077z"
-      ></path>
-    </svg>
-  );
-};
-
-const SeatIcon = () => {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width={16}
-      height={16}
-      viewBox="0 0 24 24"
-      className="shrink-0"
-    >
-      <path
-        fill="currentColor"
-        d="M5.35 5.64c-.9-.64-1.12-1.88-.49-2.79c.64-.9 1.88-1.12 2.79-.49c.9.64 1.12 1.88.49 2.79c-.64.9-1.88 1.12-2.79.49M16 19H8.93c-1.48 0-2.74-1.08-2.96-2.54L4 7H2l2 9.76A4.99 4.99 0 0 0 8.94 21H16m.23-6h-4.88l-1.03-4.1c1.58.89 3.28 1.54 5.15 1.22V10c-1.63.3-3.44-.28-4.69-1.26L9.14 7.47c-.23-.18-.49-.3-.76-.38a2.2 2.2 0 0 0-.99-.06h-.02a2.27 2.27 0 0 0-1.84 2.61l1.35 5.92A2.99 2.99 0 0 0 9.83 18h6.85l3.82 3l1.5-1.5"
-      ></path>
-    </svg>
+    <div className="bg-[#FAF8FF] rounded-lg p-2 flex flex-col items-center gap-1">
+      <h3 className="text-xs font-semibold text-gray-400">
+        {spacFeature.toUpperCase()}
+      </h3>
+      <p className="text-xs text-primary">{spacValue}</p>
+    </div>
   );
 };

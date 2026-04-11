@@ -4,7 +4,10 @@ import { useNotificationContext } from "@/Context/NotificationContext";
 import { useUserData } from "@/Context/UserDataContext";
 import { IMessageData } from "@/types/message.types";
 import { INotificationData } from "@/types/notification.types";
-import { Login, SearchBar, User } from "@/components/Navbar/NavUtils";
+import {
+  NavbarLoginButton,
+  NavbarUserMenu,
+} from "@/components/Navbar/NavbarAuthControls";
 import {
   deleteAllNotification,
   deleteNotificationById,
@@ -37,12 +40,8 @@ export default function NavbarUtility() {
 
   return (
     <div className="flex shrink-0 items-center gap-2 md:gap-3">
-      <div className="hidden max-w-md flex-1 items-center sm:flex">
-        <SearchBar />
-      </div>
-
       {user && <NotificationBell />}
-      {user ? <User /> : <Login />}
+      {user ? <NavbarUserMenu /> : <NavbarLoginButton />}
     </div>
   );
 }
@@ -80,7 +79,6 @@ const getNotifLink = (n: INotificationData): string | null => {
 // ─── NotificationBell ─────────────────────────────────────────────────────────
 
 export const NotificationBell = () => {
-  const { user } = useUserData();
   const [token, setToken] = useState<string>("");
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"app" | "chat">("app");
@@ -360,7 +358,7 @@ export const NotificationBell = () => {
                       No notifications yet
                     </p>
                     <p className="mt-1 text-xs text-gray-400">
-                      We'll let you know when something happens
+                      We&apos;ll let you know when something happens
                     </p>
                   </div>
                 ) : (
