@@ -1,40 +1,36 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 import Button from "@/components/Common/Button";
 import Input from "@/components/Common/Input";
 import { AuthPageCaption, AuthPageContainer } from "../component";
 import { authAPI } from "@/utils/Auth/authAPI";
-import { AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { LoginSchema } from "../typeSchema";
 import { useAuthForm } from "../useAuthForm";
 import { useAuthToast } from "../hooks/useAuthToast";
+import { useAuthSubmitFlow } from "../hooks/useAuthSubmitFlow";
 import { useUserData } from "@/Context/UserDataContext";
 import {
   getClientAccessToken,
   setSessionAccessToken,
 } from "@/utils/Auth/clientTokenUtils";
 import Image from "next/image";
+import loginHeroImage from "../../../../public/carImages/9.jpg";
+
+const initialLoginFormData = {
+  usernameOrEmail: "",
+  password: "",
+  rememberMe: false,
+};
 
 const Login = () => {
-  const router = useRouter();
   const { refreshUserData } = useUserData();
 
-  const { ToastComponent, showSuccessToast, showErrorToast, hideToast } =
-    useAuthToast({
-      onSuccess: { message: "Login successful! Redirecting to dashboard..." },
-      onError: { message: "Invalid credentials. Please try again." },
-    });
+  const { showSuccessToast, showErrorToast } = useAuthToast({
+    onSuccess: { message: "Login successful! Redirecting to dashboard..." },
+  });
 
-  // authAPI --> return data || error
-  // submit --> get data and catch error
-  // handleSubmit --> get data and catch error
-
-  // authAPI --> return data || error
-  // submit --> get data and rethrow error
-  // handleSubmit --> catch error and show relevant toast
   async function action(formData: FormData) {
     const usernameOrEmail = formData.get("usernameOrEmail") as string;
     const password = formData.get("password") as string;
@@ -55,15 +51,7 @@ const Login = () => {
     setFormData,
     handleSubmit: handleFormSubmit,
     isPending,
-  } = useAuthForm(
-    {
-      usernameOrEmail: "",
-      password: "",
-      rememberMe: false,
-    },
-    LoginSchema,
-    action,
-  );
+  } = useAuthForm(initialLoginFormData, LoginSchema, action);
 
   const usernameRef = useRef<HTMLInputElement>(null);
 
@@ -73,15 +61,14 @@ const Login = () => {
     }
   }, []);
 
-  const handleSubmit = async (formData: FormData) => {
-    try {
-      await handleFormSubmit(formData);
+  const { handleAuthSubmit } = useAuthSubmitFlow({
+    submitForm: handleFormSubmit,
+    showSuccessToast,
+    showErrorToast,
+    successRedirectPath: "/",
+    onSuccess: async (submitData) => {
+      const rememberMe = submitData.get("rememberMe") === "on";
 
-      const rememberMe = formData.get("rememberMe") === "on";
-
-      // Dynamic token handling:
-      // - rememberMe=true  -> clear sessionStorage token (use persistent cookie)
-      // - rememberMe=false -> mirror token in sessionStorage for session-only usage
       if (rememberMe) {
         setSessionAccessToken("");
       } else {
@@ -89,42 +76,26 @@ const Login = () => {
         setSessionAccessToken(accessToken);
       }
 
-      // Rehydrate user context immediately after successful login so
-      // navbar switches from Login button to Profile icon without refresh.
       await refreshUserData();
-
-      showSuccessToast();
-      setTimeout(() => {
-        router.push("/");
-      }, 2000);
-    } catch (error) {
-      showErrorToast(
-        error instanceof Error ? error.message : "An error occurred",
-      );
-
-      hideToast();
-      setFormData({
-        usernameOrEmail: "",
-        password: "",
-        rememberMe: false,
-      });
-    }
-  };
+    },
+    onError: () => {
+      setFormData(initialLoginFormData);
+    },
+  });
 
   return (
     <AuthPageContainer>
-      <AnimatePresence>
-        <ToastComponent />
-      </AnimatePresence>
-
       <div className="relative min-h-dvh w-screen max-w-none overflow-hidden rounded-none bg-white shadow-none sm:min-h-155 sm:w-full sm:max-w-155 sm:rounded-3xl sm:shadow-2xl sm:shadow-slate-300/30 lg:max-w-5xl">
         <div className="grid min-h-dvh w-full grid-cols-1 overflow-hidden bg-white sm:min-h-155 sm:rounded-3xl lg:grid-cols-2">
           <div className="relative hidden h-full lg:block">
             <Image
-              src="/carImages/9.jpg"
+              src={loginHeroImage}
               alt="Luxury car"
               fill
-              priority
+              loading="lazy"
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              quality={70}
+              placeholder="blur"
               className="object-cover"
             />
             <div className="absolute inset-0 bg-linear-to-b from-black/40 via-black/30 to-black/60" />
@@ -155,7 +126,7 @@ const Login = () => {
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
-                  handleSubmit(new FormData(e.currentTarget));
+                  handleAuthSubmit(new FormData(e.currentTarget));
                 }}
                 id="body"
                 className="flex w-full flex-col gap-4"

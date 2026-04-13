@@ -1,24 +1,31 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 import Button from "@/components/Common/Button";
 import Input from "@/components/Common/Input";
 import { AuthPageCaption, AuthPageContainer } from "../component";
-import { AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { RegisterSchema } from "../typeSchema";
 import { useAuthForm } from "../useAuthForm";
 import { useAuthToast } from "../hooks/useAuthToast";
+import { useAuthSubmitFlow } from "../hooks/useAuthSubmitFlow";
 import { submit } from "./action";
 import Image from "next/image";
+import registerHeroImage from "../../../../public/carImages/10.jpg";
+
+const initialRegisterFormData = {
+  firstName: "",
+  lastName: "",
+  username: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
+  agreeToTerms: false,
+};
 
 const Register = () => {
-  const router = useRouter();
-
-  const { ToastComponent, showSuccessToast, showErrorToast } = useAuthToast({
+  const { showSuccessToast, showErrorToast } = useAuthToast({
     onSuccess: { message: "Registration successful! Redirecting to login..." },
-    onError: { message: "Registration failed. Please try again." },
   });
 
   const {
@@ -27,19 +34,7 @@ const Register = () => {
     errors,
     handleSubmit: handleFormSubmit,
     isPending,
-  } = useAuthForm(
-    {
-      firstName: "",
-      lastName: "",
-      username: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-      agreeToTerms: false,
-    },
-    RegisterSchema,
-    submit,
-  );
+  } = useAuthForm(initialRegisterFormData, RegisterSchema, submit);
 
   const firstNameRef = useRef<HTMLInputElement>(null);
 
@@ -49,32 +44,26 @@ const Register = () => {
     }
   }, []);
 
-  const handleSubmit = async (formData: FormData) => {
-    try {
-      await handleFormSubmit(formData);
-      showSuccessToast();
-      setTimeout(() => {
-        router.push("/auth/login");
-      }, 2000);
-    } catch (e) {
-      showErrorToast(e instanceof Error ? e.message : "An error occurred");
-    }
-  };
+  const { handleAuthSubmit } = useAuthSubmitFlow({
+    submitForm: handleFormSubmit,
+    showSuccessToast,
+    showErrorToast,
+    successRedirectPath: "/auth/login",
+  });
 
   return (
     <AuthPageContainer>
-      <AnimatePresence>
-        <ToastComponent />
-      </AnimatePresence>
-
       <div className="relative min-h-dvh w-screen max-w-none overflow-hidden rounded-none bg-white shadow-none sm:min-h-155 sm:w-full sm:max-w-155 sm:rounded-3xl sm:shadow-2xl sm:shadow-slate-300/30 lg:max-w-5xl">
         <div className="grid min-h-dvh w-full grid-cols-1 overflow-hidden bg-white sm:min-h-155 sm:rounded-3xl lg:grid-cols-2">
           <div className="relative hidden h-full lg:block">
             <Image
-              src="/carImages/10.jpg"
+              src={registerHeroImage}
               alt="Sports car"
               fill
-              priority
+              loading="lazy"
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              quality={70}
+              placeholder="blur"
               className="object-cover"
             />
             <div className="absolute inset-0 bg-linear-to-b from-black/40 via-black/30 to-black/60" />
@@ -122,7 +111,7 @@ const Register = () => {
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
-                  handleSubmit(new FormData(e.currentTarget));
+                  handleAuthSubmit(new FormData(e.currentTarget));
                 }}
                 id="body"
                 className="flex w-full flex-col gap-4"

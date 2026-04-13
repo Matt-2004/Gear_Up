@@ -11,6 +11,13 @@ interface AuthOptions {
   rememberMe?: boolean;
 }
 
+// type guard
+function isRegisterDTO(
+  payload: LoginDTO | RegisterDTO | IAdminLogin,
+): payload is RegisterDTO {
+  return "confirmPassword" in payload;
+}
+
 export async function authAPI(
   url: string,
   payload: LoginDTO | RegisterDTO | IAdminLogin,
@@ -20,6 +27,10 @@ export async function authAPI(
 
   // Step 1: authenticate against the local Next.js auth route handler.
   const res = await FetchAuthAPI(url, payload);
+
+  if (isRegisterDTO(payload)) {
+    return;
+  }
 
   // Step 2: persist auth tokens immediately after successful login/register.
   await token_integration(res.data, rememberMe);

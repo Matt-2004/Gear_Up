@@ -8,7 +8,6 @@ import {
   AuthPageContent,
   FormContainer,
 } from "../component";
-import { AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { submit as submitReset } from "./reset-password/action";
@@ -24,7 +23,7 @@ const EmailSend = ({ variant }: { variant: EmailVariant }) => {
   const action = variant === "verification" ? submitVerification : submitReset;
   const isVerification = variant === "verification";
 
-  const { ToastComponent, showSuccessToast, showErrorToast } = useAuthToast({
+  const { showSuccessToast, showErrorToast } = useAuthToast({
     onSuccess: {
       message: isVerification
         ? "Verification email sent successfully!"
@@ -51,15 +50,12 @@ const EmailSend = ({ variant }: { variant: EmailVariant }) => {
         router.push("/auth/login");
       }, 2000);
     } catch (error) {
-      showErrorToast();
+      showErrorToast(error);
     }
   };
 
   return (
     <AuthPageContainer>
-      <AnimatePresence>
-        <ToastComponent />
-      </AnimatePresence>
       <FormContainer>
         <AuthPageCaption>Email Verification</AuthPageCaption>
         <AuthPageContent>
@@ -83,7 +79,7 @@ const EmailSend = ({ variant }: { variant: EmailVariant }) => {
             </Input>
           </div>
           <div className="mt-2 w-full">
-            <Button width="full" loading={isPending} >
+            <Button width="full" loading={isPending}>
               Send Reset Link
             </Button>
           </div>

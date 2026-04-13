@@ -6,7 +6,6 @@ import Input from "@/components/Common/Input";
 
 import { useUserData } from "@/Context/UserDataContext";
 import { updateUserProfile } from "@/utils/API/UserAPI";
-import { AnimatePresence } from "framer-motion";
 
 import { Camera, Save, X } from "lucide-react";
 import Image from "next/image";
@@ -19,7 +18,7 @@ const ProfilePage = () => {
   const [originalInput, setOriginalInput] = useState<UserItem>();
   const formData = new FormData();
 
-  const { ToastComponent, addToastMessage, removeToastMessage } = useToast({
+  const { addToastMessage, removeToastMessage } = useToast({
     toastType: "success",
     message: null,
   });
@@ -80,9 +79,6 @@ const ProfilePage = () => {
 
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 px-4 py-8">
-      <AnimatePresence>
-        <ToastComponent />
-      </AnimatePresence>
       <div className="mx-auto max-w-4xl">
         {/* Header */}
         <div className="mb-8">

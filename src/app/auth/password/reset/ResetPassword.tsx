@@ -13,12 +13,11 @@ import { submit } from "./action";
 import { useAuthForm } from "../../useAuthForm";
 import { useAuthToast } from "../../hooks/useAuthToast";
 import { ResetPasswordSchema } from "../../typeSchema";
-import { AnimatePresence } from "framer-motion";
 
 const ResetPassword = () => {
   const router = useRouter();
 
-  const { ToastComponent, showSuccessToast, showErrorToast } = useAuthToast({
+  const { showSuccessToast, showErrorToast } = useAuthToast({
     onSuccess: {
       message: "Password changed successfully! Redirecting to login...",
       redirectPath: "/auth/login",
@@ -49,15 +48,12 @@ const ResetPassword = () => {
         router.push("/auth/login");
       }, 2000);
     } catch (error) {
-      showErrorToast();
+      showErrorToast(error);
     }
   };
 
   return (
     <AuthPageContainer>
-      <AnimatePresence>
-        <ToastComponent />
-      </AnimatePresence>
       <FormContainer>
         <AuthPageCaption>Create new password</AuthPageCaption>
         <AuthPageContent>
@@ -113,7 +109,7 @@ const ResetPassword = () => {
           </div>
 
           <div className="mt-2 w-full">
-            <Button width="full" loading={isPending} >
+            <Button width="full" loading={isPending}>
               Change Password
             </Button>
           </div>

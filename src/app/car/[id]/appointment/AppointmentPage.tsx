@@ -1,129 +1,128 @@
-"use client"
+"use client";
 
-import { useToast } from "@/app/hooks/useToast"
-import { CarItems } from "@/types/car.types"
-import AppointmentCarSummary from "@/components/Appointment/AppointmentCarSummary"
-import AppointmentForm from "@/components/Appointment/AppointmentForm"
-import { createAppointment } from "@/utils/API/AppointmentAPI"
-import { AnimatePresence } from "framer-motion"
-import { ChevronLeft } from "lucide-react"
-import { useRouter } from "next/navigation"
-import { FormEvent, useState } from "react"
+import { useToast } from "@/app/hooks/useToast";
+import { CarItems } from "@/types/car.types";
+import AppointmentCarSummary from "@/components/Appointment/AppointmentCarSummary";
+import AppointmentForm from "@/components/Appointment/AppointmentForm";
+import { createAppointment } from "@/utils/API/AppointmentAPI";
+import { ChevronLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { FormEvent, useState } from "react";
 
 export default function AppointmentPage({ car }: { car: CarItems }) {
-	const router = useRouter()
-	const { ToastComponent, addToastMessage } = useToast({
-		toastType: null,
-		message: null,
-	})
-	const [formData, setFormData] = useState({
-		schedule: "",
-		time: "",
-		location: "",
-		notes: "",
-	})
+  const router = useRouter();
+  const { addToastMessage } = useToast({
+    toastType: null,
+    message: null,
+  });
+  const [formData, setFormData] = useState({
+    schedule: "",
+    time: "",
+    location: "",
+    notes: "",
+  });
 
-	const [isSubmitting, setIsSubmitting] = useState(false)
-	const [error, setError] = useState("")
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
-	const handleSubmit = async (e: FormEvent) => {
-		e.preventDefault()
-		setError("")
-		setIsSubmitting(true)
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setIsSubmitting(true);
 
-		try {
-			// Combine date and time
-			const scheduleDateTime = new Date(`${formData.schedule}T${formData.time}`)
+    try {
+      // Combine date and time
+      const scheduleDateTime = new Date(
+        `${formData.schedule}T${formData.time}`,
+      );
 
-			// Call API to create appointment
-			const res = await createAppointment(
-				car.dealerId, // Using car.id as agentId (you might need to adjust this)
-				car.id,
-				scheduleDateTime,
-				formData.location,
-				formData.notes || undefined,
-			)
+      // Call API to create appointment
+      const res = await createAppointment(
+        car.dealerId, // Using car.id as agentId (you might need to adjust this)
+        car.id,
+        scheduleDateTime,
+        formData.location,
+        formData.notes || undefined,
+      );
 
-			if (res?.isSuccess) {
-				addToastMessage(
-					"success",
-					"Appointment scheduled successfully! Redirecting...",
-				)
+      if (res?.isSuccess) {
+        addToastMessage(
+          "success",
+          "Appointment scheduled successfully! Redirecting...",
+        );
 
-				setFormData({
-					schedule: "",
-					time: "",
-					location: "",
-					notes: "",
-				})
+        setFormData({
+          schedule: "",
+          time: "",
+          location: "",
+          notes: "",
+        });
 
-				// Redirect after 2 seconds
-				setTimeout(() => {
-					router.push(`/car/${car.id}`)
-				}, 2500)
-			}
-		} catch (err: any) {
-			const errorMessage =
-				err?.response?.data || "Failed to create appointment. Please try again."
-			setError(errorMessage)
-			addToastMessage("error", errorMessage)
-		} finally {
-			setIsSubmitting(false)
-		}
-	}
+        // Redirect after 2 seconds
+        setTimeout(() => {
+          router.push(`/car/${car.id}`);
+        }, 2500);
+      }
+    } catch (err: any) {
+      const errorMessage =
+        err?.response?.data ||
+        "Failed to create appointment. Please try again.";
+      setError(errorMessage);
+      addToastMessage("error", errorMessage);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
-	const handleChange = (
-		e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-	) => {
-		setFormData({
-			...formData,
-			[e.target.name]: e.target.value,
-		})
-	}
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
 
-	if (!car) {
-		return (
-			<div className="to-primary-50 flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-50">
-				<div className="text-center">
-					<p className="text-xl text-gray-600">Car not found</p>
-				</div>
-			</div>
-		)
-	}
+  if (!car) {
+    return (
+      <div className="to-primary-50 flex min-h-screen items-center justify-center bg-linear-to-br from-gray-50">
+        <div className="text-center">
+          <p className="text-xl text-gray-600">Car not found</p>
+        </div>
+      </div>
+    );
+  }
 
-	return (
-		<div className="to-primary-50 min-h-screen bg-gradient-to-br from-gray-50">
-			<AnimatePresence>
-				<ToastComponent />
-			</AnimatePresence>
-			<div className="mx-auto max-w-5xl px-4 py-8">
-				{/* Back Button */}
-				<button
-					onClick={() => router.back()}
-					className="text-primary-600 hover:text-primary-700 mb-6 flex items-center gap-2 font-medium transition-colors"
-				>
-					<ChevronLeft className="h-5 w-5" />
-					Back to Car Details
-				</button>
+  return (
+    <div className="to-primary-50 min-h-screen bg-linear-to-br from-gray-50">
+      <div className="mx-auto max-w-5xl px-4 py-8">
+        {/* Back Button */}
+        <button
+          onClick={() => router.back()}
+          className="text-primary-600 hover:text-primary-700 mb-6 flex items-center gap-2 font-medium transition-colors"
+        >
+          <ChevronLeft className="h-5 w-5" />
+          Back to Car Details
+        </button>
 
-				<div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-					{/* Left Column - Car Summary */}
-					<div className="lg:col-span-1">
-						<AppointmentCarSummary car={car} />
-					</div>
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          {/* Left Column - Car Summary */}
+          <div className="lg:col-span-1">
+            <AppointmentCarSummary car={car} />
+          </div>
 
-					{/* Right Column - Appointment Form */}
-					<div className="lg:col-span-2">
-						<AppointmentForm
-							formData={formData}
-							isSubmitting={isSubmitting}
-							error={error}
-							onSubmit={handleSubmit}
-							onChange={handleChange}
-						/>
-					</div>
-				</div>
-			</div>
-		</div>
-	)
+          {/* Right Column - Appointment Form */}
+          <div className="lg:col-span-2">
+            <AppointmentForm
+              formData={formData}
+              isSubmitting={isSubmitting}
+              error={error}
+              onSubmit={handleSubmit}
+              onChange={handleChange}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }

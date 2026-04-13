@@ -4,7 +4,6 @@ import { useToast } from "@/app/hooks/useToast";
 import { UserItem } from "@/types/user.types";
 import { useUserData } from "@/Context/UserDataContext";
 import { updateUserProfile } from "@/utils/API/UserAPI";
-import { AnimatePresence } from "framer-motion";
 import {
   Bell,
   Camera,
@@ -95,7 +94,7 @@ const Setting = () => {
     marketing: false,
   });
 
-  const { ToastComponent, addToastMessage } = useToast({
+  const { addToastMessage } = useToast({
     toastType: null,
     message: null,
   });
@@ -234,10 +233,6 @@ const Setting = () => {
 
   return (
     <div className=" bg-linear-to-br from-gray-50 to-gray-100 px-4 py-8 sm:px-6 lg:px-8">
-      <AnimatePresence>
-        <ToastComponent />
-      </AnimatePresence>
-
       <div className="mx-auto max-w-4xl">
         {/* ── page header ──────────────────────────────────────── */}
         <div className="mb-8 flex items-center gap-3">
