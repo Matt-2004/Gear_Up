@@ -8,12 +8,12 @@ interface AuthSubmitResult {
 }
 
 const getErrorMessage = (error: unknown): string => {
-  if (!error) return "Registration failed. Please try again.";
+  if (!error) return "Login failed. Please try again.";
 
   if (typeof error === "string") return error;
 
   if (error instanceof Error) {
-    return error.message || "Registration failed. Please try again.";
+    return error.message || "Login failed. Please try again.";
   }
 
   if (typeof error === "object") {
@@ -41,30 +41,29 @@ const getErrorMessage = (error: unknown): string => {
     }
   }
 
-  return "Registration failed. Please try again.";
+  return "Login failed. Please try again.";
 };
 
-export async function submit(formData: FormData): Promise<AuthSubmitResult> {
-  const username = formData.get("username") as string;
-  const email = formData.get("email") as string;
-  const firstName = formData.get("firstName") as string;
-  const lastName = formData.get("lastName") as string;
+export async function loginSubmit(
+  formData: FormData,
+): Promise<AuthSubmitResult> {
+  const usernameOrEmail = formData.get("usernameOrEmail") as string;
   const password = formData.get("password") as string;
-  const confirmPassword = formData.get("confirmPassword") as string;
+  const rememberMe = formData.get("rememberMe") === "on";
 
   try {
-    await authAPI(`/api/auth/register`, {
-      username,
-      email,
-      firstName,
-      lastName,
-      password,
-      confirmPassword,
-    });
+    await authAPI(
+      `/api/auth/login`,
+      {
+        usernameOrEmail,
+        password,
+      },
+      { rememberMe },
+    );
 
     return {
       isSuccess: true,
-      message: "Registration successful!",
+      message: "Login successful!",
     };
   } catch (error) {
     return {
@@ -73,5 +72,3 @@ export async function submit(formData: FormData): Promise<AuthSubmitResult> {
     };
   }
 }
-
-export type Submit = typeof submit;

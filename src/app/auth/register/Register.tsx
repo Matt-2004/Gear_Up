@@ -32,9 +32,27 @@ const Register = () => {
     formData,
     setFormData,
     errors,
-    handleSubmit: handleFormSubmit,
+    handleSubmit: rawHandleFormSubmit,
     isPending,
   } = useAuthForm(initialRegisterFormData, RegisterSchema, submit);
+
+  const handleFormSubmit = async (formData: FormData) => {
+    const result = await rawHandleFormSubmit(formData);
+
+    if (
+      result &&
+      typeof result === "object" &&
+      "isSuccess" in result &&
+      !result.isSuccess
+    ) {
+      const message =
+        "message" in result && typeof result.message === "string"
+          ? result.message
+          : "Registration failed";
+
+      throw new Error(message);
+    }
+  };
 
   const firstNameRef = useRef<HTMLInputElement>(null);
 

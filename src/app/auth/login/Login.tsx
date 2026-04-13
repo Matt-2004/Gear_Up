@@ -4,7 +4,6 @@ import { useEffect, useRef } from "react";
 import Button from "@/components/Common/Button";
 import Input from "@/components/Common/Input";
 import { AuthPageCaption, AuthPageContainer } from "../component";
-import { authAPI } from "@/utils/Auth/authAPI";
 import Link from "next/link";
 import { LoginSchema } from "../typeSchema";
 import { useAuthForm } from "../useAuthForm";
@@ -17,6 +16,7 @@ import {
 } from "@/utils/Auth/clientTokenUtils";
 import Image from "next/image";
 import loginHeroImage from "../../../../public/carImages/9.jpg";
+import { loginSubmit } from "./action";
 
 const initialLoginFormData = {
   usernameOrEmail: "",
@@ -32,18 +32,11 @@ const Login = () => {
   });
 
   async function action(formData: FormData) {
-    const usernameOrEmail = formData.get("usernameOrEmail") as string;
-    const password = formData.get("password") as string;
-    const rememberMe = formData.get("rememberMe") === "on";
+    const result = await loginSubmit(formData);
 
-    await authAPI(
-      `/api/auth/login`,
-      {
-        usernameOrEmail,
-        password,
-      },
-      { rememberMe },
-    );
+    if (!result.isSuccess) {
+      throw new Error(result.message);
+    }
   }
 
   const {
