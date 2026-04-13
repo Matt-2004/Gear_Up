@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 
 export const AuthPageContainer = ({ children }: { children: ReactNode }) => {
   return (
-    <div className="flex min-h-screen w-full flex-col items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
+    <div className="flex min-h-dvh w-screen flex-col items-stretch justify-start bg-gray-50 px-0 py-0 sm:min-h-screen sm:w-full sm:items-center sm:justify-center sm:px-6 sm:py-12 lg:px-8">
       {children}
     </div>
   );
