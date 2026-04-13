@@ -3,7 +3,7 @@ import StoreProvider from "@/app/hooks/StoreProvider";
 import ConditionalNavbar from "@/components/Navbar/ConditionalNavbar";
 import NotificationProvider from "@/Context/NotificationContext";
 import { UserDataProvider } from "@/Context/UserDataContext";
-import NextAuthSessionProvider from "@/provider/NextAuthSessionProvider";
+
 import ReactQueryProvider from "@/provider/ReactQueryProvider";
 import ToastProvider from "@/provider/ToastProvider";
 import type { Metadata } from "next";
@@ -77,19 +77,17 @@ export default async function RootLayout({
     <html lang="en" className={`${roboto.className}`}>
       <body className={`antialiased`}>
         <ToastProvider>
-          <NextAuthSessionProvider>
-            <StoreProvider>
-              <ReactQueryProvider>
-                <UserDataProvider>
-                  <NotificationProvider>
-                    {/* TODO: Navbar not tested yet - needs testing before production */}
-                    <ConditionalNavbar />
-                    {children}
-                  </NotificationProvider>
-                </UserDataProvider>
-              </ReactQueryProvider>
-            </StoreProvider>
-          </NextAuthSessionProvider>
+          <StoreProvider>
+            <ReactQueryProvider>
+              <UserDataProvider>
+                <NotificationProvider>
+                  {/* TODO: Navbar not tested yet - needs testing before production */}
+                  <ConditionalNavbar />
+                  {children}
+                </NotificationProvider>
+              </UserDataProvider>
+            </ReactQueryProvider>
+          </StoreProvider>
         </ToastProvider>
       </body>
     </html>
