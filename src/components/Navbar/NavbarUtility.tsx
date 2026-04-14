@@ -219,7 +219,7 @@ export const NotificationBell = () => {
     if (!token) return;
 
     const conn = new signalR.HubConnectionBuilder()
-      .withUrl("http://localhost:5255/hubs/notification", {
+      .withUrl(`${process.env.NEXT_Backend_URL}/hubs/notification`, {
         accessTokenFactory: () => token,
         skipNegotiation: true,
         transport: signalR.HttpTransportType.WebSockets,

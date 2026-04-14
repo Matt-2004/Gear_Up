@@ -9,14 +9,16 @@ import { updateUserProfile } from "@/utils/API/UserAPI";
 
 import { Camera, Save, X } from "lucide-react";
 import Image from "next/image";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 
 const ProfilePage = () => {
   const { user } = useUserData();
   const [isDataChange, setIsDataChange] = useState<boolean>(false);
   const [input, setInput] = useState<UserItem>();
   const [originalInput, setOriginalInput] = useState<UserItem>();
-  const formData = new FormData();
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { addToastMessage, removeToastMessage } = useToast({
     toastType: "success",
@@ -42,7 +44,7 @@ const ProfilePage = () => {
     if (!user) return;
     setInput(user);
     setOriginalInput(user);
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     if (!originalInput || !input) {
@@ -50,16 +52,51 @@ const ProfilePage = () => {
       return;
     }
 
-    Object.entries(originalInput).map(([key]) => {
-      if (
+    const changed = Object.keys(originalInput).some(
+      (key) =>
         (originalInput as Record<string, any>)[key] !==
-        (input as Record<string, any>)[key]
-      ) {
-        formData.set(key, (input as Record<string, any>)[key]);
-        setIsDataChange(true);
-      }
+        (input as Record<string, any>)[key],
+    );
+
+    setIsDataChange(changed || !!avatarFile);
+  }, [input, originalInput, avatarFile]);
+
+  const handleAvatarPick = () => fileInputRef.current?.click();
+
+  const handleAvatarChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const previewUrl = URL.createObjectURL(file);
+    setAvatarFile(file);
+    setAvatarPreview(previewUrl);
+    setIsDataChange(true);
+  };
+
+  const handleCancel = () => {
+    setInput(originalInput);
+    setAvatarFile(null);
+    setAvatarPreview(null);
+    setIsDataChange(false);
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!input || !originalInput) return;
+
+    const formData = new FormData();
+
+    Object.keys(originalInput).forEach((key) => {
+      const prev = (originalInput as Record<string, any>)[key];
+      const next = (input as Record<string, any>)[key];
+      if (prev !== next) formData.set(key, next ?? "");
     });
-  }, [input]);
+
+    if (avatarFile) formData.set("AvaterImage", avatarFile);
+
+    if (![...formData.keys()].length) return;
+    await updateProfile(formData);
+  };
 
   async function updateProfile(formData: FormData) {
     try {
@@ -67,6 +104,7 @@ const ProfilePage = () => {
       if (res?.isSuccess) {
         setIsDataChange(false);
         setOriginalInput(input);
+        setAvatarFile(null);
         addToastMessage("success", res.message);
       }
       setTimeout(() => {
@@ -91,7 +129,7 @@ const ProfilePage = () => {
         </div>
 
         <form
-          action={() => updateProfile(formData)}
+          onSubmit={handleSubmit}
           className="overflow-hidden rounded-2xl bg-white shadow-sm"
         >
           {/* Profile Header Section */}
@@ -100,15 +138,27 @@ const ProfilePage = () => {
             <div className="relative flex flex-col items-center gap-4">
               <div className="group relative">
                 <Image
-                  src={input?.avatarUrl || "/default_profile.jpg"}
+                  src={
+                    avatarPreview || input?.avatarUrl || "/default_profile.jpg"
+                  }
                   alt={input?.name || "User Avatar"}
                   width={120}
                   height={120}
                   className="h-32 w-32 rounded-full border-4 border-white object-cover shadow-lg"
                 />
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  name="avatarImage"
+                  onChange={handleAvatarChange}
+                />
                 <button
                   type="button"
-                  className="absolute right-0 bottom-0 rounded-full bg-white p-2 shadow-md transition-colors hover:bg-gray-50"
+                  onClick={handleAvatarPick}
+                  className="absolute cursor-pointer right-0 bottom-0 rounded-full bg-white p-2 shadow-md transition-colors hover:bg-gray-50"
+                  aria-label="Change profile image"
                 >
                   <Camera className="h-5 w-5 text-gray-700" />
                 </button>
@@ -131,7 +181,7 @@ const ProfilePage = () => {
               <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                 <Input
                   type="text"
-                  value={input?.name}
+                  value={input?.name ?? ""}
                   placeholder={"John Doe"}
                   onChange={handleInput}
                   name="name"
@@ -141,7 +191,7 @@ const ProfilePage = () => {
 
                 <Input
                   type={"text"}
-                  value={input?.email}
+                  value={input?.email ?? ""}
                   placeholder={"test@email.com"}
                   onChange={handleInput}
                   name="email"
@@ -161,10 +211,10 @@ const ProfilePage = () => {
 
                 <Input
                   type="date"
-                  value={input?.dateOfBirth}
+                  value={input?.dateOfBirth ?? ""}
                   onChange={handleInput}
                   name="dateOfBirth"
-                  max={Date.now()}
+                  max={new Date().toISOString().split("T")[0]}
                   min={"1990-01-01"}
                 >
                   Date of Birth
@@ -187,6 +237,7 @@ const ProfilePage = () => {
               <div className="flex gap-3">
                 <button
                   type="button"
+                  onClick={handleCancel}
                   className="flex items-center gap-2 rounded-lg border-2 border-gray-300 px-6 py-2.5 font-semibold text-gray-700 transition-colors hover:bg-gray-50"
                 >
                   <X className="h-4 w-4" />
