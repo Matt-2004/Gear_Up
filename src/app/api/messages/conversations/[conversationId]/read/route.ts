@@ -1,4 +1,4 @@
-import { API_URL } from "@/lib/config";
+import { BACKEND_API_URL } from "@/lib/config";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -17,7 +17,7 @@ export async function POST(
 
   try {
     const res = await fetch(
-      `${API_URL}/api/v1/messages/conversations/${conversationId}/read`,
+      `${BACKEND_API_URL}/api/v1/messages/conversations/${conversationId}/read`,
       {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },

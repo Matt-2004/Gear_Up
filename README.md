@@ -30,7 +30,7 @@ The Next.js 16+ frontend for the Gear Up platform. Gear Up connects car buyers, 
 
 | Category                | Library                      |
 | ----------------------- | ---------------------------- |
-| Framework               | Next.js 14+ (App Router)     |
+| Framework               | Next.js 16+ (App Router)     |
 | Language                | TypeScript                   |
 | Styling                 | Tailwind CSS                 |
 | State Management        | Redux Toolkit                |
@@ -275,7 +275,7 @@ Handled transparently in the Next.js middleware before the page renders.
       └─ [no access_token, but refresh_token present]
               │
               ▼
-         POST {API_URL}/api/v1/auth/refresh
+         POST {BACKEND_API_URL}/api/v1/auth/refresh
               │  body: refresh_token
               │
               ├─ [res.ok]
@@ -482,7 +482,7 @@ Located: `src/Context/UserDataContext.tsx`
 Provides the decrypted user profile to any client component.
 
 ```tsx
-const { user, loading } = useUserData()
+const { user, loading } = useUserData();
 // user: UserItem | null
 // loading: boolean
 ```

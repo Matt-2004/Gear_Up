@@ -53,8 +53,13 @@ const DiscoverPost = ({ post }: { post: CursorBaseDTO }) => {
     >({
       queryKey: ["discover-posts"],
       queryFn: async ({ pageParam }) => {
-        const response = await getAllPosts(pageParam);
-        return response?.data;
+        const result = await getAllPosts(pageParam);
+
+        if (result instanceof Response) {
+          return (await result.json()) as CursorBaseDTO;
+        }
+
+        return result as CursorBaseDTO;
       },
       enabled: Boolean(user),
       initialPageParam: undefined,

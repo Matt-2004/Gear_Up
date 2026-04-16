@@ -1,4 +1,4 @@
-import { API_URL } from "@/lib/config";
+import { BACKEND_API_URL } from "@/lib/config";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -6,7 +6,7 @@ export async function POST(req: NextRequest) {
   const email = searchParams.get("email");
 
   const res = await fetch(
-    `${API_URL}/api/v1/auth/resend-verification-email?email=${email}`,
+    `${BACKEND_API_URL}/api/v1/auth/resend-verification-email?email=${email}`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },

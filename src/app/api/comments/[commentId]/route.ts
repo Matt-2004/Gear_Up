@@ -1,4 +1,4 @@
-import { API_URL } from "@/lib/config";
+import { BACKEND_API_URL } from "@/lib/config";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -17,7 +17,7 @@ export async function PUT(
 
   try {
     const body = await req.json();
-    const res = await fetch(`${API_URL}/api/v1/comments/${commentId}`, {
+    const res = await fetch(`${BACKEND_API_URL}/api/v1/comments/${commentId}`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -44,7 +44,7 @@ export async function DELETE(
   const token = await getToken();
 
   try {
-    const res = await fetch(`${API_URL}/api/v1/comments/${commentId}`, {
+    const res = await fetch(`${BACKEND_API_URL}/api/v1/comments/${commentId}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
     });

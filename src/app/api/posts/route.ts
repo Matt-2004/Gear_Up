@@ -1,4 +1,4 @@
-import { API_URL } from "@/lib/config";
+import { BACKEND_API_URL } from "@/lib/config";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { getServerAccessToken } from "@/utils/Auth/tokenUtils";
@@ -20,10 +20,10 @@ async function tryRefreshAccessToken(): Promise<RefreshedTokens | null> {
   const cookieStore = await cookies();
   const refreshToken = cookieStore.get("refresh_token")?.value;
 
-  if (!refreshToken || !API_URL) return null;
+  if (!refreshToken || !BACKEND_API_URL) return null;
 
   try {
-    const res = await fetch(`${API_URL}/api/v1/auth/refresh`, {
+    const res = await fetch(`${BACKEND_API_URL}/api/v1/auth/refresh`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -76,7 +76,7 @@ export async function GET(req: NextRequest) {
   }
   const cursor = req.nextUrl.searchParams.get("cursor");
 
-  if (!API_URL) {
+  if (!BACKEND_API_URL) {
     return NextResponse.json(
       { error: "Backend API URL is not configured" },
       { status: 500 },
@@ -88,20 +88,26 @@ export async function GET(req: NextRequest) {
   const suffix = query.toString() ? `?${query.toString()}` : "";
 
   try {
-    let fetchPostData = await fetch(`${API_URL}/api/v1/posts${suffix}`, {
-      headers: authHeaders(token),
-      cache: "no-store",
-    });
+    let fetchPostData = await fetch(
+      `${BACKEND_API_URL}/api/v1/posts${suffix}`,
+      {
+        headers: authHeaders(token),
+        cache: "no-store",
+      },
+    );
 
     let refreshedTokens: RefreshedTokens | null = null;
     if (fetchPostData.status === 401) {
       refreshedTokens = await tryRefreshAccessToken();
       if (refreshedTokens?.accessToken) {
         token = refreshedTokens.accessToken;
-        fetchPostData = await fetch(`${API_URL}/api/v1/posts${suffix}`, {
-          headers: authHeaders(token),
-          cache: "no-store",
-        });
+        fetchPostData = await fetch(
+          `${BACKEND_API_URL}/api/v1/posts${suffix}`,
+          {
+            headers: authHeaders(token),
+            cache: "no-store",
+          },
+        );
       }
     }
 
@@ -145,7 +151,7 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  if (!API_URL) {
+  if (!BACKEND_API_URL) {
     return NextResponse.json(
       { error: "Backend API URL is not configured" },
       { status: 500 },
@@ -161,7 +167,7 @@ export async function POST(req: NextRequest) {
       headers.Authorization = `Bearer ${token}`;
     }
 
-    let response = await fetch(`${API_URL}/api/v1/posts`, {
+    let response = await fetch(`${BACKEND_API_URL}/api/v1/posts`, {
       method: "POST",
       headers,
       body: JSON.stringify(body),
@@ -173,7 +179,7 @@ export async function POST(req: NextRequest) {
       refreshedTokens = await tryRefreshAccessToken();
       if (refreshedTokens?.accessToken) {
         token = refreshedTokens.accessToken;
-        response = await fetch(`${API_URL}/api/v1/posts`, {
+        response = await fetch(`${BACKEND_API_URL}/api/v1/posts`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

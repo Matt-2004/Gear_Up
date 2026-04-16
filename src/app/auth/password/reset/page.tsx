@@ -1,7 +1,7 @@
-import ResetPassword from "./ResetPassword"
+import ResetPassword from "@/app/features/auth/resetPassword/ui/resetPassword";
 
 const Page = () => {
-	return <ResetPassword />
-}
+  return <ResetPassword />;
+};
 
-export default Page
+export default Page;

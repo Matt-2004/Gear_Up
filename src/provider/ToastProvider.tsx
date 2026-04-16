@@ -1,8 +1,12 @@
 "use client";
 
+import { Tokens } from "@/app/features/auth/signIn/types/sign-in-response";
+import { MainResponse } from "@/app/shared/types.ts/main-response";
 import clsx from "clsx";
 import { AnimatePresence, motion } from "framer-motion";
 import { CheckCircle2, Info, X, XCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
+
 import {
   createContext,
   ReactNode,
@@ -29,6 +33,10 @@ interface ToastContextValue {
     duration?: number,
   ) => void;
   removeToastMessage: () => void;
+  handleToast: (
+    res: MainResponse<string | null | Tokens>,
+    pathAfterSuccess?: string,
+  ) => void;
 }
 
 const DEFAULT_TOAST_DURATION = 2500;
@@ -38,6 +46,7 @@ export const ToastContext = createContext<ToastContextValue | undefined>(
 );
 
 export default function ToastProvider({ children }: { children: ReactNode }) {
+  const router = useRouter();
   const [toast, setToast] = useState<ToastState>({
     toastType: null,
     message: null,
@@ -63,6 +72,26 @@ export default function ToastProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
+  const handleToast = (
+    res: MainResponse<string | null | Tokens>,
+    pathAfterSuccess?: string,
+  ) => {
+    if (res.isSuccess) {
+      addToastMessage("success", res.message);
+      if (pathAfterSuccess) {
+        setTimeout(() => {
+          router.push(pathAfterSuccess);
+        }, 3000);
+      }
+    } else {
+      addToastMessage("error", res.message);
+    }
+
+    setTimeout(() => {
+      removeToastMessage();
+    }, 5000);
+  };
+
   useEffect(() => {
     if (!toast.toastType || !toast.message) return;
 
@@ -81,6 +110,7 @@ export default function ToastProvider({ children }: { children: ReactNode }) {
       setToast,
       addToastMessage,
       removeToastMessage,
+      handleToast,
     }),
     [toast, addToastMessage, removeToastMessage],
   );

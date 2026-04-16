@@ -1,4 +1,4 @@
-import { API_URL } from "@/lib/config";
+import { BACKEND_API_URL } from "@/lib/config";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -24,14 +24,17 @@ export async function PATCH(
       body = text || null;
     }
 
-    const res = await fetch(`${API_URL}/api/v1/appointments/${id}/${action}`, {
-      method: "PATCH",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
+    const res = await fetch(
+      `${BACKEND_API_URL}/api/v1/appointments/${id}/${action}`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body,
       },
-      body,
-    });
+    );
     const data = await res.json();
     return NextResponse.json(data, { status: res.status });
   } catch {

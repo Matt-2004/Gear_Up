@@ -20,8 +20,7 @@ export function useToast(_config?: UseToastConfig) {
   }
 
   return {
-    toast: context.toast,
-    setToast: context.setToast,
+    handleToast: context.handleToast,
     addToastMessage: context.addToastMessage,
     removeToastMessage: context.removeToastMessage,
   };

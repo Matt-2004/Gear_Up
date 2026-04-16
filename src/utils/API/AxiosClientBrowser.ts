@@ -1,6 +1,6 @@
+import { MainResponse } from "@/app/shared/types.ts/main-response";
+
 function resolveUrl(path: string): string {
-  if (path.startsWith("http")) return path;
-  if (typeof window !== "undefined") return path;
   const base = process.env.NEXT_DEFAULT_API_URL ?? "http://localhost:3000";
   return `${base}${path}`;
 }
@@ -16,28 +16,15 @@ function getBrowserAuthHeader(): HeadersInit {
   };
 }
 
-async function handleResponse(res: Response) {
-  if (!res.ok) {
-    let message = `Request failed with status ${res.status}`;
-    try {
-      const json = await res.json();
-      message = json?.message ?? json?.error ?? message;
-    } catch {
-      // non-JSON error body
-    }
-    throw new Error(message);
-  }
-  if (res.status === 204) return null;
-  return res.json();
-}
-
 export async function apiFetch(url: string) {
   const res = await fetch(resolveUrl(url), {
     method: "GET",
     credentials: "include",
     headers: getBrowserAuthHeader(),
   });
-  return handleResponse(res);
+
+  const respnose = await res.json();
+  return respnose;
 }
 
 export async function apiPost(url: string, data: unknown) {
@@ -51,7 +38,8 @@ export async function apiPost(url: string, data: unknown) {
       : { ...authHeader, "Content-Type": "application/json" },
     body: isFormData ? data : data !== null ? JSON.stringify(data) : null,
   });
-  return handleResponse(res);
+  const respnose = await res.json();
+  return respnose;
 }
 
 export async function apiPut(url: string, data: unknown) {
@@ -65,7 +53,8 @@ export async function apiPut(url: string, data: unknown) {
       : { ...authHeader, "Content-Type": "application/json" },
     body: isFormData ? data : JSON.stringify(data),
   });
-  return handleResponse(res);
+  const respnose = await res.json();
+  return respnose;
 }
 
 export async function apiPatch(url: string, data?: unknown) {
@@ -76,7 +65,8 @@ export async function apiPatch(url: string, data?: unknown) {
     headers: { ...authHeader, "Content-Type": "application/json" },
     body: data ? JSON.stringify(data) : null,
   });
-  return handleResponse(res);
+  const respnose = await res.json();
+  return respnose;
 }
 
 export async function apiDelete(url: string) {
@@ -85,5 +75,6 @@ export async function apiDelete(url: string) {
     credentials: "include",
     headers: getBrowserAuthHeader(),
   });
-  return handleResponse(res);
+  const respnose = await res.json();
+  return respnose;
 }

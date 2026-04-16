@@ -1,4 +1,4 @@
-import { API_URL } from "@/lib/config";
+import { BACKEND_API_URL } from "@/lib/config";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
 
   const res = await fetch(
-    `${API_URL}/api/v1/auth/reset-password?token=${token}`,
+    `${BACKEND_API_URL}/api/v1/auth/reset-password?token=${token}`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },

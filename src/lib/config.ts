@@ -1,4 +1,4 @@
-export const API_URL = process.env.NEXT_Backend_URL;
+export const BACKEND_API_URL = process.env.NEXT_Backend_URL;
 
 /** Base URL of this Next.js app — required for SSR fetch to /api/... routes */
 

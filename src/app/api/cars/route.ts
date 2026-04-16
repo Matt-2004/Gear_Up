@@ -1,4 +1,4 @@
-import { API_URL } from "@/lib/config";
+import { BACKEND_API_URL } from "@/lib/config";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
   const search = req.nextUrl.search;
 
   try {
-    const res = await fetch(`${API_URL}/api/v1/cars${search}`);
+    const res = await fetch(`${BACKEND_API_URL}/api/v1/cars${search}`);
     const data = await res.json();
     return NextResponse.json(data, { status: res.status });
   } catch {
@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const formData = await req.formData();
-    const res = await fetch(`${API_URL}/api/v1/cars`, {
+    const res = await fetch(`${BACKEND_API_URL}/api/v1/cars`, {
       method: "POST",
       headers: { Authorization: `Bearer ${token}` },
       body: formData,

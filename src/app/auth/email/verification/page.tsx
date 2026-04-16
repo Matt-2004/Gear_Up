@@ -1,13 +1,13 @@
-import { Metadata } from "next"
-import EmailSend from "../EmailSend"
+import { Metadata } from "next";
+import EmailValidation from "@/app/features/auth/emailValidation/ui/emailValidation";
 
 export const metadata: Metadata = {
-	title: "Email Verification - Gear Up",
-	description: "Verify your email address to complete your registration.",
-}
+  title: "Email Verification - Gear Up",
+  description: "Verify your email address to complete your registration.",
+};
 
 const Page = () => {
-	return <EmailSend variant="verification" />
-}
+  return <EmailValidation variant="verification" />;
+};
 
-export default Page
+export default Page;

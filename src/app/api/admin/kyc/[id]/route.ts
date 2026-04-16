@@ -1,4 +1,4 @@
-import { API_URL } from "@/lib/config";
+import { BACKEND_API_URL } from "@/lib/config";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -16,7 +16,7 @@ export async function GET(
   const token = await getToken();
 
   try {
-    const res = await fetch(`${API_URL}/api/v1/admin/kyc/${id}`, {
+    const res = await fetch(`${BACKEND_API_URL}/api/v1/admin/kyc/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     const data = await res.json();
@@ -39,7 +39,7 @@ export async function PUT(
 
   try {
     const body = await req.json();
-    const res = await fetch(`${API_URL}/api/v1/admin/kyc/${id}`, {
+    const res = await fetch(`${BACKEND_API_URL}/api/v1/admin/kyc/${id}`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${token}`,

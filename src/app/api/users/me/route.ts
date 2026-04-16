@@ -1,4 +1,4 @@
-import { API_URL } from "@/lib/config";
+import { BACKEND_API_URL } from "@/lib/config";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -12,7 +12,7 @@ export async function GET(_req: NextRequest) {
   const token = await getToken();
 
   try {
-    const res = await fetch(`${API_URL}/api/v1/users/me`, {
+    const res = await fetch(`${BACKEND_API_URL}/api/v1/users/me`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     const data = await res.json();
@@ -31,7 +31,7 @@ export async function PUT(req: NextRequest) {
 
   try {
     const formData = await req.formData();
-    const res = await fetch(`${API_URL}/api/v1/users/me`, {
+    const res = await fetch(`${BACKEND_API_URL}/api/v1/users/me`, {
       method: "PUT",
       headers: { Authorization: `Bearer ${token}` },
       body: formData,

@@ -1,12 +1,12 @@
 import { IAdminLogin } from "@/types/admin.types";
-import { API_URL } from "@/lib/config";
+import { BACKEND_API_URL } from "@/lib/config";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
     const data = (await req.json()) as IAdminLogin;
 
-    const response = await fetch(`${API_URL}/api/v1/admin/login`, {
+    const response = await fetch(`${BACKEND_API_URL}/api/v1/admin/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

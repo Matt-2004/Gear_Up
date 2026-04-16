@@ -1,7 +1,7 @@
-import EmailSend from "../EmailSend"
+import EmailValidation from "@/app/features/auth/emailValidation/ui/emailValidation";
 
 const Page = () => {
-	return <EmailSend variant="reset-password" />
-}
+  return <EmailValidation variant="reset-password" />;
+};
 
-export default Page
+export default Page;

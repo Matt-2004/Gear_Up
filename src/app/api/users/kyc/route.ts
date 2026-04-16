@@ -1,4 +1,4 @@
-import { API_URL } from "@/lib/config";
+import { BACKEND_API_URL } from "@/lib/config";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const formData = await req.formData();
-    const res = await fetch(`${API_URL}/api/v1/users/kyc`, {
+    const res = await fetch(`${BACKEND_API_URL}/api/v1/users/kyc`, {
       method: "POST",
       headers: { Authorization: `Bearer ${token}` },
       body: formData,

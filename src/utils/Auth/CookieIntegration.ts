@@ -1,9 +1,9 @@
-import { AuthItem, ProfileDTO } from "@/types/auth.types";
-import { profileItem } from "@/types/data.types";
-import { UserItem } from "@/types/user.types";
+"use server";
+
+import { Tokens } from "@/app/features/auth/signIn/types/sign-in-response";
 import { cookies } from "next/headers";
 
-export async function token_integration(data: AuthItem, rememberMe = true) {
+export async function token_integration(data: Tokens, rememberMe = true) {
   const cookieStore = await cookies();
 
   const accessTokenCookieOptions = {

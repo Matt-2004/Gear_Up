@@ -1,13 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
-import { API_URL } from "./lib/config";
+import { BACKEND_API_URL } from "./lib/config";
 import { getDecryptedFullUserData } from "./utils/cookieHelper";
-import { encrypt } from "./utils/encryption";
 
 // Define public routes that don't require authentication
 const PUBLIC_ROUTES = [
   "/",
   "/auth/login",
   "/auth/register",
+  "/features/auth/signIn/api",
+  "/features/auth/signUp/api",
+  "/features/auth/admin/api",
+  "/features/auth/emailValidation/api",
+  "/features/auth/resetPassword/api",
+
   "/auth/password",
   "/auth/email",
   "/car/search",
@@ -24,10 +29,12 @@ const PUBLIC_ROUTES = [
 
 // Helper function to check if a path is public
 function isPublicRoute(pathname: string): boolean {
-  // Check if pathname exactly matches or starts with any public route
-  return PUBLIC_ROUTES.some(
-    (route) => pathname === route || pathname.startsWith(`${route}/`),
-  );
+  return PUBLIC_ROUTES.some((route) => {
+    const normalizedRoute = route.startsWith("/") ? route : `/${route}`;
+    return (
+      pathname === normalizedRoute || pathname.startsWith(`${normalizedRoute}/`)
+    );
+  });
 }
 
 // Helper function to fetch and cache user data
@@ -109,7 +116,7 @@ export async function proxy(req: NextRequest) {
   // If refresh token exists but no access token, attempt to refresh
   if (refresh_token && !access_token) {
     try {
-      const res = await fetch(`${API_URL}/api/v1/auth/refresh`, {
+      const res = await fetch(`${BACKEND_API_URL}/api/v1/auth/refresh`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

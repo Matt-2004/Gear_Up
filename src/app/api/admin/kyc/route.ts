@@ -1,4 +1,4 @@
-import { API_URL } from "@/lib/config";
+import { BACKEND_API_URL } from "@/lib/config";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
   const search = req.nextUrl.search;
 
   try {
-    const res = await fetch(`${API_URL}/api/v1/admin/kyc${search}`, {
+    const res = await fetch(`${BACKEND_API_URL}/api/v1/admin/kyc${search}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     const data = await res.json();

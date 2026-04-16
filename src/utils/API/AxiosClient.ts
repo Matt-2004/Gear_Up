@@ -8,12 +8,12 @@ import { IAdminUpdateStatus } from "@/types/kyc.types";
 import { CreateMessageDTO } from "@/types/message.types";
 import { CreatePostData } from "@/types/post.types";
 import { IReviewSubmissionDTO } from "@/types/review.types";
-import { API_URL } from "@/lib/config";
+import { BACKEND_API_URL } from "@/lib/config";
 import { getServerAccessToken } from "@/utils/Auth/tokenUtils";
 import axios from "axios";
 
 export const api = axios.create({
-  baseURL: API_URL,
+  baseURL: BACKEND_API_URL,
 });
 
 export async function getFetch(url: string) {

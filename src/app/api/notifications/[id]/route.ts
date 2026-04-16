@@ -1,4 +1,4 @@
-import { API_URL } from "@/lib/config";
+import { BACKEND_API_URL } from "@/lib/config";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -16,10 +16,13 @@ export async function PATCH(
   const token = await getToken();
 
   try {
-    const res = await fetch(`${API_URL}/api/v1/notifications/${id}/read`, {
-      method: "PATCH",
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const res = await fetch(
+      `${BACKEND_API_URL}/api/v1/notifications/${id}/read`,
+      {
+        method: "PATCH",
+        headers: { Authorization: `Bearer ${token}` },
+      },
+    );
     const data = await res.json();
     return NextResponse.json(data, { status: res.status });
   } catch {
@@ -39,7 +42,7 @@ export async function DELETE(
   const token = await getToken();
 
   try {
-    const res = await fetch(`${API_URL}/api/v1/notifications/${id}`, {
+    const res = await fetch(`${BACKEND_API_URL}/api/v1/notifications/${id}`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
     });
