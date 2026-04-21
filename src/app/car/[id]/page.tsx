@@ -2,7 +2,7 @@ import { CarItems } from "@/types/car.types";
 import { getCarById } from "@/utils/API/CarAPI";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import HomeCarDetailPage from "./HomeCarDetailPage";
+import CarDetail from "./CarDetail";
 
 export const dynamic = "force-dynamic";
 
@@ -14,7 +14,7 @@ export async function generateMetadata({
   const { id } = await params;
   try {
     const car = await getCarById(id);
-    const carData = car?.data;
+    const carData = car.data;
     return {
       title: carData
         ? `${carData.make} ${carData.model} ${carData.year} - Gear Up`
@@ -34,7 +34,7 @@ export async function generateMetadata({
 async function getData(id: string) {
   try {
     const res = await getCarById(id);
-    return res?.data ?? null;
+    return res.data;
   } catch (error) {
     console.error("Error fetching car:", error);
     return null;
@@ -47,7 +47,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 
   if (!car) notFound();
 
-  return <HomeCarDetailPage car={car as CarItems} />;
+  return <CarDetail car={car} />;
 };
 
 export default Page;

@@ -62,7 +62,6 @@ const CreatePostForm = ({ dealerCars }: CreatePostFormProps) => {
   };
 
   const handlePublish = async (data: CreatePostData) => {
-    console.log("Publishing post:", postData);
     try {
       const response = await createPost(data);
 

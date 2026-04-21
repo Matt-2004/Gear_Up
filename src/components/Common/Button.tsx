@@ -25,6 +25,7 @@ function Button({
   width = "full",
   disable = false,
   disabled = false,
+  className,
   ...props
 }: Partial<ButtonProps>) {
   const isDisabled = Boolean(disable || disabled || loading);
@@ -36,8 +37,12 @@ function Button({
       aria-disabled={isDisabled}
       className={clsx(
         width === "full" ? "min-w-full" : "min-w-[50%]",
-        "bg-primary-500 font-semibold active:bg-primary-500 flex w-full items-center justify-center gap-4 sm:gap-4 md:gap-6 rounded-md py-2.5 sm:py-3 md:py-3 px-4 sm:px-6 md:px-8 text-base sm:text-base md:text-lg text-white transition-shadow hover:cursor-pointer hover:shadow-sm shadow-primary-200",
-        "disabled:bg-gray-400 disabled:opacity-70 disabled:cursor-not-allowed disabled:pointer-events-none disabled:shadow-none disabled:hover:shadow-none disabled:hover:bg-gray-400",
+        "bg-primary text-white flex w-full items-center justify-center gap-3 rounded-lg px-4 py-2.5 text-base font-semibold tracking-wide shadow-md shadow-primary-200/50 transition-all duration-200 ease-out",
+        "hover:cursor-pointer hover:bg-primary-6  00 hover:shadow-lg hover:shadow-primary-300/50",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-300 focus-visible:ring-offset-2",
+        "active:translate-y-0 active:scale-[0.99]",
+        "disabled:translate-y-0 disabled:scale-100 disabled:cursor-not-allowed disabled:pointer-events-none disabled:bg-gray-400 disabled:opacity-70 disabled:shadow-none",
+        className,
       )}
       {...props}
     >

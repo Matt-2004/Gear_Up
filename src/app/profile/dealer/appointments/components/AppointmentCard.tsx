@@ -1,12 +1,12 @@
-import { IAppointment } from "@/types/appointment.types";
-import SharedAppointmentCard from "@/components/Appointment/AppointmentCard";
+import { AppointmentData } from "@/types/appointment.types";
+import SharedAppointmentCard from "@/components/Appointment/RoleBasedAppointmentCard";
 import {
   formatDate,
   getStatusColor,
 } from "@/components/Appointment/appointmentUtils";
 
 interface AppointmentCardProps {
-  appointment: IAppointment;
+  appointment: AppointmentData;
   loading: boolean;
   onAccept: (appointmentId: string) => void;
   onReject: (appointmentId: string, rejectionReason: string) => void;
@@ -27,7 +27,6 @@ const AppointmentCard = ({
       appointment={appointment}
       loading={loading}
       mode="dealer"
-      formatDate={formatDate}
       getStatusColor={getStatusColor}
       onAccept={onAccept}
       onReject={onReject}

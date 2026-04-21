@@ -1,33 +1,33 @@
 import { IReviewSubmissionDTO } from "@/types/review.types";
-import { apiFetch, apiDelete, apiPost, apiPut } from "./AxiosClientBrowser";
+import { deleteFetch, getFetch, putFetch, postFetch } from "./AxiosClient";
 
 export async function submitReview(reviewData: IReviewSubmissionDTO) {
-  return apiPost("/api/reviews", reviewData);
+  return postFetch("/api/v1/reviews", reviewData);
 }
 
 export async function editReview(
   reviewId: string,
   reviewData: Omit<IReviewSubmissionDTO, "dealerId">,
 ) {
-  return apiPut(`/api/reviews/${reviewId}`, reviewData);
+  return putFetch(`/api/reviews/${reviewId}`, reviewData);
 }
 
 export async function deleteReview(reviewId: string) {
-  return apiDelete(`/api/reviews/${reviewId}`);
+  return deleteFetch(`/api/reviews/${reviewId}`);
 }
 
 export async function getReviewsByReviewId(reviewId: string) {
-  return apiFetch(`/api/reviews/${reviewId}`);
+  return getFetch(`/api/v1/reviews/${reviewId}`);
 }
 
 export async function getReviewsByDealerId(dealerId: string) {
-  return apiFetch(`/api/reviews/dealers/${dealerId}`);
+  return getFetch(`/api/v1/reviews/dealer/${dealerId}`);
 }
 
 export async function getReviewByDealerIdWithSummary(dealerId: string) {
-  return apiFetch(`/api/reviews/dealers/${dealerId}/summary`);
+  return getFetch(`/api/v1/reviews/dealer/${dealerId}/summary`);
 }
 
 export async function getUserReviews() {
-  return apiFetch("/api/reviews/my");
+  return getFetch("/api/v1/reviews/my");
 }

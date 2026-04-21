@@ -18,7 +18,7 @@ export async function getDecryptedUserData(
 
 export async function getDecryptedFullUserData(
   encryptedData: string | undefined,
-): Promise<UserItem | null> {
+): Promise<{ userId: string; role: string } | null> {
   if (!encryptedData) {
     return null;
   }

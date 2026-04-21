@@ -1,36 +1,38 @@
 import { IAdminUpdateStatus } from "@/types/kyc.types";
-import { apiFetch, apiPut } from "./AxiosClientBrowser";
+import { getFetch, putFetch } from "./AxiosClient";
 
 export async function getAllKyc(cursor?: string) {
-  const url = cursor ? `/api/admin/kyc?cursor=${cursor}` : "/api/admin/kyc";
-  return apiFetch(url);
+  const url = cursor
+    ? `/api/v1/admin/kyc?cursor=${cursor}`
+    : "/api/v1/admin/kyc";
+  return getFetch(url);
 }
 
 export async function getKycById(id: string) {
-  return apiFetch(`/api/admin/kyc/${id}`);
+  return getFetch(`/api/v1/admin/kyc/${id}`);
 }
 
 export async function updateKycByAdmin(data: IAdminUpdateStatus, id: string) {
-  return apiPut(`/api/admin/kyc/${id}`, data);
+  return putFetch(`/api/v1/admin/kyc/${id}`, data);
 }
 
 export async function getKycWithStatus(status: string) {
-  return apiFetch(`/api/admin/kyc/status/${status}`);
+  return getFetch(`/api/v1/admin/kyc/status/${status}`);
 }
 
 export async function getAllCars(pageNum: number, limit: number) {
-  return apiFetch(`/api/admin/cars?pageNum=${pageNum}&limit=${limit}`);
+  return getFetch(`/api/v1/admin/cars?pageNum=${pageNum}&limit=${limit}`);
 }
 
 export async function getCarById(carId: string) {
-  return apiFetch(`/api/admin/cars/${carId}`);
+  return getFetch(`/api/v1/admin/cars/${carId}`);
 }
 
 export async function updateCarByAdmin(
   data: IAdminUpdateStatus,
   carId: string,
 ) {
-  return apiPut(`/api/admin/cars/${carId}`, data);
+  return putFetch(`/api/v1/admin/cars/${carId}`, data);
 }
 
 export async function getDealerCars(
@@ -38,8 +40,8 @@ export async function getDealerCars(
   pageNum: number,
   limit: number,
 ) {
-  return apiFetch(
-    `/api/admin/cars/dealer/${dealerId}?pageNum=${pageNum}&limit=${limit}`,
+  return getFetch(
+    `/api/v1/admin/cars/dealer/${dealerId}?pageNum=${pageNum}&limit=${limit}`,
   );
 }
 
@@ -48,7 +50,7 @@ export async function carStatusData(
   pageNum: number,
   limit: number,
 ) {
-  return apiFetch(
-    `/api/admin/cars/status/${status}?pageNum=${pageNum}&limit=${limit}`,
+  return getFetch(
+    `/api/v1/admin/cars/status/${status}?pageNum=${pageNum}&limit=${limit}`,
   );
 }

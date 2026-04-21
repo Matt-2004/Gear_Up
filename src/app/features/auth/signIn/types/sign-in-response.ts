@@ -5,4 +5,9 @@ export interface Tokens {
   refreshToken: string;
 }
 
+export interface LoginDTO {
+  usernameOrEmail: string;
+  password: string;
+}
+
 export interface SignInResponse extends MainResponse<Tokens | null> {}

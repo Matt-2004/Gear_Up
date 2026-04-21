@@ -1,29 +1,28 @@
-import { apiFetch, apiDelete, apiPatch } from "./AxiosClientBrowser";
+import { deleteFetch, getFetch, patchFetch } from "./AxiosClient";
 
 export const getNotification = async (
   cursor: string | null,
   limit: number = 20,
 ) => {
   const url =
-    "/api/notifications" +
+    "/api/v1/notifications" +
     (cursor ? `?cursor=${cursor}&pageSize=${limit}` : `?pageSize=${limit}`);
-  return apiFetch(url);
+  return getFetch(url);
 };
 
 export const deleteAllNotification = async () =>
-  apiDelete("/api/notifications");
-
+  deleteFetch("/api/v1/notifications");
 export const getUnreadNotificationCount = async () =>
-  apiFetch("/api/notifications/unread-count");
+  getFetch("/api/v1/notifications/unread-count");
 
 export const readNotificationById = async (id: string) =>
-  apiPatch(`/api/notifications/${id}`);
+  patchFetch(`/api/v1/notifications/${id}/read`);
 
 export const readAllNotification = async () =>
-  apiPatch("/api/notifications/read-all");
+  patchFetch("/api/v1/notifications/read-all");
 
 export const deleteNotificationById = async (id: string) =>
-  apiDelete(`/api/notifications/${id}`);
+  deleteFetch(`/api/v1/notifications/${id}`);
 
 const NotificationAPI = {
   getNotification,

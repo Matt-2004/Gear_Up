@@ -1,26 +1,20 @@
-import { IAppointment } from "@/types/appointment.types"
-import { CursorBaseDTO } from "@/types/post.types"
-import { myAppointments } from "@/utils/API/AppointmentAPI"
-import Appointments from "./Appointments"
-
-export const dynamic = "force-dynamic"
+import { AppointmentResponse } from "@/types/appointment.types";
+import { getFetch } from "@/utils/API/AxiosClient";
+import Appointments from "../../../features/appointments/ui/Appointments";
 
 async function getData(cursor?: string) {
-	try {
-		const res = await myAppointments(cursor)
-		return res?.data
-	} catch (error) {
-		console.error("Failed to fetch appointments:", error)
-		return { items: [], cursor: null, hasMore: false }
-	}
+  const url = cursor
+    ? `/api/v1/appointments/my?cursor=${encodeURIComponent(cursor)}`
+    : "/api/v1/appointments/my";
+  const res = await getFetch(url);
+
+  return res as AppointmentResponse;
 }
 
 const Page = async () => {
-	const result: Omit<CursorBaseDTO, "items"> & { items: IAppointment[] } =
-		await getData()
-	const appointments = result?.items || []
+  const appointments = await getData();
 
-	return <Appointments appointments={appointments} />
-}
+  return <Appointments appointments={appointments} />;
+};
 
-export default Page
+export default Page;

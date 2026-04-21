@@ -1,6 +1,6 @@
 "use client";
 
-import { CarCursorDTO, ICar } from "@/types/car.types";
+import { CarsCursorDTO } from "@/types/car.types";
 import { CarCard } from "@/components/Car/CarCard";
 import { searchCarWithQuery } from "@/utils/API/CarAPI";
 import carSuggestionsData from "@/../public/carSuggestions.json";
@@ -11,7 +11,7 @@ import { useEffect, useRef, useState } from "react";
 
 interface SearchPageProps {
   query: string;
-  searchResults: ICar;
+  searchResults: CarsCursorDTO;
   error: string | null;
 }
 
@@ -47,9 +47,9 @@ export default function SearchPage({
     isLoading,
     error,
   } = useInfiniteQuery<
-    CarCursorDTO,
+    CarsCursorDTO,
     Error,
-    InfiniteData<CarCursorDTO>,
+    InfiniteData<CarsCursorDTO>,
     string[],
     string | undefined
   >({
@@ -64,13 +64,13 @@ export default function SearchPage({
     getNextPageParam: (lastPage) =>
       lastPage.hasMore ? lastPage.nextCursor : undefined,
     enabled: !!query,
-    initialData: initialData?.data
+    initialData: initialData?.items
       ? {
           pages: [
             {
-              items: initialData.data.items,
-              hasMore: initialData.data.hasMore,
-              nextCursor: initialData.data.nextCursor ?? null,
+              items: initialData.items,
+              hasMore: initialData.hasMore,
+              nextCursor: initialData.nextCursor ?? null,
             },
           ],
           pageParams: [undefined],
@@ -187,10 +187,10 @@ export default function SearchPage({
               <button
                 type="button"
                 onClick={handleGoBack}
-                className="shrink-0 rounded-lg border border-gray-300 bg-white p-3 shadow-sm transition-colors hover:bg-gray-50"
+                className="shrink-0 rounded-lg  bg-white p-3 shadow-sm transition-colors hover:bg-gray-50"
                 aria-label="Go back"
               >
-                <ArrowLeft className="h-5 w-5 text-gray-700" />
+                <ArrowLeft className="h-5 w-5 text-gray-400" />
               </button>
               <div ref={searchContainerRef} className="relative flex-1">
                 <input
@@ -201,7 +201,7 @@ export default function SearchPage({
                     if (suggestions.length > 0) setShowSuggestions(true);
                   }}
                   placeholder="Search by make, model, year..."
-                  className="focus:border-primary-500 focus:ring-primary-500 w-full rounded-lg border border-gray-300 bg-white py-3 pr-12 pl-12 text-base text-gray-900 placeholder-gray-500 shadow-sm focus:ring-2 focus:outline-none"
+                  className="focus:border-primary-500 focus:ring-primary-500 w-full rounded-lg bg-white py-3 pr-12 pl-12 text-base text-gray-900 placeholder-gray-500 shadow-sm focus:ring-2 focus:outline-none"
                   suppressHydrationWarning
                 />
                 <Search className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-gray-400" />

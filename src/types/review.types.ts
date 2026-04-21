@@ -6,7 +6,7 @@ export interface IReviewSubmissionDTO {
   reviewText: string;
 }
 
-export interface IReview extends DefaultResponse<IReviewCursor> {}
+export interface ReviewResponse extends DefaultResponse<IReviewCursor> {}
 
 export interface IReviewCursor {
   items: IReviewData[];

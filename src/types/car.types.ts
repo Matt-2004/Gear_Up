@@ -1,9 +1,9 @@
 import { ReactNode } from "react";
 import { DefaultResponse } from "./default-response.types";
 
-export interface ICar extends DefaultResponse<CarCursorDTO> {}
+export interface CarsResponse extends DefaultResponse<CarsCursorDTO> {}
 
-export interface CarCursorDTO {
+export interface CarsCursorDTO {
   items: CarItems[];
   nextCursor: string | null;
   hasMore: boolean;

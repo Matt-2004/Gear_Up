@@ -357,7 +357,6 @@ const RejectButton = ({ id, data }: IDecision) => {
 const ApprovedButton = ({ id, data }: IDecision) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  console.log("Approve data id: ", id);
 
   const onSubmit = async () => {
     setIsLoading(true);

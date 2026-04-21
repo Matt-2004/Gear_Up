@@ -9,7 +9,7 @@ const initialResetPasswordFormData = {
   confirmPassword: "",
 };
 
-export const useResetPassword = () => {
+export const useResetPassword = (token: string | null) => {
   const [isPending, setIsPending] = useState(false);
 
   const { handleToast } = useToast({
@@ -25,9 +25,25 @@ export const useResetPassword = () => {
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    const normalizedToken = token?.replace(/ /g, "+").trim();
+
+    if (!normalizedToken) {
+      handleToast(
+        {
+          isSuccess: false,
+          message: "Reset token is missing or invalid.",
+          data: null,
+          status: 400,
+        },
+        "/auth/login",
+      );
+      return;
+    }
+
     const submitData = new FormData();
     submitData.append("newPassword", formData.newPassword);
     submitData.append("confirmPassword", formData.confirmPassword);
+    submitData.append("token", normalizedToken);
 
     setIsPending(true);
     const response = await resetPasswordAction(submitData);

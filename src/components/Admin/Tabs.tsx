@@ -77,9 +77,9 @@ export const Tabs = ({ name, tabs }: ITabProps) => {
               key={tab.name}
               onClick={() => handleTab(tab.path)}
               className={clsx(
-                "group flex w-full items-center gap-2 sm:gap-3 rounded-lg sm:rounded-xl px-2 sm:px-4 py-2 sm:py-3 text-left font-medium transition-all duration-200",
+                "group flex w-full items-center cursor-pointer gap-2 sm:gap-3 px-2 sm:px-4 py-2 sm:py-3 text-left font-medium transition-all duration-200",
                 isActive
-                  ? "bg-linear-to-r from-primary-500 to-primary-600 text-white shadow-sm"
+                  ? "bg-primary text-white shadow-sm"
                   : "text-gray-700 hover:bg-gray-100",
               )}
             >

@@ -1,7 +1,7 @@
 "use server";
 
-import { fetchAuthClientAPI } from "@/utils/Auth/fetchAuthClientAPI";
 import { MainResponse } from "@/app/shared/types.ts/main-response";
+import { postFetch } from "@/utils/API/AxiosClient";
 
 export async function signUpAction(
   formData: FormData,
@@ -14,7 +14,7 @@ export async function signUpAction(
   const confirmPassword = formData.get("confirmPassword") as string;
 
   try {
-    const res = await fetchAuthClientAPI("/features/auth/signUp/api", {
+    const res = await postFetch("/api/v1/auth/register", {
       username,
       email,
       firstName,

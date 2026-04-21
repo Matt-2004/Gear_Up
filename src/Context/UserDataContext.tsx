@@ -24,7 +24,9 @@ export function UserDataContextProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   async function getEncryptedUserData() {
-    const res = await fetch("/api/user");
+    const res = await fetch("/api/get-user-data", {
+      cache: "no-store",
+    });
     const response = await res.json();
     return response;
   }

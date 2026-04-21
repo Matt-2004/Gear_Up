@@ -4,12 +4,6 @@ interface CarDescriptionProps {
 
 export default function CarDescription({ description }: CarDescriptionProps) {
   return (
-    <div className="rounded-xl bg-white p-4 sm:p-6 shadow-sm">
-      <h2 className="mb-4 sm:mb-6 text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-2">
-        <div className="h-1 w-10 bg-primary-500 rounded"></div>
-        Description
-      </h2>
-      <p className="leading-relaxed text-gray-700 text-sm">{description}</p>
-    </div>
+    <p className="leading-relaxed text-[16px] text-gray-700">{description}</p>
   );
 }

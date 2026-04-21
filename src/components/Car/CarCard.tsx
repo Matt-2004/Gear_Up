@@ -4,6 +4,7 @@ import { CarItems } from "@/types/car.types";
 import { formatNumber } from "@/lib/numberFormatter";
 import Link from "next/link";
 import CarImage from "../Common/Image";
+import { SubmitVehicle } from "@/app/profile/dealer/cars/add/AddNewCarContext";
 
 export function CarCard({
   carItem,

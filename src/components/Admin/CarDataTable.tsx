@@ -15,7 +15,6 @@ const CarDataTable = ({ cars }: { cars: AdminCarData[] }) => {
     filter.searchData,
     filter.statusType,
     filter.conditionType,
-    filter.fuelType,
   );
 
   return (

@@ -14,7 +14,7 @@ function getAppointmentPath(role?: string) {
     : "/profile/user/appointments";
 }
 
-export default function NavbarTabs({ className = "" }: { className?: string }) {
+export default function NavbarTabs() {
   const pathname = usePathname();
   const { user } = useUserData();
 
@@ -25,7 +25,7 @@ export default function NavbarTabs({ className = "" }: { className?: string }) {
   );
 
   return (
-    <nav aria-label="Primary" className={clsx("hidden md:block", className)}>
+    <nav aria-label="Primary" className={clsx("hidden md:block")}>
       <ol className="flex items-center gap-1">
         {tabs.map((tab) => {
           const isActive =

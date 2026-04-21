@@ -1,47 +1,47 @@
-import { apiFetch, apiDelete, apiPost, apiPut } from "./AxiosClientBrowser";
 import { CreatePostData } from "@/types/post.types";
+import { deleteFetch, getFetch, putFetch, postFetch } from "./AxiosClient";
 
 export async function getAllPosts(cursor?: string) {
   const query = new URLSearchParams();
   if (cursor) query.set("cursor", cursor);
   const url = query.toString()
-    ? `/api/posts?${query.toString()}`
-    : "/api/posts";
-  return apiFetch(url);
+    ? `/api/v1/posts?${query.toString()}`
+    : "/api/v1/posts";
+  return getFetch(url);
 }
 
 export async function createPost(data: CreatePostData) {
-  return apiPost("/api/posts", data);
+  return postFetch("/api/v1/posts", data);
 }
 
 export async function getPostById(postId: string) {
-  return apiFetch(`/api/posts/${postId}`);
+  return getFetch(`/api/v1/posts/${postId}`);
 }
 
 export async function deletePostById(postId: string) {
-  return apiDelete(`/api/posts/${postId}`);
+  return deleteFetch(`/api/v1/posts/${postId}`);
 }
 
 export async function updatePostById(
   postId: string,
   data: Omit<CreatePostData, "carId">,
 ) {
-  return apiPut(`/api/posts/${postId}`, data);
+  return putFetch(`/api/v1/posts/${postId}`, data);
 }
 
 export async function myPost(cursor?: string) {
-  const url = cursor ? `/api/posts/me?cursor=${cursor}` : "/api/posts/me";
-  return apiFetch(url);
+  const url = cursor ? `/api/v1/posts/me?cursor=${cursor}` : "/api/v1/posts/me";
+  return getFetch(url);
 }
 
 export async function deletePostLike(postId: string) {
-  return apiDelete(`/api/posts/${postId}/like`);
+  return deleteFetch(`/api/v1/posts/${postId}/like`);
 }
 
 export async function getUserPostLikes(postId: string) {
-  return apiFetch(`/api/posts/${postId}/like`);
+  return getFetch(`/api/v1/posts/${postId}/like`);
 }
 
 export async function addUserPostLikes(postId: string) {
-  return apiPost(`/api/posts/${postId}/like`, null);
+  return postFetch(`/api/v1/posts/${postId}/like`, null);
 }

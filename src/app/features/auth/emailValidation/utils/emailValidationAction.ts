@@ -1,21 +1,18 @@
 "use server";
 
-import { fetchAuthClientAPI } from "@/utils/Auth/fetchAuthClientAPI";
 import { EmailValidationResponse } from "../types/email-validation-response";
-import { EmailValidationVariant } from "../types/email-validation-request";
+import { postFetch } from "@/utils/API/AxiosClient";
 
 export async function emailValidationAction(
   formData: FormData,
-  variant: EmailValidationVariant,
 ): Promise<EmailValidationResponse> {
   const email = (formData.get("email") as string) || "";
 
   try {
-    const response = await fetchAuthClientAPI(
-      "/features/auth/emailValidation/api",
+    const response = await postFetch(
+      `/api/v1/auth/send-password-reset-token?email=${email}`,
       {
         email,
-        variant,
       },
     );
 

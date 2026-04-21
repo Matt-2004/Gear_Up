@@ -7,17 +7,13 @@ const PUBLIC_ROUTES = [
   "/",
   "/auth/login",
   "/auth/register",
-  "/features/auth/signIn/api",
-  "/features/auth/signUp/api",
-  "/features/auth/admin/api",
-  "/features/auth/emailValidation/api",
-  "/features/auth/resetPassword/api",
-
+  "/auth/reset-password",
   "/auth/password",
   "/auth/email",
   "/car/search",
   "/post/discover",
   "/verify",
+  "/reset-password",
 ];
 
 // Middleware to handle authentication and route protection
@@ -40,18 +36,24 @@ function isPublicRoute(pathname: string): boolean {
 // Helper function to fetch and cache user data
 
 export async function proxy(req: NextRequest) {
-  const access_token = req.cookies.get("access_token")?.value;
-  const refresh_token = req.cookies.get("refresh_token")?.value;
+  const isProduction = process.env.NODE_ENV === "production";
+  const sameSite = isProduction ? ("none" as const) : ("lax" as const);
+
+  let accessToken = req.cookies.get("access_token")?.value;
+  const refreshToken = req.cookies.get("refresh_token")?.value;
   const user_data_cookie = req.cookies.get("user_data")?.value;
   const currentPath = req.nextUrl.pathname;
+  const isAdminPath =
+    currentPath === "/profile/admin" ||
+    currentPath.startsWith("/profile/admin/");
 
   // Check if tokens exist
-  const hasTokens = access_token || refresh_token;
+  const hasTokens = accessToken || refreshToken;
 
   // Allow access to admin login page without authentication
   if (
     currentPath === "/profile/admin/login" ||
-    currentPath.startsWith("/profile/admin/login/")
+    currentPath.startsWith("/profile/admin/login")
   ) {
     return NextResponse.next();
   }
@@ -66,6 +68,74 @@ export async function proxy(req: NextRequest) {
     return response;
   }
 
+  let refreshedResponse: NextResponse | null = null;
+
+  // If refresh token exists but no access token, attempt to refresh first
+  // so subsequent role checks (especially admin routes) run with updated auth.
+  if (refreshToken && !accessToken) {
+    try {
+      const res = await fetch(`${BACKEND_API_URL}/api/v1/auth/refresh`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(refreshToken),
+      });
+
+      if (!res.ok) {
+        console.error(
+          `Failed to refresh token: ${res.status} ${res.statusText}`,
+        );
+
+        const response = NextResponse.redirect(new URL("/", req.url));
+        response.cookies.delete("refresh_token");
+        response.cookies.delete("access_token");
+        response.cookies.delete("user_data");
+
+        return response;
+      }
+
+      const data = await res.json();
+      const tokenData = data?.data ?? data;
+      const nextAccessToken = tokenData?.accessToken;
+      const nextRefreshToken = tokenData?.refreshToken;
+
+      if (!nextAccessToken || !nextRefreshToken) {
+        console.error("Refresh response missing tokens");
+        const response = NextResponse.redirect(new URL("/", req.url));
+        response.cookies.delete("refresh_token");
+        response.cookies.delete("access_token");
+        response.cookies.delete("user_data");
+        return response;
+      }
+
+      accessToken = nextAccessToken;
+      refreshedResponse = NextResponse.next();
+      refreshedResponse.cookies.set("access_token", nextAccessToken, {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite,
+        maxAge: 60 * 5,
+      });
+      refreshedResponse.cookies.set("refresh_token", nextRefreshToken, {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite,
+        maxAge: 60 * 60 * 24 * 7,
+      });
+    } catch (error) {
+      console.error(
+        "Error fetching refresh token:",
+        error instanceof Error ? error.message : "Unknown error",
+      );
+      const response = NextResponse.redirect(new URL("/", req.url));
+      response.cookies.delete("refresh_token");
+      response.cookies.delete("access_token");
+      response.cookies.delete("user_data");
+      return response;
+    }
+  }
+
   const userData = await getDecryptedFullUserData(user_data_cookie);
 
   // redirect dealer routes - if user is a dealer, redirect to dealer profile page when accessing any protected route except dealer profile page
@@ -78,7 +148,7 @@ export async function proxy(req: NextRequest) {
       return NextResponse.next();
     }
     return NextResponse.redirect(
-      new URL("/profile/dealer?tab=dashboard", req.url),
+      new URL("/profile/dealer?tab=car-management", req.url),
     );
   }
 
@@ -94,13 +164,13 @@ export async function proxy(req: NextRequest) {
   }
 
   // Protect admin routes
-  if (currentPath.startsWith("/profile/admin")) {
+  if (isAdminPath) {
     if (!user_data_cookie) {
       return NextResponse.redirect(new URL("/", req.url));
     }
 
     if (userData && userData?.role === "Admin") {
-      return NextResponse.next();
+      return refreshedResponse ?? NextResponse.next();
     }
 
     if (!userData || userData.role !== "Admin") {
@@ -109,70 +179,7 @@ export async function proxy(req: NextRequest) {
     }
   }
 
-  if (!refresh_token) {
-    return NextResponse.next();
-  }
-
-  // If refresh token exists but no access token, attempt to refresh
-  if (refresh_token && !access_token) {
-    try {
-      const res = await fetch(`${BACKEND_API_URL}/api/v1/auth/refresh`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(refresh_token),
-      });
-
-      if (!res.ok) {
-        console.error(
-          `Failed to refresh token: ${res.status} ${res.statusText}`,
-        );
-
-        // Clear invalid refresh token and redirect to home
-        const response = NextResponse.redirect(new URL("/", req.url));
-        response.cookies.delete("refresh_token");
-        response.cookies.delete("access_token");
-        response.cookies.delete("user_data");
-        response.cookies.delete("user_id");
-
-        return response;
-      }
-
-      const data = await res.json();
-
-      const { accessToken, refreshToken } = data.data;
-      const response = NextResponse.next();
-
-      response.cookies.set("access_token", accessToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
-        maxAge: 60 * 5, // 5 minutes
-      });
-      response.cookies.set("refresh_token", refreshToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
-        maxAge: 60 * 60 * 24 * 7, // 7 days
-      });
-
-      return response;
-    } catch (error) {
-      console.error(
-        "Error fetching refresh token:",
-        error instanceof Error ? error.message : "Unknown error",
-      );
-    }
-
-    if (!access_token && !refresh_token) {
-      const response = NextResponse.next();
-      response.cookies.delete("user_data");
-      if (req.nextUrl.pathname !== "/") {
-        return NextResponse.redirect(new URL("/", req.url));
-      }
-    }
-  }
+  return refreshedResponse ?? NextResponse.next();
 }
 
 export const config = {

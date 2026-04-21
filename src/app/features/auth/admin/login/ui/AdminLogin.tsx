@@ -7,10 +7,11 @@ import {
   AuthPageContainer,
   FormContainer,
 } from "../../../../../auth/component";
-import { useAdmin } from "../hooks/useAdmin";
+import { useAdminLogin } from "../hooks/useAdminLogin";
 
 const AdminLogin = () => {
-  const { isPending, handleFormSubmit, formData, setFormData } = useAdmin();
+  const { isPending, handleFormSubmit, formData, setFormData } =
+    useAdminLogin();
 
   return (
     <AuthPageContainer>

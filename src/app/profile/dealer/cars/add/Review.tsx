@@ -4,25 +4,50 @@ import { useToast } from "@/app/hooks/useToast";
 import { PostContent } from "@/app/post/discover/DiscoverPost";
 import { CarImages, CarItems } from "@/types/car.types";
 import { CarCard } from "@/components/Car/CarCard";
-import Button from "@/components/Common/Button";
-import Spinner from "@/components/Common/Spinner";
-import { addCar } from "@/utils/API/CarAPI";
 import { useRouter } from "next/navigation";
 import { FormEvent, ReactNode, useEffect, useState } from "react";
 import { useVehicleContext } from "./AddNewCarContext";
-
-type ContainCarImagesType = Omit<CarItems, "carImages"> & {
-  carImages: CarImages[];
-};
+import StepNavigation from "./components/StepNavigation";
+import { addCar } from "@/utils/API/CarAPI";
 
 const Review = () => {
-  const { addedCar } = useVehicleContext();
+  const { addedCar, clearAddedCar, isDraftReady } = useVehicleContext();
   const router = useRouter();
-  const { addToastMessage, removeToastMessage } = useToast({
+  const { addToastMessage } = useToast({
     toastType: "info",
     message: null,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [carData, setCarData] = useState<CarItems>();
+
+  useEffect(() => {
+    if (!addedCar) return;
+    const data: CarItems = {
+      ...addedCar,
+      // Provide default or placeholder values for required fields if not present in addedCar
+      name: addedCar.title ?? "",
+      // dealerId is not present on SubmitVehicle, so we omit or set a placeholder if needed
+      dealerId: "",
+      id: "",
+      carStatus: "draft",
+      carValidationStatus: "pending",
+
+      carImages: addedCar.carImages.map((file) => ({
+        id: "",
+        carId: "",
+        url: URL.createObjectURL(file),
+      })),
+    };
+    setCarData(data);
+  }, [addedCar]);
+
+  if (!isDraftReady) {
+    return (
+      <div className="flex items-center justify-center p-6 sm:p-8 lg:p-10">
+        <p className="text-gray-500">Loading your saved draft...</p>
+      </div>
+    );
+  }
 
   if (!addedCar) {
     return (
@@ -53,24 +78,8 @@ const Review = () => {
     { SeatingCapacity: seatingCapacity },
   ];
 
-  const [carData, setCarData] = useState<CarItems>();
-  useEffect(() => {
-    if (!addedCar) return;
-    const data: ContainCarImagesType = {
-      ...addedCar,
-      id: "testData",
-      carImages: addedCar.carImages.map((file) => ({
-        id: "",
-        carId: "",
-        url: URL.createObjectURL(file),
-      })),
-    };
-    setCarData(data);
-  }, [addedCar]);
-
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     if (!addedCar) {
       addToastMessage("error", "No car data found. Please complete all steps.");
       return;
@@ -81,7 +90,6 @@ const Review = () => {
     try {
       // Create FormData for API submission
       const formData = new FormData();
-
       // Append all car details
       formData.append("Title", addedCar.title);
       formData.append("Description", addedCar.description);
@@ -108,7 +116,7 @@ const Review = () => {
 
       if (response?.isSuccess) {
         addToastMessage("success", "Vehicle listed successfully!");
-        // Navigate to dealer cars page after a short delay
+        clearAddedCar();
         setTimeout(() => {
           router.push("/profile/dealer/cars");
         }, 1500);
@@ -118,12 +126,10 @@ const Review = () => {
           response?.message || "Failed to list vehicle. Please try again.",
         );
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error adding car:", error);
-      addToastMessage(
-        "error",
-        error?.message || "An error occurred while listing your vehicle.",
-      );
+
+      addToastMessage("error", "Server error. Please try again later.");
     } finally {
       setIsSubmitting(false);
     }
@@ -149,7 +155,7 @@ const Review = () => {
             </h3>
             <ul className="list-inside list-disc space-y-1 text-xs text-blue-800">
               <li>Verify all specifications are accurate</li>
-              <li>Ensure images clearly show the vehicle's condition</li>
+              <li>Ensure images clearly show the vehicle&apos;s condition</li>
               <li>Check pricing is competitive for your market</li>
             </ul>
           </div>
@@ -199,7 +205,7 @@ const Review = () => {
                       {basicSpecTableData.map((d, i) => {
                         const [key, value] = Object.entries(d)[0];
                         return (
-                          <TableRow key={i} index={i}>
+                          <TableRow key={i}>
                             <td className="py-2 pr-4 text-xs font-semibold tracking-wide text-gray-500 uppercase">
                               {key}
                             </td>
@@ -221,7 +227,7 @@ const Review = () => {
                       {performanceSpecTableData.map((d, i) => {
                         const [key, value] = Object.entries(d)[0];
                         return (
-                          <TableRow key={i} index={i}>
+                          <TableRow key={i}>
                             <td className="py-2 pr-4 text-xs font-semibold tracking-wide text-gray-500 uppercase">
                               {key}
                             </td>
@@ -243,7 +249,7 @@ const Review = () => {
                       {capacitySpecTableData.map((d, i) => {
                         const [key, value] = Object.entries(d)[0];
                         return (
-                          <TableRow key={i} index={i}>
+                          <TableRow key={i}>
                             <td className="py-2 pr-4 text-xs font-semibold tracking-wide text-gray-500 uppercase">
                               {key}
                             </td>
@@ -259,24 +265,8 @@ const Review = () => {
               </div>
             </div>
           </div>
-          <div className="flex flex-col-reverse sm:flex-row justify-between border-t border-gray-200 pt-6 gap-4 sm:gap-0">
-            <button
-              type="button"
-              onClick={() => router.push(window.location.pathname + "?step=2")}
-              className="rounded-lg border-2 border-gray-300 px-6 py-2 font-semibold text-gray-700 transition-colors hover:bg-gray-50"
-            >
-              Back
-            </button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? (
-                <span className="flex items-center gap-2">
-                  <Spinner />
-                  Publishing...
-                </span>
-              ) : (
-                "Publish Listing"
-              )}
-            </Button>
+          <div className="mt-8 flex justify-end border-t border-gray-200 pt-6">
+            <StepNavigation isSubmitForm={true} isSubmitting={isSubmitting} />
           </div>
         </div>
       </form>
@@ -284,13 +274,7 @@ const Review = () => {
   );
 };
 
-export const TableRow = ({
-  index,
-  children,
-}: {
-  index: number;
-  children: ReactNode;
-}) => {
+export const TableRow = ({ children }: { children: ReactNode }) => {
   return <tr className="border-b border-gray-100 last:border-0">{children}</tr>;
 };
 

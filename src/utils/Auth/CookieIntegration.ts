@@ -3,20 +3,22 @@
 import { Tokens } from "@/app/features/auth/signIn/types/sign-in-response";
 import { cookies } from "next/headers";
 
-export async function token_integration(data: Tokens, rememberMe = true) {
+export async function token_integration(data: Tokens, rememberMe?: boolean) {
   const cookieStore = await cookies();
+  const isProduction = process.env.NODE_ENV === "production";
+  const sameSite = isProduction ? ("none" as const) : ("lax" as const);
 
   const accessTokenCookieOptions = {
     httpOnly: true,
-    secure: true,
-    sameSite: "none" as const,
-    ...(rememberMe ? { maxAge: 60 * 5 } : {}),
+    secure: isProduction,
+    sameSite,
+    maxAge: 60 * 5,
   };
 
   const refreshTokenCookieOptions = {
     httpOnly: true,
-    secure: true,
-    sameSite: "none" as const,
+    secure: isProduction,
+    sameSite,
     ...(rememberMe ? { maxAge: 60 * 60 * 24 * 7 } : {}),
   };
 
@@ -30,14 +32,16 @@ export async function token_integration(data: Tokens, rememberMe = true) {
 
 export async function user_data_integration(
   userData: string,
-  rememberMe = true,
+  rememberMe?: boolean,
 ) {
   const cookieStore = await cookies();
+  const isProduction = process.env.NODE_ENV === "production";
+  const sameSite = isProduction ? ("none" as const) : ("lax" as const);
 
   const userDataCookieOptions = {
     httpOnly: true,
-    secure: true,
-    sameSite: "none" as const,
+    secure: isProduction,
+    sameSite,
     ...(rememberMe ? { maxAge: 60 * 60 * 24 * 7 } : {}),
   };
 

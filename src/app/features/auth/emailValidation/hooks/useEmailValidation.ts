@@ -29,7 +29,7 @@ export const useEmailValidation = (variant: EmailValidationVariant) => {
     submitData.append("email", formData.email);
 
     setIsPending(true);
-    const response = await emailValidationAction(submitData, variant);
+    const response = await emailValidationAction(submitData);
     setIsPending(false);
 
     handleToast(response, "/auth/login");

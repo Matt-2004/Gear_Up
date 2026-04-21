@@ -1,30 +1,35 @@
-import { apiFetch, apiPost, apiPut, apiDelete } from "./AxiosClientBrowser";
+import { SubmitVehicle } from "@/app/profile/dealer/cars/add/AddNewCarContext";
+import { getFetch, postFetch, putFetch, deleteFetch } from "./AxiosClient";
 
 export async function addCar(data: FormData) {
-  return apiPost("/api/cars", data);
+  return postFetch("/api/v1/cars", data);
 }
 
 export async function getAllCars(cursor: string | null) {
-  return apiFetch(`/api/cars?cursor=${cursor ?? ""}`);
+  return getFetch(`/api/v1/cars?cursor=${cursor ?? ""}`);
 }
 
 export async function updateCar(carId: string, data: FormData) {
-  return apiPut(`/api/cars/${carId}`, data);
+  return putFetch(`/api/v1/cars/${carId}`, data);
 }
 
 export async function getCarById(carId: string) {
-  return apiFetch(`/api/cars/${carId}`);
+  return getFetch(`/api/v1/cars/${carId}`);
 }
 
 export async function deleteCarById(carId: string) {
-  return apiDelete(`/api/cars/${carId}`);
+  return deleteFetch(`/api/v1/cars/${carId}`);
 }
 
 export async function getMyCars(status: string, cursor: string | null) {
-  if (!status) throw new Error("Status parameter is required");
-  return apiFetch(`/api/cars/my-car?status=${status}&cursor=${cursor ?? ""}`);
+  const url = cursor
+    ? `/api/v1/cars/my-car?status=${status}&cursor=${cursor}`
+    : `/api/v1/cars/my-car?status=${status}`;
+  const res = await getFetch(url);
+
+  return res;
 }
 
 export async function searchCarWithQuery(query: string) {
-  return apiFetch(`/api/cars/search?${query}`);
+  return getFetch(`/api/v1/cars/search?${query}`);
 }

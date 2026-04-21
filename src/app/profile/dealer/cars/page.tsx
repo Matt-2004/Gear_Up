@@ -1,66 +1,49 @@
-// Dealer car inventory page
+import { CarsCursorDTO } from "@/types/car.types";
+import { getMyCars } from "@/utils/API/CarAPI";
+import DealerCarDashboard from "./DealerCarDashboard";
 
-import { CarItems } from "@/types/car.types"
-import { CursorBaseDTO } from "@/types/post.types"
-import { getMyCars } from "@/utils/API/CarAPI"
-import DealerCarDashboard from "./DealerCarDashboard"
-
-export const dynamic = "force-dynamic"
-
-// Fetch cars by status
-async function getCarsByStatus(status: string) {
-	try {
-		const res = await getMyCars(status, null)
-		return res?.data
-	} catch (error) {
-		console.error(`Error fetching ${status} cars:`, error)
-		return null
-	}
-}
+export const dynamic = "force-dynamic";
 
 // Fetch all cars (Pending, Approved, Rejected) and combine into CursorBaseDTO format
-async function getAllStatusCars(): Promise<
-	Omit<CursorBaseDTO, "items"> & { items: CarItems[] }
-> {
-	try {
-		const [pendingData, approvedData, rejectedData] = await Promise.all([
-			getCarsByStatus("Pending"),
-			getCarsByStatus("Approved"),
-			getCarsByStatus("Rejected"),
-		])
+export async function getAllStatusCars(): Promise<CarsCursorDTO> {
+  try {
+    const [pendingData, approvedData, rejectedData] = await Promise.all([
+      getMyCars("Pending", null),
+      getMyCars("Approved", null),
+      getMyCars("Rejected", null),
+    ]);
 
-		console.log(pendingData, approvedData, rejectedData)
-		// Combine all cars from different statuses into items array
-		const allCars: Omit<CursorBaseDTO, "items"> & { items: CarItems[] } = {
-			items: [
-				...pendingData?.items,
-				...approvedData?.items,
-				...rejectedData?.items,
-			],
-			hasMore: false,
-			nextCursor: "",
-		}
-		console.log("All cars combined:", allCars)
-		// Return in CursorBaseDTO format
-		return {
-			items: allCars.items,
-			hasMore: false,
-			nextCursor: "",
-		}
-	} catch (error) {
-		console.error("Error fetching all status cars:", error)
-		return {
-			items: [],
-			hasMore: false,
-			nextCursor: "",
-		}
-	}
+    // Combine all cars from different statuses into items array
+    const allCars: CarsCursorDTO = {
+      items: [
+        ...pendingData?.data.items,
+        ...approvedData?.data.items,
+        ...rejectedData?.data.items,
+      ],
+      hasMore: false,
+      nextCursor: "",
+    };
+
+    // Return in CursorBaseDTO format
+    return {
+      items: allCars.items,
+      hasMore: false,
+      nextCursor: "",
+    };
+  } catch (error) {
+    console.error("Error fetching all status cars:", error);
+    return {
+      items: [],
+      hasMore: false,
+      nextCursor: "",
+    };
+  }
 }
 
 const Page = async () => {
-	const cars = await getAllStatusCars()
+  const cars = await getAllStatusCars();
 
-	return <DealerCarDashboard carData={cars} />
-}
+  return <DealerCarDashboard carData={cars} />;
+};
 
-export default Page
+export default Page;

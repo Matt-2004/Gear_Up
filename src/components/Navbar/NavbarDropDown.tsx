@@ -1,6 +1,7 @@
 "use client";
 
 import { useUserData } from "@/Context/UserDataContext";
+import { useToast } from "@/app/hooks/useToast";
 import { clearSessionAccessToken } from "@/utils/Auth/clientTokenUtils";
 import clsx from "clsx";
 import { Calendar, Car, LogOut, Settings, User, UserPlus } from "lucide-react";
@@ -10,20 +11,21 @@ import { HTMLAttributes, ReactNode } from "react";
 
 export function ProfileDropDown() {
   const { user, refreshUserData } = useUserData();
+  const { addToastMessage } = useToast();
   const router = useRouter();
   if (!user) return null;
 
   const signOut = async () => {
-    console.log("Signing out...");
     try {
       await fetch("/api/token/remove", {
         method: "POST",
       });
       clearSessionAccessToken();
       await refreshUserData();
+      addToastMessage("success", "Logged out successfully.");
       router.push("/");
     } catch (err) {
-      console.error("Error signing out:", err);
+      addToastMessage("error", "Failed to log out. Please try again.");
     }
   };
 

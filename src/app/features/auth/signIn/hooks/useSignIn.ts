@@ -9,6 +9,7 @@ import {
 } from "@/utils/Auth/CookieIntegration";
 import { UserFetch } from "@/utils/User/UserFetch";
 import { encrypt } from "@/utils/encryption";
+import { useUserData } from "@/Context/UserDataContext";
 
 // formData --> handleFromSubmit() --> signUpAction --> toast
 
@@ -20,6 +21,7 @@ const initialLoginFormData = {
 
 export const useSignIn = () => {
   const [isPending, setIsPending] = useState(false);
+  const { refreshUserData } = useUserData();
 
   const { handleToast } = useToast({
     toastType: null,
@@ -40,7 +42,6 @@ export const useSignIn = () => {
 
     // signInAction will return access_token & refresh_token
     const res = await signInAction(submitData);
-    console.log("Sign In action response:: ", res);
     // to reduce server load for fetching user data, save the user encrypted data in cookie
     if (res.isSuccess && res.data) {
       // set tokens in cookie
@@ -53,6 +54,8 @@ export const useSignIn = () => {
         encryptedUserData,
         initialLoginFormData.rememberMe,
       );
+
+      await refreshUserData();
     }
 
     setIsPending(false);

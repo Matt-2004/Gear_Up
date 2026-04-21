@@ -20,9 +20,6 @@ interface ICommnetsProps {
 export const Comment = ({ comment, level }: ICommnetsProps) => {
   const { handleParentIdUpdate, expandedCommentIds, toggleExpandedCommentId } =
     useCommentContext();
-  useEffect(() => {
-    console.log("Rendering comments:: ", comment, level);
-  }, [comment, level]);
 
   const contentRef = useRef<HTMLDivElement>(null);
   const [replyText, setReplyText] = useState<string>("");

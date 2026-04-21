@@ -1,6 +1,7 @@
 "use client";
 
 import { useUserData } from "@/Context/UserDataContext";
+import { useToast } from "@/app/hooks/useToast";
 import { clearSessionAccessToken } from "@/utils/Auth/clientTokenUtils";
 import clsx from "clsx";
 import {
@@ -77,6 +78,7 @@ export default function NavbarBrand() {
 
 function NavbarMobileDrawer({ onClose }: { onClose: () => void }) {
   const { user, refreshUserData } = useUserData();
+  const { addToastMessage } = useToast();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -102,9 +104,11 @@ function NavbarMobileDrawer({ onClose }: { onClose: () => void }) {
       await fetch("/api/token/remove", { method: "POST" });
       clearSessionAccessToken();
       await refreshUserData();
+      addToastMessage("success", "Logged out successfully.");
       router.push("/");
       onClose();
     } catch (error) {
+      addToastMessage("error", "Failed to log out. Please try again.");
       console.error("Error signing out:", error);
     }
   };

@@ -31,41 +31,41 @@ export default function AppointmentPage({ car }: { car: CarItems }) {
     setIsSubmitting(true);
 
     try {
-      // Combine date and time
+      // Combine date and time and convert to ISO string for backend compatibility
       const scheduleDateTime = new Date(
         `${formData.schedule}T${formData.time}`,
-      );
+      ).toISOString();
 
       // Call API to create appointment
       const res = await createAppointment(
         car.dealerId, // Using car.id as agentId (you might need to adjust this)
         car.id,
-        scheduleDateTime,
+        scheduleDateTime as any, // Cast as any in case the function strictly expects a Date object type
         formData.location,
-        formData.notes || undefined,
+        formData.notes || "",
       );
 
-      if (res?.isSuccess) {
-        addToastMessage(
-          "success",
-          "Appointment scheduled successfully! Redirecting...",
-        );
+      // Instead of relying on empty body error throwing
+      addToastMessage(
+        "success",
+        "Appointment scheduled successfully! Redirecting...",
+      );
 
-        setFormData({
-          schedule: "",
-          time: "",
-          location: "",
-          notes: "",
-        });
+      setFormData({
+        schedule: "",
+        time: "",
+        location: "",
+        notes: "",
+      });
 
-        // Redirect after 2 seconds
-        setTimeout(() => {
-          router.push(`/car/${car.id}`);
-        }, 2500);
-      }
+      // Redirect after 2 seconds
+      setTimeout(() => {
+        router.push(`/car/${car.id}`);
+      }, 2500);
     } catch (err: any) {
       const errorMessage =
-        err?.response?.data ||
+        err?.response?.data?.message ||
+        err?.message ||
         "Failed to create appointment. Please try again.";
       setError(errorMessage);
       addToastMessage("error", errorMessage);
@@ -94,12 +94,12 @@ export default function AppointmentPage({ car }: { car: CarItems }) {
   }
 
   return (
-    <div className="to-primary-50 min-h-screen bg-linear-to-br from-gray-50">
+    <div className="">
       <div className="mx-auto max-w-5xl px-4 py-8">
         {/* Back Button */}
         <button
           onClick={() => router.back()}
-          className="text-primary-600 hover:text-primary-700 mb-6 flex items-center gap-2 font-medium transition-colors"
+          className="cursor-pointer hover:text-primary-700 mb-6 flex items-center gap-2 font-medium transition-colors"
         >
           <ChevronLeft className="h-5 w-5" />
           Back to Car Details

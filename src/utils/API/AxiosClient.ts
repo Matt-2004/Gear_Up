@@ -2,7 +2,7 @@
 
 import { IAdminLogin } from "@/types/admin.types";
 import { createAppointmentDTO } from "@/types/appointment.types";
-import { NewPasswordDTO } from "@/types/auth.types";
+import { LoginDTO, NewPasswordDTO } from "@/types/auth.types";
 import { AddComment } from "@/types/comment.types";
 import { IAdminUpdateStatus } from "@/types/kyc.types";
 import { CreateMessageDTO } from "@/types/message.types";
@@ -11,6 +11,9 @@ import { IReviewSubmissionDTO } from "@/types/review.types";
 import { BACKEND_API_URL } from "@/lib/config";
 import { getServerAccessToken } from "@/utils/Auth/tokenUtils";
 import axios from "axios";
+import { SubmitVehicle } from "@/app/profile/dealer/cars/add/AddNewCarContext";
+import { EmailValidationRequest } from "@/app/features/auth/emailValidation/types/email-validation-request";
+import { SignUpDTO } from "@/app/features/auth/signUp/types/sign-up-dto";
 
 export const api = axios.create({
   baseURL: BACKEND_API_URL,
@@ -18,12 +21,10 @@ export const api = axios.create({
 
 export async function getFetch(url: string) {
   const access_token = await getServerAccessToken();
-
   // url & options
   try {
     const response = await api.get(url, {
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${access_token}`,
       },
     });
@@ -36,6 +37,9 @@ export async function getFetch(url: string) {
 }
 
 type PostFetchAvaliableType =
+  | SignUpDTO
+  | EmailValidationRequest
+  | LoginDTO
   | NewPasswordDTO
   | IAdminLogin
   | FormData
@@ -46,7 +50,8 @@ type PostFetchAvaliableType =
   | Omit<CreatePostData, "carId">
   | CreateMessageDTO
   | IReviewSubmissionDTO
-  | Omit<IReviewSubmissionDTO, "dealerId">;
+  | Omit<IReviewSubmissionDTO, "dealerId">
+  | SubmitVehicle;
 
 export async function postFetch(url: string, data: PostFetchAvaliableType) {
   const access_token = await getServerAccessToken();
@@ -76,10 +81,10 @@ export async function putFetch(
 ) {
   const access_token = await getServerAccessToken();
   // url & options
+  console.log("Data:: ", data);
   try {
     const response = await api.put(url, data, {
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${access_token}`,
       },
     });
@@ -112,8 +117,7 @@ export async function patchFetch(
   data?: { rejectionReason: string },
 ) {
   const access_token = await getServerAccessToken();
-  console.log("patchFetch url:", url);
-  console.log("Access Token:", access_token);
+
   try {
     const respones = await api.patch(url, data, {
       headers: {

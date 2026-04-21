@@ -9,7 +9,6 @@ export const getPrimaryNavbarLinks = (
 ): NavbarLink[] => {
   const baseLinks: NavbarLink[] = [
     { id: "home", label: "Home", href: "/" },
-    { id: "cars", label: "Browse Cars", href: "/car/search" },
     { id: "discover", label: "Discover", href: "/post/discover" },
   ];
 

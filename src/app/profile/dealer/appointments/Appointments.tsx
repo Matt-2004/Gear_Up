@@ -1,6 +1,6 @@
 "use client";
 
-import { AppointmentStatus, IAppointment } from "@/types/appointment.types";
+import { AppointmentStatus, AppointmentData } from "@/types/appointment.types";
 import { CursorBaseDTO } from "@/types/post.types";
 import {
   acceptAppointmentById,
@@ -14,14 +14,14 @@ import AppointmentEmptyState from "@/components/Appointment/AppointmentEmptyStat
 import FilterDropdown from "@/components/Appointment/FilterDropdown";
 
 interface AppointmentsProps {
-  appointments: Omit<CursorBaseDTO, "items"> & { items: IAppointment[] };
+  appointments: Omit<CursorBaseDTO, "items"> & { items: AppointmentData[] };
 }
 
 const Appointments = ({
   appointments: initialAppointments,
 }: AppointmentsProps) => {
   const [appointments, setAppointments] = useState<
-    Omit<CursorBaseDTO, "items"> & { items: IAppointment[] }
+    Omit<CursorBaseDTO, "items"> & { items: AppointmentData[] }
   >(initialAppointments || { items: [] });
   const [filter, setFilter] = useState<AppointmentStatus | "All">("All");
   const [loading, setLoading] = useState<string | null>(null);
@@ -35,7 +35,7 @@ const Appointments = ({
   const appointmentCounts = {
     total: appointments.items.length,
     pending: appointments.items.filter((a) => a.status === "Pending").length,
-    confirmed: appointments.items.filter((a) => a.status === "Confirmed")
+    confirmed: appointments.items.filter((a) => a.status === "Scheduled")
       .length,
     completed: appointments.items.filter((a) => a.status === "Completed")
       .length,
@@ -46,13 +46,13 @@ const Appointments = ({
 
   const handleAccept = async (appointmentId: string) => {
     setLoading(appointmentId);
-    console.log("Accepting appointment with ID:", appointmentId);
+
     try {
       await acceptAppointmentById(appointmentId);
       setAppointments((prev) => ({
         ...prev,
         items: prev.items.map((apt) =>
-          apt.id === appointmentId ? { ...apt, status: "Confirmed" } : apt,
+          apt.id === appointmentId ? { ...apt, status: "Scheduled" } : apt,
         ),
       }));
     } catch (error) {
@@ -67,7 +67,7 @@ const Appointments = ({
     rejectionReason: string,
   ) => {
     setLoading(appointmentId);
-    console.log("handleReject called with:", appointmentId, rejectionReason);
+
     try {
       const result = await rejectAppointmentById(appointmentId, {
         rejectionReason,
@@ -151,9 +151,11 @@ const Appointments = ({
         </div>
 
         {/* Appointments List */}
-        <div className="space-y-4">
+        <div className="grid gap-6 md:grid-cols-1 xl:grid-cols-2">
           {(filteredAppointments || []).length === 0 ? (
-            <AppointmentEmptyState filter={filter} mode="dealer" />
+            <div className="col-span-full">
+              <AppointmentEmptyState filter={filter} mode="dealer" />
+            </div>
           ) : (
             (filteredAppointments || []).map((appointment) => (
               <AppointmentCard

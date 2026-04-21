@@ -15,7 +15,8 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
     | "number"
     | "file"
     | "month"
-    | "Checkbox";
+    | "Checkbox"
+    | "time";
 
   children: ReactNode;
   error?: string;
@@ -104,9 +105,11 @@ export const RadioInputContainer = ({
   error?: string;
 }) => {
   return (
-    <section className="flex w-full flex-col items-start justify-center gap-2">
+    <section className="flex w-full flex-col items-start justify-center">
       <h1 className="text-sm font-semibold text-gray-500">{title}</h1>
-      <div className="flex w-full justify-between gap-2">{children}</div>
+      <div className="flex w-full justify-between bg-[#E8E9E0] rounded-lg">
+        {children}
+      </div>
     </section>
   );
 };
@@ -123,8 +126,9 @@ export const RadioInput = ({
   defaultChecked?: boolean;
 }) => {
   return (
-    <label className="has-checked:border-primary has-checked:text-primary flex w-full max-w-[25rem] flex-1 cursor-pointer items-center text-center justify-center rounded-lg border border-gray-300 px-4 py-1 text-gray-400 has-[:checked]:bg-green-200">
+    <label className="has-checked:border-primary has-checked:text-white flex w-full max-w-100 flex-1 cursor-pointer items-center text-center justify-center rounded-lg  px-4 py-2 text-gray-400 has-checked:bg-primary">
       <input
+        required
         name={name}
         value={value}
         type="radio"

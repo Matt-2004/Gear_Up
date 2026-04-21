@@ -1,5 +1,6 @@
 import { Calendar, Clock, FileText, MapPin } from "lucide-react";
 import { FormEvent } from "react";
+import Input from "@/components/Common/Input";
 
 interface AppointmentFormData {
   schedule: string;
@@ -26,12 +27,12 @@ export default function AppointmentForm({
   onChange,
 }: AppointmentFormProps) {
   return (
-    <div className="bg-white rounded-xl shadow-lg border border-primary-100 p-4 sm:p-6 md:p-8">
+    <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 md:p-8">
       <div className="mb-6 sm:mb-8">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+        <h1 className="text-2xl sm:text-3xl font-bold text-primary mb-2">
           Schedule an Appointment
         </h1>
-        <p className="text-gray-600">
+        <p className="text-gray-600 text-sm">
           Fill out the form below to schedule a visit to see this car. The
           dealer will confirm your appointment shortly.
         </p>
@@ -50,14 +51,13 @@ export default function AppointmentForm({
             <Calendar className="h-4 w-4 text-primary-600" />
             Preferred Date
           </label>
-          <input
+          <Input
             type="date"
             name="schedule"
             value={formData.schedule}
             onChange={onChange}
             min={new Date().toISOString().split("T")[0]}
             required
-            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-500 focus:outline-none transition-colors text-gray-900"
           />
         </div>
 
@@ -67,13 +67,12 @@ export default function AppointmentForm({
             <Clock className="h-4 w-4 text-primary-600" />
             Preferred Time
           </label>
-          <input
+          <Input
             type="time"
             name="time"
             value={formData.time}
             onChange={onChange}
             required
-            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-500 focus:outline-none transition-colors text-gray-900"
           />
         </div>
 
@@ -83,14 +82,13 @@ export default function AppointmentForm({
             <MapPin className="h-4 w-4 text-primary-600" />
             Preferred Location
           </label>
-          <input
+          <Input
             type="text"
             name="location"
             value={formData.location}
             onChange={onChange}
             placeholder="Enter your preferred meeting location"
             required
-            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-500 focus:outline-none transition-colors text-gray-900 placeholder:text-gray-400"
           />
           <p className="mt-2 text-xs text-gray-500">
             You can specify the dealership location or request a different
@@ -110,12 +108,12 @@ export default function AppointmentForm({
             onChange={onChange}
             placeholder="Any special requests or questions about the car?"
             rows={4}
-            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-primary-500 focus:outline-none transition-colors text-gray-900 placeholder:text-gray-400 resize-none"
+            className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:border-primary-500 focus:outline-none transition-colors text-gray-900 placeholder:text-gray-400 resize-none"
           />
         </div>
 
         {/* Submit Button */}
-        <div className="pt-4">
+        <div className="pt-2">
           <button
             type="submit"
             disabled={isSubmitting}

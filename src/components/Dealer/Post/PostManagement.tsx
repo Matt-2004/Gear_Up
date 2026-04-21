@@ -126,7 +126,7 @@ const StepBadge = ({
     <div
       className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold transition-colors ${
         done
-          ? "bg-primary-500 text-white"
+          ? "bg-primary text-white"
           : active
             ? "bg-primary-500 text-white"
             : "bg-gray-200 text-gray-500"
@@ -158,7 +158,7 @@ const PostRow = ({
   const firstImage = post.carDto?.carImages?.[0]?.url;
   const isDeleting = deletingId === post.id;
   return (
-    <div className="flex items-center gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md">
+    <div className="flex items-center gap-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md">
       <div className="relative h-16 w-20 shrink-0 overflow-hidden rounded-lg bg-gray-100">
         {firstImage ? (
           <Image
@@ -182,22 +182,26 @@ const PostRow = ({
           <span>
             {post.carDto?.make} {post.carDto?.model} · {post.carDto?.year}
           </span>
-          <span className="rounded-full bg-gray-100 px-2 py-0.5">
+          <span
+            className={`rounded-full ${post.visibility === "Public" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"} px-2 py-0.5`}
+          >
             {post.visibility}
           </span>
           <span>{new Date(post.createdAt).toLocaleDateString()}</span>
         </div>
       </div>
+      <div className="flex gap-4 text-sm text-gray-500">
+        <span>Seen: {post.viewCount}</span>
+        <span>Like: {post.likeCount}</span>
+      </div>
       <div className="flex shrink-0 items-center gap-2 text-xs text-gray-500">
-        <span>👁 {post.viewCount}</span>
-        <span>❤️ {post.likeCount}</span>
         <button
           type="button"
           onClick={() => onEdit(post)}
           className="ml-2 rounded-lg p-1.5 text-blue-400 transition-colors hover:bg-blue-50 hover:text-blue-600"
           title="Edit post"
         >
-          <Pencil className="h-4 w-4" />
+          Edit
         </button>
         <button
           type="button"
@@ -381,14 +385,14 @@ const EditPostModal = ({
             <button
               type="button"
               onClick={onClose}
-              className="rounded-xl border-2 border-gray-300 px-5 py-2 font-semibold text-gray-600 transition-colors hover:bg-gray-50"
+              className="rounded-xl border border-gray-300 px-5 py-2 font-semibold text-gray-600 transition-colors hover:bg-gray-50"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving || !caption.trim() || !content.trim()}
-              className="bg-primary-500 hover:bg-primary-600 flex items-center gap-2 rounded-xl px-6 py-2 font-semibold text-white shadow transition-all disabled:cursor-not-allowed disabled:opacity-40"
+              className="bg-primary hover:bg-primary-600 flex items-center gap-2 rounded-lg px-6 py-2 font-semibold text-white shadow transition-all disabled:cursor-not-allowed disabled:opacity-40"
             >
               {saving ? (
                 <RotateCcw className="h-4 w-4 animate-spin" />
@@ -579,7 +583,7 @@ const PostManagement = () => {
             }}
           />
         )}
-        <div className=" bg-linear-to-br from-gray-50 to-gray-100 px-4 py-8 sm:px-6 lg:px-8">
+        <div className=" bg-linear-to-br max-h-full min-h-screen from-gray-50 to-gray-100 px-4 py-8 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-4xl">
             {/* header */}
             <div className="mb-8 flex items-center justify-between">
@@ -594,7 +598,7 @@ const PostManagement = () => {
               <button
                 type="button"
                 onClick={startCreate}
-                className="bg-primary-500 hover:bg-primary-600 flex items-center gap-2 rounded-xl px-5 py-2.5 font-semibold text-white shadow transition-colors"
+                className="bg-primary hover:bg-primary-600 flex items-center gap-2 rounded-lg px-5 py-2.5 font-semibold text-white shadow-sm transition-colors"
               >
                 <Plus className="h-5 w-5" />
                 New Post
@@ -653,7 +657,7 @@ const PostManagement = () => {
                 <button
                   type="button"
                   onClick={startCreate}
-                  className="bg-primary-500 hover:bg-primary-600 mt-6 flex items-center gap-2 rounded-xl px-5 py-2.5 font-semibold text-white shadow transition-colors"
+                  className="bg-primary hover:bg-primary-600 mt-6 flex items-center gap-2 rounded-lg px-5 py-2.5 font-semibold text-white shadow transition-colors"
                 >
                   <Plus className="h-4 w-4" />
                   Create Post
@@ -963,21 +967,21 @@ const PostManagement = () => {
               <button
                 type="button"
                 onClick={() => setStep("list")}
-                className="rounded-xl border-2 border-gray-300 px-5 py-2 font-semibold text-gray-600 transition-colors hover:bg-gray-50"
+                className="rounded-lg border border-gray-300 px-5 py-2 font-semibold text-gray-600 transition-colors hover:bg-gray-50"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={submitting || !caption.trim() || !content.trim()}
-                className="bg-primary-500 hover:bg-primary-600 flex items-center gap-2 rounded-xl px-6 py-2 font-semibold text-white shadow transition-all disabled:cursor-not-allowed disabled:opacity-40"
+                className="bg-primary hover:bg-primary-600 flex items-center gap-2 rounded-lg px-6 py-2 font-semibold text-white shadow-sm transition-all disabled:cursor-not-allowed disabled:opacity-40"
               >
                 {submitting ? (
                   <RotateCcw className="h-4 w-4 animate-spin" />
                 ) : (
                   <Send className="h-4 w-4" />
                 )}
-                {submitting ? "Publishing…" : "Publish Post"}
+                {submitting ? "Publishing…" : "Post"}
               </button>
             </div>
           </form>

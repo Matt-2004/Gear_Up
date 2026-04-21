@@ -1,26 +1,25 @@
-import { UserItem, UserResponse } from "@/types/user.types";
-import { apiFetch, apiPost, apiPut } from "./AxiosClientBrowser";
+import { getFetch, putFetch, postFetch } from "./AxiosClient";
 
 export async function getUserProfile() {
-  return await apiFetch("/api/users/me");
+  return await getFetch("/api/v1/users/me");
 }
 
 export async function updateUserProfile(formdata: FormData) {
-  return apiPut("/api/users/me", formdata);
+  return putFetch("/api/v1/users/me", formdata);
 }
 
 export async function getUserByUserId(userId: string) {
-  return apiFetch(`/api/users/${userId}`);
+  return getFetch(`/api/v1/users/${userId}`);
 }
 
 export async function getPostByUserId(userId: string, cursor?: string) {
-  return apiFetch(`/api/users/${userId}/posts?cursor=${cursor}`);
+  return getFetch(`/api/v1/users/${userId}/posts?cursor=${cursor}`);
 }
 
 export async function getCarByUserId(userId: string, cursor?: string) {
-  return apiFetch(`/api/users/${userId}/cars?cursor=${cursor}`);
+  return getFetch(`/api/v1/users/${userId}/cars?cursor=${cursor}`);
 }
 
 export async function kycRegister(data: FormData) {
-  return apiPost("/api/users/kyc", data);
+  return postFetch("/api/v1/users/kyc", data);
 }

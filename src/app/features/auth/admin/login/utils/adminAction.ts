@@ -1,14 +1,14 @@
 "use server";
 
-import { fetchAuthClientAPI } from "@/utils/Auth/fetchAuthClientAPI";
 import { AdminResponse } from "../types/admin-response";
+import { postFetch } from "@/utils/API/AxiosClient";
 
 export async function adminAction(formData: FormData): Promise<AdminResponse> {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
   try {
-    const res = await fetchAuthClientAPI("/features/auth/admin/api", {
+    const res = await postFetch("api/v1/admin/login", {
       email,
       password,
     });

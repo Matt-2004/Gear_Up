@@ -8,9 +8,13 @@ import {
   AuthPageContent,
   FormContainer,
 } from "@/app/auth/component";
+import { useSearchParams } from "next/navigation";
 import { useResetPassword } from "../hooks/useResetPassword";
 
 const ResetPassword = () => {
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
+
   const {
     isPending,
     handleFormSubmit,
@@ -18,7 +22,7 @@ const ResetPassword = () => {
     setFormData,
     validationErrors,
     isFormValid,
-  } = useResetPassword();
+  } = useResetPassword(token);
 
   return (
     <AuthPageContainer>
@@ -28,7 +32,10 @@ const ResetPassword = () => {
           Your new password must be different from your previous password.
         </AuthPageContent>
 
-        <form onSubmit={handleFormSubmit} className="flex w-full flex-col gap-4">
+        <form
+          onSubmit={handleFormSubmit}
+          className="flex w-full flex-col gap-4"
+        >
           <div className="w-full">
             <Input
               name="newPassword"

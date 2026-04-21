@@ -1,3 +1,6 @@
+import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
+import { CursorBaseDTO } from "./post.types";
+
 export interface createAppointmentDTO {
   agentId: string;
   carId: string;
@@ -7,14 +10,15 @@ export interface createAppointmentDTO {
 }
 
 export type AppointmentStatus =
+  | "All"
   | "Pending"
-  | "Confirmed"
   | "Completed"
   | "Cancelled"
   | "Rejected"
-  | "Scheduled";
+  | "Scheduled"
+  | "NoShow";
 
-export interface IAppointment {
+export interface AppointmentData {
   id: string;
   agentId: string;
   agentName: string;
@@ -34,6 +38,6 @@ export interface IAppointment {
 export interface AppointmentResponse {
   isSuccess: boolean;
   message: string;
-  data: IAppointment[];
+  data: CursorResponse<AppointmentData[]>;
   status: number;
 }

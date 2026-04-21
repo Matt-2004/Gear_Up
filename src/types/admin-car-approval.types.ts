@@ -3,6 +3,9 @@ import { DefaultResponse } from "./default-response.types";
 import { CursorBaseDTO } from "./post.types";
 
 export interface AdminCarData extends CarItems {
+  documentType: string;
+  fullName: any;
+  status: string;
   createdAt: string;
   updatedAt: string;
 }

@@ -1,7 +1,7 @@
 "use server";
 
-import { fetchAuthClientAPI } from "@/utils/Auth/fetchAuthClientAPI";
 import { SignInResponse } from "../types/sign-in-response";
+import { postFetch } from "@/utils/API/AxiosClient";
 
 export async function signInAction(
   formData: FormData,
@@ -10,7 +10,7 @@ export async function signInAction(
   const password = formData.get("password") as string;
 
   try {
-    const res = await fetchAuthClientAPI("/features/auth/signIn/api", {
+    const res = await postFetch("/api/v1/auth/login", {
       usernameOrEmail,
       password,
     });

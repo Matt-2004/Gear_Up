@@ -76,20 +76,18 @@ export default function ToastProvider({ children }: { children: ReactNode }) {
     res: MainResponse<string | null | Tokens>,
     pathAfterSuccess?: string,
   ) => {
+    const duration = DEFAULT_TOAST_DURATION;
+
     if (res.isSuccess) {
-      addToastMessage("success", res.message);
+      addToastMessage("success", res.message, duration);
       if (pathAfterSuccess) {
         setTimeout(() => {
           router.push(pathAfterSuccess);
-        }, 3000);
+        }, duration + 150);
       }
     } else {
-      addToastMessage("error", res.message);
+      addToastMessage("error", res.message, duration);
     }
-
-    setTimeout(() => {
-      removeToastMessage();
-    }, 5000);
   };
 
   useEffect(() => {
@@ -118,16 +116,15 @@ export default function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={contextValue}>
       {children}
-      <AnimatePresence>
+      <AnimatePresence initial={false} mode="wait">
         {toast.toastType !== null && toast.message !== null && (
           <motion.div
-            initial={{ y: -30, opacity: 0, scale: 0.85 }}
-            animate={{ y: [0, 3, 0], opacity: 1, scale: [1.06, 0.98, 1] }}
-            exit={{ y: -24, opacity: 0, scale: 0.98 }}
+            initial={{ y: -20, opacity: 0, scale: 0.96 }}
+            animate={{ y: 0, opacity: 1, scale: 1 }}
+            exit={{ y: -14, opacity: 0, scale: 0.98 }}
             transition={{
-              duration: 0.28,
-              ease: "easeOut",
-              times: [0, 0.6, 1],
+              duration: 0.22,
+              ease: "easeInOut",
             }}
             className="fixed top-5 left-1/2 z-9999 w-[min(92vw,30rem)] -translate-x-1/2"
           >

@@ -1,4 +1,5 @@
-import { apiFetch, apiPatch, apiPost } from "./AxiosClientBrowser";
+import { AppointmentResponse } from "@/types/appointment.types";
+import { getFetch, patchFetch, postFetch } from "./AxiosClient";
 
 export async function createAppointment(
   agentId: string,
@@ -7,7 +8,7 @@ export async function createAppointment(
   location: string,
   notes?: string,
 ) {
-  return apiPost("/api/appointments", {
+  return postFetch("/api/v1/appointments", {
     agentId,
     carId,
     schedule,
@@ -17,38 +18,38 @@ export async function createAppointment(
 }
 
 export async function getAppointmentById(appointmentId: string) {
-  return apiFetch(`/api/appointments/${appointmentId}`);
+  return getFetch(`/api/v1/appointments/${appointmentId}`);
 }
 
 export async function dealerAppointments(cursor?: string) {
   const url = cursor
-    ? `/api/appointments/dealer?cursor=${cursor}`
-    : "/api/appointments/dealer";
-  return apiFetch(url);
+    ? `/api/v1/appointments/dealer?cursor=${cursor}`
+    : "/api/v1/appointments/dealer";
+  return getFetch(url);
 }
 
 export async function myAppointments(cursor?: string) {
   const url = cursor
-    ? `/api/appointments/my?cursor=${cursor}`
-    : "/api/appointments/my";
-  return apiFetch(url);
+    ? `/api/v1/appointments/my?cursor=${cursor}`
+    : "/api/v1/appointments/my";
+  return getFetch(url);
 }
 
 export async function cancelAppointmentById(appointmentId: string) {
-  return apiPatch(`/api/appointments/${appointmentId}/cancel`);
+  return patchFetch(`/api/v1/appointments/${appointmentId}/cancel`);
 }
 
 export async function completeAppointmentById(appointmentId: string) {
-  return apiPatch(`/api/appointments/${appointmentId}/complete`);
+  return patchFetch(`/api/v1/appointments/${appointmentId}/complete`);
 }
 
 export async function acceptAppointmentById(appointmentId: string) {
-  return apiPatch(`/api/appointments/${appointmentId}/accept`);
+  return patchFetch(`/api/v1/appointments/${appointmentId}/accept`);
 }
 
 export async function rejectAppointmentById(
   appointmentId: string,
   data: { rejectionReason: string },
 ) {
-  return apiPatch(`/api/appointments/${appointmentId}/reject`, data);
+  return patchFetch(`/api/v1/appointments/${appointmentId}/reject`, data);
 }
