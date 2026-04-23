@@ -1,4 +1,4 @@
-import { ISteps } from "../../register/KycRegister";
+import { ISteps } from "@/app/features/dashboards/dealer/ui/dealer-kyc-register/KycRegister";
 
 export const AddNewCarSteps: ISteps = [
   {

@@ -14,8 +14,7 @@ import { Calendar, ChevronDown, Filter, RotateCcw } from "lucide-react";
 import { useEffect, useState } from "react";
 import StatsCard, {
   StatsCardProps,
-} from "@/app/profile/dealer/management/components/StatsCard";
-
+} from "@/app/features/dashboards/dealer/ui/dealer-management/StatsCard";
 // ─── sub-components ───────────────────────────────────────────────────────────
 
 type AppointmentCounts = {

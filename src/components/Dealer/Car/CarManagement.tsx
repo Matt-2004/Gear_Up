@@ -1,11 +1,9 @@
 "use client";
 
-import {
-  DashboardHeader,
-  StatsCard,
-  ConditionalCarFilter,
-  CarList,
-} from "@/app/profile/dealer/management/components";
+import DashboardHeader from "@/app/features/dashboards/dealer/ui/dealer-management/DashboardHeader";
+import StatsCard from "@/app/features/dashboards/dealer/ui/dealer-management/StatsCard";
+import ConditionalCarFilter from "@/app/features/dashboards/dealer/ui/dealer-management/ConditionalCarFilter";
+import CarList from "@/app/features/dashboards/dealer/ui/dealer-management/CarList";
 import {
   useCarFilters,
   useCarData,

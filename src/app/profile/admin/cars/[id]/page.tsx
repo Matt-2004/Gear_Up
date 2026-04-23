@@ -1,4 +1,4 @@
-import AdminCarReviewDetailPage from "@/components/Admin/CarDetailPage";
+import AdminCarReviewDetailPage from "@/app/features/dashboards/admin/ui/cars/AdminCarDetail";
 import { getCarById } from "@/utils/API/AdminAPI";
 
 export const dynamic = "force-dynamic";

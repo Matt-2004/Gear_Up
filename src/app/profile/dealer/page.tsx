@@ -1,11 +1,11 @@
-import { PageSwitcher } from "@/components/Admin/PageSwitcher";
+import { PageSwitcher } from "@/app/features/dashboards/admin/ui/dashboard/PageSwitcher";
 import { DealerTabs } from "@/components/Dealer/DealerTabs";
 import PostManagement from "@/components/Dealer/Post/PostManagement";
 import RevenueManagement from "@/components/Dealer/Revenue/RevenueManagement";
 import Setting from "@/components/Dealer/Setting";
 import TestDriveManagement from "@/components/Dealer/TestDrive/TestDriveManagement";
 import { Metadata } from "next";
-import DealerCarDashboard from "./cars/DealerCarDashboard";
+import DealerCarDashboard from "../../features/dashboards/dealer/ui/dealer-dashboard/DealerCarDashboard";
 import { getAllStatusCars } from "./cars/page";
 
 export const dynamic = "force-dynamic";

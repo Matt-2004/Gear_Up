@@ -1,9 +1,9 @@
-import AdminCarVerification from "@/components/Admin/AdminCarVerification";
-import AdminDashboard from "@/components/Admin/AdminDashboard";
-import AdminGenerateReport from "@/components/Admin/AdminGenerateReport";
-import AdminKycVerification from "@/components/Admin/AdminKycVerification";
-import { PageSwitcher } from "@/components/Admin/PageSwitcher";
-import { Tabs } from "@/components/Admin/Tabs";
+import AdminCarVerification from "@/app/features/dashboards/admin/ui/cars/AdminCarVerification";
+import AdminDashboard from "@/app/features/dashboards/admin/ui/dashboard/AdminDashboard";
+
+import AdminKycVerification from "@/app/features/dashboards/admin/ui/kyc/AdminKycVerification";
+import { PageSwitcher } from "@/app/features/dashboards/admin/ui/dashboard/PageSwitcher";
+import { Tabs } from "@/app/features/dashboards/admin/ui/dashboard/Tabs";
 import { getAllCars, getAllKyc } from "@/utils/API/AdminAPI";
 import { Metadata } from "next";
 

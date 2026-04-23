@@ -19,6 +19,13 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
+import {
+  FillDetailField,
+  FillDetailInput,
+  FillDetailLabel,
+} from "@/app/features/dashboards/dealer/ui/add-car-form/FillDetailFormComponents";
+import Button from "../Common/Button";
+import Input from "../Common/Input";
 
 // ─── types ──────────────────────────────────────────────────────────────────
 
@@ -38,39 +45,38 @@ const SectionTitle = ({ children }: { children: React.ReactNode }) => (
   </h3>
 );
 
-const Field = ({
-  label,
-  required,
-  children,
-}: {
-  label: string;
-  required?: boolean;
-  children: React.ReactNode;
-}) => (
-  <div className="flex w-full flex-col gap-1">
-    <label className="text-sm font-semibold text-gray-500">
-      {label}
-      {required && <span className="ml-1 text-red-500">*</span>}
-    </label>
-    {children}
-  </div>
-);
-
 const inputCls =
   "focus:ring-primary w-full rounded-lg border border-gray-200 px-4 py-2 text-black placeholder:text-sm placeholder:text-gray-400 focus:bg-green-50 focus:ring-1 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400";
 
 // ─── main component ───────────────────────────────────────────────────────────
+
+type ProfileState = {
+  input: UserItem | undefined;
+  originalInput: UserItem | undefined;
+  isDataChange: boolean;
+  savingProfile: boolean;
+  avatarPreview: string | null;
+};
 
 const Setting = () => {
   const { user } = useUserData();
   const [activeTab, setActiveTab] = useState<Tab>("profile");
 
   // ── profile state ──
-  const [input, setInput] = useState<UserItem | undefined>();
-  const [originalInput, setOriginalInput] = useState<UserItem | undefined>();
-  const [isDataChange, setIsDataChange] = useState(false);
-  const [savingProfile, setSavingProfile] = useState(false);
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [profileState, setProfileState] = useState<ProfileState>({
+    input: undefined,
+    originalInput: undefined,
+    isDataChange: false,
+    savingProfile: false,
+    avatarPreview: null,
+  });
+
+  const updateProfileStates = (updates: Partial<ProfileState>) => {
+    setProfileState((prev) => ({
+      ...prev,
+      ...updates,
+    }));
+  };
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // ── security state ──
@@ -79,11 +85,7 @@ const Setting = () => {
     newPassword: "",
     confirmedNewPassword: "",
   });
-  const [showPw, setShowPw] = useState<Record<keyof PasswordForm, boolean>>({
-    currentPassword: false,
-    newPassword: false,
-    confirmedNewPassword: false,
-  });
+
   const [pwErrors, setPwErrors] = useState<Partial<PasswordForm>>({});
   const [savingPw, setSavingPw] = useState(false);
 
@@ -102,49 +104,56 @@ const Setting = () => {
   // seed form from context
   useEffect(() => {
     if (!user) return;
-    setInput(user);
-    setOriginalInput(user);
+    updateProfileStates({ input: user });
+    updateProfileStates({ originalInput: user });
   }, [user]);
 
   // track dirty
   useEffect(() => {
-    if (!originalInput || !input) {
-      setIsDataChange(false);
+    if (!profileState.originalInput || !profileState.input) {
+      updateProfileStates({ isDataChange: false });
       return;
     }
-    const changed = Object.keys(originalInput).some(
+    const changed = Object.keys(profileState.originalInput).some(
       (k) =>
-        (originalInput as Record<string, any>)[k] !==
-        (input as Record<string, any>)[k],
+        (profileState.originalInput as Record<string, any>)[k] !==
+        (profileState.input as Record<string, any>)[k],
     );
-    setIsDataChange(changed || avatarPreview !== null);
-  }, [input, avatarPreview, originalInput]);
-
+    updateProfileStates({
+      isDataChange: changed || profileState.avatarPreview !== null,
+    });
+  }, [
+    profileState.input,
+    profileState.avatarPreview,
+    profileState.originalInput,
+  ]);
   // ── handlers ──────────────────────────────────────────────────────────────
 
   const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.currentTarget;
-    setInput((prev) => (prev ? { ...prev, [name]: value } : prev));
+    if (!profileState.input) return;
+    updateProfileStates({ input: { ...profileState.input, [name]: value } });
   };
 
   const handleAvatarChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     const url = URL.createObjectURL(file);
-    setAvatarPreview(url);
+    updateProfileStates({ avatarPreview: url });
   };
 
   const handleCancelProfile = () => {
-    setInput(originalInput);
-    setAvatarPreview(null);
+    updateProfileStates({ input: profileState.originalInput });
+    updateProfileStates({ avatarPreview: null });
   };
 
-  const handleSaveProfile = async () => {
-    setSavingProfile(true);
+  const handleSaveProfile = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    updateProfileStates({ savingProfile: true });
     try {
       const fd = new FormData();
-      if (input) {
-        Object.entries(input).forEach(([k, v]) => {
+      if (profileState.input) {
+        Object.entries(profileState.input).forEach(([k, v]) => {
           if (v !== undefined && v !== null) fd.set(k, String(v));
         });
       }
@@ -153,8 +162,8 @@ const Setting = () => {
       }
       const res = await updateUserProfile(fd);
       if (res?.isSuccess) {
-        setOriginalInput(input);
-        setAvatarPreview(null);
+        updateProfileStates({ originalInput: profileState.input });
+        updateProfileStates({ avatarPreview: null });
         addToastMessage("success", res.message ?? "Profile updated!");
       } else {
         addToastMessage(
@@ -168,7 +177,7 @@ const Setting = () => {
         err?.response?.data?.errorMessage ?? err?.message ?? "Update failed.",
       );
     } finally {
-      setSavingProfile(false);
+      updateProfileStates({ savingProfile: false });
     }
   };
 
@@ -184,7 +193,8 @@ const Setting = () => {
     return Object.keys(errs).length === 0;
   };
 
-  const handleSavePassword = async () => {
+  const handleSavePassword = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     if (!validatePw()) return;
     setSavingPw(true);
     try {
@@ -235,28 +245,23 @@ const Setting = () => {
     <div className=" bg-linear-to-br from-gray-50 to-gray-100 px-4 py-8 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-4xl">
         {/* ── page header ──────────────────────────────────────── */}
-        <div className="mb-8 flex items-center gap-3">
-          <div className="bg-primary-500 flex h-10 w-10 items-center justify-center rounded-xl text-white shadow">
-            <Settings2 className="h-5 w-5" />
-          </div>
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
-            <p className="text-sm text-gray-500">
-              Manage your dealership account preferences
-            </p>
-          </div>
+        <div className="mb-8 flex flex-col gap-2">
+          <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
+          <p className="text-sm text-gray-500">
+            Manage your dealership account preferences
+          </p>
         </div>
 
         {/* ── tab bar ──────────────────────────────────────────── */}
-        <div className="mb-6 flex gap-1 rounded-2xl bg-white p-1.5 shadow-sm">
+        <div className="mb-6 flex gap-1 rounded-full bg-white shadow-sm">
           {tabs.map((t) => (
             <button
               key={t.id}
               type="button"
               onClick={() => setActiveTab(t.id)}
-              className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all ${
+              className={`flex flex-1 items-center justify-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold transition-all ${
                 activeTab === t.id
-                  ? "bg-primary-500 text-white shadow"
+                  ? "bg-primary text-white shadow"
                   : "text-gray-500 hover:bg-gray-100 hover:text-gray-700"
               }`}
             >
@@ -272,18 +277,17 @@ const Setting = () => {
         {activeTab === "profile" && (
           <div className="overflow-hidden rounded-2xl bg-white shadow-sm">
             {/* gradient hero */}
-            <div className="from-primary-500 to-primary-600 relative bg-linear-to-r px-8 py-10">
-              <div className="absolute inset-0 bg-black/5" />
+            <div className="bg-white relative px-8 py-10">
               <div className="relative flex flex-col items-center gap-3">
                 {/* avatar */}
                 <div className="group relative">
                   <Image
                     src={
-                      avatarPreview ??
-                      input?.avatarUrl ??
+                      profileState.avatarPreview ??
+                      profileState.input?.avatarUrl ??
                       "/default_profile.jpg"
                     }
-                    alt={input?.name ?? "Avatar"}
+                    alt={profileState.input?.name ?? "Avatar"}
                     width={100}
                     height={100}
                     className="h-24 w-24 rounded-full border-4 border-white object-cover shadow-lg"
@@ -303,10 +307,12 @@ const Setting = () => {
                     onChange={handleAvatarChange}
                   />
                 </div>
-                <div className="text-center text-white">
-                  <p className="text-xl font-bold">{input?.name}</p>
-                  <span className="mt-1 inline-block rounded-full bg-white/20 px-3 py-0.5 text-sm font-medium">
-                    {input?.role}
+                <div className="text-center">
+                  <p className="text-2xl text-black font-bold">
+                    {profileState.input?.name}
+                  </p>
+                  <span className="mt-1 inline-block rounded-full text-primary bg-white/20 px-3 py-0.5 text-sm font-medium">
+                    {profileState.input?.email}
                   </span>
                 </div>
               </div>
@@ -316,76 +322,75 @@ const Setting = () => {
             <div className="p-8">
               <SectionTitle>Personal Information</SectionTitle>
               <div className="mb-6 grid grid-cols-1 gap-5 lg:grid-cols-2">
-                <Field label="Full Name">
-                  <input
-                    className={inputCls}
+                <FillDetailField>
+                  <FillDetailLabel label="Full Name" />
+                  <FillDetailInput
                     type="text"
                     name="name"
-                    value={input?.name ?? ""}
+                    value={profileState.input?.name ?? ""}
                     placeholder="John Doe"
                     onChange={handleInput}
                   />
-                </Field>
+                </FillDetailField>
 
-                <Field label="Email Address">
-                  <input
-                    className={inputCls}
-                    type="email"
-                    name="email"
-                    value={input?.email ?? ""}
-                    placeholder="dealer@example.com"
+                <FillDetailField>
+                  <FillDetailLabel label="Full Name" />
+                  <FillDetailInput
+                    type="text"
+                    name="name"
+                    value={profileState.input?.email ?? ""}
+                    placeholder="John Doe"
                     onChange={handleInput}
                   />
-                </Field>
+                </FillDetailField>
 
-                <Field label="Username">
-                  <input
-                    className={inputCls}
+                <FillDetailField>
+                  <FillDetailLabel label="Username" />
+                  <FillDetailInput
                     type="text"
                     name="username"
-                    value={input?.username ?? ""}
+                    value={profileState.input?.username ?? ""}
                     placeholder="my_dealership"
                     onChange={handleInput}
                   />
-                </Field>
+                </FillDetailField>
 
-                <Field label="Phone Number">
-                  <input
-                    className={inputCls}
+                <FillDetailField>
+                  <FillDetailLabel label="Phone Number" />
+                  <FillDetailInput
                     type="tel"
                     name="phoneNumber"
-                    value={input?.phoneNumber ?? ""}
+                    value={profileState.input?.phoneNumber ?? ""}
                     placeholder="+66-XX-XXX-XXXX"
                     onChange={handleInput}
                   />
-                </Field>
+                </FillDetailField>
 
-                <Field label="Date of Birth">
-                  <input
-                    className={inputCls}
+                <FillDetailField>
+                  <FillDetailLabel label="Date of Birth" />
+                  <FillDetailInput
                     type="date"
                     name="dateOfBirth"
-                    value={input?.dateOfBirth ?? ""}
-                    max={new Date().toISOString().split("T")[0]}
-                    min="1950-01-01"
+                    value={profileState.input?.dateOfBirth ?? ""}
+                    placeholder="John Doe"
                     onChange={handleInput}
                   />
-                </Field>
+                </FillDetailField>
 
-                <Field label="Role">
-                  <input
-                    className={inputCls}
+                <FillDetailField>
+                  <FillDetailLabel label="Role" />
+                  <FillDetailInput
                     type="text"
-                    value={input?.role ?? ""}
+                    value={profileState.input?.role ?? ""}
                     disabled
                   />
-                </Field>
+                </FillDetailField>
               </div>
 
               {/* actions */}
               <div className="flex items-center justify-between border-t border-gray-100 pt-6">
                 <p className="text-sm text-gray-500">
-                  {isDataChange ? (
+                  {profileState?.isDataChange ? (
                     <span className="flex items-center gap-2 text-orange-500">
                       <span className="h-2 w-2 animate-pulse rounded-full bg-orange-500" />
                       Unsaved changes
@@ -398,25 +403,26 @@ const Setting = () => {
                   <button
                     type="button"
                     onClick={handleCancelProfile}
-                    disabled={!isDataChange}
-                    className="flex items-center gap-2 rounded-xl border-2 border-gray-300 px-5 py-2 font-semibold text-gray-600 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+                    disabled={!profileState.isDataChange}
+                    className="flex items-center gap-2 rounded-xl border border-gray-300 px-5 py-2 font-semibold text-gray-600 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
                   >
                     <X className="h-4 w-4" />
                     Cancel
                   </button>
-                  <button
+                  <Button
                     type="button"
-                    onClick={handleSaveProfile}
-                    disabled={!isDataChange || savingProfile}
-                    className="from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 flex items-center gap-2 rounded-xl bg-linear-to-r px-6 py-2 font-semibold text-white shadow transition-all disabled:cursor-not-allowed disabled:from-gray-400 disabled:to-gray-500 disabled:shadow-none"
+                    width="half"
+                    onClick={(e) => handleSaveProfile(e)}
+                    disabled={!profileState.isDataChange}
+                    loading={profileState.savingProfile}
                   >
-                    {savingProfile ? (
+                    {profileState.savingProfile ? (
                       <RotateCcw className="h-4 w-4 animate-spin" />
                     ) : (
                       <Save className="h-4 w-4" />
                     )}
-                    {savingProfile ? "Saving…" : "Save Changes"}
-                  </button>
+                    {profileState.savingProfile ? "Saving…" : "Save Changes"}
+                  </Button>
                 </div>
               </div>
             </div>
@@ -431,18 +437,11 @@ const Setting = () => {
             {/* change password card */}
             <div className="overflow-hidden rounded-2xl bg-white shadow-sm">
               <div className="border-b border-gray-100 px-8 py-5">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50">
-                    <KeyRound className="h-5 w-5 text-blue-500" />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-900">
-                      Change Password
-                    </p>
-                    <p className="text-sm text-gray-400">
-                      Keep your account secure with a strong password
-                    </p>
-                  </div>
+                <div className="flex flex-col gap-1">
+                  <p className="font-semibold text-gray-900">Change Password</p>
+                  <p className="text-sm text-gray-400">
+                    Keep your account secure with a strong password
+                  </p>
                 </div>
               </div>
 
@@ -461,43 +460,20 @@ const Setting = () => {
                       },
                     ] as const
                   ).map(({ id, label }) => (
-                    <Field key={id} label={label}>
-                      <div className="relative">
-                        <input
-                          className={inputCls + " pr-10"}
-                          type={showPw[id] ? "text" : "password"}
-                          value={pwForm[id]}
-                          placeholder="••••••••"
-                          onChange={(e) =>
-                            setPwForm((prev) => ({
-                              ...prev,
-                              [id]: e.target.value,
-                            }))
-                          }
-                        />
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setShowPw((prev) => ({
-                              ...prev,
-                              [id]: !prev[id],
-                            }))
-                          }
-                          className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                        >
-                          {showPw[id] ? (
-                            <EyeOff className="h-4 w-4" />
-                          ) : (
-                            <Eye className="h-4 w-4" />
-                          )}
-                        </button>
-                      </div>
-                      {pwErrors[id] && (
-                        <p className="mt-1 text-xs text-red-500">
-                          {pwErrors[id]}
-                        </p>
-                      )}
-                    </Field>
+                    <FillDetailField>
+                      <FillDetailLabel label={label} />
+                      <Input
+                        type="password"
+                        value={pwForm[id]}
+                        placeholder="••••••••"
+                        onChange={(e) =>
+                          setPwForm((prev) => ({
+                            ...prev,
+                            [id]: e.target.value,
+                          }))
+                        }
+                      />
+                    </FillDetailField>
                   ))}
                 </div>
 
@@ -536,11 +512,11 @@ const Setting = () => {
                 )}
 
                 <div className="mt-6 flex justify-end border-t border-gray-100 pt-5">
-                  <button
+                  <Button
+                    width="half"
                     type="button"
-                    onClick={handleSavePassword}
+                    onClick={(e) => handleSavePassword(e)}
                     disabled={savingPw}
-                    className="from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 flex items-center gap-2 rounded-xl bg-linear-to-r px-6 py-2 font-semibold text-white shadow transition-all disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {savingPw ? (
                       <RotateCcw className="h-4 w-4 animate-spin" />
@@ -548,7 +524,7 @@ const Setting = () => {
                       <ShieldCheck className="h-4 w-4" />
                     )}
                     {savingPw ? "Saving…" : "Update Password"}
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>

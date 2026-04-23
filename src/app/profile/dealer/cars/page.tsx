@@ -1,6 +1,6 @@
 import { CarsCursorDTO } from "@/types/car.types";
 import { getMyCars } from "@/utils/API/CarAPI";
-import DealerCarDashboard from "./DealerCarDashboard";
+import DealerCarDashboard from "../../../features/dashboards/dealer/ui/dealer-dashboard/DealerCarDashboard";
 
 export const dynamic = "force-dynamic";
 

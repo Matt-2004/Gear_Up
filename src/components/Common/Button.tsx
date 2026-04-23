@@ -23,12 +23,12 @@ function Button({
   children,
   loading = false,
   width = "full",
-  disable = false,
+
   disabled = false,
   className,
   ...props
 }: Partial<ButtonProps>) {
-  const isDisabled = Boolean(disable || disabled || loading);
+  const isDisabled = Boolean(disabled || loading);
 
   return (
     <button

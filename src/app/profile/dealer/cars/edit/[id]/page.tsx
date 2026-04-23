@@ -1,7 +1,7 @@
 import { CarItems } from "@/types/car.types";
 import { getCarById } from "@/utils/API/CarAPI";
 import { redirect } from "next/navigation";
-import EditCarForm from "./EditCarForm";
+import EditCarForm from "../../../../../features/dashboards/dealer/ui/edit-car-form/EditCarForm";
 
 export const dynamic = "force-dynamic";
 

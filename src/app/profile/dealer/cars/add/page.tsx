@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import VehicleContextProvider from "./AddNewCarContext";
-import AddNewCar from "./AddNewCar";
+import AddNewCar from "../../../../features/dashboards/dealer/ui/add-car-form/AddNewCar";
 
 export const metadata: Metadata = {
   title: "Add New Vehicle - Gear Up",

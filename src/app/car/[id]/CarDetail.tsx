@@ -10,7 +10,6 @@ import CarSpecifications from "@/components/Car/CarSpecifications";
 import { useState } from "react";
 
 export default function CarDetail({ car }: { car: CarItems }) {
-  console.log("Cars:: ", car);
   const [selectedImage, setSelectedImage] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
 
