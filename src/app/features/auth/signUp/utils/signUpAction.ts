@@ -13,24 +13,15 @@ export async function signUpAction(
   const password = formData.get("password") as string;
   const confirmPassword = formData.get("confirmPassword") as string;
 
-  try {
-    const res = await postFetch("/api/v1/auth/register", {
-      username,
-      email,
-      firstName,
-      lastName,
-      password,
-      confirmPassword,
-    });
-    return res;
-  } catch {
-    return {
-      isSuccess: false,
-      message: "An error occurred while registering. Please try again.",
-      data: null,
-      status: 500,
-    };
-  }
+  const res = await postFetch("/api/v1/auth/register", {
+    username,
+    email,
+    firstName,
+    lastName,
+    password,
+    confirmPassword,
+  });
+  return res;
 }
 
 export type SignUpAction = typeof signUpAction;

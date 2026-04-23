@@ -9,21 +9,30 @@ export async function signInAction(
   const usernameOrEmail = formData.get("usernameOrEmail") as string;
   const password = formData.get("password") as string;
 
-  try {
-    const res = await postFetch("/api/v1/auth/login", {
-      usernameOrEmail,
-      password,
-    });
+  const res = await postFetch("/api/v1/auth/login", {
+    usernameOrEmail,
+    password,
+  });
 
+  // Check if the user is not verified
+  if (res.status === 403) {
+    const res = await postFetch(
+      `/api/v1/auth/resend-verification-email?email=${usernameOrEmail}`,
+      null,
+    );
+    if (res.isSuccess) {
+      return {
+        isSuccess: false,
+        message:
+          "Your email is not verified. Please check your email for the verification link.",
+        data: null,
+        status: 403,
+      };
+    }
     return res;
-  } catch {
-    return {
-      isSuccess: false,
-      message: "An error occurred while registering. Please try again.",
-      data: null,
-      status: 500,
-    };
   }
+
+  return res;
 }
 
 export type SignInAction = typeof signInAction;

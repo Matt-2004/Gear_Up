@@ -1,6 +1,6 @@
 import { CarItems } from "@/types/car.types";
 import { render, screen } from "@testing-library/react";
-import DealerCarDashboard from "../../../features/dashboards/dealer/ui/dealer-dashboard/DealerCarDashboard";
+import DealerCarDashboard from "./DealerCarDashboard";
 
 // Mock child components
 jest.mock("./management/components", () => ({
