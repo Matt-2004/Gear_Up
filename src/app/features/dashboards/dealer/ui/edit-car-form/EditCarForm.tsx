@@ -1,8 +1,8 @@
 "use client";
 
-import { CarItems } from "@/types/car.types";
-import Button from "@/components/Common/Button";
-import { RadioInput, RadioInputContainer } from "@/components/Common/Input";
+import { CarItems } from "@/app/features/car/types/car.types";
+import Button from "@/app/shared/ui/Button";
+import { RadioInput, RadioInputContainer } from "@/app/shared/ui/Input";
 import { updateCar } from "@/utils/API/CarAPI";
 import {
   ArrowLeft,

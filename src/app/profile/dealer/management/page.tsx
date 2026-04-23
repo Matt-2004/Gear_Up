@@ -1,4 +1,4 @@
-import CarManagement from "@/components/Dealer/Car/CarManagement";
+import CarManagement from "@/app/features/dashboards/dealer/ui/car-management/CarManagement";
 
 const Page = async () => {
   return <CarManagement />;

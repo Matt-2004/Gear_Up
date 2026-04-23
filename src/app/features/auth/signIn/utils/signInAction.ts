@@ -1,7 +1,7 @@
 "use server";
 
 import { SignInResponse } from "../types/sign-in-response";
-import { postFetch } from "@/utils/API/AxiosClient";
+import { postFetch } from "@/app/shared/utils/API/AxiosClient";
 
 export async function signInAction(
   formData: FormData,

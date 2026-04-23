@@ -1,28 +1,24 @@
-import MessagesClient from "@/components/Messaging/MessagesClient";
+import MessagesClient from "@/app/features/messaging/ui/MessagesClient";
+
+import { cookies } from "next/headers";
+import {
+  IMessageData,
+  IMessageDetailData,
+} from "../features/messaging/types/message.types";
 import {
   getConversationByOtherUserId,
   getConversationsByConversationId,
-} from "@/utils/API/MessageAPI";
-import { cookies } from "next/headers";
-import {
-  IMessage,
-  IMessageData,
-  IMessageDetailData,
-} from "../../types/message.types";
+} from "../shared/utils/API/MessageAPI";
 
 export const dynamic = "force-dynamic";
 
 const getData = async (otherUserId: string) => {
-  const res = (await getConversationByOtherUserId(otherUserId)) as IMessage<
-    IMessageDetailData<[]>
-  >;
+  const res = await getConversationByOtherUserId(otherUserId);
   if (!res) {
     console.log("No response from getConversationByOtherUserId");
   }
   const conversationId = res.data.conversationId;
-  const resp = (await getConversationsByConversationId(
-    conversationId,
-  )) as IMessage<IMessageDetailData<IMessageData[]>>;
+  const resp = await getConversationsByConversationId(conversationId);
   return resp.data;
 };
 

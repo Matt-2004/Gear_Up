@@ -1,8 +1,8 @@
-import { AppointmentData } from "@/types/appointment.types";
-import { CursorBaseDTO } from "@/types/post.types";
-import { dealerAppointments } from "@/utils/API/AppointmentAPI";
+import { AppointmentData } from "@/app/features/appointments/types/appointment.types";
+import { CursorBaseDTO } from "@/app/features/post/types/post.types";
 
 import Appointments from "../../../features/dashboards/dealer/ui/appointment/Appointments";
+import { dealerAppointments } from "@/app/shared/utils/API/AppointmentAPI";
 
 export const dynamic = "force-dynamic";
 

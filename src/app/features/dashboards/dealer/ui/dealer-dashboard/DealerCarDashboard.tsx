@@ -1,6 +1,6 @@
 "use client";
 
-import { CarsCursorDTO } from "@/types/car.types";
+import { CarsCursorDTO } from "@/app/features/car/types/car.types";
 import { SlidersHorizontal } from "lucide-react";
 import DashboardHeader from "../dealer-management/DashboardHeader";
 import StatsCard from "../dealer-management/StatsCard";

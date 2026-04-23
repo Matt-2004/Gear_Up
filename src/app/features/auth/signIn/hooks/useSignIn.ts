@@ -1,15 +1,15 @@
 import { useState } from "react";
-import { RegisterSchema } from "../../../../auth/typeSchema";
+import { RegisterSchema } from "../../utils/typeSchema";
 import { useAuthForm } from "../../../../shared/hooks/useAuthForm";
-import { useToast } from "@/app/hooks/useToast";
+import { useToast } from "@/app/features/toast/hooks/useToast";
 import { signInAction } from "../utils/signInAction";
 import {
   token_integration,
   user_data_integration,
-} from "@/utils/Auth/CookieIntegration";
-import { UserFetch } from "@/utils/User/UserFetch";
-import { encrypt } from "@/utils/encryption";
-import { useUserData } from "@/Context/UserDataContext";
+} from "@/app/shared/utils/AuthUtils/CookieIntegration";
+import { UserFetch } from "@/app/shared/utils/AuthUtils/UserFetch";
+import { encrypt } from "@/app/shared/utils/AuthUtils/encryption";
+import { useUserData } from "@/app/features/navbar/context/UserDataContext";
 
 // formData --> handleFromSubmit() --> signUpAction --> toast
 

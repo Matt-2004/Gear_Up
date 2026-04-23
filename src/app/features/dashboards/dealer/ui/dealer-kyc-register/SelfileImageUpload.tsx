@@ -4,7 +4,7 @@ import { UserCheck } from "lucide-react";
 import Image from "next/image";
 import React, { useRef, useState } from "react";
 import { StepNavigation } from "./StepNavigation";
-import { useKycRegisterContext } from "@/app/profile/dealer/register/context/KycRegisterContext";
+import { useKycRegisterContext } from "@/app/features/dashboards/dealer/context/KycRegisterContext";
 
 const SelfieImageUpload = () => {
   const { updateKycData } = useKycRegisterContext();

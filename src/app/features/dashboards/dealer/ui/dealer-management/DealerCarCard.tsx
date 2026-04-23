@@ -1,10 +1,10 @@
 "use client";
 
-import { CarItems } from "@/types/car.types";
-import { CarCard } from "@/components/Car/CarCard";
+import { CarItems } from "@/app/features/car/types/car.types";
+import { CarCard } from "@/app/features/car/ui/car-card/CarCard";
 import { MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { getStatusColor } from "@/app/profile/dealer/management/utils";
+import { getStatusColor } from "@/app/features/dashboards/dealer/utils/getStatusColor";
 
 interface DealerCarCardProps {
   car: CarItems;

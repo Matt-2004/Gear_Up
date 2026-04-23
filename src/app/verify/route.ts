@@ -1,4 +1,4 @@
-import { BACKEND_API_URL } from "@/lib/config";
+import { BACKEND_API_URL } from "@/app/shared/utils/config";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {

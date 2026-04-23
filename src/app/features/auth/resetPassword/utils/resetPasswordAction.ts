@@ -1,7 +1,7 @@
 "use server";
 
 import { ResetPasswordResponse } from "../types/reset-password-response";
-import { postFetch } from "@/utils/API/AxiosClient";
+import { postFetch } from "@/app/shared/utils/API/AxiosClient";
 
 export async function resetPasswordAction(
   formData: FormData,

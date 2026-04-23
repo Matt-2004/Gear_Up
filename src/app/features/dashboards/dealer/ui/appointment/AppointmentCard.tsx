@@ -1,9 +1,9 @@
-import { AppointmentData } from "@/types/appointment.types";
-import SharedAppointmentCard from "@/components/Appointment/RoleBasedAppointmentCard";
+import { AppointmentData } from "@/app/features/appointments/types/appointment.types";
+import SharedAppointmentCard from "@/app/features/appointments/ui/appointment-card/RoleBasedAppointmentCard";
 import {
   formatDate,
   getStatusColor,
-} from "@/components/Appointment/appointmentUtils";
+} from "@/app/features/appointments/utils/appointmentUtils";
 
 interface AppointmentCardProps {
   appointment: AppointmentData;

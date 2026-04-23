@@ -1,10 +1,13 @@
 "use client";
 
-import { IAdminUpdateStatus, IKycSubmissions } from "@/types/kyc.types";
-import StatusUI from "@/components/Common/StatusUI";
+import {
+  IAdminUpdateStatus,
+  IKycSubmissions,
+} from "@/app/features/dashboards/dealer/types/kyc.types";
+import StatusUI from "@/app/shared/ui/StatusUI";
 
 import { updateKycByAdmin } from "@/utils/API/AdminAPI";
-import { timeFormat } from "@/utils/timeFormat";
+import { timeFormat } from "@/app/shared/utils/timeFormat";
 import clsx from "clsx";
 import { ArrowLeft, Check, FileCheck, UserCheck, X } from "lucide-react";
 import Image from "next/image";

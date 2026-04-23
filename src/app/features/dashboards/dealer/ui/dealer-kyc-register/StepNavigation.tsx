@@ -1,10 +1,10 @@
-import { useToast } from "@/app/hooks/useToast";
+import { useToast } from "@/app/features/toast/hooks/useToast";
 import clsx from "clsx";
 import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { Steps } from "./KycRegister";
-import { useKycRegisterContext } from "@/app/profile/dealer/register/context/KycRegisterContext";
+import { useKycRegisterContext } from "@/app/features/dashboards/dealer/context/KycRegisterContext";
 
 export const StepNavigation = () => {
   const router = useRouter();

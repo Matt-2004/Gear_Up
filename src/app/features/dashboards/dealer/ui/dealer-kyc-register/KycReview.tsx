@@ -5,7 +5,7 @@ import {
   CreditCard,
   FileText,
 } from "lucide-react";
-import { useKycRegisterContext } from "../../../../../profile/dealer/register/context/KycRegisterContext";
+import { useKycRegisterContext } from "../../context/KycRegisterContext";
 import { StepNavigation } from "./StepNavigation";
 
 const KycReview = () => {

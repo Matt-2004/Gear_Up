@@ -1,11 +1,11 @@
 "use client";
 
-import CarImage from "@/components/Common/Image";
+import CarImage from "@/app/shared/ui/Image";
 import clsx from "clsx";
 import { ImageUp } from "lucide-react";
 import { useState } from "react";
 import { StepNavigation } from "./StepNavigation";
-import { useKycRegisterContext } from "@/app/profile/dealer/register/context/KycRegisterContext";
+import { useKycRegisterContext } from "@/app/features/dashboards/dealer/context/KycRegisterContext";
 
 interface FileItem {
   id: string;

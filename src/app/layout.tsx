@@ -1,11 +1,9 @@
-import StoreProvider from "@/app/hooks/StoreProvider";
+import ConditionalNavbar from "@/app/features/navbar/ui/ConditionalNavbar";
+import NotificationProvider from "@/app/features/notification/context/NotificationContext";
+import { UserDataProvider } from "@/app/features/navbar/context/UserDataContext";
 
-import ConditionalNavbar from "@/components/Navbar/ConditionalNavbar";
-import NotificationProvider from "@/Context/NotificationContext";
-import { UserDataProvider } from "@/Context/UserDataContext";
-
-import ReactQueryProvider from "@/provider/ReactQueryProvider";
-import ToastProvider from "@/provider/ToastProvider";
+import ReactQueryProvider from "@/app/shared/provider/ReactQueryProvider";
+import ToastProvider from "@/app/features/toast/provider/ToastProvider";
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import { ReactNode } from "react";
@@ -77,17 +75,15 @@ export default async function RootLayout({
     <html lang="en" className={`${roboto.className}`}>
       <body className={`antialiased`}>
         <ToastProvider>
-          <StoreProvider>
-            <ReactQueryProvider>
-              <UserDataProvider>
-                <NotificationProvider>
-                  {/* TODO: Navbar not tested yet - needs testing before production */}
-                  <ConditionalNavbar />
-                  {children}
-                </NotificationProvider>
-              </UserDataProvider>
-            </ReactQueryProvider>
-          </StoreProvider>
+          <ReactQueryProvider>
+            <UserDataProvider>
+              <NotificationProvider>
+                {/* TODO: Navbar not tested yet - needs testing before production */}
+                <ConditionalNavbar />
+                {children}
+              </NotificationProvider>
+            </UserDataProvider>
+          </ReactQueryProvider>
         </ToastProvider>
       </body>
     </html>

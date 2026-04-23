@@ -1,14 +1,14 @@
 "use client";
 
-import { IKycSubmissions } from "@/types/kyc.types";
-import StatusUI, { Status } from "@/components/Common/StatusUI";
-import { useKycFilterContext } from "@/Context/AdminKycFilterContext";
+import { IKycSubmissions } from "@/app/features/dashboards/dealer/types/kyc.types";
+import StatusUI, { Status } from "@/app/shared/ui/StatusUI";
+import { useKycFilterContext } from "@/app/features/dashboards/admin/ui/context/AdminKycFilterContext";
 import { ArrowUpRight, Check, Search } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { AdminCarData } from "@/types/admin-car-approval.types";
-import { CarItems } from "@/types/car.types";
-import { useCarFilterContext } from "@/Context/AdminCarFilterContext";
+import { AdminCarData } from "@/app/features/dashboards/admin/types/admin-car-approval.types";
+import { CarItems } from "@/app/features/car/types/car.types";
+import { useCarFilterContext } from "@/app/features/dashboards/admin/ui/context/AdminCarFilterContext";
 
 type Car = {
   type: "car";

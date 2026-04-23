@@ -1,13 +1,13 @@
 "use client";
 
-import Button from "@/components/Common/Button";
-import Input from "@/components/Common/Input";
+import Button from "@/app/shared/ui/Button";
+import Input from "@/app/shared/ui/Input";
 import {
   AuthPageCaption,
   AuthPageContainer,
   AuthPageContent,
   FormContainer,
-} from "@/app/auth/component";
+} from "@/app/features/auth/ui/AuthComponents";
 import { useSearchParams } from "next/navigation";
 import { useResetPassword } from "../hooks/useResetPassword";
 

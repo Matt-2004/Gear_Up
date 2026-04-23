@@ -1,6 +1,6 @@
 "use client";
 
-import { CarItems } from "@/types/car.types";
+import { CarItems } from "@/app/features/car/types/car.types";
 import { useState } from "react";
 import {
   MoreHorizontal,

@@ -1,8 +1,7 @@
-import { CarItems } from "@/types/car.types";
-import { getCarById } from "@/utils/API/CarAPI";
+import { getCarById } from "@/app/shared/utils/API/CarAPI";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import CarDetail from "./CarDetail";
+import CarDetail from "../../features/car/ui/car-detail/CarDetail";
 
 export const dynamic = "force-dynamic";
 

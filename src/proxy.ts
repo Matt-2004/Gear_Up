@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { BACKEND_API_URL } from "./lib/config";
-import { getDecryptedFullUserData } from "./utils/cookieHelper";
+import { BACKEND_API_URL } from "./app/shared/utils/config";
+import { getDecryptedFullUserData } from "./app/shared/utils/AuthUtils/cookieHelper";
 
 // Define public routes that don't require authentication
 const PUBLIC_ROUTES = [

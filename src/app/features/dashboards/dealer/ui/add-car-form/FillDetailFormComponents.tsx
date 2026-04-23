@@ -1,4 +1,4 @@
-import { RadioInputContainer } from "@/components/Common/Input";
+import { RadioInputContainer } from "@/app/shared/ui/Input";
 import { ChevronRight } from "lucide-react";
 import { InputHTMLAttributes, ReactNode, TextareaHTMLAttributes } from "react";
 

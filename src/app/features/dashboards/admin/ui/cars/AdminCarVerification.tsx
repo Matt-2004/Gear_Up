@@ -1,10 +1,12 @@
 "use client";
 
-import { AdminCarApprovalData } from "@/types/admin-car-approval.types";
+import { AdminCarApprovalData } from "@/app/features/dashboards/admin/types/admin-car-approval.types";
 
 import DataTable from "../dashboard/DataTable";
-import AdminCarFilterProvider from "@/Context/AdminCarFilterContext";
-import FilterProvider, { StatusType } from "@/Context/AdminKycFilterContext";
+import AdminCarFilterProvider from "@/app/features/dashboards/admin/ui/context/AdminCarFilterContext";
+import FilterProvider, {
+  StatusType,
+} from "@/app/features/dashboards/admin/ui/context/AdminKycFilterContext";
 import { FilterUI } from "../kyc/AdminKycVerification";
 import StatsCard from "../../../dealer/ui/dealer-management/StatsCard";
 

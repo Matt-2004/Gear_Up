@@ -1,9 +1,9 @@
 "use client";
 
 import StatsCard from "../../../dealer/ui/dealer-management/StatsCard";
-import { CarItems } from "@/types/car.types";
-import { IKycSubmissions } from "@/types/kyc.types";
-import { CursorBaseDTO } from "@/types/post.types";
+import { CarItems } from "@/app/features/car/types/car.types";
+import { IKycSubmissions } from "@/app/features/dashboards/dealer/types/kyc.types";
+import { CursorBaseDTO } from "@/app/features/post/types/post.types";
 import {
   ArrowUpRight,
   BarChart3,

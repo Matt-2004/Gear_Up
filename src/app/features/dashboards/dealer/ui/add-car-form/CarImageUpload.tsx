@@ -9,7 +9,7 @@ import {
   useState,
 } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useVehicleContext } from "../../../../../profile/dealer/cars/add/AddNewCarContext";
+import { useVehicleContext } from "../../context/AddNewCarContext";
 import StepNavigation from "./StepNavigation";
 
 export interface IFileProps {

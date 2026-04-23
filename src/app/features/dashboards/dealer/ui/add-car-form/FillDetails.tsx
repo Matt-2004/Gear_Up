@@ -1,6 +1,6 @@
-import { RadioInput } from "@/components/Common/Input";
+import { RadioInput } from "@/app/shared/ui/Input";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { CarItems } from "@/types/car.types";
+import { CarItems } from "@/app/features/car/types/car.types";
 import {
   ChevronDown,
   Cpu,
@@ -18,7 +18,7 @@ import {
   useState,
 } from "react";
 import carSuggestionsData from "../../../../../../../public/carSuggestions.json";
-import { useVehicleContext } from "../../../../../profile/dealer/cars/add/AddNewCarContext";
+import { useVehicleContext } from "../../context/AddNewCarContext";
 import {
   FillDetailField,
   FillDetailInput,

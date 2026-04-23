@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import ProfilePage from "./ProfilePage";
+import ProfilePage from "../../features/user/ui/UserProfile";
 
 export const metadata: Metadata = {
   title: "My Profile - Gear Up",

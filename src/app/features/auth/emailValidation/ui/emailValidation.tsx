@@ -1,14 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import Button from "@/components/Common/Button";
-import Input from "@/components/Common/Input";
+import Button from "@/app/shared/ui/Button";
+import Input from "@/app/shared/ui/Input";
 import {
   AuthPageCaption,
   AuthPageContainer,
   AuthPageContent,
   FormContainer,
-} from "@/app/auth/component";
+} from "@/app/features/auth/ui/AuthComponents";
 import { useEmailValidation } from "../hooks/useEmailValidation";
 import { EmailValidationVariant } from "../types/email-validation-request";
 
@@ -30,8 +30,14 @@ const textByVariant: Record<
 };
 
 const EmailValidation = ({ variant }: { variant: EmailValidationVariant }) => {
-  const { isPending, handleFormSubmit, formData, setFormData, validationErrors, isFormValid } =
-    useEmailValidation(variant);
+  const {
+    isPending,
+    handleFormSubmit,
+    formData,
+    setFormData,
+    validationErrors,
+    isFormValid,
+  } = useEmailValidation(variant);
 
   const content = textByVariant[variant];
 
@@ -41,7 +47,10 @@ const EmailValidation = ({ variant }: { variant: EmailValidationVariant }) => {
         <AuthPageCaption>{content.title}</AuthPageCaption>
         <AuthPageContent>{content.description}</AuthPageContent>
 
-        <form onSubmit={handleFormSubmit} className="flex w-full flex-col gap-4">
+        <form
+          onSubmit={handleFormSubmit}
+          className="flex w-full flex-col gap-4"
+        >
           <div className="w-full">
             <Input
               name="email"

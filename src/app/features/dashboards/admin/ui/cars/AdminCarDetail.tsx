@@ -1,10 +1,10 @@
 "use client";
 
-import { AdminCarData } from "@/types/admin-car-approval.types";
-import { IAdminUpdateStatus } from "@/types/kyc.types";
-import StatusUI, { Status } from "@/components/Common/StatusUI";
+import { AdminCarData } from "@/app/features/dashboards/admin/types/admin-car-approval.types";
+import { IAdminUpdateStatus } from "@/app/features/dashboards/dealer/types/kyc.types";
+import StatusUI, { Status } from "@/app/shared/ui/StatusUI";
 import { updateCarByAdmin } from "@/utils/API/AdminAPI";
-import { timeFormat } from "@/utils/timeFormat";
+import { timeFormat } from "@/app/shared/utils/timeFormat";
 import {
   ArrowLeft,
   Calendar,
@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
-import CarImage from "../../../../../../components/Common/Image";
+import CarImage from "../../../../../shared/ui/Image";
 
 const AdminCarDetail = ({ carData }: { carData: AdminCarData }) => {
   const [text, setText] = useState("");

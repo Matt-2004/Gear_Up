@@ -1,7 +1,7 @@
 "use server";
 
 import { MainResponse } from "@/app/shared/types.ts/main-response";
-import { postFetch } from "@/utils/API/AxiosClient";
+import { postFetch } from "@/app/shared/utils/API/AxiosClient";
 
 export async function signUpAction(
   formData: FormData,

@@ -1,4 +1,4 @@
-import DiscoverPost from "./DiscoverPost";
+import DiscoverPost from "../../features/post/ui/DiscoverPost";
 
 export const dynamic = "force-dynamic";
 

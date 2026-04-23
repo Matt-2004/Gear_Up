@@ -1,12 +1,12 @@
 "use client";
 
-import { useToast } from "@/app/hooks/useToast";
-import { PostContent } from "@/app/post/discover/DiscoverPost";
-import { CarImages, CarItems } from "@/types/car.types";
+import { useToast } from "@/app/features/toast/hooks/useToast";
+import { PostContent } from "@/app/features/post/ui/DiscoverPost";
+import { CarImages, CarItems } from "@/app/features/car/types/car.types";
 import { CarCard } from "@/components/Car/CarCard";
 import { useRouter } from "next/navigation";
 import { FormEvent, ReactNode, useEffect, useState } from "react";
-import { useVehicleContext } from "../../../../../profile/dealer/cars/add/AddNewCarContext";
+import { useVehicleContext } from "../../context/AddNewCarContext";
 import StepNavigation from "./StepNavigation";
 import { addCar } from "@/utils/API/CarAPI";
 

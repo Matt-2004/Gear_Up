@@ -4,7 +4,7 @@ import { ProgressSteps } from "../dealer-kyc-register/ProgressSteps";
 import CarImageUpload from "./CarImageUpload";
 import FillDetails from "./FillDetails";
 import Review from "./Review";
-import { AddNewCarSteps } from "../../../../../profile/dealer/cars/add/steps";
+import { AddNewCarSteps } from "../../utils/steps";
 
 const AddNewCar = ({ step }: { step?: string }) => {
   return (

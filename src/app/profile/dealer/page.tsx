@@ -1,9 +1,9 @@
 import { PageSwitcher } from "@/app/features/dashboards/admin/ui/dashboard/PageSwitcher";
-import { DealerTabs } from "@/components/Dealer/DealerTabs";
-import PostManagement from "@/components/Dealer/Post/PostManagement";
-import RevenueManagement from "@/components/Dealer/Revenue/RevenueManagement";
-import Setting from "@/components/Dealer/Setting";
-import TestDriveManagement from "@/components/Dealer/TestDrive/TestDriveManagement";
+import { DealerTabs } from "@/app/features/dashboards/dealer/ui/tabs/DealerTabs";
+import PostManagement from "@/app/features/dashboards/dealer/ui/post-management/PostManagement";
+import RevenueManagement from "@/app/features/dashboards/dealer/ui/review-management/RevenueManagement";
+import Setting from "@/app/features/dashboards/dealer/ui/dealer-profile/DealerProfile";
+import TestDriveManagement from "@/app/features/dashboards/dealer/ui/appiontment-management/AppointmentManagement";
 import { Metadata } from "next";
 import DealerCarDashboard from "../../features/dashboards/dealer/ui/dealer-dashboard/DealerCarDashboard";
 import { getAllStatusCars } from "./cars/page";

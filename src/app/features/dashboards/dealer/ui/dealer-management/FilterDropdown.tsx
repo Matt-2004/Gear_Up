@@ -1,4 +1,4 @@
-import { CarStatus } from "@/types/car.types";
+import { CarStatus } from "@/app/features/car/types/car.types";
 import { Check, ChevronDown, Filter } from "lucide-react";
 
 interface FilterDropdownProps {

@@ -1,10 +1,10 @@
-import { CarGrid } from "@/components/Car/CarGrid";
-import HeroSection from "@/components/Home/HeroSection";
-import SellMyCarCTA from "@/components/Home/SellMyCarCTA";
-import ValuePropositionSection from "@/components/Home/ValuePropositionSection";
-import HomeFooter from "@/components/Home/HomeFooter";
-import { getAllCars } from "@/utils/API/CarAPI";
+import { CarGrid } from "./features/car/ui/car-card/CarGrid";
+import HeroSection from "@/app/features/home/ui/HeroSection";
+import SellMyCarCTA from "@/app/features/home/ui/SellMyCarCTA";
+import ValuePropositionSection from "@/app/features/home/ui/ValuePropositionSection";
+import HomeFooter from "@/app/features/home/ui/HomeFooter";
 import { Metadata } from "next";
+import { getAllCars } from "./shared/utils/API/CarAPI";
 
 export const dynamic = "force-dynamic";
 

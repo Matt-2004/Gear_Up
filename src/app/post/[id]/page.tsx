@@ -1,9 +1,9 @@
-import { getPostById } from "@/utils/API/PostAPI";
+import { getPostById } from "@/app/shared/utils/API/PostAPI";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { cookies } from "next/headers";
-import CommentContextProvider from "./CommentContext";
-import Details from "./Details";
+import CommentContextProvider from "../../features/comment/context/CommentContext";
+import Details from "../../features/post/ui/PostDetails";
 
 export async function generateMetadata({
   params,

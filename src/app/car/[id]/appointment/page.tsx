@@ -1,9 +1,9 @@
-import { CarItems } from "@/types/car.types";
-import { getCarById } from "@/utils/API/CarAPI";
+import { CarItems } from "@/app/features/car/types/car.types";
+import { getCarById } from "@/app/shared/utils/API/CarAPI";
 
 export const dynamic = "force-dynamic";
 import { notFound } from "next/navigation";
-import AppointmentPage from "./AppointmentPage";
+import AppointmentPage from "../../../features/car/ui/car-appointment/CarAppointment";
 
 async function getData(id: string) {
   try {

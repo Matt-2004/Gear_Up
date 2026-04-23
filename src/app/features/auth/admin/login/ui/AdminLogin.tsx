@@ -1,12 +1,12 @@
 "use client";
 
-import Button from "@/components/Common/Button";
-import Input from "@/components/Common/Input";
+import Button from "@/app/shared/ui/Button";
+import Input from "@/app/shared/ui/Input";
 import {
   AuthPageCaption,
   AuthPageContainer,
   FormContainer,
-} from "../../../../../auth/component";
+} from "../../../ui/AuthComponents";
 import { useAdminLogin } from "../hooks/useAdminLogin";
 
 const AdminLogin = () => {

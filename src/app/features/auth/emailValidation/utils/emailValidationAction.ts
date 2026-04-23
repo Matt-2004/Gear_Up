@@ -1,7 +1,7 @@
 "use server";
 
 import { EmailValidationResponse } from "../types/email-validation-response";
-import { postFetch } from "@/utils/API/AxiosClient";
+import { postFetch } from "@/app/shared/utils/API/AxiosClient";
 
 export async function emailValidationAction(
   formData: FormData,

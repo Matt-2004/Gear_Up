@@ -1,17 +1,20 @@
 "use client";
 
-import { AppointmentStatus, AppointmentData } from "@/types/appointment.types";
-import { CursorBaseDTO } from "@/types/post.types";
+import {
+  AppointmentStatus,
+  AppointmentData,
+} from "@/app/features/appointments/types/appointment.types";
+import { CursorBaseDTO } from "@/app/features/post/types/post.types";
 import {
   acceptAppointmentById,
   cancelAppointmentById,
   completeAppointmentById,
   rejectAppointmentById,
-} from "@/utils/API/AppointmentAPI";
+} from "@/app/shared/utils/API/AppointmentAPI";
 import { useState } from "react";
 import AppointmentCard from "./AppointmentCard";
-import AppointmentEmptyState from "@/components/Appointment/AppointmentEmptyState";
-import FilterDropdown from "@/components/Appointment/FilterDropdown";
+import AppointmentEmptyState from "@/app/features/appointments/ui/appointment-card/AppointmentEmptyState";
+import FilterDropdown from "@/app/features/appointments/ui/dashboard/FilterDropdown";
 
 interface AppointmentsProps {
   appointments: Omit<CursorBaseDTO, "items"> & { items: AppointmentData[] };

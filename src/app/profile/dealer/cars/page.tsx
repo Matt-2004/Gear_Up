@@ -1,4 +1,4 @@
-import { CarsCursorDTO } from "@/types/car.types";
+import { CarsCursorDTO } from "@/app/features/car/types/car.types";
 import { getMyCars } from "@/utils/API/CarAPI";
 import DealerCarDashboard from "../../../features/dashboards/dealer/ui/dealer-dashboard/DealerCarDashboard";
 

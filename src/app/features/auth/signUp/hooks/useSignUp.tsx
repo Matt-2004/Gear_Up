@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { RegisterSchema } from "../../../../auth/typeSchema";
+import { RegisterSchema } from "../../utils/typeSchema";
 import { useAuthForm } from "../../../../shared/hooks/useAuthForm";
 import { signUpAction } from "../utils/signUpAction";
-import { useToast } from "@/app/hooks/useToast";
+import { useToast } from "@/app/features/toast/hooks/useToast";
 
 // formData --> handleFromSubmit() --> signUpAction --> toast
 

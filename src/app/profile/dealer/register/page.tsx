@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import KycRegisterFormProvider from "./context/KycRegisterContext";
+import KycRegisterFormProvider from "../../../features/dashboards/dealer/context/KycRegisterContext";
 import KycRegister from "@/app/features/dashboards/dealer/ui/dealer-kyc-register/KycRegister";
 
 export const metadata: Metadata = {

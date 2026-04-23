@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useToast } from "@/app/hooks/useToast";
-import { sendEmailSchema } from "@/app/auth/typeSchema";
+import { useToast } from "@/app/features/toast/hooks/useToast";
+import { sendEmailSchema } from "@/app/features/auth/utils/typeSchema";
 import { useAuthForm } from "@/app/shared/hooks/useAuthForm";
 import { emailValidationAction } from "../utils/emailValidationAction";
 import { EmailValidationVariant } from "../types/email-validation-request";

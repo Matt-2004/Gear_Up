@@ -1,4 +1,4 @@
-import { CarItems } from "@/types/car.types";
+import { CarItems } from "@/app/features/car/types/car.types";
 import { render, screen } from "@testing-library/react";
 import DealerCarDashboard from "./DealerCarDashboard";
 

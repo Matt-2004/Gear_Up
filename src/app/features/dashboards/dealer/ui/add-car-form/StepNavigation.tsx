@@ -1,6 +1,6 @@
-import Button from "@/components/Common/Button";
+import Button from "@/app/shared/ui/Button";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { AddNewCarSteps } from "../../../../../profile/dealer/cars/add/steps";
+import { AddNewCarSteps } from "../../utils/steps";
 
 const StepNavigation = ({
   isSubmitForm = false,

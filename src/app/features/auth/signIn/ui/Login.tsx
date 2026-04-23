@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import Button from "@/components/Common/Button";
-import Input from "@/components/Common/Input";
-import { AuthPageCaption, AuthPageContainer } from "../../../../auth/component";
+import Button from "@/app/shared/ui/Button";
+import Input from "@/app/shared/ui/Input";
+import { AuthPageCaption, AuthPageContainer } from "../../ui/AuthComponents";
 import Link from "next/link";
 import Image from "next/image";
 import { useSignIn } from "../hooks/useSignIn";

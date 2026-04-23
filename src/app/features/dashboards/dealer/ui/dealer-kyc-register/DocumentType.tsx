@@ -1,10 +1,10 @@
 "use client";
 
-import { DocId } from "@/types/kycRegister.types";
+import { DocId } from "@/app/features/dashboards/dealer/types/kycRegister.types";
 import clsx from "clsx";
 import Image from "next/image";
 import { FormEvent, useState } from "react";
-import { useKycRegisterContext } from "@/app/profile/dealer/register/context/KycRegisterContext";
+import { useKycRegisterContext } from "@/app/features/dashboards/dealer/context/KycRegisterContext";
 import { StepNavigation } from "./StepNavigation";
 
 interface IDocType {

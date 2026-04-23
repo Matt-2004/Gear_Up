@@ -1,7 +1,7 @@
 "use server";
 
 import { AdminResponse } from "../types/admin-response";
-import { postFetch } from "@/utils/API/AxiosClient";
+import { postFetch } from "@/app/shared/utils/API/AxiosClient";
 
 export async function adminAction(formData: FormData): Promise<AdminResponse> {
   const email = formData.get("email") as string;
