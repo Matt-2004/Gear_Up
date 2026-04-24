@@ -35,13 +35,11 @@ export async function getFetch(url: string) {
   } catch (error: any) {
     const err = error as AxiosError<any>;
     console.error("Error in getFetch:", err);
-    return {
-      isSuccess: false,
-      data: null,
-      message:
-        err.response?.data?.message || err.message || "Something went wrong",
-      status: err.response?.status ?? 500,
-    };
+    throw new ErrorResponse(
+      err.response?.data?.message || err.message || "Something went wrong",
+      err.response?.status ?? 500,
+      null,
+    );
   }
 }
 
@@ -65,7 +63,7 @@ type PostFetchAvaliableType =
 export async function postFetch<T>(
   url: string,
   data: PostFetchAvaliableType,
-): Promise<MainResponse<T | null>> {
+): Promise<MainResponse<T>> {
   const access_token = await getServerAccessToken();
 
   // url & options
@@ -78,13 +76,12 @@ export async function postFetch<T>(
     return response.data;
   } catch (error) {
     const err = error as AxiosError<any>;
-    return {
-      isSuccess: false,
-      data: null,
-      message:
-        err.response?.data?.message || err.message || "Something went wrong",
-      status: err.response?.status ?? 500,
-    };
+    console.log("Error in postFetch:", err.response?.data);
+    throw new ErrorResponse(
+      err.response?.data?.message || err.message || "Something went wrong",
+      err.response?.status ?? 500,
+      null,
+    );
   }
 }
 
@@ -109,13 +106,12 @@ export async function putFetch(
     return response.data;
   } catch (error: any) {
     const err = error as AxiosError<any>;
-    return {
-      isSuccess: false,
-      data: null,
-      message:
-        err.response?.data?.message || err.message || "Something went wrong",
-      status: err.response?.status ?? 500,
-    };
+    console.log("Error in putFetch:", error?.response?.data);
+    throw new ErrorResponse(
+      err.response?.data?.message || err.message || "Something went wrong",
+      err.response?.status ?? 500,
+      null,
+    );
   }
 }
 
@@ -132,13 +128,12 @@ export async function deleteFetch(url: string) {
     return response.data;
   } catch (error: any) {
     const err = error as AxiosError<any>;
-    return {
-      isSuccess: false,
-      data: null,
-      message:
-        err.response?.data?.message || err.message || "Something went wrong",
-      status: err.response?.status ?? 500,
-    };
+    console.log("Error in deleteFetch:", error?.response?.data);
+    throw new ErrorResponse(
+      err.response?.data?.message || err.message || "Something went wrong",
+      err.response?.status ?? 500,
+      null,
+    );
   }
 }
 
@@ -158,12 +153,11 @@ export async function patchFetch(
     return respones.data;
   } catch (error: any) {
     const err = error as AxiosError<any>;
-    return {
-      isSuccess: false,
-      data: null,
-      message:
-        err.response?.data?.message || err.message || "Something went wrong",
-      status: err.response?.status ?? 500,
-    };
+    console.log("Error in patchFetch:", error?.response?.data);
+    throw new ErrorResponse(
+      err.response?.data?.message || err.message || "Something went wrong",
+      err.response?.status ?? 500,
+      null,
+    );
   }
 }
