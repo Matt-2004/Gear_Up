@@ -34,14 +34,14 @@ export async function getFetch(url: string) {
     return response.data;
   } catch (error: any) {
     const err = error as AxiosError<any>;
-    if (err.response?.status === 401) redirect("/unauthorized");
-    if (err.response?.status === 403) redirect("/forbidden");
     console.error("Error in getFetch:", err);
-    throw new ErrorResponse(
-      err.response?.data?.message || err.message || "Something went wrong",
-      err.response?.status ?? 500,
-      null,
-    );
+    return {
+      isSuccess: false,
+      data: null,
+      message:
+        err.response?.data?.message || err.message || "Something went wrong",
+      status: err.response?.status ?? 500,
+    };
   }
 }
 
@@ -65,7 +65,7 @@ type PostFetchAvaliableType =
 export async function postFetch<T>(
   url: string,
   data: PostFetchAvaliableType,
-): Promise<MainResponse<T>> {
+): Promise<MainResponse<T | null>> {
   const access_token = await getServerAccessToken();
 
   // url & options
@@ -78,14 +78,13 @@ export async function postFetch<T>(
     return response.data;
   } catch (error) {
     const err = error as AxiosError<any>;
-    if (err.response?.status === 401) redirect("/unauthorized");
-    if (err.response?.status === 403) redirect("/forbidden");
-    console.log("Error in postFetch:", err.response?.data);
-    throw new ErrorResponse(
-      err.response?.data?.message || err.message || "Something went wrong",
-      err.response?.status ?? 500,
-      null,
-    );
+    return {
+      isSuccess: false,
+      data: null,
+      message:
+        err.response?.data?.message || err.message || "Something went wrong",
+      status: err.response?.status ?? 500,
+    };
   }
 }
 
@@ -110,14 +109,13 @@ export async function putFetch(
     return response.data;
   } catch (error: any) {
     const err = error as AxiosError<any>;
-    if (err.response?.status === 401) redirect("/unauthorized");
-    if (err.response?.status === 403) redirect("/forbidden");
-    console.log("Error in putFetch:", error?.response?.data);
-    throw new ErrorResponse(
-      err.response?.data?.message || err.message || "Something went wrong",
-      err.response?.status ?? 500,
-      null,
-    );
+    return {
+      isSuccess: false,
+      data: null,
+      message:
+        err.response?.data?.message || err.message || "Something went wrong",
+      status: err.response?.status ?? 500,
+    };
   }
 }
 
@@ -134,14 +132,13 @@ export async function deleteFetch(url: string) {
     return response.data;
   } catch (error: any) {
     const err = error as AxiosError<any>;
-    if (err.response?.status === 401) redirect("/unauthorized");
-    if (err.response?.status === 403) redirect("/forbidden");
-    console.log("Error in deleteFetch:", error?.response?.data);
-    throw new ErrorResponse(
-      err.response?.data?.message || err.message || "Something went wrong",
-      err.response?.status ?? 500,
-      null,
-    );
+    return {
+      isSuccess: false,
+      data: null,
+      message:
+        err.response?.data?.message || err.message || "Something went wrong",
+      status: err.response?.status ?? 500,
+    };
   }
 }
 
@@ -161,13 +158,12 @@ export async function patchFetch(
     return respones.data;
   } catch (error: any) {
     const err = error as AxiosError<any>;
-    if (err.response?.status === 401) redirect("/unauthorized");
-    if (err.response?.status === 403) redirect("/forbidden");
-    console.log("Error in patchFetch:", error?.response?.data);
-    throw new ErrorResponse(
-      err.response?.data?.message || err.message || "Something went wrong",
-      err.response?.status ?? 500,
-      null,
-    );
+    return {
+      isSuccess: false,
+      data: null,
+      message:
+        err.response?.data?.message || err.message || "Something went wrong",
+      status: err.response?.status ?? 500,
+    };
   }
 }
