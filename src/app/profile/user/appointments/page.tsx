@@ -1,6 +1,6 @@
 import { AppointmentResponse } from "@/app/features/appointments/types/appointment.types";
-import { getFetch } from "@/utils/API/AxiosClient";
 import Appointments from "../../../features/appointments/ui/dashboard/Appointments";
+import { getFetch } from "@/app/shared/utils/API/AxiosClient";
 
 async function getData(cursor?: string) {
   const url = cursor

@@ -1,5 +1,5 @@
 import KycDetailPage from "@/app/features/dashboards/admin/ui/kyc/AdminKycDetail";
-import { getKycById } from "@/utils/API/AdminAPI";
+import { getKycById } from "@/app/shared/utils/API/AdminAPI";
 
 const getKycDataById = async (id: string) => {
   const response = await getKycById(id);

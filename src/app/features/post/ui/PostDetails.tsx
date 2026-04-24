@@ -148,7 +148,10 @@ const PostDetails = ({ access_token, postData }: IDetailProp) => {
 
                   {/* Image Carousel */}
                   <div className="bg-gray-100">
-                    <CarouselImages images={postData.carDto.carImages} />
+                    <CarouselImages
+                      price={postData.carDto.price}
+                      images={postData.carDto.carImages}
+                    />
                   </div>
 
                   {/* Specifications Section */}

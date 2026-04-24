@@ -2,13 +2,14 @@
 
 import { useToast } from "@/app/features/toast/hooks/useToast";
 import { PostContent } from "@/app/features/post/ui/DiscoverPost";
-import { CarImages, CarItems } from "@/app/features/car/types/car.types";
-import { CarCard } from "@/components/Car/CarCard";
+import { CarItems } from "@/app/features/car/types/car.types";
+
 import { useRouter } from "next/navigation";
 import { FormEvent, ReactNode, useEffect, useState } from "react";
 import { useVehicleContext } from "../../context/AddNewCarContext";
 import StepNavigation from "./StepNavigation";
-import { addCar } from "@/utils/API/CarAPI";
+import { addCar } from "@/app/shared/utils/API/CarAPI";
+import { CarCard } from "@/app/features/car/ui/car-card/CarCard";
 
 const Review = () => {
   const { addedCar, clearAddedCar, isDraftReady } = useVehicleContext();

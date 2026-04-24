@@ -1,26 +1,22 @@
 "use client";
 
-import { CarsCursorDTO } from "@/app/features/car/types/car.types";
+import { CarItems } from "@/app/features/car/types/car.types";
 import { SlidersHorizontal } from "lucide-react";
 import DashboardHeader from "../dealer-management/DashboardHeader";
 import StatsCard from "../dealer-management/StatsCard";
 import ConditionalCarFilter from "../dealer-management/ConditionalCarFilter";
 import CarList from "../dealer-management/CarList";
-import {
-  useCarFilters,
-  useCarData,
-  useCarActions,
-} from "../../../../../profile/dealer/management/hooks";
+import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
+import { useCarActions } from "../../hooks/useCarActions";
+import { useCarData } from "../../hooks/useCarData";
+import { useCarFilters } from "../../hooks/useCarFilters";
 
-const DealerCarDashboard = ({ carData }: { carData: CarsCursorDTO }) => {
-  const {
-    isFilterOpen,
-    statusFilter,
-    statusDropdownOpen,
-    toggleFilters,
-    toggleStatusDropdown,
-    setStatusFilter,
-  } = useCarFilters();
+const DealerCarDashboard = ({
+  carData,
+}: {
+  carData: CursorResponse<CarItems[]>;
+}) => {
+  const { isFilterOpen, statusFilter, toggleFilters } = useCarFilters();
 
   const { filteredCars, carCounts } = useCarData(carData.items, statusFilter);
   const { handleDelete, handleEdit } = useCarActions();

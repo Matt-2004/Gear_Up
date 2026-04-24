@@ -1,5 +1,4 @@
 import { Status } from "@/app/shared/ui/StatusUI";
-import { CursorBaseDTO } from "../../../post/types/post.types";
 import { MainResponse } from "@/app/shared/types.ts/main-response";
 import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
 

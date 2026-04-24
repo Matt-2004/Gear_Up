@@ -3,7 +3,7 @@
 import { AdminCarData } from "@/app/features/dashboards/admin/types/admin-car-approval.types";
 import { IAdminUpdateStatus } from "@/app/features/dashboards/dealer/types/kyc.types";
 import StatusUI, { Status } from "@/app/shared/ui/StatusUI";
-import { updateCarByAdmin } from "@/utils/API/AdminAPI";
+import { updateCarByAdmin } from "@/app/shared/utils/API/AdminAPI";
 import { timeFormat } from "@/app/shared/utils/timeFormat";
 import {
   ArrowLeft,

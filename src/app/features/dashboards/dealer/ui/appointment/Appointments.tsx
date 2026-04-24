@@ -4,7 +4,6 @@ import {
   AppointmentStatus,
   AppointmentData,
 } from "@/app/features/appointments/types/appointment.types";
-import { CursorBaseDTO } from "@/app/features/post/types/post.types";
 import {
   acceptAppointmentById,
   cancelAppointmentById,
@@ -15,16 +14,17 @@ import { useState } from "react";
 import AppointmentCard from "./AppointmentCard";
 import AppointmentEmptyState from "@/app/features/appointments/ui/appointment-card/AppointmentEmptyState";
 import FilterDropdown from "@/app/features/appointments/ui/dashboard/FilterDropdown";
+import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
 
 interface AppointmentsProps {
-  appointments: Omit<CursorBaseDTO, "items"> & { items: AppointmentData[] };
+  appointments: CursorResponse<AppointmentData[]>;
 }
 
 const Appointments = ({
   appointments: initialAppointments,
 }: AppointmentsProps) => {
   const [appointments, setAppointments] = useState<
-    Omit<CursorBaseDTO, "items"> & { items: AppointmentData[] }
+    CursorResponse<AppointmentData[]>
   >(initialAppointments || { items: [] });
   const [filter, setFilter] = useState<AppointmentStatus | "All">("All");
   const [loading, setLoading] = useState<string | null>(null);

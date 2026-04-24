@@ -1,8 +1,8 @@
 import { CarItems, CarStatus } from "@/app/features/car/types/car.types";
-import { CursorBaseDTO } from "@/app/features/post/types/post.types";
+import { CursorResponse } from "../types.ts/cursor-response";
 
 export const carFilter = (
-  cars: Omit<CursorBaseDTO, "items"> & { items: CarItems[] },
+  cars: CursorResponse<CarItems[]>,
   status: string,
 ): number => {
   if (status === "All") return cars.items.length;

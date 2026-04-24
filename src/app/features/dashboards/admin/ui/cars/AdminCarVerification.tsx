@@ -1,6 +1,6 @@
 "use client";
 
-import { AdminCarApprovalData } from "@/app/features/dashboards/admin/types/admin-car-approval.types";
+import { IAdminCarApprovalResponse } from "@/app/features/dashboards/admin/types/admin-car-approval.types";
 
 import DataTable from "../dashboard/DataTable";
 import AdminCarFilterProvider from "@/app/features/dashboards/admin/ui/context/AdminCarFilterContext";
@@ -10,13 +10,17 @@ import FilterProvider, {
 import { FilterUI } from "../kyc/AdminKycVerification";
 import StatsCard from "../../../dealer/ui/dealer-management/StatsCard";
 
-const AdminCarVerification = ({ cars }: { cars: AdminCarApprovalData }) => {
+const AdminCarVerification = ({
+  cars,
+}: {
+  cars: IAdminCarApprovalResponse;
+}) => {
   if (!cars) {
     return <h3>Car data missing</h3>;
   }
 
   const carFilter = (status: Omit<StatusType, "All">) =>
-    cars.items.filter((car) => car.status === status);
+    cars.data.items.filter((car) => car.status === status);
 
   const carCounts = {
     pending: carFilter("Pending").length,
@@ -41,7 +45,7 @@ const AdminCarVerification = ({ cars }: { cars: AdminCarApprovalData }) => {
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
               <StatsCard
                 label="All Cars"
-                value={cars.items.length}
+                value={cars.data.items.length}
                 variant="default"
                 description=""
                 category="Car"
@@ -71,7 +75,7 @@ const AdminCarVerification = ({ cars }: { cars: AdminCarApprovalData }) => {
             </div>
             {/* Data Table */}
             <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
-              <DataTable data={{ type: "car", data: cars.items }} />
+              <DataTable data={{ type: "car", data: cars.data.items }} />
             </div>
           </div>
         </div>

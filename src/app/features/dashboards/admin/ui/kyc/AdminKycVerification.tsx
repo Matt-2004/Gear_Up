@@ -1,7 +1,6 @@
 "use client";
 
 import { IKycSubmissions } from "@/app/features/dashboards/dealer/types/kyc.types";
-import { CursorBaseDTO } from "@/app/features/post/types/post.types";
 import DataTable from "@/app/features/dashboards/admin/ui/dashboard/DataTable";
 import FilterProvider, {
   KycDocumentType,
@@ -9,14 +8,14 @@ import FilterProvider, {
   useKycFilterContext,
 } from "@/app/features/dashboards/admin/ui/context/AdminKycFilterContext";
 import { Search, SlidersHorizontal } from "lucide-react";
-
 import AdminCarFilterProvider from "@/app/features/dashboards/admin/ui/context/AdminCarFilterContext";
 import StatsCard from "../../../dealer/ui/dealer-management/StatsCard";
+import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
 
 const AdminKycVerification = ({
   kyc,
 }: {
-  kyc: Omit<CursorBaseDTO, "items"> & { items: IKycSubmissions[] };
+  kyc: CursorResponse<IKycSubmissions[]>;
 }) => {
   if (!kyc) {
     return <h3>Kyc data missing</h3>;

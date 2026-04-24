@@ -1,11 +1,11 @@
 import AdminCarVerification from "@/app/features/dashboards/admin/ui/cars/AdminCarVerification";
 import AdminDashboard from "@/app/features/dashboards/admin/ui/dashboard/AdminDashboard";
-
 import AdminKycVerification from "@/app/features/dashboards/admin/ui/kyc/AdminKycVerification";
 import { PageSwitcher } from "@/app/features/dashboards/admin/ui/dashboard/PageSwitcher";
 import { Tabs } from "@/app/features/dashboards/admin/ui/dashboard/Tabs";
-import { getAllCars, getAllKyc } from "@/utils/API/AdminAPI";
 import { Metadata } from "next";
+import { getAllKyc } from "@/app/shared/utils/API/AdminAPI";
+import { getAllCars } from "@/app/shared/utils/API/AdminAPI";
 
 export const dynamic = "force-dynamic";
 

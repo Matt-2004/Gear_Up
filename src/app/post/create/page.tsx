@@ -1,4 +1,4 @@
-import { getMyCars } from "@/utils/API/CarAPI";
+import { getMyCars } from "@/app/shared/utils/API/CarAPI";
 import { Metadata } from "next";
 import { CreatePostProvider } from "../../features/post/context/CreatePostContext";
 import CreatePostForm from "../../features/post/ui/CreatePostForm";

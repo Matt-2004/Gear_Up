@@ -1,6 +1,6 @@
 "use client";
 
-import { CarsCursorDTO } from "@/app/features/car/types/car.types";
+import { CarItems } from "@/app/features/car/types/car.types";
 import { CarCard } from "@/app/features/car/ui/car-card/CarCard";
 import { searchCarWithQuery } from "@/app/shared/utils/API/CarAPI";
 import carSuggestionsData from "@/../public/carSuggestions.json";
@@ -8,10 +8,11 @@ import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
 import { ArrowLeft, Loader2, Search, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
 
 interface CarSearchProps {
   query: string;
-  searchResults: CarsCursorDTO;
+  searchResults: CursorResponse<CarItems[]>;
   error: string | null;
 }
 
@@ -47,9 +48,9 @@ export default function CarSearch({
     isLoading,
     error,
   } = useInfiniteQuery<
-    CarsCursorDTO,
+    CursorResponse<CarItems[]>,
     Error,
-    InfiniteData<CarsCursorDTO>,
+    InfiniteData<CursorResponse<CarItems[]>>,
     string[],
     string | undefined
   >({

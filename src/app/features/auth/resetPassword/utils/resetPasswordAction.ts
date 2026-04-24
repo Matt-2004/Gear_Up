@@ -10,15 +10,24 @@ export async function resetPasswordAction(
   const confirmedPassword = formData.get("confirmPassword") as string;
   const token = formData.get("token") as string;
 
-  const response = await postFetch(
-    `/api/v1/auth/reset-password?token=${token}`,
-    {
-      newPassword,
-      confirmedPassword,
-    },
-  );
+  try {
+    const response = await postFetch<null>(
+      `/api/v1/auth/reset-password?token=${token}`,
+      {
+        newPassword,
+        confirmedPassword,
+      },
+    );
 
-  return response;
+    return response;
+  } catch (error: any) {
+    return {
+      isSuccess: false,
+      message: error?.message || "An error occurred while validating email.",
+      data: null,
+      status: error?.status || 500,
+    };
+  }
 }
 
 export type ResetPasswordAction = typeof resetPasswordAction;

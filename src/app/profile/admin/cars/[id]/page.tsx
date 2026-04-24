@@ -1,5 +1,5 @@
 import AdminCarReviewDetailPage from "@/app/features/dashboards/admin/ui/cars/AdminCarDetail";
-import { getCarById } from "@/utils/API/AdminAPI";
+import { getCarById } from "@/app/shared/utils/API/CarAPI";
 
 export const dynamic = "force-dynamic";
 

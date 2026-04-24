@@ -3,7 +3,7 @@
 import StatsCard from "../../../dealer/ui/dealer-management/StatsCard";
 import { CarItems } from "@/app/features/car/types/car.types";
 import { IKycSubmissions } from "@/app/features/dashboards/dealer/types/kyc.types";
-import { CursorBaseDTO } from "@/app/features/post/types/post.types";
+import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
 import {
   ArrowUpRight,
   BarChart3,
@@ -18,8 +18,8 @@ import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 
 interface DashboardData {
-  kyc: (Omit<CursorBaseDTO, "items"> & { items: IKycSubmissions[] }) | null;
-  cars: (Omit<CursorBaseDTO, "items"> & { items: CarItems[] }) | null;
+  kyc: CursorResponse<IKycSubmissions[]>;
+  cars: CursorResponse<CarItems[]>;
 }
 
 interface AdminDashboardProps {

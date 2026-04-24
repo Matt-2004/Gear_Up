@@ -5,7 +5,7 @@ import {
   AppointmentStatus,
   AppointmentData,
 } from "@/app/features/appointments/types/appointment.types";
-import { cancelAppointmentById } from "@/utils/API/AppointmentAPI";
+import { cancelAppointmentById } from "@/app/shared/utils/API/AppointmentAPI";
 import { useState } from "react";
 import AppointmentEmptyState from "@/app/features/appointments/ui/appointment-card/AppointmentEmptyState";
 import FilterDropdown from "@/app/features/appointments/ui/dashboard/FilterDropdown";

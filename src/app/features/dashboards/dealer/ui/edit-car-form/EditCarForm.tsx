@@ -2,8 +2,8 @@
 
 import { CarItems } from "@/app/features/car/types/car.types";
 import Button from "@/app/shared/ui/Button";
-import { RadioInput, RadioInputContainer } from "@/app/shared/ui/Input";
-import { updateCar } from "@/utils/API/CarAPI";
+import { RadioInput } from "@/app/shared/ui/Input";
+import { updateCar } from "@/app/shared/utils/API/CarAPI";
 import {
   ArrowLeft,
   ChevronDown,

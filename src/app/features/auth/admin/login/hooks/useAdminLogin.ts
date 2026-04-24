@@ -39,7 +39,7 @@ export const useAdminLogin = () => {
     const res = await adminAction(submitData);
     if (res.isSuccess && res.data) {
       await token_integration(res.data);
-      const userRes = await UserFetch(res.data.accessToken);
+      const userRes = await UserFetch();
       const encryptedUserData = await encrypt(userRes.data);
       await user_data_integration(encryptedUserData);
     }

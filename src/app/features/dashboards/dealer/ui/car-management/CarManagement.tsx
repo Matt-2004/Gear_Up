@@ -4,15 +4,13 @@ import DashboardHeader from "@/app/features/dashboards/dealer/ui/dealer-manageme
 import StatsCard from "@/app/features/dashboards/dealer/ui/dealer-management/StatsCard";
 import ConditionalCarFilter from "@/app/features/dashboards/dealer/ui/dealer-management/ConditionalCarFilter";
 import CarList from "@/app/features/dashboards/dealer/ui/dealer-management/CarList";
-import {
-  useCarFilters,
-  useCarData,
-  useCarActions,
-} from "@/app/profile/dealer/management/hooks";
 import { CarItems } from "@/app/features/car/types/car.types";
 import { getMyCars } from "@/app/shared/utils/API/CarAPI";
 import { SlidersHorizontal, Search } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useCarActions } from "../../hooks/useCarActions";
+import { useCarData } from "../../hooks/useCarData";
+import { useCarFilters } from "../../hooks/useCarFilters";
 
 const CarManagement = () => {
   const [cars, setCars] = useState<CarItems[]>([]);

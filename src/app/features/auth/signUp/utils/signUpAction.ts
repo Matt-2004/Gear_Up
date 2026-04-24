@@ -13,15 +13,35 @@ export async function signUpAction(
   const password = formData.get("password") as string;
   const confirmPassword = formData.get("confirmPassword") as string;
 
-  const res = await postFetch("/api/v1/auth/register", {
-    username,
-    email,
-    firstName,
-    lastName,
-    password,
-    confirmPassword,
-  });
-  return res;
+  try {
+    const res = await postFetch<null>("/api/v1/auth/register", {
+      username,
+      email,
+      firstName,
+      lastName,
+      password,
+      confirmPassword,
+    });
+
+    // Check if registration was successful
+    if (res.status === 201) {
+      return {
+        isSuccess: res.isSuccess,
+        message: "Registration successful, check your email for verification.",
+        status: res.status,
+        data: res.data,
+      };
+    }
+
+    return res;
+  } catch (error: any) {
+    return {
+      isSuccess: false,
+      message: error?.message || "Registration failed",
+      data: null,
+      status: error?.status || 500,
+    };
+  }
 }
 
 export type SignUpAction = typeof signUpAction;

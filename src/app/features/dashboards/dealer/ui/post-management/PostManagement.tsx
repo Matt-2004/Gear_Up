@@ -2,7 +2,7 @@
 
 import { useToast } from "@/app/features/toast/hooks/useToast";
 import { CarItems } from "@/app/features/car/types/car.types";
-import { CursorBaseDTO, PostItem } from "@/app/features/post/types/post.types";
+import { PostItem } from "@/app/features/post/types/post.types";
 import CarImage from "@/app/shared/ui/Image";
 import { formatNumber } from "@/app/shared/utils/numberFormatter";
 import { getMyCars } from "@/app/shared/utils/API/CarAPI";
@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
 
 // ─── types ──────────────────────────────────────────────────────────────────
 
@@ -453,7 +454,7 @@ const PostManagement = () => {
     setPostsError(null);
     try {
       const res = await myPost();
-      const data: CursorBaseDTO = res?.data;
+      const data: CursorResponse<PostItem[]> = res?.data;
       if (!data) throw new Error("No data returned");
       setPosts(data?.items ?? []);
     } catch (err: any) {

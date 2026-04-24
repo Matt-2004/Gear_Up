@@ -48,7 +48,7 @@ export const useSignIn = () => {
       await token_integration(res.data, initialLoginFormData.rememberMe);
 
       // promise-chain for setting user data in cookie
-      const userRes = await UserFetch(res.data.accessToken);
+      const userRes = await UserFetch();
       const encryptedUserData = await encrypt(userRes.data);
       await user_data_integration(
         encryptedUserData,

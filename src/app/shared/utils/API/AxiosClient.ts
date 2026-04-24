@@ -10,10 +10,13 @@ import { CreatePostData } from "@/app/features/post/types/post.types";
 import { IReviewSubmissionDTO } from "@/app/features/review/types/review.types";
 import { BACKEND_API_URL } from "@/app/shared/utils/config";
 import { getServerAccessToken } from "@/app/shared/utils/AuthUtils/tokenUtils";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { SubmitVehicle } from "@/app/features/dashboards/dealer/context/AddNewCarContext";
 import { EmailValidationRequest } from "@/app/features/auth/emailValidation/types/email-validation-request";
 import { SignUpDTO } from "@/app/features/auth/signUp/types/sign-up-dto";
+import { MainResponse } from "@/app/shared/types.ts/main-response";
+import { ErrorResponse } from "../errors/errorResponse";
+import { redirect } from "next/navigation";
 
 export const api = axios.create({
   baseURL: BACKEND_API_URL,
@@ -30,9 +33,15 @@ export async function getFetch(url: string) {
     });
     return response.data;
   } catch (error: any) {
-    console.error("Error in getFetch:", error?.response);
-
-    throw error;
+    const err = error as AxiosError<any>;
+    if (err.response?.status === 401) redirect("/unauthorized");
+    if (err.response?.status === 403) redirect("/forbidden");
+    console.error("Error in getFetch:", err);
+    throw new ErrorResponse(
+      err.response?.data?.message || err.message || "Something went wrong",
+      err.response?.status ?? 500,
+      null,
+    );
   }
 }
 
@@ -53,7 +62,10 @@ type PostFetchAvaliableType =
   | Omit<IReviewSubmissionDTO, "dealerId">
   | SubmitVehicle;
 
-export async function postFetch(url: string, data: PostFetchAvaliableType) {
+export async function postFetch<T>(
+  url: string,
+  data: PostFetchAvaliableType,
+): Promise<MainResponse<T>> {
   const access_token = await getServerAccessToken();
 
   // url & options
@@ -64,9 +76,16 @@ export async function postFetch(url: string, data: PostFetchAvaliableType) {
       },
     });
     return response.data;
-  } catch (error: any) {
-    console.log("Error in postFetch:", error?.response?.data);
-    throw error;
+  } catch (error) {
+    const err = error as AxiosError<any>;
+    if (err.response?.status === 401) redirect("/unauthorized");
+    if (err.response?.status === 403) redirect("/forbidden");
+    console.log("Error in postFetch:", err.response?.data);
+    throw new ErrorResponse(
+      err.response?.data?.message || err.message || "Something went wrong",
+      err.response?.status ?? 500,
+      null,
+    );
   }
 }
 
@@ -90,8 +109,15 @@ export async function putFetch(
     });
     return response.data;
   } catch (error: any) {
+    const err = error as AxiosError<any>;
+    if (err.response?.status === 401) redirect("/unauthorized");
+    if (err.response?.status === 403) redirect("/forbidden");
     console.log("Error in putFetch:", error?.response?.data);
-    throw error;
+    throw new ErrorResponse(
+      err.response?.data?.message || err.message || "Something went wrong",
+      err.response?.status ?? 500,
+      null,
+    );
   }
 }
 
@@ -107,8 +133,15 @@ export async function deleteFetch(url: string) {
     });
     return response.data;
   } catch (error: any) {
+    const err = error as AxiosError<any>;
+    if (err.response?.status === 401) redirect("/unauthorized");
+    if (err.response?.status === 403) redirect("/forbidden");
     console.log("Error in deleteFetch:", error?.response?.data);
-    throw error;
+    throw new ErrorResponse(
+      err.response?.data?.message || err.message || "Something went wrong",
+      err.response?.status ?? 500,
+      null,
+    );
   }
 }
 
@@ -127,7 +160,14 @@ export async function patchFetch(
     });
     return respones.data;
   } catch (error: any) {
+    const err = error as AxiosError<any>;
+    if (err.response?.status === 401) redirect("/unauthorized");
+    if (err.response?.status === 403) redirect("/forbidden");
     console.log("Error in patchFetch:", error?.response?.data);
-    throw error;
+    throw new ErrorResponse(
+      err.response?.data?.message || err.message || "Something went wrong",
+      err.response?.status ?? 500,
+      null,
+    );
   }
 }

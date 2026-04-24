@@ -1,8 +1,8 @@
 import { IKycSubmissions } from "@/app/features/dashboards/dealer/types/kyc.types";
-import { CursorBaseDTO } from "@/app/features/post/types/post.types";
+import { CursorResponse } from "../types.ts/cursor-response";
 
 export function kycFilter(
-  kycRes: Omit<CursorBaseDTO, "items"> & { items: IKycSubmissions[] },
+  kycRes: CursorResponse<IKycSubmissions[]>,
   status: string,
 ) {
   if (!kycRes.items) {

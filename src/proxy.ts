@@ -14,6 +14,8 @@ const PUBLIC_ROUTES = [
   "/post/discover",
   "/verify",
   "/reset-password",
+  "/unauthorized",
+  "/forbidden",
 ];
 
 // Middleware to handle authentication and route protection
@@ -175,7 +177,7 @@ export async function proxy(req: NextRequest) {
 
     if (!userData || userData.role !== "Admin") {
       // Redirect to unauthorized page if user is not an admin
-      return NextResponse.redirect(new URL("/unauthorized", req.url));
+      return NextResponse.redirect(new URL("/forbidden", req.url));
     }
   }
 

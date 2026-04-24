@@ -8,7 +8,7 @@ import {
   addComment,
   addLikeToComment,
 } from "@/app/shared/utils/API/CommentAPI";
-import { diffFromNowAuto } from "@/app/shared/utils/timeFormat";
+import { formatRelativeTime } from "@/app/shared/utils/timeFormat";
 import { addUserPostLikes } from "@/app/shared/utils/API/PostAPI";
 import clsx from "clsx";
 import { Heart, Reply } from "lucide-react";
@@ -109,8 +109,8 @@ export const Comment = ({ comment, level }: ICommnetsProps) => {
                   {/* Timeline */}
                   <div className="mb-2">
                     <h3 className="text-xs font-light">
-                      {diffFromNowAuto(c.createdAt).value}{" "}
-                      {diffFromNowAuto(c.createdAt).unit} ago
+                      {formatRelativeTime(c.createdAt).value}{" "}
+                      {formatRelativeTime(c.createdAt).unit} ago
                     </h3>
                   </div>
                   {/* c Actions */}
@@ -277,11 +277,11 @@ export const LikeCount = ({
     >
       {/* TODO: if isLikedByCurrentUser is true, change the heart icon to a filled heart */}
       <span className="flex h-5 w-5 items-center justify-center">
-        {liked ? (
-          <Heart className="w-5 h-5 bg-orange-500 text-white" />
-        ) : (
-          <Heart className="w-5 h-5 " />
-        )}
+        <Heart
+          className={`w-6 h-6 transition ${
+            liked ? "fill-red-500 text-red-500" : "fill-none text-gray-400"
+          }`}
+        />
       </span>
       <span className="text-sm font-medium">{count}</span>
     </button>
