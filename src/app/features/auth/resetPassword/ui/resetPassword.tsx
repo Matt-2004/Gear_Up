@@ -39,6 +39,7 @@ const ResetPassword = () => {
           <div className="w-full">
             <Input
               name="newPassword"
+              data-testid="new-password"
               required
               minLength={8}
               autoComplete="new-password"
@@ -49,7 +50,7 @@ const ResetPassword = () => {
               onChange={(e) =>
                 setFormData((prev) => ({
                   ...prev,
-                  newPassword: e.target.value,
+                  newPassword: e.target.value.trim(),
                 }))
               }
             >
@@ -59,18 +60,19 @@ const ResetPassword = () => {
 
           <div className="w-full">
             <Input
-              name="confirmPassword"
+              data-testid="confirm-password"
+              name="confirmedPassword"
               required
               minLength={8}
               autoComplete="new-password"
               type="password"
               placeholder="Re-enter your new password"
-              value={formData.confirmPassword}
-              error={validationErrors.confirmPassword}
+              value={formData.confirmedPassword}
+              error={validationErrors.confirmedPassword}
               onChange={(e) =>
                 setFormData((prev) => ({
                   ...prev,
-                  confirmPassword: e.target.value,
+                  confirmedPassword: e.target.value.trim(),
                 }))
               }
             >

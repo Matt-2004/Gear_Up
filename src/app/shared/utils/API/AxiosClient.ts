@@ -2,7 +2,10 @@
 
 import { AdminLoginDTO } from "@/app/features/dashboards/admin/types/admin.types";
 import { createAppointmentDTO } from "@/app/features/appointments/types/appointment.types";
-import { LoginDTO, NewPasswordDTO } from "@/app/features/auth/types/auth.types";
+import {
+  LoginDTO,
+  ResetPasswordDTO,
+} from "@/app/features/auth/types/auth.types";
 import { AddComment } from "@/app/features/comment/types/comment.types";
 import { IAdminUpdateStatus } from "@/app/features/dashboards/dealer/types/kyc.types";
 import { CreateMessageDTO } from "@/app/features/messaging/types/message.types";
@@ -47,7 +50,7 @@ type PostFetchAvaliableType =
   | SignUpDTO
   | EmailValidationRequest
   | LoginDTO
-  | NewPasswordDTO
+  | ResetPasswordDTO
   | AdminLoginDTO
   | FormData
   | null

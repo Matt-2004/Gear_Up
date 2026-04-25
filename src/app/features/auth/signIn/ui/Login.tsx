@@ -67,16 +67,18 @@ const Login = () => {
               >
                 <div className="w-full">
                   <Input
+                    id="usernameOrEmail"
                     ref={usernameRef}
                     name="usernameOrEmail"
                     autoComplete="email"
                     type="text"
                     placeholder="example@gmail.com or matthew"
                     value={formData.usernameOrEmail}
+                    data-testid="email"
                     onChange={(e) =>
                       setFormData((prev) => ({
                         ...prev,
-                        usernameOrEmail: e.target.value,
+                        usernameOrEmail: e.target.value.trim(),
                       }))
                     }
                   >
@@ -86,6 +88,7 @@ const Login = () => {
 
                 <div className="w-full">
                   <Input
+                    id="password"
                     name="password"
                     minLength={8}
                     autoComplete="current-password"
@@ -95,9 +98,10 @@ const Login = () => {
                     onChange={(e) =>
                       setFormData((prev) => ({
                         ...prev,
-                        password: e.target.value,
+                        password: e.target.value.trim(),
                       }))
                     }
+                    data-testid="password"
                   >
                     Password
                   </Input>

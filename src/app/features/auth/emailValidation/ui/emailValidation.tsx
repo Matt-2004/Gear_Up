@@ -53,6 +53,7 @@ const EmailValidation = ({ variant }: { variant: EmailValidationVariant }) => {
         >
           <div className="w-full">
             <Input
+              data-testid="email"
               name="email"
               type="email"
               placeholder="Enter your email address"

@@ -7,7 +7,7 @@ export interface ForgetPasswordDTO {
   email: string;
 }
 
-export interface NewPasswordDTO {
+export interface ResetPasswordDTO {
   newPassword: string;
   confirmedPassword: string;
 }

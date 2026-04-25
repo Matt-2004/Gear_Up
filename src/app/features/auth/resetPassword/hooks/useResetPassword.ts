@@ -3,10 +3,11 @@ import { useToast } from "@/app/features/toast/hooks/useToast";
 import { ResetPasswordSchema } from "@/app/features/auth/utils/typeSchema";
 import { useAuthForm } from "@/app/shared/hooks/useAuthForm";
 import { resetPasswordAction } from "../utils/resetPasswordAction";
+import { ResetPasswordDTO } from "../../types/auth.types";
 
 const initialResetPasswordFormData = {
   newPassword: "",
-  confirmPassword: "",
+  confirmedPassword: "",
 };
 
 export const useResetPassword = (token: string | null) => {
@@ -17,15 +18,16 @@ export const useResetPassword = (token: string | null) => {
     message: null,
   });
 
-  const { formData, setFormData, validationErrors, isFormValid } = useAuthForm(
-    initialResetPasswordFormData,
-    ResetPasswordSchema,
-  );
+  const { formData, setFormData, validationErrors, isFormValid } =
+    useAuthForm<ResetPasswordDTO>(
+      initialResetPasswordFormData,
+      ResetPasswordSchema,
+    );
 
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const normalizedToken = token?.replace(/ /g, "+").trim();
+    const normalizedToken = token?.trim().replace(/\s+/g, "+");
 
     if (!normalizedToken) {
       handleToast(
@@ -42,7 +44,7 @@ export const useResetPassword = (token: string | null) => {
 
     const submitData = new FormData();
     submitData.append("newPassword", formData.newPassword);
-    submitData.append("confirmPassword", formData.confirmPassword);
+    submitData.append("confirmedPassword", formData.confirmedPassword);
     submitData.append("token", normalizedToken);
 
     setIsPending(true);

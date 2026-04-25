@@ -10,7 +10,7 @@ import Image from "next/image";
 
 import { useSignUp } from "../hooks/useSignUp";
 
-const Register = ({}) => {
+const Register = () => {
   const {
     formData,
     isPending,
@@ -46,11 +46,8 @@ const Register = ({}) => {
             />
             <div className="absolute inset-0 bg-linear-to-b from-black/40 via-black/30 to-black/60" />
             <div className="absolute right-8 bottom-8 left-8 rounded-2xl border border-white/25 bg-white/15 p-6 shadow-xl backdrop-blur-md">
-              <p className="text-sm font-medium tracking-wide text-white/90 uppercase">
-                Join Gear Up Today
-              </p>
               <h2 className="mt-2 text-2xl font-bold text-white">
-                Create your account in minutes.
+                Join Gear Up Today
               </h2>
               <p className="mt-2 text-sm text-white/85">
                 Save your favorites, connect with dealers, and unlock a
@@ -62,7 +59,7 @@ const Register = ({}) => {
           <div className="flex h-full bg-transparent sm:bg-gray-50 sm:p-4 md:p-5 lg:p-0">
             <div className="flex h-full w-full flex-col justify-center bg-white p-6 sm:rounded-2xl sm:border sm:border-gray-200/80 sm:p-8 sm:shadow-xl sm:shadow-slate-900/10 lg:rounded-none lg:border-0 lg:border-l lg:border-gray-100 lg:shadow-none lg:p-10">
               <div className="mb-5">
-                <AuthPageCaption>Create your account 🚀</AuthPageCaption>
+                <AuthPageCaption>Create your account</AuthPageCaption>
                 <h3 className="mt-1 text-sm leading-relaxed text-gray-600">
                   Start your journey with Gear Up and discover the right car
                   with confidence.
@@ -94,6 +91,7 @@ const Register = ({}) => {
                 <div className="flex w-full flex-col gap-4 sm:flex-row">
                   <div className="w-full flex-1">
                     <Input
+                      data-testid="first-name"
                       ref={firstNameRef}
                       name="firstName"
                       type="text"
@@ -103,7 +101,7 @@ const Register = ({}) => {
                       onChange={(e) =>
                         setFormData((prev) => ({
                           ...prev,
-                          firstName: e.target.value,
+                          firstName: e.target.value.trim(),
                         }))
                       }
                     >
@@ -112,6 +110,7 @@ const Register = ({}) => {
                   </div>
                   <div className="w-full flex-1">
                     <Input
+                      data-testid="last-name"
                       name="lastName"
                       type="text"
                       placeholder="Doe"
@@ -120,7 +119,7 @@ const Register = ({}) => {
                       onChange={(e) =>
                         setFormData((prev) => ({
                           ...prev,
-                          lastName: e.target.value,
+                          lastName: e.target.value.trim(),
                         }))
                       }
                     >
@@ -131,6 +130,7 @@ const Register = ({}) => {
 
                 <div className="w-full">
                   <Input
+                    data-testid="username"
                     name="username"
                     type="text"
                     placeholder="John_Doe"
@@ -139,7 +139,7 @@ const Register = ({}) => {
                     onChange={(e) =>
                       setFormData((prev) => ({
                         ...prev,
-                        username: e.target.value,
+                        username: e.target.value.trim(),
                       }))
                     }
                   >
@@ -149,6 +149,7 @@ const Register = ({}) => {
 
                 <div className="w-full">
                   <Input
+                    data-testid="email"
                     name="email"
                     type="email"
                     autoComplete="email"
@@ -158,7 +159,7 @@ const Register = ({}) => {
                     onChange={(e) =>
                       setFormData((prev) => ({
                         ...prev,
-                        email: e.target.value,
+                        email: e.target.value.trim(),
                       }))
                     }
                   >
@@ -168,6 +169,7 @@ const Register = ({}) => {
 
                 <div className="w-full">
                   <Input
+                    data-testid="password"
                     name="password"
                     type="password"
                     minLength={8}
@@ -178,7 +180,7 @@ const Register = ({}) => {
                     onChange={(e) =>
                       setFormData((prev) => ({
                         ...prev,
-                        password: e.target.value,
+                        password: e.target.value.trim(),
                       }))
                     }
                   >
@@ -188,6 +190,7 @@ const Register = ({}) => {
 
                 <div className="w-full">
                   <Input
+                    data-testid="confirm-password"
                     name="confirmPassword"
                     type="password"
                     autoComplete="new-password"
@@ -197,7 +200,7 @@ const Register = ({}) => {
                     onChange={(e) =>
                       setFormData((prev) => ({
                         ...prev,
-                        confirmPassword: e.target.value,
+                        confirmPassword: e.target.value.trim(),
                       }))
                     }
                   >
@@ -207,6 +210,7 @@ const Register = ({}) => {
 
                 <div className="mt-1 flex w-full select-none items-center gap-2">
                   <input
+                    data-testid="agree-to-terms"
                     required
                     name="agreeToTerms"
                     id="policy"

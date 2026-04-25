@@ -12,7 +12,6 @@ import { encrypt } from "@/app/shared/utils/AuthUtils/encryption";
 import { useUserData } from "@/app/features/navbar/context/UserDataContext";
 
 // formData --> handleFromSubmit() --> signUpAction --> toast
-
 const initialLoginFormData = {
   usernameOrEmail: "",
   password: "",
@@ -45,15 +44,12 @@ export const useSignIn = () => {
     // to reduce server load for fetching user data, save the user encrypted data in cookie
     if (res.isSuccess && res.data) {
       // set tokens in cookie
-      await token_integration(res.data, initialLoginFormData.rememberMe);
+      await token_integration(res.data, formData.rememberMe);
 
       // promise-chain for setting user data in cookie
       const userRes = await UserFetch();
       const encryptedUserData = await encrypt(userRes.data);
-      await user_data_integration(
-        encryptedUserData,
-        initialLoginFormData.rememberMe,
-      );
+      await user_data_integration(encryptedUserData, formData.rememberMe);
 
       await refreshUserData();
     }

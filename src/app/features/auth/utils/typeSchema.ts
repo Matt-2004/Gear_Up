@@ -28,13 +28,15 @@ export const ResetPasswordSchema = z
       .string()
       .min(8, "Password must be at least 8 characters")
       .max(20, "Password is too long")
-      .regex(/[a-z]/, "- Must Contain at least one lowercase letter")
-      .regex(/[0-9]/, "- Must contain at least one number")
-      .regex(/[^A-Za-z0-9]/, "- Must contain at least one symbol"),
-    confirmPassword: z.string(),
+      .regex(/[a-z]/, "Must contain at least one lowercase letter")
+      .regex(/[0-9]/, "Must contain at least one number")
+      .regex(/[^A-Za-z0-9]/, "Must contain at least one symbol"),
+
+    confirmPassword: z.string().min(1, "Please confirm your password"),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
     message: "Passwords don't match",
+    path: ["confirmPassword"],
   });
 
 export const sendEmailSchema = z.object({
