@@ -1,7 +1,9 @@
 "use client";
 
 import { IKycFormData } from "@/app/features/dashboards/dealer/types/kycRegister.types";
+import { MainResponse } from "@/app/shared/types.ts/main-response";
 import { kycRegister } from "@/app/shared/utils/API/UserAPI";
+import { ErrorResponse } from "@/app/shared/utils/errors/errorResponse";
 
 import {
   createContext,
@@ -16,32 +18,26 @@ interface KycRegisterContextType {
   kycData: IKycFormData;
   updateKycData: (data: Partial<IKycFormData>) => void;
   isSubmitting: boolean;
-  submitError: string | null;
-  submitKycData: () => Promise<boolean>;
+  submitKycData: () => Promise<MainResponse<null>>;
   isStepValid: (step: number) => boolean;
   resetForm: () => void;
 }
 
-export const KycRegisterContext = createContext<
-  KycRegisterContextType | undefined
->(undefined);
+export const KycFormContext = createContext<KycRegisterContextType | undefined>(
+  undefined,
+);
 
-export default function KycRegisterFormProvider({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export default function KycFormProvider({ children }: { children: ReactNode }) {
   const [kycData, setKycData] = useState<IKycFormData>({
     DocumentType: null,
     Kyc: null,
     SelfieImage: null,
   });
+
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const updateKycData = useCallback((data: Partial<IKycFormData>) => {
     setKycData((prev) => ({ ...prev, ...data }));
-    setSubmitError(null); // Clear error when user updates data
   }, []);
 
   // Validate if current step data is filled
@@ -49,6 +45,8 @@ export default function KycRegisterFormProvider({
     (step: number): boolean => {
       switch (step) {
         case 1: // Document Type
+          // if data is not null -> null, if null -> false
+
           return kycData.DocumentType !== null;
         case 2: // KYC Upload
           return (
@@ -76,15 +74,9 @@ export default function KycRegisterFormProvider({
   );
 
   // Submit KYC data to backend
-  const submitKycData = useCallback(async (): Promise<boolean> => {
-    // Validate all data before submission
-    if (!isStepValid(4)) {
-      setSubmitError("Please complete all required fields");
-      return false;
-    }
-
+  const submitKycData = useCallback(async (): Promise<MainResponse<null>> => {
+    console.log("Calling submitKycData");
     setIsSubmitting(true);
-    setSubmitError(null);
 
     try {
       const formData = new FormData();
@@ -113,13 +105,16 @@ export default function KycRegisterFormProvider({
       }
 
       localStorage.removeItem("kyc_verficiation");
-      return true;
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to submit KYC data";
-      setSubmitError(errorMessage);
-      console.error("KYC submission error:", error);
-      return false;
+      return response;
+    } catch (error: any) {
+      const err = error as ErrorResponse;
+
+      return {
+        isSuccess: false,
+        message: err.message,
+        data: null,
+        status: err.status,
+      };
     } finally {
       setIsSubmitting(false);
     }
@@ -132,7 +127,7 @@ export default function KycRegisterFormProvider({
       Kyc: null,
       SelfieImage: null,
     });
-    setSubmitError(null);
+
     localStorage.removeItem("kyc_verficiation");
   }, []);
 
@@ -166,27 +161,26 @@ export default function KycRegisterFormProvider({
   }, [kycData]);
 
   return (
-    <KycRegisterContext.Provider
+    <KycFormContext.Provider
       value={{
         kycData,
         updateKycData,
         isSubmitting,
-        submitError,
         submitKycData,
         isStepValid,
         resetForm,
       }}
     >
       {children}
-    </KycRegisterContext.Provider>
+    </KycFormContext.Provider>
   );
 }
 
-export const useKycRegisterContext = () => {
-  const context = useContext(KycRegisterContext);
+export const useKycSubmit = () => {
+  const context = useContext(KycFormContext);
 
   if (!context) {
-    throw new Error("useKycRegisterContext must be used inside a Provider");
+    throw new Error("useKycFormContext must be used inside a Provider");
   }
   return context;
 };

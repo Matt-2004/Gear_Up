@@ -27,7 +27,7 @@ export const useSignIn = () => {
     toastType: null,
     message: null,
   });
-  const { formData, setFormData, validationErrors } = useAuthForm(
+  const { formData, setFormData } = useAuthForm(
     initialLoginFormData,
     RegisterSchema,
   );

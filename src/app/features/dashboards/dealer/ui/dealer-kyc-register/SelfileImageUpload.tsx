@@ -1,24 +1,28 @@
 "use client";
 
-import { UserCheck } from "lucide-react";
+import { Camera, TriangleAlert, UserCheck } from "lucide-react";
 import Image from "next/image";
 import React, { useRef, useState } from "react";
-import { StepNavigation } from "./StepNavigation";
-import { useKycRegisterContext } from "@/app/features/dashboards/dealer/context/KycRegisterContext";
+import { useKycSubmit } from "@/app/features/dashboards/dealer/context/KycFormContext";
+import StepNavigation from "../add-car-form/StepNavigation";
+import { DefaultImageUpload } from "./KycUpload";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const SelfieImageUpload = () => {
-  const { updateKycData } = useKycRegisterContext();
+  const { updateKycData } = useKycSubmit();
   const [preview, setPreview] = useState<string>("");
   const [file, setFile] = useState<File | null>(null);
   const [useCameraMode, setUseCameraMode] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const currentStep = Number(searchParams.get("step") ?? 1);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0];
+  const handleFileChange = (id: string, selectedFile: File | null) => {
     if (selectedFile) {
       setFile(selectedFile);
-      // onUpload(selectedFile)
       const url = URL.createObjectURL(selectedFile);
       setPreview(url);
     }
@@ -72,7 +76,13 @@ const SelfieImageUpload = () => {
   };
 
   return (
-    <div className="w-full max-w-2xl rounded-xl bg-white shadow-lg border-2 border-gray-200 p-8">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        router.push(`${pathname}?step=${currentStep + 1}`);
+      }}
+      className="w-full max-w-2xl rounded-xl bg-white shadow-sm border border-gray-200 p-8"
+    >
       <h3 className="mb-3 text-2xl font-bold text-gray-900">Take a Selfie</h3>
       <p className="mb-6 text-gray-600">
         Take a clear photo of your face for identity verification
@@ -82,24 +92,12 @@ const SelfieImageUpload = () => {
         {!preview && !useCameraMode && (
           <div className="space-y-4">
             {/* Upload from File */}
-            <div className="rounded-lg border-2 border-dashed border-gray-300 bg-white p-8 transition-all hover:border-primary-400">
-              <label className="flex cursor-pointer flex-col items-center">
-                <UserCheck className="h-10 w-10 text-primary-500 my-4" />
-                <span className="mb-2 text-gray-700">
-                  Click to upload selfie
-                </span>
-                <span className="text-sm text-gray-500">
-                  PNG, JPG up to 10MB
-                </span>
-                <input
-                  type="file"
-                  accept="image/*"
-                  capture="user"
-                  onChange={handleFileChange}
-                  className="hidden"
-                />
-              </label>
-            </div>
+            <DefaultImageUpload
+              id="main_upload"
+              label="Take a Selfile"
+              description="Upload a clear selfie of yourself. Make sure your face is fully visible, well-lit, and not covered by hats, sunglasses, or filters."
+              handleFileChange={handleFileChange}
+            />
 
             {/* Or use Camera */}
             <div className="text-center">
@@ -111,25 +109,7 @@ const SelfieImageUpload = () => {
               onClick={startCamera}
               className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary-600 text-white py-4 font-medium transition-colors hover:bg-primary-700"
             >
-              <svg
-                className="h-6 w-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
-                />
-              </svg>
+              <Camera className="h-5 w-5" />
               Use Camera
             </button>
           </div>
@@ -179,16 +159,23 @@ const SelfieImageUpload = () => {
               />
             </div>
             <div className="mt-4 flex items-center justify-between rounded-lg bg-gray-100 border border-gray-200 p-3">
-              <span className="flex-1 truncate text-sm text-gray-700">
+              <span className="flex-1 truncate text-sm text-gray-900">
                 {file?.name || "selfie.jpg"}
               </span>
-              <label className="ml-3 cursor-pointer rounded-lg bg-primary-600 text-white px-4 py-2 text-sm font-medium transition-colors hover:bg-primary-700">
+              <label className="ml-3 cursor-pointer rounded-lg bg-primary text-white px-4 py-2 text-sm font-medium transition-colors hover:bg-primary-600">
                 Retake
                 <input
                   type="file"
                   accept="image/*"
                   capture="user"
-                  onChange={handleFileChange}
+                  onChange={(e) =>
+                    handleFileChange(
+                      "main_upload",
+                      e.target.files && e.target.files[0]
+                        ? e.target.files[0]
+                        : null,
+                    )
+                  }
                   className="hidden"
                 />
               </label>
@@ -197,24 +184,14 @@ const SelfieImageUpload = () => {
         )}
       </div>
 
-      <div className="mt-6 rounded-lg border-2 border-primary-200 bg-primary-50 p-4">
+      <div className="mt-6 rounded-lg border-2 border-amber-200 bg-amber-50 p-4">
         <div className="flex items-start gap-3">
-          <svg
-            className="mt-0.5 h-5 w-5 shrink-0 text-primary-600"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path
-              fillRule="evenodd"
-              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-              clipRule="evenodd"
-            />
-          </svg>
+          <TriangleAlert className="h-4 w-4 text-amber-700" />
           <div>
-            <p className="text-sm font-medium text-primary-900">
+            <p className="text-sm font-medium text-amber-800">
               Selfie Requirements
             </p>
-            <ul className="mt-1 list-inside list-disc space-y-1 text-sm text-primary-800">
+            <ul className="mt-1 list-inside list-disc space-y-1 text-sm text-amber-700">
               <li>Face the camera directly</li>
               <li>Remove glasses and hats</li>
               <li>Ensure good lighting</li>
@@ -223,8 +200,8 @@ const SelfieImageUpload = () => {
           </div>
         </div>
       </div>
-      <StepNavigation />
-    </div>
+      <StepNavigation label="Submit" />
+    </form>
   );
 };
 

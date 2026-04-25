@@ -21,5 +21,5 @@ export async function getCarByUserId(userId: string, cursor?: string) {
 }
 
 export async function kycRegister(data: FormData) {
-  return postFetch("/api/v1/users/kyc", data);
+  return postFetch<null>("/api/v1/users/kyc", data);
 }

@@ -267,7 +267,11 @@ const Review = () => {
             </div>
           </div>
           <div className="mt-8 flex justify-end border-t border-gray-200 pt-6">
-            <StepNavigation isSubmitForm={true} isSubmitting={isSubmitting} />
+            <StepNavigation
+              isSubmitForm={true}
+              isSubmitting={isSubmitting}
+              label="Submit"
+            />
           </div>
         </div>
       </form>

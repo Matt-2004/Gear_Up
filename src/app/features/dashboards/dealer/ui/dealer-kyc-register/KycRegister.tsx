@@ -52,7 +52,7 @@ const KycRegister = ({ step }: { step: string }) => {
   // Passing useState to child components to get data
 
   return (
-    <div className="flex min-h-screen flex-col items-center bg-gradient-to-br from-primary-50 via-white to-primary-100/30 px-4 py-12">
+    <div className="flex min-h-screen flex-col items-center bg-background px-4 py-12">
       <div className="w-full max-w-6xl">
         {/* Header */}
         <div className="mb-12 text-center">

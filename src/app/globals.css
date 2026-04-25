@@ -1,60 +1,60 @@
 @import "tailwindcss";
 
 :root {
-	--primary-active: #4b8633;
-	--background: #f5f5f5;
-	--foreground: #142030;
-	--main-color: #345f22;
-	--main-color-50: #f1f9ec;
-	--main-color-100: #e1f2d5;
-	--main-color-200: #c4e7af;
-	--main-color-300: #9ed680;
-	--main-color-400: #7dc358;
-	--main-color-500: #5ea83a;
-	--main-color-600: #47852b;
-	--main-color-700: #345f22;
-	--main-color-800: #305222;
-	--main-color-900: #2b4621;
-	--google-color-background: #1b72e8;
-	--line-color-background: #3aad42;
-	--primary-background: #fbfffa;
-	--input-bg: #2a2e3d;
-	--input-border: #3b4252;
-	--primary-hover: #bffcad;
+  --primary-active: #4b8633;
+  --background: #f5f5f5;
+  --foreground: #e8e9e0;
+  --main-color: #345f22;
+  --main-color-50: #f1f9ec;
+  --main-color-100: #e1f2d5;
+  --main-color-200: #c4e7af;
+  --main-color-300: #9ed680;
+  --main-color-400: #7dc358;
+  --main-color-500: #5ea83a;
+  --main-color-600: #47852b;
+  --main-color-700: #345f22;
+  --main-color-800: #305222;
+  --main-color-900: #2b4621;
+  --google-color-background: #1b72e8;
+  --line-color-background: #3aad42;
+  --primary-background: #fbfffa;
+  --input-bg: #2a2e3d;
+  --input-border: #3b4252;
+  --primary-hover: #bffcad;
 }
 
 @theme inline {
-	--color-primary-50: var(--main-color-50);
-	--color-primary-100: var(--main-color-100);
-	--color-primary-200: var(--main-color-200);
-	--color-primary-300: var(--main-color-300);
-	--color-primary-400: var(--main-color-400);
-	--color-primary-500: var(--main-color-500);
-	--color-primary-600: var(--main-color-600);
-	--color-primary-700: var(--main-color-700);
-	--color-primary-800: var(--main-color-800);
-	--color-primary-900: var(--main-color-900);
+  --color-primary-50: var(--main-color-50);
+  --color-primary-100: var(--main-color-100);
+  --color-primary-200: var(--main-color-200);
+  --color-primary-300: var(--main-color-300);
+  --color-primary-400: var(--main-color-400);
+  --color-primary-500: var(--main-color-500);
+  --color-primary-600: var(--main-color-600);
+  --color-primary-700: var(--main-color-700);
+  --color-primary-800: var(--main-color-800);
+  --color-primary-900: var(--main-color-900);
 
-	--color-primary-active: var(--primary-active);
-	--color-primary-btn-hover: var(--primary-hover);
-	--color-background: var(--background);
-	--color-primary: var(--main-color);
-	--color-foreground: var(--foreground);
-	--font-roboto: var(--font-roboto);
-	--color-primary-background: var(--primary-background);
-	--color-input-background: var(--input-bg);
-	--color-input-border: var(--input-border);
+  --color-primary-active: var(--primary-active);
+  --color-primary-btn-hover: var(--primary-hover);
+  --color-background: var(--background);
+  --color-primary: var(--main-color);
+  --color-foreground: var(--foreground);
+  --font-roboto: var(--font-roboto);
+  --color-primary-background: var(--primary-background);
+  --color-input-background: var(--input-bg);
+  --color-input-border: var(--input-border);
 }
 
 .main-color-gradient {
-	background: #7ed957;
-	background: linear-gradient(90deg, #7ed957 0%, #74e000 100%);
-	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+  background: #7ed957;
+  background: linear-gradient(90deg, #7ed957 0%, #74e000 100%);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
 }
 
 .main-color-gradient:hover {
-	background: linear-gradient(90deg, #7ed957, #7ed957);
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(90deg, #7ed957, #7ed957);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 /* @media (prefers-color-scheme: dark) {
@@ -65,28 +65,28 @@
 } */
 
 body {
-	background: #f5f5f5;
-	z-index: 0;
+  background: #f5f5f5;
+  z-index: 0;
 }
 
 .hide-scrollbar {
-	/* For Internet Explorer and Edge */
-	-ms-overflow-style: none;
-	/* For Firefox */
-	scrollbar-width: none;
-	/* Ensure scrolling is still possible if content overflows */
-	overflow: auto;
+  /* For Internet Explorer and Edge */
+  -ms-overflow-style: none;
+  /* For Firefox */
+  scrollbar-width: none;
+  /* Ensure scrolling is still possible if content overflows */
+  overflow: auto;
 }
 
 /* For Chrome, Safari, and Opera */
 .hide-scrollbar::-webkit-scrollbar {
-	display: none;
+  display: none;
 }
 
 .two-line-ellipsis {
-	display: -webkit-box;
-	-webkit-line-clamp: 2;
-	-webkit-box-orient: vertical;
-	overflow: hidden;
-	text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

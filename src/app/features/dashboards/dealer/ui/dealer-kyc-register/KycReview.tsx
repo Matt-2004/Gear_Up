@@ -5,11 +5,27 @@ import {
   CreditCard,
   FileText,
 } from "lucide-react";
-import { useKycRegisterContext } from "../../context/KycRegisterContext";
-import { StepNavigation } from "./StepNavigation";
+import { useKycSubmit } from "../../context/KycFormContext";
+import { useToast } from "@/app/features/toast/hooks/useToast";
+import StepNavigation from "../add-car-form/StepNavigation";
+import { useState } from "react";
 
 const KycReview = () => {
-  const { kycData } = useKycRegisterContext();
+  const { kycData, submitKycData } = useKycSubmit();
+  const { handleToast } = useToast();
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      setIsSubmitting(true);
+      // If we're on the last step, submit the form
+      const res = await submitKycData();
+      handleToast(res, "/");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   if (!kycData.SelfieImage || !kycData.Kyc || !kycData.DocumentType) {
     return (
@@ -25,7 +41,10 @@ const KycReview = () => {
   }
 
   return (
-    <div className="w-full max-w-2xl rounded-xl bg-white shadow-lg border-2 border-gray-200 p-8">
+    <form
+      onSubmit={handleSubmit}
+      className="w-full max-w-2xl rounded-xl bg-white shadow-lg border-2 border-gray-200 p-8"
+    >
       <div className="mb-6 flex items-center gap-3">
         <div className="rounded-full bg-primary-100 p-3">
           <FileText className="h-6 w-6 text-primary-600" />
@@ -106,8 +125,12 @@ const KycReview = () => {
           </p>
         </div>
       </div>
-      <StepNavigation />
-    </div>
+      <StepNavigation
+        isSubmitForm={true}
+        isSubmitting={isSubmitting}
+        label="Submit"
+      />
+    </form>
   );
 };
 

@@ -17,7 +17,9 @@ export interface IKycSubmissions {
   rejectionReason: string | null;
 }
 
-export interface KycrResponse extends MainResponse<
+export interface UserKycSubmissionResponse extends MainResponse<null> {}
+
+export interface KycResponse extends MainResponse<
   CursorResponse<IKycSubmissions[]>
 > {}
 

@@ -6,8 +6,6 @@ import HomeFooter from "@/app/features/home/ui/HomeFooter";
 import { Metadata } from "next";
 import { getAllCars } from "./shared/utils/API/CarAPI";
 
-export const dynamic = "force-dynamic";
-
 export const metadata: Metadata = {
   title: "Gear Up - Your Ultimate Car Marketplace",
   description:
@@ -15,14 +13,8 @@ export const metadata: Metadata = {
 };
 
 export default async function HOME() {
-  let cars = [];
-
-  try {
-    const response = await getAllCars(null);
-    cars = response?.data?.items || [];
-  } catch (error) {
-    console.error("Failed to fetch cars:", error);
-  }
+  const response = await getAllCars(null);
+  const cars = response?.data?.items;
 
   return (
     <main className="min-h-screen bg-gray-50">
