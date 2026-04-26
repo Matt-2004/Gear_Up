@@ -1,0 +1,143 @@
+import ResponsiveDropdown from "@/app/shared/ui/ResponsiveDropDown";
+import { useEffect, useMemo } from "react";
+import {
+  FillDetailField,
+  FillDetailLabel,
+  FillDetailInput,
+} from "../../../dealer/ui/add-car-form/FillDetailFormComponents";
+import {
+  useAdminFilterContext,
+  KycDocumentType,
+  KycStatusType,
+  CarStatusType,
+} from "../context/AdminFilterContext";
+import { debounce } from "@/app/shared/utils/debounce";
+
+type FilterUIProps = {
+  category: "Kyc" | "Car";
+};
+
+type DropdownOption<T extends string = string> = {
+  label: string;
+  value: T;
+};
+
+const documentTypeOptions: DropdownOption<KycDocumentType>[] = [
+  { label: "All Document Types", value: "All" },
+  { label: "Passport", value: "Passport" },
+  { label: "National ID", value: "NationalID" },
+  { label: "Driver License", value: "DriverLicense" },
+  { label: "Utility Bill", value: "UtilityBill" },
+  { label: "Other", value: "Other" },
+];
+
+const kycStatusOptions: DropdownOption<KycStatusType>[] = [
+  { label: "All Status", value: "All" },
+  { label: "Pending", value: "Pending" },
+  { label: "Approved", value: "Approved" },
+  { label: "Rejected", value: "Rejected" },
+];
+
+const carStatusOptions: DropdownOption<CarStatusType>[] = [
+  { label: "All Status", value: "All" },
+  { label: "Pending", value: "Pending" },
+  { label: "Approved", value: "Approved" },
+  { label: "Rejected", value: "Rejected" },
+];
+
+export const FilterUI = ({ category }: FilterUIProps) => {
+  const { filter, setFilter } = useAdminFilterContext();
+
+  const filterCategory = category === "Kyc" ? "kyc" : "car";
+
+  useEffect(() => {
+    setFilter({
+      category: filterCategory,
+    });
+  }, [filterCategory, setFilter]);
+
+  const statusOptions =
+    filterCategory === "kyc" ? kycStatusOptions : carStatusOptions;
+
+  const debouncedSearch = debounce((value: string) => {
+    setFilter({
+      searchData: value,
+    });
+  }, 400);
+
+  return (
+    <div className="flex w-full flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+      <div className="flex w-full flex-col gap-4 md:flex-row md:items-end">
+        {/* Search Input */}
+        <div className="flex w-full flex-col gap-4 md:flex-row md:items-end">
+          {/* Search Input */}
+          <div className="min-w-0 max-w-100 flex-1">
+            <FillDetailField>
+              <FillDetailLabel
+                label={filterCategory === "kyc" ? "Search KYC" : "Search Car"}
+              />
+
+              <FillDetailInput
+                type="text"
+                value={filter.searchData}
+                placeholder={
+                  filterCategory === "kyc"
+                    ? "Search by name, ID, or document type..."
+                    : "Search by title, make, model, or status..."
+                }
+                onChange={(e) => debouncedSearch(e.currentTarget.value)}
+              />
+            </FillDetailField>
+          </div>
+
+          {/* KYC Document Type Filter */}
+          {filterCategory === "kyc" && (
+            <div className="w-full md:w-64 md:shrink-0">
+              <FillDetailField>
+                <FillDetailLabel label="Document Type" />
+
+                <ResponsiveDropdown
+                  options={documentTypeOptions}
+                  value={
+                    filter.category === "kyc" ? filter.documentType : "All"
+                  }
+                  placeholder="Select document type"
+                  onChange={(value) =>
+                    setFilter({
+                      documentType: value as KycDocumentType,
+                    })
+                  }
+                />
+              </FillDetailField>
+            </div>
+          )}
+
+          {/* Status Filter */}
+          <div className="w-full md:w-52 md:shrink-0">
+            <FillDetailField>
+              <FillDetailLabel label="Status" />
+
+              <ResponsiveDropdown
+                options={statusOptions}
+                value={filter.statusType}
+                placeholder="Select status"
+                onChange={(value) => {
+                  if (filterCategory === "kyc") {
+                    setFilter({
+                      statusType: value as KycStatusType,
+                    });
+                    return;
+                  }
+
+                  setFilter({
+                    statusType: value as CarStatusType,
+                  });
+                }}
+              />
+            </FillDetailField>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
