@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { BACKEND_API_URL } from "./app/shared/utils/config";
 import { getDecryptedFullUserData } from "./app/shared/utils/AuthUtils/cookieHelper";
 
-// Define public routes that don't require authentication
 const PUBLIC_ROUTES = [
   "/",
   "/auth/login",
@@ -16,177 +15,241 @@ const PUBLIC_ROUTES = [
   "/reset-password",
   "/unauthorized",
   "/forbidden",
-];
+] as const;
 
-// Middleware to handle authentication and route protection
-// if refresh token exists, but no access token, try to refresh token
-// if refresh token is invalid, clear cookies and redirect to home
-// roles-based access control for admin routes --> only allow users with Admin role to access /profile/admin routes, else redirect to "Unauthorized" page or home
-// if user is a dealer, redirect to dealer profile page when accessing any protected route except dealer profile page
-// if no tokens and trying to access protected route, redirect to home
+const ADMIN_LOGIN_ROUTE = "/profile/admin/login";
+const ADMIN_ROOT_ROUTE = "/profile/admin";
+const DEALER_ROOT_ROUTE = "/profile/dealer";
+const DEALER_DEFAULT_ROUTE = "/profile/dealer?tab=car-management";
+const ADMIN_DEFAULT_ROUTE = "/profile/admin?tab=dashboard";
 
-// Helper function to check if a path is public
-function isPublicRoute(pathname: string): boolean {
-  return PUBLIC_ROUTES.some((route) => {
-    const normalizedRoute = route.startsWith("/") ? route : `/${route}`;
-    return (
-      pathname === normalizedRoute || pathname.startsWith(`${normalizedRoute}/`)
-    );
-  });
+type RefreshTokenResponse = {
+  data?: {
+    accessToken?: string;
+    refreshToken?: string;
+  };
+  accessToken?: string;
+  refreshToken?: string;
+};
+
+function isRouteMatch(pathname: string, route: string) {
+  return pathname === route || pathname.startsWith(`${route}/`);
 }
 
-// Helper function to fetch and cache user data
+function isPublicRoute(pathname: string) {
+  return PUBLIC_ROUTES.some((route) => isRouteMatch(pathname, route));
+}
+
+function isAdminRoute(pathname: string) {
+  return isRouteMatch(pathname, ADMIN_ROOT_ROUTE);
+}
+
+function isAdminLoginRoute(pathname: string) {
+  return isRouteMatch(pathname, ADMIN_LOGIN_ROUTE);
+}
+
+function isDealerRoute(pathname: string) {
+  return isRouteMatch(pathname, DEALER_ROOT_ROUTE);
+}
+
+function isMessagesRoute(pathname: string) {
+  return isRouteMatch(pathname, "/messages");
+}
+
+function clearAuthCookies(response: NextResponse) {
+  response.cookies.delete("access_token");
+  response.cookies.delete("refresh_token");
+  response.cookies.delete("user_data");
+
+  return response;
+}
+
+function redirectTo(path: string, req: NextRequest) {
+  return NextResponse.redirect(new URL(path, req.url));
+}
+
+function redirectAndClearAuth(path: string, req: NextRequest) {
+  const response = redirectTo(path, req);
+  return clearAuthCookies(response);
+}
+
+async function refreshAuthTokens(refreshToken: string) {
+  const res = await fetch(`${BACKEND_API_URL}/api/v1/auth/refresh`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+
+    /**
+     * Use this if your backend expects:
+     * { "refreshToken": "..." }
+     */
+    body: JSON.stringify({ refreshToken }),
+
+    /**
+     * If your backend expects raw JSON string instead, use this:
+     * body: JSON.stringify(refreshToken),
+     */
+  });
+
+  if (!res.ok) {
+    return null;
+  }
+
+  const data = (await res
+    .json()
+    .catch(() => null)) as RefreshTokenResponse | null;
+
+  const tokenData = data?.data ?? data;
+
+  const accessToken = tokenData?.accessToken;
+  const nextRefreshToken = tokenData?.refreshToken;
+
+  if (!accessToken || !nextRefreshToken) {
+    return null;
+  }
+
+  return {
+    accessToken,
+    refreshToken: nextRefreshToken,
+  };
+}
+
+function setAuthCookies(
+  response: NextResponse,
+  tokens: {
+    accessToken: string;
+    refreshToken: string;
+  },
+) {
+  const isProduction = process.env.NODE_ENV === "production";
+
+  response.cookies.set("access_token", tokens.accessToken, {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
+    path: "/",
+    maxAge: 60 * 5,
+  });
+
+  response.cookies.set("refresh_token", tokens.refreshToken, {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
+    path: "/",
+    maxAge: 60 * 60 * 24 * 7,
+  });
+
+  return response;
+}
 
 export async function proxy(req: NextRequest) {
-  const isProduction = process.env.NODE_ENV === "production";
-  const sameSite = isProduction ? ("none" as const) : ("lax" as const);
+  const pathname = req.nextUrl.pathname;
 
-  let accessToken = req.cookies.get("access_token")?.value;
+  const accessToken = req.cookies.get("access_token")?.value;
   const refreshToken = req.cookies.get("refresh_token")?.value;
-  const user_data_cookie = req.cookies.get("user_data")?.value;
-  const currentPath = req.nextUrl.pathname;
-  const isAdminPath =
-    currentPath === "/profile/admin" ||
-    currentPath.startsWith("/profile/admin/");
+  const userDataCookie = req.cookies.get("user_data")?.value;
 
-  // Check if tokens exist
-  const hasTokens = accessToken || refreshToken;
+  const isPublic = isPublicRoute(pathname);
+  const isAdminPath = isAdminRoute(pathname);
+  const hasAccessToken = Boolean(accessToken);
+  const hasRefreshToken = Boolean(refreshToken);
+  const hasAnyToken = hasAccessToken || hasRefreshToken;
 
-  // Allow access to admin login page without authentication
-  if (
-    currentPath === "/profile/admin/login" ||
-    currentPath.startsWith("/profile/admin/login")
-  ) {
+  /**
+   * Admin login should be accessible without auth.
+   */
+  if (isAdminLoginRoute(pathname)) {
     return NextResponse.next();
   }
 
-  // If no tokens and trying to access protected route, redirect to home
-  if (!hasTokens && !isPublicRoute(currentPath)) {
-    console.log(
-      `Access denied to ${currentPath} - No authentication tokens found`,
-    );
-    const response = NextResponse.redirect(new URL("/", req.url));
-    response.cookies.delete("user_data");
-    return response;
+  /**
+   * Public routes should be accessible.
+   * Example: "/", "/car/search", "/post/discover"
+   */
+  if (isPublic) {
+    return NextResponse.next();
   }
 
-  let refreshedResponse: NextResponse | null = null;
+  /**
+   * Protected route without any token.
+   */
+  if (!hasAnyToken) {
+    return redirectAndClearAuth("/", req);
+  }
 
-  // If refresh token exists but no access token, attempt to refresh first
-  // so subsequent role checks (especially admin routes) run with updated auth.
-  if (refreshToken && !accessToken) {
-    try {
-      const res = await fetch(`${BACKEND_API_URL}/api/v1/auth/refresh`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(refreshToken),
-      });
+  /**
+   * Refresh access token if refresh token exists but access token is missing.
+   */
+  let responseWithRefreshCookies: NextResponse | null = null;
 
-      if (!res.ok) {
-        console.error(
-          `Failed to refresh token: ${res.status} ${res.statusText}`,
-        );
+  if (!hasAccessToken && refreshToken) {
+    const refreshedTokens = await refreshAuthTokens(refreshToken);
 
-        const response = NextResponse.redirect(new URL("/", req.url));
-        response.cookies.delete("refresh_token");
-        response.cookies.delete("access_token");
-        response.cookies.delete("user_data");
-
-        return response;
-      }
-
-      const data = await res.json();
-      const tokenData = data?.data ?? data;
-      const nextAccessToken = tokenData?.accessToken;
-      const nextRefreshToken = tokenData?.refreshToken;
-
-      if (!nextAccessToken || !nextRefreshToken) {
-        console.error("Refresh response missing tokens");
-        const response = NextResponse.redirect(new URL("/", req.url));
-        response.cookies.delete("refresh_token");
-        response.cookies.delete("access_token");
-        response.cookies.delete("user_data");
-        return response;
-      }
-
-      accessToken = nextAccessToken;
-      refreshedResponse = NextResponse.next();
-      refreshedResponse.cookies.set("access_token", nextAccessToken, {
-        httpOnly: true,
-        secure: isProduction,
-        sameSite,
-        maxAge: 60 * 5,
-      });
-      refreshedResponse.cookies.set("refresh_token", nextRefreshToken, {
-        httpOnly: true,
-        secure: isProduction,
-        sameSite,
-        maxAge: 60 * 60 * 24 * 7,
-      });
-    } catch (error) {
-      console.error(
-        "Error fetching refresh token:",
-        error instanceof Error ? error.message : "Unknown error",
-      );
-      const response = NextResponse.redirect(new URL("/", req.url));
-      response.cookies.delete("refresh_token");
-      response.cookies.delete("access_token");
-      response.cookies.delete("user_data");
-      return response;
+    if (!refreshedTokens) {
+      return redirectAndClearAuth("/", req);
     }
-  }
 
-  const userData = await getDecryptedFullUserData(user_data_cookie);
-
-  // redirect dealer routes - if user is a dealer, redirect to dealer profile page when accessing any protected route except dealer profile page
-  if (
-    userData?.role === "Dealer" &&
-    currentPath !== "/profile/dealer" &&
-    !currentPath.startsWith("/profile/dealer/")
-  ) {
-    if (currentPath.startsWith("/messages")) {
-      return NextResponse.next();
-    }
-    return NextResponse.redirect(
-      new URL("/profile/dealer?tab=car-management", req.url),
+    responseWithRefreshCookies = setAuthCookies(
+      NextResponse.next(),
+      refreshedTokens,
     );
   }
 
-  // Redirect admin routes - only allow users with Admin role to access /profile/admin routes, else redirect to "Unauthorized" page or home
-  if (
-    userData?.role === "Admin" &&
-    !currentPath.startsWith("/profile/admin") &&
-    currentPath !== "/profile/admin"
-  ) {
-    return NextResponse.redirect(
-      new URL("/profile/admin?tab=dashboard", req.url),
-    );
+  /**
+   * Role checks depend on user_data.
+   * If user_data is missing, do not allow protected role routes.
+   */
+  const userData = await getDecryptedFullUserData(userDataCookie);
+
+  if (!userData) {
+    return redirectAndClearAuth("/", req);
   }
 
-  // Protect admin routes
+  /**
+   * Protect admin pages.
+   */
   if (isAdminPath) {
-    if (!user_data_cookie) {
-      return NextResponse.redirect(new URL("/", req.url));
+    if (userData.role !== "Admin") {
+      return redirectTo("/forbidden", req);
     }
 
-    if (userData && userData?.role === "Admin") {
-      return refreshedResponse ?? NextResponse.next();
-    }
-
-    if (!userData || userData.role !== "Admin") {
-      // Redirect to unauthorized page if user is not an admin
-      return NextResponse.redirect(new URL("/forbidden", req.url));
-    }
+    return responseWithRefreshCookies ?? NextResponse.next();
   }
 
-  return refreshedResponse ?? NextResponse.next();
+  /**
+   * Dealer users should stay inside dealer area,
+   * but allow messages.
+   */
+  if (userData.role === "Dealer") {
+    const canAccessDealerRoute = isDealerRoute(pathname);
+    const canAccessMessages = isMessagesRoute(pathname);
+
+    if (!canAccessDealerRoute && !canAccessMessages) {
+      return redirectTo(DEALER_DEFAULT_ROUTE, req);
+    }
+
+    return responseWithRefreshCookies ?? NextResponse.next();
+  }
+
+  /**
+   * Admin users should stay inside admin area for protected pages.
+   */
+  if (userData.role === "Admin") {
+    return redirectTo(ADMIN_DEFAULT_ROUTE, req);
+  }
+
+  return responseWithRefreshCookies ?? NextResponse.next();
 }
 
 export const config = {
   matcher: [
-    // Match all routes except static files, API routes, and Next.js internals
-    "/((?!api|_next/static|_next/image|favicon.ico|.*\\.png$|.*\\.jpg$|.*\\.jpeg$|.*\\.gif$|.*\\.svg$|.*\\.ico$).*)",
+    /**
+     * Match pages, but skip:
+     * - API routes
+     * - Next internals
+     * - static files with extensions
+     */
+    "/((?!api|_next|.*\\..*).*)",
   ],
 };
