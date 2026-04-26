@@ -10,7 +10,7 @@ jest.mock("../context/AdminFilterContext", () => ({
   ),
 }));
 
-jest.mock("../dashboard/FilterUI", () => ({
+jest.mock("../ui/dashboard/FilterUI", () => ({
   __esModule: true,
   FilterUI: ({ category }: { category: string }) => (
     <div data-testid="filter-ui" data-category={category}>
@@ -19,7 +19,7 @@ jest.mock("../dashboard/FilterUI", () => ({
   ),
 }));
 
-jest.mock("../dashboard/DataTable", () => ({
+jest.mock("../ui/dashboard/DataTable", () => ({
   __esModule: true,
   default: ({ data }: { data: { type: string; data: unknown[] } }) => (
     <div
@@ -32,30 +32,33 @@ jest.mock("../dashboard/DataTable", () => ({
   ),
 }));
 
-jest.mock("../../../dealer/ui/dealer-management/StatsCard", () => ({
-  __esModule: true,
-  default: ({
-    label,
-    value,
-    variant,
-    category,
-  }: {
-    label: string;
-    value: number;
-    variant: string;
-    category?: string;
-  }) => (
-    <div
-      data-testid="stats-card"
-      data-label={label}
-      data-value={value}
-      data-variant={variant}
-      data-category={category ?? ""}
-    >
-      {label}: {value}
-    </div>
-  ),
-}));
+jest.mock(
+  "@/app/features/dashboards/dealer/ui/dealer-management/StatsCard",
+  () => ({
+    __esModule: true,
+    default: ({
+      label,
+      value,
+      variant,
+      category,
+    }: {
+      label: string;
+      value: number;
+      variant: string;
+      category?: string;
+    }) => (
+      <div
+        data-testid="stats-card"
+        data-label={label}
+        data-value={value}
+        data-variant={variant}
+        data-category={category ?? ""}
+      >
+        {label}: {value}
+      </div>
+    ),
+  }),
+);
 
 const createCars = (): CursorResponse<AdminCarData[]> =>
   ({

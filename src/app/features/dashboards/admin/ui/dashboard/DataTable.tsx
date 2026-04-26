@@ -6,7 +6,7 @@ import { ArrowUpRight, Check, Search } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useMemo } from "react";
 import { CarItems } from "@/app/features/car/types/car.types";
-import { useAdminFilterContext } from "../context/AdminFilterContext";
+import { useAdminFilterContext } from "../../context/AdminFilterContext";
 
 type Car = {
   type: "car";

@@ -3,14 +3,14 @@ import AdminKycVerification from "../ui/kyc/AdminKycVerification";
 import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
 import { IKycSubmissions } from "@/app/features/dashboards/dealer/types/kyc.types";
 
-jest.mock("../context/AdminFilterContext", () => ({
-  __esModule: true,
-  default: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="admin-filter-provider">{children}</div>
-  ),
+jest.mock("next/navigation", () => ({
+  usePathname: () => "/profile/admin",
+  useRouter: () => ({
+    push: jest.fn(),
+  }),
 }));
 
-jest.mock("../dashboard/FilterUI", () => ({
+jest.mock("../ui/dashboard/FilterUI", () => ({
   __esModule: true,
   FilterUI: ({ category }: { category: string }) => (
     <div data-testid="filter-ui" data-category={category}>
@@ -19,43 +19,40 @@ jest.mock("../dashboard/FilterUI", () => ({
   ),
 }));
 
-jest.mock("@/app/features/dashboards/admin/ui/dashboard/DataTable", () => ({
+jest.mock("@/app/shared/ui/StatusUI", () => ({
   __esModule: true,
-  default: ({ data }: { data: { type: string; data: unknown[] } }) => (
-    <div
-      data-testid="data-table"
-      data-type={data.type}
-      data-count={data.data.length}
-    >
-      DataTable - {data.type}
-    </div>
+  default: ({ status }: { status: string }) => (
+    <span data-testid={`status-${status}`}>{status}</span>
   ),
 }));
 
-jest.mock("../../../dealer/ui/dealer-management/StatsCard", () => ({
-  __esModule: true,
-  default: ({
-    label,
-    value,
-    variant,
-    category,
-  }: {
-    label: string;
-    value: number;
-    variant: string;
-    category?: string;
-  }) => (
-    <div
-      data-testid="stats-card"
-      data-label={label}
-      data-value={value}
-      data-variant={variant}
-      data-category={category ?? ""}
-    >
-      {label}: {value}
-    </div>
-  ),
-}));
+jest.mock(
+  "@/app/features/dashboards/dealer/ui/dealer-management/StatsCard",
+  () => ({
+    __esModule: true,
+    default: ({
+      label,
+      value,
+      variant,
+      category,
+    }: {
+      label: string;
+      value: number;
+      variant: string;
+      category?: string;
+    }) => (
+      <div
+        data-testid="stats-card"
+        data-label={label}
+        data-value={value}
+        data-variant={variant}
+        data-category={category ?? ""}
+      >
+        {label}: {value}
+      </div>
+    ),
+  }),
+);
 
 const createKyc = (): CursorResponse<IKycSubmissions[]> =>
   ({
@@ -132,19 +129,35 @@ describe("AdminKycVerification", () => {
     expect(filterUI).toHaveAttribute("data-category", "Kyc");
   });
 
-  it("passes kyc data to DataTable", () => {
+  it("renders kyc data in the table", () => {
     render(<AdminKycVerification kyc={createKyc()} />);
 
-    const dataTable = screen.getByTestId("data-table");
+    expect(screen.getByText("Mg Mg")).toBeInTheDocument();
+    expect(screen.getByText("mgmg@example.com")).toBeInTheDocument();
+    expect(screen.getByText("Passport")).toBeInTheDocument();
 
-    expect(dataTable).toBeInTheDocument();
-    expect(dataTable).toHaveAttribute("data-type", "kyc");
-    expect(dataTable).toHaveAttribute("data-count", "4");
+    expect(screen.getByText("Aung Aung")).toBeInTheDocument();
+    expect(screen.getByText("aung@example.com")).toBeInTheDocument();
+    expect(screen.getByText("NationalID")).toBeInTheDocument();
   });
 
-  it("wraps content with AdminFilterProvider", () => {
+  it("shows kyc statuses in the table", () => {
     render(<AdminKycVerification kyc={createKyc()} />);
 
-    expect(screen.getByTestId("admin-filter-provider")).toBeInTheDocument();
+    expect(screen.getAllByTestId("status-Pending")).toHaveLength(2);
+    expect(screen.getByTestId("status-Approved")).toBeInTheDocument();
+    expect(screen.getByTestId("status-Rejected")).toBeInTheDocument();
+  });
+
+  it("shows completed button for non-pending statuses", () => {
+    render(<AdminKycVerification kyc={createKyc()} />);
+
+    expect(screen.getAllByText("Completed")).toHaveLength(2);
+  });
+
+  it("shows view button for pending statuses", () => {
+    render(<AdminKycVerification kyc={createKyc()} />);
+
+    expect(screen.getAllByText("View")).toHaveLength(2);
   });
 });

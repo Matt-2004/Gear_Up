@@ -11,7 +11,7 @@ import StatsCard from "../../../dealer/ui/dealer-management/StatsCard";
 import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
 import AdminFilterProvider, {
   CarStatusType,
-} from "../context/AdminFilterContext";
+} from "../../context/AdminFilterContext";
 import { FilterUI } from "../dashboard/FilterUI";
 
 const AdminCarVerification = ({

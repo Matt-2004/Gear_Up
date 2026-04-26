@@ -1,5 +1,7 @@
+"use client";
+
 import ResponsiveDropdown from "@/app/shared/ui/ResponsiveDropDown";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   FillDetailField,
   FillDetailLabel,
@@ -10,7 +12,7 @@ import {
   KycDocumentType,
   KycStatusType,
   CarStatusType,
-} from "../context/AdminFilterContext";
+} from "../../context/AdminFilterContext";
 import { debounce } from "@/app/shared/utils/debounce";
 
 type FilterUIProps = {
@@ -50,6 +52,8 @@ export const FilterUI = ({ category }: FilterUIProps) => {
 
   const filterCategory = category === "Kyc" ? "kyc" : "car";
 
+  const [searchValue, setSearchValue] = useState(filter.searchData);
+
   useEffect(() => {
     setFilter({
       category: filterCategory,
@@ -59,83 +63,89 @@ export const FilterUI = ({ category }: FilterUIProps) => {
   const statusOptions =
     filterCategory === "kyc" ? kycStatusOptions : carStatusOptions;
 
-  const debouncedSearch = debounce((value: string) => {
-    setFilter({
-      searchData: value,
-    });
-  }, 400);
+  const debouncedSearch = useMemo(
+    () =>
+      debounce((value: string) => {
+        setFilter({
+          searchData: value,
+        });
+      }, 400),
+    [setFilter],
+  );
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.currentTarget.value;
+
+    setSearchValue(value);
+    debouncedSearch(value);
+  };
 
   return (
-    <div className="flex w-full flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+    <div className="w-full">
       <div className="flex w-full flex-col gap-4 md:flex-row md:items-end">
         {/* Search Input */}
-        <div className="flex w-full flex-col gap-4 md:flex-row md:items-end">
-          {/* Search Input */}
-          <div className="min-w-0 max-w-100 flex-1">
+        <div className="min-w-0 flex-1">
+          <FillDetailField>
+            <FillDetailLabel
+              label={filterCategory === "kyc" ? "Search KYC" : "Search Car"}
+            />
+
+            <FillDetailInput
+              type="text"
+              value={searchValue}
+              placeholder={
+                filterCategory === "kyc"
+                  ? "Search by name, ID, or document type..."
+                  : "Search by title, make, model, or status..."
+              }
+              onChange={handleSearchChange}
+            />
+          </FillDetailField>
+        </div>
+
+        {/* KYC Document Type Filter */}
+        {filterCategory === "kyc" && (
+          <div className="w-full md:w-64 md:shrink-0">
             <FillDetailField>
-              <FillDetailLabel
-                label={filterCategory === "kyc" ? "Search KYC" : "Search Car"}
-              />
-
-              <FillDetailInput
-                type="text"
-                value={filter.searchData}
-                placeholder={
-                  filterCategory === "kyc"
-                    ? "Search by name, ID, or document type..."
-                    : "Search by title, make, model, or status..."
-                }
-                onChange={(e) => debouncedSearch(e.currentTarget.value)}
-              />
-            </FillDetailField>
-          </div>
-
-          {/* KYC Document Type Filter */}
-          {filterCategory === "kyc" && (
-            <div className="w-full md:w-64 md:shrink-0">
-              <FillDetailField>
-                <FillDetailLabel label="Document Type" />
-
-                <ResponsiveDropdown
-                  options={documentTypeOptions}
-                  value={
-                    filter.category === "kyc" ? filter.documentType : "All"
-                  }
-                  placeholder="Select document type"
-                  onChange={(value) =>
-                    setFilter({
-                      documentType: value as KycDocumentType,
-                    })
-                  }
-                />
-              </FillDetailField>
-            </div>
-          )}
-
-          {/* Status Filter */}
-          <div className="w-full md:w-52 md:shrink-0">
-            <FillDetailField>
-              <FillDetailLabel label="Status" />
+              <FillDetailLabel label="Document Type" />
 
               <ResponsiveDropdown
-                options={statusOptions}
-                value={filter.statusType}
-                placeholder="Select status"
-                onChange={(value) => {
-                  if (filterCategory === "kyc") {
-                    setFilter({
-                      statusType: value as KycStatusType,
-                    });
-                    return;
-                  }
-
+                options={documentTypeOptions}
+                value={filter.category === "kyc" ? filter.documentType : "All"}
+                placeholder="Select document type"
+                onChange={(value) =>
                   setFilter({
-                    statusType: value as CarStatusType,
-                  });
-                }}
+                    documentType: value as KycDocumentType,
+                  })
+                }
               />
             </FillDetailField>
           </div>
+        )}
+
+        {/* Status Filter */}
+        <div className="w-full md:w-52 md:shrink-0">
+          <FillDetailField>
+            <FillDetailLabel label="Status" />
+
+            <ResponsiveDropdown
+              options={statusOptions}
+              value={filter.statusType}
+              placeholder="Select status"
+              onChange={(value) => {
+                if (filterCategory === "kyc") {
+                  setFilter({
+                    statusType: value as KycStatusType,
+                  });
+                  return;
+                }
+
+                setFilter({
+                  statusType: value as CarStatusType,
+                });
+              }}
+            />
+          </FillDetailField>
         </div>
       </div>
     </div>

@@ -79,17 +79,7 @@ async function refreshAuthTokens(refreshToken: string) {
     headers: {
       "Content-Type": "application/json",
     },
-
-    /**
-     * Use this if your backend expects:
-     * { "refreshToken": "..." }
-     */
     body: JSON.stringify({ refreshToken }),
-
-    /**
-     * If your backend expects raw JSON string instead, use this:
-     * body: JSON.stringify(refreshToken),
-     */
   });
 
   if (!res.ok) {

@@ -5,7 +5,7 @@ import DataTable from "@/app/features/dashboards/admin/ui/dashboard/DataTable";
 import StatsCard from "../../../dealer/ui/dealer-management/StatsCard";
 import AdminFilterProvider, {
   KycStatusType,
-} from "../context/AdminFilterContext";
+} from "../../context/AdminFilterContext";
 import { FilterUI } from "../dashboard/FilterUI";
 import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
 
