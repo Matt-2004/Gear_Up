@@ -11,6 +11,7 @@ import {
   DEALER_TABS,
   type DealerTabId,
 } from "@/app/features/dashboards/dealer/utils/dealer-tabs.config";
+import { AdminTabId } from "@/app/features/dashboards/admin/utils/admin-tab.config";
 
 export const dynamic = "force-dynamic";
 
@@ -20,8 +21,8 @@ export const metadata: Metadata = {
     "Manage your dealership, listings, and appointments from your dashboard.",
 };
 
-interface PageItem {
-  id: DealerTabId;
+export interface PageItem {
+  id: DealerTabId | AdminTabId;
   page: React.ReactNode;
 }
 

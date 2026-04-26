@@ -1,17 +1,13 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { ReactNode, useMemo } from "react";
+import { useMemo } from "react";
 import {
   DEFAULT_DEALER_TAB,
   isDealerTabId,
   type DealerTabId,
 } from "@/app/features/dashboards/dealer/utils/dealer-tabs.config";
-
-interface PageItem {
-  id: DealerTabId;
-  page: ReactNode;
-}
+import { PageItem } from "@/app/profile/dealer/page";
 
 export const PageSwitcher = ({ pages = [] }: { pages?: PageItem[] }) => {
   const searchParams = useSearchParams();

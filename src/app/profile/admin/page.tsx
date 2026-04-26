@@ -6,6 +6,7 @@ import { Tabs } from "@/app/features/dashboards/admin/ui/dashboard/Tabs";
 import { Metadata } from "next";
 import { getAllKyc } from "@/app/shared/utils/API/AdminAPI";
 import { getAllCars } from "@/app/shared/utils/API/AdminAPI";
+import { PageItem } from "../dealer/page";
 
 export const dynamic = "force-dynamic";
 
@@ -54,16 +55,16 @@ export default async function Page() {
     { name: "Car Verification", path: "?tab=car-verification" },
   ];
 
-  const pages = [
+  const pages: PageItem[] = [
     {
-      name: "dashboard",
+      id: "dashboard",
       page: <AdminDashboard dashboardData={dashboardData} />,
     },
     {
-      name: "kyc-verification",
+      id: "kyc-verification",
       page: <AdminKycVerification kyc={kyc} />,
     },
-    { name: "car-verification", page: <AdminCarVerification cars={cars} /> },
+    { id: "car-verification", page: <AdminCarVerification cars={cars} /> },
   ];
 
   return (

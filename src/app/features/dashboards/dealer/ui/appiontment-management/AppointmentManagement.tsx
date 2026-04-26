@@ -67,13 +67,15 @@ const StatsRow = ({ counts }: { counts: AppointmentCounts }) => {
   return (
     <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {stats.map((s) => (
-        <StatsCard
-          label={s.label}
-          value={s.value}
-          description={s.description}
-          variant={s.variant}
-          category={s.category}
-        />
+        <div key={s.label}>
+          <StatsCard
+            label={s.label}
+            value={s.value}
+            description={s.description}
+            variant={s.variant}
+            category={s.category}
+          />
+        </div>
       ))}
     </div>
   );
