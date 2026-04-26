@@ -1,0 +1,7 @@
+.git
+.github
+coverage
+README.md
+*.log
+.env*
+.vscode

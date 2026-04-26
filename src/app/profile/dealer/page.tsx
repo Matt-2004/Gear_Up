@@ -6,7 +6,6 @@ import { DealerTabs } from "@/app/features/dashboards/dealer/ui/tabs/DealerTabs"
 import PostManagement from "@/app/features/dashboards/dealer/ui/post-management/PostManagement";
 import RevenueManagement from "@/app/features/dashboards/dealer/ui/review-management/RevenueManagement";
 import Setting from "@/app/features/dashboards/dealer/ui/dealer-profile/DealerProfile";
-import TestDriveManagement from "@/app/features/dashboards/dealer/ui/appiontment-management/AppointmentManagement";
 import DealerCarDashboard from "../../features/dashboards/dealer/ui/dealer-dashboard/DealerCarDashboard";
 import { getAllStatusCars } from "./cars/page";
 import { Metadata } from "next";
@@ -17,6 +16,7 @@ import {
   isDealerTabId,
 } from "@/app/features/dashboards/dealer/utils/dealer-tabs.config";
 import { AdminTabId } from "@/app/features/dashboards/admin/utils/admin-tab.config";
+import AppointmentManagement from "@/app/features/dashboards/dealer/ui/appiontment-management/AppointmentManagement";
 
 export const dynamic = "force-dynamic";
 
@@ -40,7 +40,7 @@ export default async function Page() {
     },
     {
       id: "test-drive-management",
-      page: <TestDriveManagement />,
+      page: <AppointmentManagement />,
     },
     {
       id: "revenue-management",
