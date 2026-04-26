@@ -1,15 +1,24 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useMemo } from "react";
-import {
-  DEFAULT_DEALER_TAB,
-  isDealerTabId,
-  type DealerTabId,
-} from "@/app/features/dashboards/dealer/utils/dealer-tabs.config";
-import { PageItem } from "@/app/profile/dealer/page";
+import { ReactNode, useMemo } from "react";
 
-export const PageSwitcher = ({ pages = [] }: { pages?: PageItem[] }) => {
+export interface PageItem<T extends string = string> {
+  id: T;
+  page: ReactNode;
+}
+
+interface PageSwitcherProps<T extends string = string> {
+  pages?: readonly PageItem<T>[];
+  defaultPageId?: T;
+  queryKey?: string;
+}
+
+export const PageSwitcher = <T extends string = string>({
+  pages = [],
+  defaultPageId,
+  queryKey = "tab",
+}: PageSwitcherProps<T>) => {
   const searchParams = useSearchParams();
 
   const activePage = useMemo(() => {
@@ -17,13 +26,15 @@ export const PageSwitcher = ({ pages = [] }: { pages?: PageItem[] }) => {
       return null;
     }
 
-    const currentTab = searchParams.get("tab");
-    const activeTab = isDealerTabId(currentTab)
-      ? currentTab
-      : DEFAULT_DEALER_TAB;
+    const currentTab = searchParams.get(queryKey);
 
-    return pages.find((page) => page.id === activeTab) ?? pages[0] ?? null;
-  }, [pages, searchParams]);
+    return (
+      pages.find((page) => page.id === currentTab) ??
+      pages.find((page) => page.id === defaultPageId) ??
+      pages[0] ??
+      null
+    );
+  }, [pages, searchParams, queryKey, defaultPageId]);
 
   if (!activePage) {
     return null;

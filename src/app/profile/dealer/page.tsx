@@ -1,4 +1,7 @@
-import { PageSwitcher } from "@/app/features/dashboards/admin/ui/dashboard/PageSwitcher";
+import {
+  type PageItem,
+  PageSwitcher,
+} from "@/app/features/dashboards/admin/ui/dashboard/PageSwitcher";
 import { DealerTabs } from "@/app/features/dashboards/dealer/ui/tabs/DealerTabs";
 import PostManagement from "@/app/features/dashboards/dealer/ui/post-management/PostManagement";
 import RevenueManagement from "@/app/features/dashboards/dealer/ui/review-management/RevenueManagement";
@@ -9,7 +12,9 @@ import { getAllStatusCars } from "./cars/page";
 import { Metadata } from "next";
 import {
   DEALER_TABS,
-  type DealerTabId,
+  DealerTabId,
+  DEFAULT_DEALER_TAB,
+  isDealerTabId,
 } from "@/app/features/dashboards/dealer/utils/dealer-tabs.config";
 import { AdminTabId } from "@/app/features/dashboards/admin/utils/admin-tab.config";
 
@@ -21,15 +26,10 @@ export const metadata: Metadata = {
     "Manage your dealership, listings, and appointments from your dashboard.",
 };
 
-export interface PageItem {
-  id: DealerTabId | AdminTabId;
-  page: React.ReactNode;
-}
-
 export default async function Page() {
   const carData = await getAllStatusCars();
 
-  const pages: PageItem[] = [
+  const pages: PageItem<DealerTabId>[] = [
     {
       id: "car-management",
       page: <DealerCarDashboard carData={carData} />,
@@ -61,7 +61,7 @@ export default async function Page() {
           </div>
 
           <div className="w-full bg-gray-50/20 p-0 md:p-6">
-            <PageSwitcher pages={pages} />
+            <PageSwitcher pages={pages} defaultPageId={DEFAULT_DEALER_TAB} />
           </div>
         </div>
       </div>

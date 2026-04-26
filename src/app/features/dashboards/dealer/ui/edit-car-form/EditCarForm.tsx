@@ -1,6 +1,5 @@
 "use client";
 
-import { CarItems } from "@/app/features/car/types/car.types";
 import Button from "@/app/shared/ui/Button";
 import { RadioInput } from "@/app/shared/ui/Input";
 import { updateCar } from "@/app/shared/utils/API/CarAPI";
@@ -33,6 +32,7 @@ import {
   CarImageUploadSectionFile,
 } from "../add-car-form/CarImageUpload";
 import { GroupInputForm } from "../add-car-form/FillDetailSection";
+import { CarItems } from "@/app/features/car/types/car.types";
 
 interface CarSuggestion {
   make: string;

@@ -1,12 +1,21 @@
 import AdminCarVerification from "@/app/features/dashboards/admin/ui/cars/AdminCarVerification";
 import AdminDashboard from "@/app/features/dashboards/admin/ui/dashboard/AdminDashboard";
 import AdminKycVerification from "@/app/features/dashboards/admin/ui/kyc/AdminKycVerification";
-import { PageSwitcher } from "@/app/features/dashboards/admin/ui/dashboard/PageSwitcher";
-import { Tabs } from "@/app/features/dashboards/admin/ui/dashboard/Tabs";
+import {
+  type PageItem,
+  PageSwitcher,
+} from "@/app/features/dashboards/admin/ui/dashboard/PageSwitcher";
+import { AdminTabs } from "@/app/features/dashboards/admin/ui/dashboard/AdminTabs";
 import { Metadata } from "next";
 import { getAllKyc } from "@/app/shared/utils/API/AdminAPI";
 import { getAllCars } from "@/app/shared/utils/API/AdminAPI";
-import { PageItem } from "../dealer/page";
+
+import {
+  ADMIN_TABS,
+  AdminTabId,
+  DEFAULT_ADMIN_TAB,
+  isAdminTabId,
+} from "@/app/features/dashboards/admin/utils/admin-tab.config";
 
 export const dynamic = "force-dynamic";
 
@@ -49,13 +58,8 @@ export default async function Page() {
   const kyc = await getKycData();
   const cars = await getCarsData();
   const dashboardData = await getDashboardData();
-  const tabs = [
-    { name: "Dashboard", path: "?tab=dashboard" },
-    { name: "Kyc Verification", path: "?tab=kyc-verification" },
-    { name: "Car Verification", path: "?tab=car-verification" },
-  ];
 
-  const pages: PageItem[] = [
+  const pages: PageItem<AdminTabId>[] = [
     {
       id: "dashboard",
       page: <AdminDashboard dashboardData={dashboardData} />,
@@ -70,10 +74,10 @@ export default async function Page() {
   return (
     <div className="flex min-h-screen bg-linear-to-br from-gray-50 to-gray-100">
       <div className="w-64 p-4">
-        <Tabs name="Admin" tabs={tabs} />
+        <AdminTabs tabs={ADMIN_TABS} />
       </div>
       <div className="flex-1">
-        <PageSwitcher pages={pages} />
+        <PageSwitcher pages={pages} defaultPageId={DEFAULT_ADMIN_TAB} />
       </div>
     </div>
   );
