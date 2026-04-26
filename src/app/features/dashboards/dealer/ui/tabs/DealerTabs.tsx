@@ -6,77 +6,86 @@ import {
   Car,
   DollarSign,
   FileText,
-  LayoutDashboard,
   Settings,
 } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import {
+  DEFAULT_DEALER_TAB,
+  isDealerTabId,
+  type DealerTabId,
+} from "@/app/features/dashboards/dealer/utils/dealer-tabs.config";
 
-interface ITab {
-  name: string;
-  path: string;
+interface DealerTab {
+  id: DealerTabId;
+  label: string;
 }
 
-const tabIcons: Record<string, React.ReactNode> = {
-  "Dashboard": <LayoutDashboard className="h-4 w-4" />,
-  "Car Management": <Car className="h-4 w-4" />,
-  "Post Management": <FileText className="h-4 w-4" />,
-  "Test Drive Management": <CalendarCheck className="h-4 w-4" />,
-  "Revenue Management": <DollarSign className="h-4 w-4" />,
-  "Setting": <Settings className="h-4 w-4" />,
+interface DealerTabsProps {
+  tabs: readonly DealerTab[];
+}
+
+const tabIcons: Record<DealerTabId, React.ReactNode> = {
+  "car-management": <Car className="h-4 w-4" />,
+  "post-management": <FileText className="h-4 w-4" />,
+  "test-drive-management": <CalendarCheck className="h-4 w-4" />,
+  "revenue-management": <DollarSign className="h-4 w-4" />,
+  setting: <Settings className="h-4 w-4" />,
 };
 
-interface ITabProps {
-  tabs: ITab[];
-}
-
-export const DealerTabs = ({ tabs }: ITabProps) => {
+export const DealerTabs = ({ tabs }: DealerTabsProps) => {
   const router = useRouter();
-  const path = usePathname();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const strToUrl = (tabName: string) => {
-    return (
-      tabName.toLocaleLowerCase().split(" ")[0] +
-      "-" +
-      tabName.toLocaleLowerCase().split(" ")[1]
-    );
-  };
+  const currentTab = searchParams.get("tab");
+  const activeTab = isDealerTabId(currentTab) ? currentTab : DEFAULT_DEALER_TAB;
 
-  const defaultTab = tabs[0]?.path.replace("?", "").split("=")[1] ?? "dashboard";
-  const activeTab = searchParams.get("tab") ?? defaultTab;
+  const handleTabChange = (tabId: DealerTabId) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("tab", tabId);
 
-  const handleTab = (tabPath: string) => {
-    router.replace(`${path}${tabPath}`);
+    router.replace(`${pathname}?${params.toString()}`, {
+      scroll: false,
+    });
   };
 
   return (
     <div className="w-full bg-white">
-      <nav className="flex overflow-x-auto hide-scrollbar scroll-smooth" aria-label="Tabs">
+      <nav
+        className="hide-scrollbar flex overflow-x-auto scroll-smooth"
+        aria-label="Dealer dashboard tabs"
+      >
         {tabs.map((tab) => {
-          const tabKey = tab.path.replace("?", "").split("=")[1] ?? strToUrl(tab.name);
-          const isActive = activeTab === tabKey;
-          
+          const isActive = activeTab === tab.id;
+
           return (
             <button
-              key={tab.name}
-              onClick={() => handleTab(tab.path)}
+              key={tab.id}
+              type="button"
+              onClick={() => handleTabChange(tab.id)}
               className={clsx(
-                "group relative min-w-fit flex-1 inline-flex items-center justify-center gap-2.5 px-5 py-4 text-sm font-semibold transition-all hover:bg-gray-50",
+                "group relative inline-flex min-w-fit flex-1 items-center justify-center gap-2.5 px-5 py-4 text-sm font-semibold transition-all hover:bg-gray-50",
                 isActive
-                  ? "text-primary-700 bg-primary-50/30"
-                  : "text-gray-600 hover:text-gray-900"
+                  ? "bg-primary-50/30 text-primary-700"
+                  : "text-gray-600 hover:text-gray-900",
               )}
               aria-current={isActive ? "page" : undefined}
             >
-              <span className={clsx(
-                "transition-transform",
-                isActive ? "text-primary-600 scale-110" : "text-gray-500 group-hover:text-gray-700"
-              )}>
-                {tabIcons[tab.name]}
+              <span
+                className={clsx(
+                  "transition-transform",
+                  isActive
+                    ? "scale-110 text-primary-600"
+                    : "text-gray-500 group-hover:text-gray-700",
+                )}
+              >
+                {tabIcons[tab.id]}
               </span>
-              <span className="whitespace-nowrap">{tab.name}</span>
+
+              <span className="whitespace-nowrap">{tab.label}</span>
+
               {isActive && (
-                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-600" />
+                <span className="absolute right-0 bottom-0 left-0 h-0.5 bg-primary-600" />
               )}
             </button>
           );
