@@ -13,9 +13,8 @@ import {
   DEALER_TABS,
   DealerTabId,
   DEFAULT_DEALER_TAB,
-  isDealerTabId,
 } from "@/app/features/dashboards/dealer/utils/dealer-tabs.config";
-import { AdminTabId } from "@/app/features/dashboards/admin/utils/admin-tab.config";
+
 import AppointmentManagement from "@/app/features/dashboards/dealer/ui/appiontment-management/AppointmentManagement";
 
 export const dynamic = "force-dynamic";

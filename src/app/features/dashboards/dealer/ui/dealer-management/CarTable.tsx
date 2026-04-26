@@ -13,21 +13,19 @@ import {
 import Image from "next/image";
 
 interface CarTableProps {
-  cars?: CarItems[];
+  cars: CarItems[];
   onDelete: (carId: string) => void;
   onEdit: (carId: string) => void;
 }
 
-export default function CarTable({
-  cars = [],
-  onDelete,
-  onEdit,
-}: CarTableProps) {
+export default function CarTable({ cars, onDelete, onEdit }: CarTableProps) {
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
 
   const toggleMenu = (id: string) => {
     setActiveMenuId((prev) => (prev === id ? null : id));
   };
+
+  console.log(cars);
 
   if (!Array.isArray(cars) || cars.length === 0) {
     return (
