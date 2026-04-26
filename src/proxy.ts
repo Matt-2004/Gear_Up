@@ -79,7 +79,7 @@ async function refreshAuthTokens(refreshToken: string) {
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ refreshToken }),
+    body: JSON.stringify(refreshToken),
   });
 
   if (!res.ok) {
