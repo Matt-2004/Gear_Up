@@ -119,7 +119,7 @@ const Review = () => {
         addToastMessage("success", "Vehicle listed successfully!");
         clearAddedCar();
         setTimeout(() => {
-          router.push("/profile/dealer/cars");
+          router.push("/profile/dealer?tab=car-management");
         }, 1500);
       } else {
         addToastMessage(

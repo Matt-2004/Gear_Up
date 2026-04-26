@@ -27,9 +27,9 @@ const CarManagement = () => {
           getMyCars("rejected", null),
         ]);
         const allCars = [
-          ...(approved?.items || []),
-          ...(pending?.items || []),
-          ...(rejected?.items || []),
+          ...approved?.items,
+          ...pending?.items,
+          ...rejected?.items,
         ];
         setCars(allCars);
       } catch (e) {

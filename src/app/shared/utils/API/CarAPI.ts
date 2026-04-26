@@ -1,8 +1,7 @@
-import { SubmitVehicle } from "@/app/features/dashboards/dealer/context/AddNewCarContext";
 import { getFetch, postFetch, putFetch, deleteFetch } from "./AxiosClient";
 
 export async function addCar(data: FormData) {
-  return postFetch("/api/v1/cars", data);
+  return postFetch<null>("/api/v1/cars", data);
 }
 
 export async function getAllCars(cursor: string | null) {

@@ -40,7 +40,7 @@ export default async function Page() {
     <div className="min-h-screen w-full bg-gray-50">
       <div className="mx-auto w-full relative">
         <div className="border-t border-b md:border border-gray-200 bg-white shadow-sm">
-          <div className="border-b border-gray-200 bg-white sticky top-[68px] z-10">
+          <div className="border-b border-gray-200 bg-white sticky top-17 z-10">
             <DealerTabs tabs={tabs} />
           </div>
 
