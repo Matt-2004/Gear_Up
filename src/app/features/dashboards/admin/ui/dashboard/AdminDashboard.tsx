@@ -188,7 +188,7 @@ const AdminDashboard = ({ dashboardData }: AdminDashboardProps) => {
                   icon={<Users className="h-5 w-5" />}
                   label="Verify Dealers"
                   count={0}
-                  href="?tab=dealer-verification"
+                  href="?tab=car-verification"
                   color="blue"
                 />
               </div>
