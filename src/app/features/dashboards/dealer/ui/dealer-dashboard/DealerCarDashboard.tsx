@@ -16,6 +16,7 @@ const DealerCarDashboard = ({
 }: {
   carData: CursorResponse<CarItems[]>;
 }) => {
+  console.log("carData received in DealerCarDashboard:", carData);
   const { isFilterOpen, statusFilter, toggleFilters } = useCarFilters();
 
   const { filteredCars, carCounts } = useCarData(carData.items, statusFilter);

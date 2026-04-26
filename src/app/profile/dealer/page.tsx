@@ -27,6 +27,7 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   const carData = await getAllStatusCars();
+  console.log("carData sending from :", carData);
 
   const pages: PageItem<DealerTabId>[] = [
     {
