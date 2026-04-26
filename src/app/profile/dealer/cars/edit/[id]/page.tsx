@@ -22,7 +22,7 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
   const carData = await fetchCarData(carId);
 
   if (!carData) {
-    redirect("/profile/dealer/cars");
+    redirect("/profile/dealer?tab=car-management");
   }
 
   return <EditCarForm initialData={carData} />;

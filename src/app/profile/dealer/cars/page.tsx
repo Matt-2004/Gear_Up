@@ -14,16 +14,25 @@ export async function getAllStatusCars(): Promise<CursorResponse<CarItems[]>> {
       getMyCars("Rejected", null),
     ]);
 
+    const getItems = (response: any): CarItems[] => {
+      if (Array.isArray(response?.items)) return response.items;
+      if (Array.isArray(response?.data?.items)) return response.data.items;
+      if (Array.isArray(response?.data)) return response.data;
+      return [];
+    };
+
     // Combine all cars from different statuses into items array
     const allCars: CursorResponse<CarItems[]> = {
       items: [
-        ...pendingData?.data.items,
-        ...approvedData?.data.items,
-        ...rejectedData?.data.items,
+        ...getItems(approvedData),
+        ...getItems(pendingData),
+        ...getItems(rejectedData),
       ],
       hasMore: false,
       nextCursor: "",
     };
+
+    console.log("allCars:", allCars);
 
     // Return in CursorBaseDTO format
     return {
