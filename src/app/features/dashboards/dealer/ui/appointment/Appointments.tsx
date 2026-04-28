@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  AppointmentFilterStatus,
   AppointmentStatus,
   AppointmentData,
 } from "@/app/features/appointments/types/appointment.types";
@@ -13,7 +14,7 @@ import {
 import { useState } from "react";
 import AppointmentCard from "./AppointmentCard";
 import AppointmentEmptyState from "@/app/features/appointments/ui/appointment-card/AppointmentEmptyState";
-import FilterDropdown from "@/app/features/appointments/ui/dashboard/FilterDropdown";
+import AppointmentFilterDropdown from "@/app/features/appointments/ui/dashboard/AppointmentFilterDropdown";
 import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
 
 interface AppointmentsProps {
@@ -26,7 +27,7 @@ const Appointments = ({
   const [appointments, setAppointments] = useState<
     CursorResponse<AppointmentData[]>
   >(initialAppointments || { items: [] });
-  const [filter, setFilter] = useState<AppointmentStatus | "All">("All");
+  const [filter, setFilter] = useState<AppointmentFilterStatus>("All");
   const [loading, setLoading] = useState<string | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -141,7 +142,7 @@ const Appointments = ({
           </div>
 
           {/* Filter Dropdown */}
-          <FilterDropdown
+          <AppointmentFilterDropdown
             filter={filter}
             dropdownOpen={dropdownOpen}
             appointmentCounts={appointmentCounts}

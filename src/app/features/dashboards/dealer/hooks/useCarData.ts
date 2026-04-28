@@ -1,10 +1,11 @@
-import { AppointmentStatus } from "@/app/features/appointments/types/appointment.types";
+import { AppointmentFilterStatus } from "@/app/features/appointments/types/appointment.types";
 import { CarItems } from "@/app/features/car/types/car.types";
 import { useMemo } from "react";
+import { DashboardCarDTO } from "../types/dashboard-car/dashboard-car.dto";
 
 export function useCarData(
-  cars: CarItems[],
-  statusFilter: AppointmentStatus | "All",
+  cars: DashboardCarDTO[],
+  statusFilter: AppointmentFilterStatus,
 ) {
   const filteredCars = useMemo(
     () =>
@@ -12,7 +13,7 @@ export function useCarData(
         ? cars
         : cars.filter(
             (car) =>
-              car.carValidationStatus?.toLowerCase() ===
+              car?.carValidationStatus?.toLowerCase() ===
               statusFilter.toLowerCase(),
           ),
     [cars, statusFilter],

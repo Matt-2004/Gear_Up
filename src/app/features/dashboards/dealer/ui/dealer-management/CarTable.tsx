@@ -1,6 +1,5 @@
 "use client";
 
-import { CarItems } from "@/app/features/car/types/car.types";
 import { useState } from "react";
 import {
   MoreHorizontal,
@@ -9,14 +8,41 @@ import {
   Settings,
   Calendar,
   Car,
+  Palette,
+  Users,
 } from "lucide-react";
 import Image from "next/image";
+import { DashboardCarDTO } from "../../types/dashboard-car/dashboard-car.dto";
 
 interface CarTableProps {
-  cars: CarItems[];
+  cars: DashboardCarDTO[];
   onDelete: (carId: string) => void;
   onEdit: (carId: string) => void;
 }
+
+const formatDate = (date: string) => {
+  if (!date) return "N/A";
+
+  const parsedDate = new Date(date);
+
+  if (Number.isNaN(parsedDate.getTime())) {
+    return "N/A";
+  }
+
+  return parsedDate.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+};
+
+const formatTransmission = (transmissionType?: string) => {
+  if (!transmissionType || transmissionType === "Default") {
+    return "N/A";
+  }
+
+  return transmissionType;
+};
 
 export default function CarTable({ cars, onDelete, onEdit }: CarTableProps) {
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
@@ -24,8 +50,6 @@ export default function CarTable({ cars, onDelete, onEdit }: CarTableProps) {
   const toggleMenu = (id: string) => {
     setActiveMenuId((prev) => (prev === id ? null : id));
   };
-
-  console.log(cars);
 
   if (!Array.isArray(cars) || cars.length === 0) {
     return (
@@ -54,15 +78,23 @@ export default function CarTable({ cars, onDelete, onEdit }: CarTableProps) {
             <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
               Vehicle
             </th>
+
             <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
               Details
             </th>
+
             <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
-              VIN
+              Color
             </th>
+
+            <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+              Created
+            </th>
+
             <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-gray-500">
               Price
             </th>
+
             <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-gray-500">
               Actions
             </th>
@@ -71,7 +103,6 @@ export default function CarTable({ cars, onDelete, onEdit }: CarTableProps) {
 
         <tbody className="divide-y divide-gray-200 bg-white">
           {cars.map((car) => {
-            const imageUrl = car.carImages?.[0]?.url;
             const carName = `${car.make ?? "Unknown"} ${
               car.model ?? "Vehicle"
             }`;
@@ -84,9 +115,9 @@ export default function CarTable({ cars, onDelete, onEdit }: CarTableProps) {
                 <td className="whitespace-nowrap px-6 py-4">
                   <div className="flex items-center gap-4">
                     <div className="relative h-16 w-16 shrink-0 overflow-hidden border border-gray-200 bg-gray-100">
-                      {imageUrl ? (
+                      {car.thumbnailUrl ? (
                         <Image
-                          src={imageUrl}
+                          src={car.thumbnailUrl}
                           alt={carName}
                           fill
                           sizes="64px"
@@ -103,6 +134,7 @@ export default function CarTable({ cars, onDelete, onEdit }: CarTableProps) {
                       <div className="font-semibold text-gray-900">
                         {carName}
                       </div>
+
                       <div className="text-xs text-gray-500">
                         {car.title ?? "Untitled vehicle"}
                       </div>
@@ -113,29 +145,31 @@ export default function CarTable({ cars, onDelete, onEdit }: CarTableProps) {
                 <td className="whitespace-nowrap px-6 py-4">
                   <div className="flex flex-col gap-1.5 text-xs text-gray-600">
                     <div className="flex items-center gap-1.5">
-                      <Calendar className="h-3.5 w-3.5 text-gray-400" />
-                      {car.year ?? "N/A"} • {car.mileage?.toLocaleString() ?? 0}{" "}
-                      km
+                      <Settings className="h-3.5 w-3.5 text-gray-400" />
+                      {formatTransmission(car.transmissionType)}
                     </div>
 
                     <div className="flex items-center gap-1.5">
-                      <Settings className="h-3.5 w-3.5 text-gray-400" />
-                      {car.transmissionType &&
-                      car.transmissionType !== "Default"
-                        ? car.transmissionType
-                        : "Auto"}{" "}
-                      •{" "}
-                      {car.fuelType && car.fuelType !== "Default"
-                        ? car.fuelType
-                        : "Petrol"}
+                      <Calendar className="h-3.5 w-3.5 text-gray-400" />
+                      {car.mileage?.toLocaleString() ?? 0} km
+                    </div>
+
+                    <div className="flex items-center gap-1.5">
+                      <Users className="h-3.5 w-3.5 text-gray-400" />
+                      {car.seatingCapacity ?? "N/A"} seats
                     </div>
                   </div>
                 </td>
 
                 <td className="whitespace-nowrap px-6 py-4">
-                  <span className="inline-flex items-center font-normal uppercase text-gray-500">
-                    {car.vin ?? "N/A"}
-                  </span>
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <Palette className="h-4 w-4 text-gray-400" />
+                    <span>{car.color ?? "N/A"}</span>
+                  </div>
+                </td>
+
+                <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                  {formatDate(car.createdAt)}
                 </td>
 
                 <td className="whitespace-nowrap px-6 py-4 text-right">

@@ -10,13 +10,14 @@ import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
 import { useCarActions } from "../../hooks/useCarActions";
 import { useCarData } from "../../hooks/useCarData";
 import { useCarFilters } from "../../hooks/useCarFilters";
+import { DashboardCarDTO } from "../../types/dashboard-car/dashboard-car.dto";
 
 const DealerCarDashboard = ({
   carData,
 }: {
-  carData: CursorResponse<CarItems[]>;
+  carData: CursorResponse<DashboardCarDTO[]>;
 }) => {
-  console.log("carData received in DealerCarDashboard:", carData);
+  
   const { isFilterOpen, statusFilter, toggleFilters } = useCarFilters();
 
   const { filteredCars, carCounts } = useCarData(carData.items, statusFilter);
