@@ -7,10 +7,12 @@ import { usePathname, useRouter } from "next/navigation";
 import { useMemo } from "react";
 import { CarItems } from "@/app/features/car/types/car.types";
 import { useAdminFilterContext } from "../../context/AdminFilterContext";
+import { DashboardCarDTO } from "../../../dealer/types/dashboard-car/dashboard-car.dto";
+import { timeFormat } from "@/app/shared/utils/timeFormat";
 
 type Car = {
   type: "car";
-  data: CarItems[];
+  data: Omit<DashboardCarDTO, "thumbnailUrl">[];
 };
 
 type Kyc = {
@@ -23,6 +25,8 @@ type DataTableProps = {
 };
 
 const DataTable = ({ data }: DataTableProps) => {
+  console.log(data);
+
   if (data.type === "kyc") {
     return <KycDataTable data={data.data} />;
   }
@@ -100,7 +104,11 @@ const KycDataTable = ({ data }: { data: IKycSubmissions[] }) => {
   );
 };
 
-const CarDataTable = ({ data }: { data: CarItems[] }) => {
+const CarDataTable = ({
+  data,
+}: {
+  data: Omit<DashboardCarDTO, "thumbnailUrl">[];
+}) => {
   const { filter } = useAdminFilterContext();
 
   const filteredData = useMemo(() => {
@@ -109,7 +117,7 @@ const CarDataTable = ({ data }: { data: CarItems[] }) => {
     return data.filter((car) => {
       const matchesSearch =
         searchValue.length === 0 ||
-        [car.title, car.id, car.price, car.carValidationStatus]
+        [car.title, car.id, car.price]
           .join(" ")
           .toLowerCase()
           .includes(searchValue);
@@ -122,7 +130,14 @@ const CarDataTable = ({ data }: { data: CarItems[] }) => {
     });
   }, [data, filter]);
 
-  const cols = ["No.", "Car Name", "Dealer / ID", "Price", "Status", "Action"];
+  const cols = [
+    "No.",
+    "Car Name",
+    "Dealer / ID",
+    "Price",
+    "Submitted At",
+    "Action",
+  ];
 
   return (
     <TableLayout cols={cols} isEmpty={filteredData.length === 0}>
@@ -147,8 +162,8 @@ const CarDataTable = ({ data }: { data: CarItems[] }) => {
             ${car.price.toLocaleString()}
           </td>
 
-          <td className="px-6 py-4 whitespace-nowrap">
-            <StatusUI status={car.carValidationStatus as Status} />
+          <td className="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">
+            {timeFormat(car.createdAt, "Hour")}
           </td>
 
           <td className="px-6 py-4 text-center whitespace-nowrap">
@@ -238,7 +253,7 @@ const ReviewBtn = ({
       return;
     }
 
-    router.push(`${currentPath}/management/car/${id}`);
+    router.push(`${currentPath}/cars/${id}`);
   };
 
   return (

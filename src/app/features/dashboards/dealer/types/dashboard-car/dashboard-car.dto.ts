@@ -1,4 +1,7 @@
-import { CarStatus, ITransmissionType } from "@/app/features/car/types/car.types";
+import {
+  CarStatus,
+  ITransmissionType,
+} from "@/app/features/car/types/car.types";
 
 export interface DashboardCarDTO {
   id: string;
@@ -9,7 +12,7 @@ export interface DashboardCarDTO {
   color: string;
   mileage: number;
   seatingCapacity: number;
-  carValidationStatus: CarStatus
+  carValidationStatus: CarStatus;
   createdAt: string;
   thumbnailUrl: string;
   transmissionType: ITransmissionType;

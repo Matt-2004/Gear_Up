@@ -27,7 +27,7 @@ interface DealerTabsProps {
 const tabIcons: Record<DealerTabId, React.ReactNode> = {
   "car-management": <Car className="h-4 w-4" />,
   "post-management": <FileText className="h-4 w-4" />,
-  "test-drive-management": <CalendarCheck className="h-4 w-4" />,
+  "appointment-management": <CalendarCheck className="h-4 w-4" />,
   "revenue-management": <DollarSign className="h-4 w-4" />,
   setting: <Settings className="h-4 w-4" />,
 };

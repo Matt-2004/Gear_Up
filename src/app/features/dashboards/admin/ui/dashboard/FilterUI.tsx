@@ -84,7 +84,7 @@ export const FilterUI = ({ category }: FilterUIProps) => {
     <div className="w-full">
       <div className="flex w-full flex-col gap-4 md:flex-row md:items-end">
         {/* Search Input */}
-        <div className="min-w-0 flex-1">
+        <div className="min-w-100">
           <FillDetailField>
             <FillDetailLabel
               label={filterCategory === "kyc" ? "Search KYC" : "Search Car"}

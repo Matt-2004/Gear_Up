@@ -173,7 +173,7 @@ export default function CarTable({ cars, onDelete, onEdit }: CarTableProps) {
                 </td>
 
                 <td className="whitespace-nowrap px-6 py-4 text-right">
-                  <div className="font-semibold text-gray-900">
+                  <div className="font-semibold text-primary">
                     ฿{car.price?.toLocaleString() ?? 0}
                   </div>
                 </td>
@@ -183,7 +183,7 @@ export default function CarTable({ cars, onDelete, onEdit }: CarTableProps) {
                     type="button"
                     onClick={() => toggleMenu(car.id)}
                     onBlur={() => setTimeout(() => setActiveMenuId(null), 200)}
-                    className="p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus:outline-none"
+                    className="p-2 text-gray-400 hover:bg-gray-100 cursor-pointer hover:text-gray-600 focus:outline-none"
                   >
                     <MoreHorizontal className="h-5 w-5" />
                   </button>

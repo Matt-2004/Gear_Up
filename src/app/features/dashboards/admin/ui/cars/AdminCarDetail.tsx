@@ -96,7 +96,8 @@ const CarInfoComponent = ({ carData, text }: CarInfoComponentProps) => {
             Car Images
           </h2>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-            {carData.carImages && carData.carImages.length > 0 ? (
+            {Array.isArray(carData.carImages) &&
+            carData.carImages.length > 0 ? (
               carData.carImages.map((image: any, i: number) => (
                 <div
                   key={i}

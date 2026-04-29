@@ -1,12 +1,10 @@
 "use client";
 
 import StatsCard from "../../../dealer/ui/dealer-management/StatsCard";
-import { CarItems } from "@/app/features/car/types/car.types";
 import { IKycSubmissions } from "@/app/features/dashboards/dealer/types/kyc.types";
 import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
 import {
   ArrowUpRight,
-  BarChart3,
   CheckCircle,
   Clock,
   FileCheck,
@@ -16,10 +14,12 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
+import { AdminCarData } from "../../types/admin-car-approval.types";
+import { DashboardCarDTO } from "../../../dealer/types/dashboard-car/dashboard-car.dto";
 
 interface DashboardData {
   kyc: CursorResponse<IKycSubmissions[]>;
-  cars: CursorResponse<CarItems[]>;
+  cars: CursorResponse<DashboardCarDTO[]>;
 }
 
 interface AdminDashboardProps {
@@ -50,9 +50,8 @@ const AdminDashboard = ({ dashboardData }: AdminDashboardProps) => {
     ).length;
 
     // Count unique dealers (users who have cars)
-    const uniqueDealers = new Set(
-      carItems.map((c) => c.dealerId).filter(Boolean),
-    ).size;
+    const uniqueDealers = new Set(carItems.map((c) => c.id).filter(Boolean))
+      .size;
 
     return {
       totalUsers: kycItems.length,
@@ -98,7 +97,7 @@ const AdminDashboard = ({ dashboardData }: AdminDashboardProps) => {
       <div className="mx-auto max-w-7xl space-y-8">
         {/* Header */}
         <div className="space-y-2">
-          <h1 className="text-4xl font-bold text-gray-900">Admin Dashboard</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
           <p className="text-sm text-gray-500">
             Welcome back! Here's what's happening today.
           </p>
@@ -106,9 +105,7 @@ const AdminDashboard = ({ dashboardData }: AdminDashboardProps) => {
 
         {/* Stats Cards */}
         <div className="space-y-2">
-          <h3 className="text-lg font-semibold text-gray-900">
-            Verification Status
-          </h3>
+          <h3 className="font-semibold text-gray-900">Verification Status</h3>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             <StatsCard
               label="All KYC"
@@ -138,9 +135,7 @@ const AdminDashboard = ({ dashboardData }: AdminDashboardProps) => {
           </div>
         </div>
         <div className="space-y-2">
-          <h3 className="text-lg font-semibold text-gray-900">
-            Vehicle Status
-          </h3>
+          <h3 className="text font-semibold text-gray-900">Vehicle Status</h3>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             <StatsCard
               label="All Cars"
@@ -202,14 +197,6 @@ const AdminDashboard = ({ dashboardData }: AdminDashboardProps) => {
                 <h2 className="text-xl font-bold text-gray-900">
                   Recent Activity
                 </h2>
-                <button
-                  onClick={() => {
-                    router.push("?tab=kyc-verification");
-                  }}
-                  className="text-primary-600 hover:text-primary-700 text-sm font-medium transition-colors"
-                >
-                  View All
-                </button>
               </div>
               <div className="space-y-4">
                 {recentKycActivity.length > 0 ? (

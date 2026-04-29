@@ -36,7 +36,7 @@ const AdminKycVerification = ({
         <div className="mx-auto max-w-7xl space-y-8">
           {/* Header */}
           <div className="space-y-2">
-            <h1 className="text-4xl font-bold text-gray-900">
+            <h1 className="text-2xl font-bold text-gray-900">
               Document Verification
             </h1>
             <p className="text-sm text-gray-500">
@@ -45,34 +45,37 @@ const AdminKycVerification = ({
           </div>
 
           {/* Stats Cards */}
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            <StatsCard
-              label="All KYC"
-              value={allKycCounts}
-              variant="default"
-              description=""
-              category="KYC"
-            />
-            <StatsCard
-              label="Pending KYC"
-              value={kycCounts.pending}
-              variant="yellow"
-              description=""
-            />
-            <StatsCard
-              label="Approved KYC"
-              value={kycCounts.approved}
-              variant="green"
-              description=""
-            />
-            <StatsCard
-              label="Rejected KYC"
-              value={kycCounts.rejected}
-              variant="red"
-              description=""
-            />
-          </div>
+          <div className="space-y-2">
+            <h3 className="text font-semibold text-gray-900">KYC Status</h3>
 
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+              <StatsCard
+                label="All KYC"
+                value={allKycCounts}
+                variant="default"
+                description=""
+                category="KYC"
+              />
+              <StatsCard
+                label="Pending KYC"
+                value={kycCounts.pending}
+                variant="yellow"
+                description=""
+              />
+              <StatsCard
+                label="Approved KYC"
+                value={kycCounts.approved}
+                variant="green"
+                description=""
+              />
+              <StatsCard
+                label="Rejected KYC"
+                value={kycCounts.rejected}
+                variant="red"
+                description=""
+              />
+            </div>
+          </div>
           {/* Filter Section */}
           <div className=" bg-white p-6 shadow-sm shadow-gray-100">
             <FilterUI category="Kyc" />
