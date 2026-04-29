@@ -1,8 +1,11 @@
-import { AppointmentStatus } from "@/app/features/appointments/types/appointment.types";
+import {
+  AppointmentFilterStatus,
+  AppointmentStatus,
+} from "@/app/features/appointments/types/appointment.types";
 import { ChevronDown, Filter } from "lucide-react";
 
-interface FilterDropdownProps {
-  filter: AppointmentStatus | "All";
+interface AppointmentFilterDropdownProps {
+  filter: AppointmentFilterStatus;
   dropdownOpen: boolean;
   appointmentCounts: {
     total: number;
@@ -13,21 +16,17 @@ interface FilterDropdownProps {
     rejected?: number;
   };
   onToggleDropdown: () => void;
-  onFilterChange: (filter: AppointmentStatus | "All") => void;
+  onFilterChange: (filter: AppointmentFilterStatus) => void;
 }
 
-const FilterDropdown = ({
+const AppointmentFilterDropdown = ({
   filter,
   dropdownOpen,
   appointmentCounts,
   onToggleDropdown,
   onFilterChange,
-}: FilterDropdownProps) => {
-  const rawOptions: {
-    label: string;
-    status: AppointmentStatus | "All";
-    count: number;
-  }[] = [
+}: AppointmentFilterDropdownProps) => {
+  const rawOptions: { label: string; status: AppointmentFilterStatus; count: number }[] = [
     { label: "All", status: "All", count: appointmentCounts.total },
     { label: "Pending", status: "Pending", count: appointmentCounts.pending },
     {
@@ -35,31 +34,24 @@ const FilterDropdown = ({
       status: "Cancelled",
       count: appointmentCounts.cancelled,
     },
-
     {
       label: "Confirmed",
-      status: "Scheduled" as const,
+      status: "Scheduled" as AppointmentStatus,
       count: appointmentCounts.confirmed ?? 0,
     },
-
     {
       label: "Completed",
-      status: "Completed" as const,
+      status: "Completed",
       count: appointmentCounts.completed ?? 0,
     },
-
     {
       label: "Rejected",
-      status: "Rejected" as const,
+      status: "Rejected",
       count: appointmentCounts.rejected ?? 0,
     },
   ];
 
-  const statusOptions = rawOptions.filter((opt) => opt.count !== undefined) as {
-    label: string;
-    status: AppointmentStatus | "All";
-    count: number;
-  }[];
+  const statusOptions = rawOptions.filter((opt) => opt.count !== undefined);
 
   return (
     <div className="relative">
@@ -112,4 +104,4 @@ const FilterDropdown = ({
   );
 };
 
-export default FilterDropdown;
+export default AppointmentFilterDropdown;

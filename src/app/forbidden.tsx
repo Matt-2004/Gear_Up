@@ -1,7 +1,7 @@
 import { Home, LogIn, ShieldUser } from "lucide-react";
 import Link from "next/link";
 
-const page = () => {
+const Forbidden = () => {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-sm text-center">
@@ -29,4 +29,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Forbidden;

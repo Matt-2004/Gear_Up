@@ -14,22 +14,11 @@ interface SearchPageProps {
 
 export default async function Page({ searchParams }: SearchPageProps) {
   const params = await searchParams;
-  const query = typeof params.query === "string" ? params.query : "";
+  const query = params.query;
 
-  let searchResults = null;
-  let error = null;
+  const response = await searchCarWithQuery(`query=${query}`);
+  console.log("response from searc");
+  const searchResults = response;
 
-  if (query) {
-    try {
-      const response = await searchCarWithQuery(`query=${query}`);
-      searchResults = response?.data;
-    } catch (err) {
-      console.error("Error fetching search results:", err);
-      error = "Failed to fetch search results. Please try again.";
-    }
-  }
-
-  return (
-    <SearchPage query={query} searchResults={searchResults} error={error} />
-  );
+  return <SearchPage query={query} searchResults={searchResults} />;
 }

@@ -1,12 +1,15 @@
-import { AddComment } from "@/app/features/comment/types/comment.types";
+import {
+  AddComment,
+  CommentRoot,
+} from "@/app/features/comment/types/comment.types";
 import { deleteFetch, getFetch, postFetch, putFetch } from "./AxiosClient";
 
 export async function getCommentsByPostId(postId: string) {
-  return getFetch(`/api/comments/${postId}/top`);
+  return getFetch<CommentRoot>(`/api/comments/${postId}/top`);
 }
 
 export async function getNestedCommentsByCommentId(parentCommentId: string) {
-  return getFetch(`/api/comments/${parentCommentId}/children`);
+  return getFetch<CommentRoot>(`/api/comments/${parentCommentId}/children`);
 }
 
 export async function addComment(data: AddComment) {

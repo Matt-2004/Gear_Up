@@ -13,7 +13,11 @@ export default function AppointmentCarSummary({
     <div className=" sticky top-20 overflow-hidden rounded-xl bg-white shadow-sm">
       <div className="aspect-video bg-gray-900">
         <img
-          src={car.carImages[0]?.url}
+          src={
+            typeof car.carImages[0] === "string"
+              ? car.carImages[0]
+              : car.carImages[0]?.url
+          }
           alt={`${car.make} ${car.model}`}
           className="h-full w-full object-cover"
         />

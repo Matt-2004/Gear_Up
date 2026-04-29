@@ -2,17 +2,17 @@ import { CarItems } from "@/app/features/car/types/car.types";
 import { redirect } from "next/navigation";
 import EditCarForm from "../../../../../features/dashboards/dealer/ui/edit-car-form/EditCarForm";
 import { getCarById } from "@/app/shared/utils/API/CarAPI";
+import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
+import { handleServerError } from "@/app/shared/utils/errors/handleServerError";
 
-export const dynamic = "force-dynamic";
-
-async function fetchCarData(carId: string): Promise<CarItems | null> {
+async function fetchCarData(carId: string): Promise<CarItems> {
   try {
     const result = await getCarById(carId);
-
-    return result?.data;
-  } catch (err: any) {
-    console.error("Error fetching car data:", err);
-    return null;
+    console.log("result of car edit", result);
+    return result.data;
+  } catch (error) {
+    handleServerError(error);
+    throw error;
   }
 }
 

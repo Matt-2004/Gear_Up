@@ -10,7 +10,7 @@ export function CarCard({
   className = "",
   priority = true,
 }: {
-  carItem: CarItems;
+  carItem: Partial<CarItems>;
   className?: string;
   priority?: boolean;
 }) {
@@ -19,7 +19,7 @@ export function CarCard({
       <article className="group mx-auto flex w-[340px] max-w-full flex-col overflow-hidden rounded-md bg-white shadow-sm shadow-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-sm">
         <div className="relative w-full shrink-0 overflow-hidden aspect-16/10 sm:aspect-video">
           <CarImage
-            src={carItem?.carImages[0]?.url}
+            src={typeof carItem?.carImages === "string" ? carItem?.carImages : carItem?.carImages?.[0]?.url ?? ""}
             alt={carItem.title || "Car image"}
             width={600}
             height={600}
@@ -42,7 +42,7 @@ export function CarCard({
               </p>
             </div>
             <h3 className="font-semibold text-primary text-xl">
-              {carItem.price > 0
+              {carItem.price && carItem.price > 0
                 ? `฿${formatNumber(carItem.price)}`
                 : "Contact for Price"}
             </h3>
@@ -53,16 +53,18 @@ export function CarCard({
             <SpacsInfoItem
               spacFeature="Tran"
               spacValue={
-                carItem.transmissionType === "Automatic"
+                carItem.transmissionType && carItem.transmissionType === "Automatic"
                   ? "Auto"
-                  : carItem.transmissionType === "SemiAutomatic"
+                  : carItem.transmissionType && carItem.transmissionType === "SemiAutomatic"
                     ? "Hybrid"
-                    : carItem.transmissionType
+                    : carItem.transmissionType && carItem.transmissionType !== "Default"
+                      ? carItem.transmissionType
+                      : "Auto"
               }
             />
             <SpacsInfoItem
               spacFeature="Miles"
-              spacValue={formatNumber(carItem.mileage)}
+              spacValue={formatNumber(carItem.mileage ?? 0)}
             />
             <SpacsInfoItem
               spacFeature="Seats"

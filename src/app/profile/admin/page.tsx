@@ -14,7 +14,6 @@ import {
   ADMIN_TABS,
   AdminTabId,
   DEFAULT_ADMIN_TAB,
-  isAdminTabId,
 } from "@/app/features/dashboards/admin/utils/admin-tab.config";
 
 export const dynamic = "force-dynamic";
@@ -35,23 +34,15 @@ const getCarsData = async () => {
 };
 
 const getDashboardData = async () => {
-  try {
-    const [kycRes, carsRes] = await Promise.all([
-      getAllKyc(),
-      getAllCars(1, 100), // Fetch first 100 cars for stats
-    ]);
+  const [kycRes, carsRes] = await Promise.all([
+    getAllKyc(),
+    getAllCars(1, 100), // Fetch first 100 cars for stats
+  ]);
 
-    return {
-      kyc: kycRes?.data,
-      cars: carsRes?.data,
-    };
-  } catch (error) {
-    console.error("Error fetching dashboard data:", error);
-    return {
-      kyc: null,
-      cars: null,
-    };
-  }
+  return {
+    kyc: kycRes?.data,
+    cars: carsRes?.data,
+  };
 };
 
 export default async function Page() {

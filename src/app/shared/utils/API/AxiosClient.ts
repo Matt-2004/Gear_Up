@@ -19,34 +19,115 @@ import { EmailValidationRequest } from "@/app/features/auth/emailValidation/type
 import { SignUpDTO } from "@/app/features/auth/signUp/types/sign-up-dto";
 import { MainResponse } from "@/app/shared/types.ts/main-response";
 import { ErrorResponse } from "../errors/errorResponse";
-import { redirect } from "next/navigation";
 
 export const api = axios.create({
   baseURL: BACKEND_API_URL,
 });
 
-export async function getFetch(url: string) {
-  const access_token = await getServerAccessToken();
-  // url & options
-  try {
-    const response = await api.get(url, {
-      headers: {
-        Authorization: `Bearer ${access_token}`,
-      },
-    });
-    return response.data;
-  } catch (error: any) {
-    const err = error as AxiosError<any>;
-    console.error("Error in getFetch:", err);
-    throw new ErrorResponse(
-      err.response?.data?.message || err.message || "Something went wrong",
-      err.response?.status ?? 500,
-      null,
-    );
+type ApiErrorPayload = {
+  isSuccess?: boolean;
+  message?: string;
+  data?: null;
+  status?: number;
+};
+
+const buildAuthHeaders = async (
+  includeJsonContentType = false,
+): Promise<Record<string, string>> => {
+  const accessToken = await getServerAccessToken();
+  const headers: Record<string, string> = {
+    Authorization: `Bearer ${accessToken}`,
+  };
+
+  if (includeJsonContentType) {
+    headers["Content-Type"] = "application/json";
   }
+
+  return headers;
+};
+
+const extractErrorMessage = (
+  payload: ApiErrorPayload | undefined,
+  fallback: string,
+): string => {
+  if (payload?.message) return payload.message;
+  return fallback;
+};
+
+const extractErrorStatus = (
+  payload: ApiErrorPayload | undefined,
+  fallback: number,
+): number => {
+  if (typeof payload?.status === "number") return payload.status;
+  return fallback;
+};
+
+const isApiErrorPayload = (value: unknown): value is ApiErrorPayload => {
+  if (!value || typeof value !== "object") return false;
+  return "message" in value || "status" in value || "isSuccess" in value;
+};
+
+const normalizeError = (error: unknown, context: string): ErrorResponse => {
+  if (axios.isAxiosError(error)) {
+    const axiosError = error as AxiosError<ApiErrorPayload>;
+    const payload = axiosError.response?.data;
+    const message = extractErrorMessage(
+      payload,
+      axiosError.message || "Request failed",
+    );
+    const statusCode = extractErrorStatus(
+      payload,
+      axiosError.response?.status ?? 500,
+    );
+    console.error(`${context}:`, {
+      statusCode,
+      message,
+      url: axiosError.config?.url,
+      method: axiosError.config?.method,
+    });
+    return new ErrorResponse(message, statusCode, null);
+  }
+
+  if (isApiErrorPayload(error)) {
+    const message = extractErrorMessage(error, "Request failed");
+    const statusCode = extractErrorStatus(error, 500);
+    console.error(`${context}:`, { statusCode, message });
+    return new ErrorResponse(message, statusCode, null);
+  }
+
+  return new ErrorResponse(
+    error instanceof Error ? error.message : "Request failed",
+    500,
+    null,
+  );
+};
+
+const request = async <T>(
+  method: "get" | "post" | "put" | "patch" | "delete",
+  url: string,
+  data?: unknown,
+  includeJsonContentType = false,
+): Promise<T> => {
+  try {
+    const response = await api.request<T>({
+      method,
+      url,
+      data,
+      headers: await buildAuthHeaders(includeJsonContentType),
+    });
+    console.log(`Response for ${method.toUpperCase()} ${url}:`, response.data);
+    return response.data;
+  } catch (error: unknown) {
+    console.log("Error in request:", error);
+    throw normalizeError(error, `Error in ${method.toUpperCase()} ${url}`);
+  }
+};
+
+export async function getFetch<T>(url: string): Promise<T> {
+  return request<T>("get", url);
 }
 
-type PostFetchAvaliableType =
+type PostFetchAvailableType =
   | SignUpDTO
   | EmailValidationRequest
   | LoginDTO
@@ -65,27 +146,9 @@ type PostFetchAvaliableType =
 
 export async function postFetch<T>(
   url: string,
-  data: PostFetchAvaliableType,
+  data: PostFetchAvailableType,
 ): Promise<MainResponse<T>> {
-  const access_token = await getServerAccessToken();
-
-  // url & options
-  try {
-    const response = await api.post(url, data, {
-      headers: {
-        Authorization: `Bearer ${access_token}`,
-      },
-    });
-    return response.data;
-  } catch (error) {
-    const err = error as AxiosError<any>;
-    console.log("Error in postFetch:", err.response?.data);
-    throw new ErrorResponse(
-      err.response?.data?.message || err.message || "Something went wrong",
-      err.response?.status ?? 500,
-      null,
-    );
-  }
+  return request<MainResponse<T>>("post", url, data);
 }
 
 export async function putFetch(
@@ -97,70 +160,16 @@ export async function putFetch(
     | Omit<IReviewSubmissionDTO, "dealerId">
     | Omit<CreatePostData, "carId">,
 ) {
-  const access_token = await getServerAccessToken();
-  // url & options
-  console.log("Data:: ", data);
-  try {
-    const response = await api.put(url, data, {
-      headers: {
-        Authorization: `Bearer ${access_token}`,
-      },
-    });
-    return response.data;
-  } catch (error: any) {
-    const err = error as AxiosError<any>;
-    console.log("Error in putFetch:", error?.response?.data);
-    throw new ErrorResponse(
-      err.response?.data?.message || err.message || "Something went wrong",
-      err.response?.status ?? 500,
-      null,
-    );
-  }
+  return request<MainResponse<null>>("put", url, data);
 }
 
 export async function deleteFetch(url: string) {
-  const access_token = await getServerAccessToken();
-  // url & options
-  try {
-    const response = await api.delete(url, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${access_token}`,
-      },
-    });
-    return response.data;
-  } catch (error: any) {
-    const err = error as AxiosError<any>;
-    console.log("Error in deleteFetch:", error?.response?.data);
-    throw new ErrorResponse(
-      err.response?.data?.message || err.message || "Something went wrong",
-      err.response?.status ?? 500,
-      null,
-    );
-  }
+  return request<MainResponse<null>>("delete", url, undefined, true);
 }
 
 export async function patchFetch(
   url: string,
   data?: { rejectionReason: string },
 ) {
-  const access_token = await getServerAccessToken();
-
-  try {
-    const respones = await api.patch(url, data, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${access_token}`,
-      },
-    });
-    return respones.data;
-  } catch (error: any) {
-    const err = error as AxiosError<any>;
-    console.log("Error in patchFetch:", error?.response?.data);
-    throw new ErrorResponse(
-      err.response?.data?.message || err.message || "Something went wrong",
-      err.response?.status ?? 500,
-      null,
-    );
-  }
+  return request("patch", url, data, true);
 }

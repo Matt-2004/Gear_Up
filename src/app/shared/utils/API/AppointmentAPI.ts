@@ -1,5 +1,9 @@
-import { AppointmentResponse } from "@/app/features/appointments/types/appointment.types";
+import {
+  AppointmentData,
+  AppointmentResponse,
+} from "@/app/features/appointments/types/appointment.types";
 import { getFetch, patchFetch, postFetch } from "./AxiosClient";
+import { CursorResponse } from "../../types.ts/cursor-response";
 
 export async function createAppointment(
   agentId: string,
@@ -25,7 +29,7 @@ export async function dealerAppointments(cursor?: string) {
   const url = cursor
     ? `/api/v1/appointments/dealer?cursor=${cursor}`
     : "/api/v1/appointments/dealer";
-  return getFetch(url);
+  return getFetch<AppointmentResponse>(url);
 }
 
 export async function myAppointments(cursor?: string) {

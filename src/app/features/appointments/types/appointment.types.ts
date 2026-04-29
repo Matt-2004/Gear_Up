@@ -9,14 +9,18 @@ export interface createAppointmentDTO {
   notes?: string;
 }
 
-export type AppointmentStatus =
-  | "All"
+export type AppointmentLifecycleStatus =
   | "Pending"
   | "Completed"
   | "Cancelled"
   | "Rejected"
   | "Scheduled"
   | "NoShow";
+
+// Backward-compatible alias used across the codebase.
+export type AppointmentStatus = AppointmentLifecycleStatus;
+
+export type AppointmentFilterStatus = AppointmentLifecycleStatus | "All";
 
 export interface AppointmentData {
   id: string;
@@ -29,7 +33,7 @@ export interface AppointmentData {
   schedule: string;
   location: string;
   notes?: string;
-  status: AppointmentStatus;
+  status: AppointmentLifecycleStatus;
   rejectionReason?: string;
   createdAt: string;
   updatedAt: string;

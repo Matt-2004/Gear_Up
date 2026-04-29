@@ -12,14 +12,15 @@ export const metadata: Metadata = {
     "Discover, buy, and sell amazing vehicles on Gear Up. Find your dream car today!",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function HOME() {
-  const response = await getAllCars(null);
-  const cars = response?.data?.items;
+  const cars = await getAllCars(null);
 
   return (
     <main className="min-h-screen bg-gray-50">
       <HeroSection />
-      <CarGrid cars={cars} />
+      <CarGrid cars={cars.items} />
       <ValuePropositionSection />
       <SellMyCarCTA />
       <HomeFooter />

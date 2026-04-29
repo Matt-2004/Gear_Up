@@ -21,7 +21,7 @@ const page = async () => {
 
   return (
     <CreatePostProvider>
-      <CreatePostForm dealerCars={dealerCars} />
+      <CreatePostForm dealerCars={dealerCars.data.items} />
     </CreatePostProvider>
   );
 };

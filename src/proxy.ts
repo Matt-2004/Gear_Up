@@ -17,8 +17,6 @@ const PUBLIC_ROUTES = [
   "/post/discover",
   "/verify",
   "/reset-password",
-  "/unauthorized",
-  "/forbidden",
 ];
 
 // ---------------------------------------------------------------------------

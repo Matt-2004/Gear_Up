@@ -13,19 +13,20 @@ export const AppointmentHeader = ({
   status,
   getStatusColor,
 }: AppointmentHeaderProps) => {
-  const getStatusLabel = (status: AppointmentStatus | string) => {
+  const getStatusLabel = (status: AppointmentStatus) => {
     switch (status) {
       case "Pending":
         return "Waiting for confirmation";
       case "Scheduled":
-      case "Schdeduled":
         return "Confirmed";
       case "Completed":
         return "Completed";
       case "Rejected":
         return "Not Accepted";
-      case "No Show":
+      case "NoShow":
         return "Missed Appointment";
+      case "Cancelled":
+        return "Cancelled";
       default:
         return status;
     }
