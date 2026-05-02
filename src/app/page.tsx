@@ -5,6 +5,7 @@ import ValuePropositionSection from "@/app/features/home/ui/ValuePropositionSect
 import HomeFooter from "@/app/features/home/ui/HomeFooter";
 import { Metadata } from "next";
 import { getAllCars } from "./shared/utils/API/CarAPI";
+import { carMapper } from "./features/car/types/car.mapper";
 
 export const metadata: Metadata = {
   title: "Gear Up - Your Ultimate Car Marketplace",
@@ -16,11 +17,12 @@ export const dynamic = "force-dynamic";
 
 export default async function HOME() {
   const cars = await getAllCars(null);
+  const data = cars.data.items.map(carMapper) ?? [];
 
   return (
     <main className="min-h-screen bg-gray-50">
       <HeroSection />
-      <CarGrid cars={cars.items} />
+      <CarGrid cars={data} />
       <ValuePropositionSection />
       <SellMyCarCTA />
       <HomeFooter />

@@ -6,20 +6,20 @@ import { CarCard } from "@/app/features/car/ui/car-card/CarCard";
 import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
 import { MainResponse } from "@/app/shared/types.ts/main-response";
 import { searchCarWithQuery } from "@/app/shared/utils/API/CarAPI";
-import { debounce } from "@/app/shared/utils/debounce";
 import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Loader2, Search, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { ReactNode, useEffect, useMemo, useRef, useState } from "react";
-import { de } from "zod/locales";
+import { ReactNode, useEffect, useId, useRef, useState } from "react";
+import { CarModel } from "../../types/car.model";
+import { carMapper } from "../../types/car.mapper";
 
 interface CarSearchProps {
   query: string;
-  searchResults: MainResponse<CursorResponse<CarItems[]>>;
+  searchResults: CursorResponse<CarModel[]>;
 }
 
-type SearchPage = CursorResponse<CarItems[]>;
+type SearchPage = CursorResponse<CarModel[]>;
 
 const emptySearchPage: SearchPage = {
   items: [],
@@ -33,10 +33,10 @@ export default function CarSearch({
 }: CarSearchProps) {
   const router = useRouter();
 
-  const [isMounted, setIsMounted] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(query);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const suggestionsId = useId();
 
   const parentRef = useRef<HTMLDivElement>(null);
   const searchContainerRef = useRef<HTMLDivElement>(null);
@@ -44,25 +44,13 @@ export default function CarSearch({
   const trimmedQuery = query.trim();
   const canSearch = searchQuery.trim().length > 0;
 
-  const debouncedSearchQuery = useMemo(
-    () =>
-      debounce((value: string) => {
-        setSearchQuery(value);
-      }, 300),
-    [],
-  );
-
-  const initialSearchPage: SearchPage = initialData?.data
+  const initialSearchPage: SearchPage = initialData
     ? {
-        items: initialData.data.items ?? [],
-        hasMore: Boolean(initialData.data.hasMore),
-        nextCursor: initialData.data.nextCursor ?? null,
+        items: initialData.items ?? [],
+        hasMore: Boolean(initialData.hasMore),
+        nextCursor: initialData.nextCursor ?? null,
       }
     : emptySearchPage;
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   useEffect(() => {
     setSearchQuery(query);
@@ -95,16 +83,16 @@ export default function CarSearch({
       }
 
       const response = await searchCarWithQuery(params.toString());
-
+      const results: CursorResponse<CarModel[]> = {
+        hasMore: response.data.hasMore,
+        nextCursor: response.data.nextCursor,
+        items: response.data.items.map(carMapper),
+      };
       if (!response?.isSuccess || !response.data) {
         throw new Error(response?.message || "Failed to search cars.");
       }
 
-      return {
-        items: response.data.items ?? [],
-        hasMore: Boolean(response.data.hasMore),
-        nextCursor: response.data.nextCursor ?? null,
-      };
+      return results;
     },
 
     initialPageParam: undefined,
@@ -214,7 +202,7 @@ export default function CarSearch({
   };
 
   const handleSuggestionClick = (suggestion: string) => {
-    debouncedSearchQuery(suggestion);
+    setSearchQuery(suggestion);
     setShowSuggestions(false);
     router.push(`/car/search?query=${encodeURIComponent(suggestion)}`);
   };
@@ -254,22 +242,44 @@ export default function CarSearch({
 
                   <input
                     type="text"
-                    value={isMounted ? searchQuery : query}
+                    value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onFocus={() => {
                       if (suggestions.length > 0) {
                         setShowSuggestions(true);
                       }
                     }}
+                    onKeyDown={(event) => {
+                      if (event.key === "Escape") {
+                        setShowSuggestions(false);
+                        (event.target as HTMLInputElement).blur();
+                      }
+                    }}
                     placeholder="Search by make, model, year..."
-                    className="focus:border-primary-500 focus:ring-primary-500/20 w-full rounded-xl border border-gray-200 bg-white py-3.5 px-12 text-base text-gray-900 shadow-sm transition-all placeholder:text-gray-400 hover:border-gray-300 focus:outline-none"
-                    suppressHydrationWarning
+                    aria-label="Search cars"
+                    aria-expanded={showSuggestions}
+                    aria-controls={suggestionsId}
+                    className="focus:border-primary-500 focus:ring-primary-500/20 w-full rounded-lg border border-gray-200 bg-white py-2.5 px-11 pr-10 text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 hover:border-gray-300 focus:outline-none"
                   />
+
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSearchQuery("");
+                        setShowSuggestions(false);
+                      }}
+                      aria-label="Clear search"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-0.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  )}
                 </div>
 
                 {/* Suggestions Dropdown */}
                 <AnimatePresence>
-                  {isMounted && showSuggestions && suggestions.length > 0 && (
+                  {showSuggestions && suggestions.length > 0 && (
                     <motion.div
                       key="search-suggestions"
                       initial={{ opacity: 0, y: -8, scale: 0.98 }}
@@ -277,6 +287,8 @@ export default function CarSearch({
                       exit={{ opacity: 0, y: -8, scale: 0.98 }}
                       transition={{ duration: 0.16, ease: "easeOut" }}
                       className="absolute z-50 mt-2 max-h-72 w-full overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xl"
+                      role="listbox"
+                      id={suggestionsId}
                     >
                       <div className="border-b border-gray-100 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-gray-400">
                         Suggestions
@@ -286,9 +298,11 @@ export default function CarSearch({
                         {suggestions.map((suggestion) => (
                           <motion.button
                             key={suggestion}
-                            type="button"
+                            type="submit"
                             onClick={() => handleSuggestionClick(suggestion)}
                             whileHover={{ x: 3 }}
+                            role="option"
+                            aria-selected={suggestion === searchQuery}
                             className="flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left transition-colors hover:bg-gray-50"
                           >
                             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gray-100">
@@ -317,7 +331,7 @@ export default function CarSearch({
                 disabled={!canSearch}
                 whileHover={canSearch ? { scale: 1.03 } : undefined}
                 whileTap={canSearch ? { scale: 0.96 } : undefined}
-                className="bg-primary-600 hover:bg-primary-700 disabled:hover:bg-primary-600 w-full rounded-xl px-8 py-3.5 font-semibold text-lg text-white shadow-sm transition-all hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+                className="bg-primary-600 hover:bg-primary-700 disabled:hover:bg-primary-600 w-full rounded-lg px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
               >
                 Search
               </motion.button>
