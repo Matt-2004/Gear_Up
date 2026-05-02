@@ -16,9 +16,10 @@ import {
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useCreatePostContext } from "../context/CreatePostContext";
+import { CarModel } from "../../car/types/car.model";
 
 interface CreatePostFormProps {
-  dealerCars: CarItems[];
+  dealerCars: CarModel[];
 }
 
 const CreatePostForm = ({ dealerCars }: CreatePostFormProps) => {

@@ -30,6 +30,8 @@ import {
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
+import { CarModel } from "@/app/features/car/types/car.model";
+import { carMapper } from "@/app/features/car/types/car.mapper";
 
 export const dynamic = "force-dynamic";
 // ─── types ──────────────────────────────────────────────────────────────────
@@ -49,12 +51,10 @@ const SelectableCarCard = ({
   selected,
   onSelect,
 }: {
-  car: CarItems;
+  car: CarModel;
   selected: boolean;
-  onSelect: (car: CarItems) => void;
+  onSelect: (car: CarModel) => void;
 }) => {
-  const firstImage =
-    typeof car.carImages === "string" ? car.carImages : car.carImages?.[0]?.url;
   return (
     <button
       type="button"
@@ -74,9 +74,9 @@ const SelectableCarCard = ({
 
       {/* image */}
       <div className="relative h-40 w-full overflow-hidden bg-gray-100">
-        {firstImage ? (
+        {car.imageUrl ? (
           <CarImage
-            src={firstImage}
+            src={car.imageUrl}
             alt={car.title}
             width={400}
             height={160}
@@ -93,16 +93,12 @@ const SelectableCarCard = ({
       <div className="flex flex-1 flex-col gap-1 p-3">
         <h3 className="line-clamp-1 font-bold text-gray-900">{car.title}</h3>
         <p className="text-sm text-gray-500">
-          {car.make} {car.model} · {car.year}
+          {car.make} {car.model}
         </p>
         <div className="mt-1 flex items-center gap-3 text-xs text-gray-500">
           <span className="flex items-center gap-1">
             <Gauge className="h-3.5 w-3.5" />
             {formatNumber(car.mileage)} km
-          </span>
-          <span className="flex items-center gap-1">
-            <Fuel className="h-3.5 w-3.5" />
-            {car.fuelType}
           </span>
         </div>
         <p className="mt-1 text-sm font-semibold text-gray-800">
@@ -421,10 +417,10 @@ const PostManagement = () => {
   const [postsError, setPostsError] = useState<string | null>(null);
 
   // step 1 — car selection
-  const [cars, setCars] = useState<CarItems[]>([]);
+  const [cars, setCars] = useState<CarModel[]>([]);
   const [loadingCars, setLoadingCars] = useState(false);
   const [carsError, setCarsError] = useState<string | null>(null);
-  const [selectedCar, setSelectedCar] = useState<CarItems | null>(null);
+  const [selectedCar, setSelectedCar] = useState<CarModel | null>(null);
   const [carCursor, setCarCursor] = useState<string | undefined>();
   const [hasMoreCars, setHasMoreCars] = useState(false);
 
@@ -483,8 +479,12 @@ const PostManagement = () => {
       const res = await getMyCars("Approved", cursor);
       const data = res?.data;
       if (!data) throw new Error("No data returned");
-      const items: CarItems[] = data?.items ?? [];
-      setCars((prev) => (cursor ? [...prev, ...items] : items));
+      const items: CursorResponse<CarModel[]> = {
+        items: data.items.map(carMapper),
+        hasMore: data.hasMore,
+        nextCursor: data.nextCursor,
+      };
+      setCars((prev) => (cursor ? [...prev, ...items.items] : items.items));
       setCarCursor(data?.nextCursor ?? undefined);
       setHasMoreCars(data?.hasMore ?? false);
     } catch (err: any) {
@@ -863,13 +863,9 @@ const PostManagement = () => {
             {selectedCar && (
               <div className="flex items-center gap-3 rounded-xl border border-gray-200 bg-gray-50 p-3">
                 <div className="relative h-14 w-20 shrink-0 overflow-hidden rounded-lg bg-gray-200">
-                  {selectedCar.carImages ? (
+                  {selectedCar.imageUrl ? (
                     <Image
-                      src={
-                        typeof selectedCar.carImages === "string"
-                          ? selectedCar.carImages
-                          : selectedCar.carImages[0].url
-                      }
+                      src={selectedCar.imageUrl}
                       alt={selectedCar.title}
                       fill
                       className="object-cover"
@@ -885,8 +881,8 @@ const PostManagement = () => {
                     {selectedCar.title}
                   </p>
                   <p className="text-sm text-gray-500">
-                    {selectedCar.make} {selectedCar.model} · {selectedCar.year}{" "}
-                    · ฿{formatNumber(selectedCar.price)}
+                    {selectedCar.make} {selectedCar.model}· ฿
+                    {formatNumber(selectedCar.price)}
                   </p>
                 </div>
                 <button

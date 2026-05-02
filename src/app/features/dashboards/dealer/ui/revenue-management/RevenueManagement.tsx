@@ -3,7 +3,7 @@ import { ReactNode } from "react";
 
 const RevenueManagement = () => {
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm md:p-8">
+    <div className="rounded-2xl min-h-screen border border-gray-200 bg-white p-6 shadow-sm md:p-8">
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Revenue Overview</h2>

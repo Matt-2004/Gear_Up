@@ -104,6 +104,7 @@ const CarInfoComponent = ({ carData, text }: CarInfoComponentProps) => {
                   className="group relative aspect-video overflow-hidden rounded-xl bg-gray-100"
                 >
                   <CarImage
+                    alt={image.alt || "Car Image"}
                     className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
                     src={image.url}
                     width={400}
@@ -465,7 +466,7 @@ const HistoryComponent = ({ submittedAt }: { submittedAt: string }) => {
           <div className="flex-1 pb-8">
             <h3 className="font-semibold text-gray-900">Initial Submission</h3>
             <p className="mt-1 text-sm text-gray-600">
-              {timeFormat(submittedAt, "Hour")}
+              {timeFormat(new Date(submittedAt), "Hour")}
             </p>
             <div className="bg-primary-50 mt-3 rounded-lg p-3">
               <p className="text-primary-900 text-sm">

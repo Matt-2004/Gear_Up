@@ -199,14 +199,23 @@ const AppointmentManagement = ({
     nextCursor: null,
     hasMore: false,
   });
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [filter, setFilter] = useState<AppointmentStatus | "All">("All");
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
+    if (!appointmentData?.isSuccess) {
+      setFetchError(appointmentData?.message || "Failed to load appointments.");
+      setData({ items: [], nextCursor: null, hasMore: false });
+      setLoading(false);
+      return;
+    }
+
     setData(appointmentData.data);
+    setFetchError(null);
+    setLoading(false);
   }, [appointmentData]);
 
   // ── action handlers ──────────────────────────────────────────────────────
@@ -287,7 +296,7 @@ const AppointmentManagement = ({
         <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">
-              Test Drive Management
+              Appointment Management
             </h1>
             <p className="mt-1 text-sm text-gray-500">
               Manage customer test-drive appointments and schedules

@@ -30,20 +30,7 @@ export default function DealerCarCard({
         setShowOptions(false);
       }}
     >
-      <CarCard
-        carItem={{
-          id: car.id,
-          title: car.title,
-          make: car.make,
-          model: car.model,
-          price: car.price,
-          mileage: car.mileage,
-          seatingCapacity: car.seatingCapacity,
-          carValidationStatus: car.carValidationStatus,
-          carImages: car.thumbnailUrl,
-          transmissionType: car.transmissionType,
-        }}
-      />
+      <CarCard carItem={car} />
 
       {/* Status Badge */}
       {car.status && (

@@ -10,37 +10,35 @@ import { useVehicleContext } from "../../context/AddNewCarContext";
 import StepNavigation from "./StepNavigation";
 import { addCar } from "@/app/shared/utils/API/CarAPI";
 import { CarCard } from "@/app/features/car/ui/car-card/CarCard";
+import { CarModel } from "@/app/features/car/types/car.model";
 
 const Review = () => {
   const { addedCar, clearAddedCar, isDraftReady } = useVehicleContext();
-
-  const router = useRouter();
   const { handleToast, addToastMessage } = useToast({
     toastType: "info",
     message: null,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [carData, setCarData] = useState<CarItems>();
+  const [carData, setCarData] = useState<CarModel>();
 
   useEffect(() => {
     if (!addedCar) return;
-    const data: CarItems = {
-      ...addedCar,
-      // Provide default or placeholder values for required fields if not present in addedCar
-      name: addedCar.title ?? "",
-      // dealerId is not present on SubmitVehicle, so we omit or set a placeholder if needed
-      dealerId: "",
+    setCarData({
       id: "",
-      carStatus: "draft",
-      carValidationStatus: "pending",
-
-      carImages: addedCar.carImages.map((file) => ({
-        id: "",
-        carId: "",
-        url: URL.createObjectURL(file),
-      })),
-    };
-    setCarData(data);
+      imageUrl: addedCar.carImages[0]
+        ? URL.createObjectURL(addedCar.carImages[0])
+        : "",
+      title: addedCar.title,
+      model: addedCar.model,
+      transmission: addedCar.transmissionType,
+      mileage: addedCar.mileage,
+      make: addedCar.make,
+      status: "Default",
+      price: addedCar.price,
+      seats: addedCar.seatingCapacity,
+      createdAt: new Date(),
+      color: addedCar.color,
+    });
   }, [addedCar]);
 
   if (!isDraftReady) {
