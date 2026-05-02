@@ -5,11 +5,6 @@ import {
   PageSwitcher,
 } from "@/app/features/dashboards/admin/ui/dashboard/PageSwitcher";
 import { DealerTabs } from "@/app/features/dashboards/dealer/ui/tabs/DealerTabs";
-import PostManagement from "@/app/features/dashboards/dealer/ui/post-management/PostManagement";
-import RevenueManagement from "@/app/features/dashboards/dealer/ui/review-management/RevenueManagement";
-import Setting from "@/app/features/dashboards/dealer/ui/dealer-profile/DealerProfile";
-import DealerCarDashboard from "../../features/dashboards/dealer/ui/dealer-dashboard/DealerCarDashboard";
-import { getAllStatusCars } from "./cars/page";
 import { Metadata } from "next";
 import {
   DEALER_TABS,
@@ -107,28 +102,28 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   const carData = await getAllStatusCars();
-  console.log("carData sending from :", carData);
+  const appointmentData = await getAppointment();
 
   const pages: PageItem<DealerTabId>[] = [
     {
       id: "car-management",
-      page: <DealerCarDashboard carData={carData} />,
+      page: <DealerCarDashboardPage carData={carData} />,
     },
     {
       id: "post-management",
-      page: <PostManagement />,
+      page: <PostManagementPage />,
     },
     {
-      id: "test-drive-management",
-      page: <AppointmentManagement />,
+      id: "appointment-management",
+      page: <AppointmentManagementPage appointmentData={appointmentData} />,
     },
     {
       id: "revenue-management",
-      page: <RevenueManagement />,
+      page: <RevenueManagementPage />,
     },
     {
       id: "setting",
-      page: <Setting />,
+      page: <SettingPage />,
     },
   ];
 

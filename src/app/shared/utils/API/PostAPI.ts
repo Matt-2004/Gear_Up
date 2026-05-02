@@ -1,5 +1,10 @@
-import { CreatePostData } from "@/app/features/post/types/post.types";
+import {
+  CreatePostData,
+  PostItem,
+  PostRoot,
+} from "@/app/features/post/types/post.types";
 import { deleteFetch, getFetch, putFetch, postFetch } from "./AxiosClient";
+import { MainResponse } from "../../types.ts/main-response";
 
 export async function getAllPosts(cursor?: string) {
   const query = new URLSearchParams();
@@ -7,7 +12,7 @@ export async function getAllPosts(cursor?: string) {
   const url = query.toString()
     ? `/api/v1/posts?${query.toString()}`
     : "/api/v1/posts";
-  return getFetch(url);
+  return getFetch<PostRoot>(url);
 }
 
 export async function createPost(data: CreatePostData) {
@@ -15,7 +20,7 @@ export async function createPost(data: CreatePostData) {
 }
 
 export async function getPostById(postId: string) {
-  return getFetch(`/api/v1/posts/${postId}`);
+  return getFetch<MainResponse<PostItem>>(`/api/v1/posts/${postId}`);
 }
 
 export async function deletePostById(postId: string) {
@@ -31,7 +36,7 @@ export async function updatePostById(
 
 export async function myPost(cursor?: string) {
   const url = cursor ? `/api/v1/posts/me?cursor=${cursor}` : "/api/v1/posts/me";
-  return getFetch(url);
+  return getFetch<PostRoot>(url);
 }
 
 export async function deletePostLike(postId: string) {

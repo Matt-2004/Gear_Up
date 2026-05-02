@@ -22,9 +22,8 @@ export interface IMessageListData {
   createdAt: string;
 }
 
-type F = IMessageData[] | null;
 export interface MessageDetailResponse extends MainResponse<
-  IMessageDetailData<F>
+  IMessageDetailData<IMessageData[]>
 > {}
 
 export interface IMessageDetailData<T> {

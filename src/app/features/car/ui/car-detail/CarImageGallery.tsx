@@ -90,20 +90,23 @@ export default function CarImageGallery({ car }: CarImageGalleryProps) {
           className="flex snap-x snap-mandatory items-center overflow-x-scroll scroll-smooth"
           style={{ scrollbarWidth: "none" }}
         >
-          {car.carImages.map((img: { url: string }, idx: number) => (
-            <CarImage
-              key={idx}
-              src={img.url}
-              alt={`${car.make} ${car.model}`}
-              height={800}
-              width={800}
-              className="block h-[500px] lg:h-[700px] min-w-full snap-start object-cover"
-            />
-          ))}
+          {(Array.isArray(car.carImages) ? car.carImages : []).map(
+            (img: { url: string }, idx: number) => (
+              <CarImage
+                key={idx}
+                src={img.url}
+                alt={`${car.make} ${car.model}`}
+                height={800}
+                width={800}
+                className="block h-[500px] lg:h-[700px] min-w-full snap-start object-cover"
+              />
+            ),
+          )}
         </div>
 
         <div className="absolute top-4 right-4 z-10 rounded-full bg-black/60 px-3 py-1 text-sm font-medium text-white backdrop-blur-sm">
-          {currentIndex + 1} / {car.carImages.length}
+          {currentIndex + 1} /{" "}
+          {Array.isArray(car.carImages) ? car.carImages.length : 0}
         </div>
 
         {currentIndex !== 0 && (
@@ -115,40 +118,43 @@ export default function CarImageGallery({ car }: CarImageGalleryProps) {
           </button>
         )}
 
-        {currentIndex < car.carImages.length - 1 && (
-          <button
-            onClick={scrollNext}
-            className="hover:bg-primary-500 absolute top-1/2 right-4 z-30 -translate-y-1/2 rounded-full bg-white/95 p-2.5 shadow-lg transition-all hover:scale-110 hover:text-white"
-          >
-            <ChevronRight className="h-6 w-6" />
-          </button>
-        )}
+        {Array.isArray(car.carImages) &&
+          currentIndex < car.carImages.length - 1 && (
+            <button
+              onClick={scrollNext}
+              className="hover:bg-primary-500 absolute top-1/2 right-4 z-30 -translate-y-1/2 rounded-full bg-white/95 p-2.5 shadow-lg transition-all hover:scale-110 hover:text-white"
+            >
+              <ChevronRight className="h-6 w-6" />
+            </button>
+          )}
       </div>
 
       <div className="grid grid-cols-3 gap-3 p-4">
-        {car.carImages.map((img: { url: string }, idx: number) => (
-          <button
-            key={idx}
-            onClick={() => {
-              if (!scrollRef.current) return;
-              scrollRef.current.scrollTo({
-                left: idx * scrollRef.current.clientWidth,
-                behavior: "smooth",
-              });
-              // Reset interval when clicking thumbnail
-              startAutoScroll();
-            }}
-            className={`aspect-video overflow-hidden rounded-lg transition-all ${currentIndex === idx ? "scale-105" : ""}`}
-          >
-            <CarImage
-              width={200}
-              height={200}
-              src={img.url}
-              alt=""
-              className="h-full w-full object-cover"
-            />
-          </button>
-        ))}
+        {(Array.isArray(car.carImages) ? car.carImages : []).map(
+          (img: { url: string }, idx: number) => (
+            <button
+              key={idx}
+              onClick={() => {
+                if (!scrollRef.current) return;
+                scrollRef.current.scrollTo({
+                  left: idx * scrollRef.current.clientWidth,
+                  behavior: "smooth",
+                });
+                // Reset interval when clicking thumbnail
+                startAutoScroll();
+              }}
+              className={`aspect-video overflow-hidden rounded-lg transition-all ${currentIndex === idx ? "scale-105" : ""}`}
+            >
+              <CarImage
+                width={200}
+                height={200}
+                src={img.url}
+                alt=""
+                className="h-full w-full object-cover"
+              />
+            </button>
+          ),
+        )}
       </div>
     </div>
   );

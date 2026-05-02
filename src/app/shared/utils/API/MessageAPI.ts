@@ -1,4 +1,8 @@
-import { CreateMessageDTO } from "@/app/features/messaging/types/message.types";
+import {
+  CreateMessageDTO,
+  MessageDetailResponse,
+  MessageResponses,
+} from "@/app/features/messaging/types/message.types";
 
 import { getFetch, postFetch } from "./AxiosClient";
 
@@ -19,11 +23,12 @@ export const getConversationsByConversationId = async (
   const url = cursor
     ? `/api/v1/messages/conversations/${conversationId}?cursor=${cursor}`
     : `/api/v1/messages/conversations/${conversationId}`;
-  return getFetch(url);
+  return getFetch<MessageDetailResponse>(url);
 };
 
 export const getConversationByOtherUserId = async (otherUserId: string) =>
-  getFetch(`/api/v1/messages/conversations/with/${otherUserId}`);
-
+  getFetch<MessageDetailResponse>(
+    `/api/v1/messages/conversations/with/${otherUserId}`,
+  );
 export const readMessagesByConversationId = async (conversationId: string) =>
   postFetch(`/api/v1/messages/conversations/${conversationId}/read`, null);

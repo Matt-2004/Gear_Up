@@ -26,7 +26,7 @@ export interface CarItems {
   mileage: number;
   seatingCapacity: number;
   engineCapacity: number;
-  carImages: CarImages[];
+  carImages: CarImages[] | string;
   fuelType: IFuelType;
   carCondition: ICarCondition;
   transmissionType: ITransmissionType;

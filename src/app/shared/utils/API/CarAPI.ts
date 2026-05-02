@@ -32,7 +32,7 @@ export async function getMyCars(status: string, cursor: string | null) {
   const url = cursor
     ? `/api/v1/cars/my-car?status=${status}&cursor=${cursor}`
     : `/api/v1/cars/my-car?status=${status}`;
-  const res = await getFetch(url);
+  const res = await getFetch<MainResponse<CursorResponse<CarItems[]>>>(url);
 
   return res;
 }

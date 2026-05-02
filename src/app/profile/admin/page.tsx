@@ -7,13 +7,10 @@ import {
   ADMIN_TABS,
   AdminTabId,
   DEFAULT_ADMIN_TAB,
-  isAdminTabId,
 } from "@/app/features/dashboards/admin/utils/admin-tab.config";
 import dynamicImport from "next/dynamic";
 import { CarModel } from "@/app/features/car/types/car.model";
 import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
-import { CarDTO } from "@/app/features/car/types/car.dto";
-import { carMapper } from "@/app/features/car/types/car.mapper";
 
 const AdminDashboardPage = dynamicImport(
   () => import("@/app/features/dashboards/admin/ui/dashboard/AdminDashboard"),

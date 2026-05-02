@@ -1,6 +1,10 @@
 "use client";
 
-import { CarImageDTO, PostItem } from "@/app/features/post/types/post.types";
+import {
+  CarImageDTO,
+  PostItem,
+  PostRoot,
+} from "@/app/features/post/types/post.types";
 import { useUserData } from "@/app/features/navbar/context/UserDataContext";
 import { DEFAULT_API_URL } from "@/app/shared/utils/config";
 import { getAllPosts } from "@/app/shared/utils/API/PostAPI";
@@ -43,37 +47,46 @@ const DiscoverPost = ({ post }: { post: CursorResponse<PostItem[]> }) => {
 
   const { data, fetchNextPage, isFetchingNextPage, hasNextPage, refetch } =
     useInfiniteQuery<
-      CursorResponse<PostItem[]>,
+      PostRoot,
       Error,
-      InfiniteData<CursorResponse<PostItem[]>, string | undefined>,
+      InfiniteData<PostRoot, string | undefined>,
       string[],
       string | undefined
     >({
       queryKey: ["discover-posts"],
       queryFn: async ({ pageParam }) => {
         const result = await getAllPosts(pageParam);
-        console.log("PageParam:: ", pageParam);
+
         if (result instanceof Response) {
-          return (await result.json()) as CursorResponse<PostItem[]>;
+          return (await result.json()) as PostRoot;
         }
 
-        return result as CursorResponse<PostItem[]>;
+        return result;
       },
       enabled: Boolean(user),
       initialPageParam: undefined,
       initialData: {
-        pages: [post],
+        pages: [
+          {
+            // Wrap the CursorResponse<PostItem[]> into the expected PostRoot shape
+            isSuccess: true,
+            data: post,
+            successMessage: "",
+            errorMessage: "",
+            status: 200,
+          },
+        ],
         pageParams: [undefined],
       },
       getNextPageParam: (lastPage) => {
-        return lastPage.hasMore ? lastPage.nextCursor : undefined;
+        return lastPage.data.hasMore ? lastPage.data.nextCursor : undefined;
       },
       staleTime: 1000 * 60 * 5, // 5 minutes
       refetchOnMount: false,
       refetchOnWindowFocus: false,
     });
 
-  const posts = data?.pages.flatMap((page) => page.items) ?? [];
+  const posts = data?.pages.flatMap((page) => page.data.items) ?? [];
 
   const parentRef = useRef<HTMLDivElement>(null);
   const rowVirtualizer = useVirtualizer({

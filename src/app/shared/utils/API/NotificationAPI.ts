@@ -1,4 +1,7 @@
+import { INotificationData } from "@/app/features/notification/types/notification.types";
+import { MainResponse } from "../../types.ts/main-response";
 import { deleteFetch, getFetch, patchFetch } from "./AxiosClient";
+import { CursorResponse } from "../../types.ts/cursor-response";
 
 export const getNotification = async (
   cursor: string | null,
@@ -7,13 +10,13 @@ export const getNotification = async (
   const url =
     "/api/v1/notifications" +
     (cursor ? `?cursor=${cursor}&pageSize=${limit}` : `?pageSize=${limit}`);
-  return getFetch(url);
+  return getFetch<MainResponse<CursorResponse<INotificationData[]>>>(url);
 };
 
 export const deleteAllNotification = async () =>
   deleteFetch("/api/v1/notifications");
 export const getUnreadNotificationCount = async () =>
-  getFetch("/api/v1/notifications/unread-count");
+  getFetch<MainResponse<number>>("/api/v1/notifications/unread-count");
 
 export const readNotificationById = async (id: string) =>
   patchFetch(`/api/v1/notifications/${id}/read`);

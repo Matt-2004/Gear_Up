@@ -1,8 +1,8 @@
-import { AppointmentStatus } from "@/app/features/appointments/types/appointment.types";
+import { AppointmentFilterStatus } from "@/app/features/appointments/types/appointment.types";
 import { Calendar } from "lucide-react";
 
 interface AppointmentEmptyStateProps {
-  filter: AppointmentStatus | "All";
+  filter: AppointmentFilterStatus;
   mode?: "dealer" | "user";
 }
 

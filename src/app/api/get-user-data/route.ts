@@ -10,11 +10,11 @@ export async function GET() {
     if (!userDataCookie) {
       return NextResponse.json(
         {
-          isSuccess: false,
-          message: "user_data cookie not found",
+          isSuccess: true,
+          message: "No user session",
           data: null,
         },
-        { status: 404 },
+        { status: 200 },
       );
     }
 

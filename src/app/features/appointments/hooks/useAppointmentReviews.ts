@@ -95,13 +95,10 @@ export const useAppointmentReviews = ({
 
     setDeletingReview(true);
     try {
-      const response = await deleteReview(existingReview.id);
-      if (response.isSuccess) {
-        setShowDeleteConfirm(false);
-        setExistingReview(null);
-      } else {
-        console.error("Failed to delete review:", response.message);
-      }
+      await deleteReview(existingReview.id);
+
+      setShowDeleteConfirm(false);
+      setExistingReview(null);
     } catch (error) {
       console.error("Error deleting review:", error);
     } finally {
