@@ -11,6 +11,7 @@ import {
 import dynamicImport from "next/dynamic";
 import { CarModel } from "@/app/features/car/types/car.model";
 import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
+import { carMapper } from "@/app/features/car/types/car.mapper";
 
 const AdminDashboardPage = dynamicImport(
   () => import("@/app/features/dashboards/admin/ui/dashboard/AdminDashboard"),

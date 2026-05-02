@@ -116,9 +116,9 @@ export default function CarTable({ cars, onDelete, onEdit }: CarTableProps) {
                 <td className="whitespace-nowrap px-6 py-4">
                   <div className="flex items-center gap-4">
                     <div className="relative h-16 w-16 shrink-0 overflow-hidden border border-gray-200 bg-gray-100">
-                      {car.thumbnailUrl ? (
+                      {car.imageUrl ? (
                         <Image
-                          src={car.thumbnailUrl}
+                          src={car.imageUrl}
                           alt={carName}
                           fill
                           sizes="64px"
