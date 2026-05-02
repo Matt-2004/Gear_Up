@@ -31,7 +31,7 @@ export default function ResponsiveDropdown({
   };
 
   return (
-    <div className="relative w-full sm:w-64">
+    <div className="relative w-full ">
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}

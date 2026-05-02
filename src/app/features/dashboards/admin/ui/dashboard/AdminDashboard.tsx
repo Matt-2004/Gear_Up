@@ -1,5 +1,6 @@
 "use client";
 
+import { CarModel } from "@/app/features/car/types/car.model";
 import StatsCard from "../../../dealer/ui/dealer-management/StatsCard";
 import { IKycSubmissions } from "@/app/features/dashboards/dealer/types/kyc.types";
 import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
@@ -13,13 +14,11 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useMemo } from "react";
-import { AdminCarData } from "../../types/admin-car-approval.types";
-import { DashboardCarDTO } from "../../../dealer/types/dashboard-car/dashboard-car.dto";
+import { useEffect, useMemo, useState } from "react";
 
 interface DashboardData {
   kyc: CursorResponse<IKycSubmissions[]>;
-  cars: CursorResponse<DashboardCarDTO[]>;
+  cars: CursorResponse<CarModel[]>;
 }
 
 interface AdminDashboardProps {
@@ -29,6 +28,11 @@ interface AdminDashboardProps {
 const AdminDashboard = ({ dashboardData }: AdminDashboardProps) => {
   const router = useRouter();
   const { kyc, cars } = dashboardData;
+  const [clientNow, setClientNow] = useState<Date | null>(null);
+
+  useEffect(() => {
+    setClientNow(new Date());
+  }, []);
 
   // Calculate real statistics
   const stats = useMemo(() => {
@@ -40,13 +44,13 @@ const AdminDashboard = ({ dashboardData }: AdminDashboardProps) => {
     const rejectedKyc = kycItems.filter((k) => k.status === "Rejected").length;
 
     const approvedCars = carItems.filter(
-      (c) => c.carValidationStatus?.toLowerCase() === "approved",
+      (c) => c.status?.toLowerCase() === "approved",
     ).length;
     const pendingCars = carItems.filter(
-      (c) => c.carValidationStatus?.toLowerCase() === "pending",
+      (c) => c.status?.toLowerCase() === "pending",
     ).length;
     const rejectedCars = carItems.filter(
-      (c) => c.carValidationStatus?.toLowerCase() === "rejected",
+      (c) => c.status?.toLowerCase() === "rejected",
     ).length;
 
     // Count unique dealers (users who have cars)
@@ -77,9 +81,9 @@ const AdminDashboard = ({ dashboardData }: AdminDashboardProps) => {
       .slice(0, 5);
   }, [kyc]);
 
-  const getTimeAgo = (dateString: string) => {
+  const getTimeAgo = (dateString: string, now: Date | null) => {
+    if (!now) return "";
     const date = new Date(dateString);
-    const now = new Date();
     const diffInMs = now.getTime() - date.getTime();
     const diffInMins = Math.floor(diffInMs / 60000);
     const diffInHours = Math.floor(diffInMins / 60);
@@ -224,7 +228,7 @@ const AdminDashboard = ({ dashboardData }: AdminDashboardProps) => {
                         icon={config.icon}
                         title={config.title}
                         description={`${kycItem.fullName}'s ${kycItem.documentType} verification`}
-                        time={getTimeAgo(kycItem.submittedAt)}
+                        time={getTimeAgo(kycItem.submittedAt, clientNow)}
                       />
                     );
                   })

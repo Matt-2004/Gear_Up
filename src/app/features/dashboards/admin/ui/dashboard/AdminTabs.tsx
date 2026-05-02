@@ -7,13 +7,8 @@ import {
   LayoutDashboard,
   UserRoundCheck,
 } from "lucide-react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ReactNode } from "react";
-import {
-  DEFAULT_ADMIN_TAB,
-  isAdminTabId,
-  type AdminTabId,
-} from "../../utils/admin-tab.config";
+import { type AdminTabId } from "../../utils/admin-tab.config";
 
 interface AdminTab {
   id: AdminTabId;
@@ -24,6 +19,8 @@ interface AdminTabProps {
   tabs: readonly AdminTab[];
   panelTitle?: string;
   description?: string;
+  activeTab: AdminTabId;
+  onTabChange: (tabId: AdminTabId) => void;
 }
 
 const tabIcons: Record<AdminTabId, ReactNode> = {
@@ -36,28 +33,9 @@ export const AdminTabs = ({
   tabs,
   panelTitle = "Admin",
   description = "Manage your platform",
+  activeTab,
+  onTabChange,
 }: AdminTabProps) => {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-
-  const currentTab = searchParams.get("tab");
-  const activeTab = isAdminTabId(currentTab) ? currentTab : DEFAULT_ADMIN_TAB;
-
-  const handleTabChange = (tabId: AdminTabId) => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("tab", tabId);
-
-    console.log("Changing tab to:", tabId);
-    console.log("router redirecting: ", `${pathname}?${params.toString()}`);
-
-    router.replace(`${pathname}?${params.toString()}`, {
-      scroll: false,
-    });
-  };
-
-  console.log("Active Tab:", activeTab);
-
   return (
     <div className="h-full bg-white p-2 sm:p-4">
       <div className="mb-4 p-2 sm:mb-8 sm:p-4">
@@ -76,7 +54,7 @@ export const AdminTabs = ({
             <button
               key={tab.id}
               type="button"
-              onClick={() => handleTabChange(tab.id)}
+              onClick={() => onTabChange(tab.id)}
               className={clsx(
                 "group flex w-full cursor-pointer items-center gap-2 px-2 py-2 text-left font-medium transition-all duration-200 sm:gap-3 sm:px-4 sm:py-3",
                 isActive

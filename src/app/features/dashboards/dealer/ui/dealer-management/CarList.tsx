@@ -2,10 +2,10 @@ import { CarItems } from "@/app/features/car/types/car.types";
 import DealerCarCard from "./DealerCarCard";
 import EmptyInventoryState from "./EmptyInventoryState";
 import CarTable from "./CarTable";
-import { DashboardCarDTO } from "../../types/dashboard-car/dashboard-car.dto";
+import { CarModel } from "@/app/features/car/types/car.model";
 
 interface CarListProps {
-  cars: DashboardCarDTO[];
+  cars: CarModel[];
   onDelete: (carId: string) => void;
   onEdit: (carId: string) => void;
 }
@@ -19,7 +19,7 @@ export default function CarList({ cars, onDelete, onEdit }: CarListProps) {
     <div className="animate-in fade-in duration-150">
       {/* Mobile view: Cards grid */}
       <div className="grid grid-cols-1 gap-4 lg:hidden">
-        {cars.map((car: DashboardCarDTO, index: number) => (
+        {cars.map((car: CarModel, index: number) => (
           <div
             key={car.id || index}
             className="animate-in fade-in slide-in-from-bottom duration-150"

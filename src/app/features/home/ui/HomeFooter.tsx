@@ -8,7 +8,7 @@ export default function HomeFooter() {
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
             <div>
               <p className="text-lg font-semibold text-white">Gear Up</p>
-              <p className="mt-3 text-sm leading-6 text-gray-400">
+              <p className="mt-3 text-sm leading-6 text-gray-300">
                 Your trusted marketplace to discover, compare, and book your
                 next car with confidence.
               </p>
@@ -72,7 +72,7 @@ export default function HomeFooter() {
               <p className="text-sm font-semibold uppercase tracking-wide text-white">
                 Contact
               </p>
-              <ul className="mt-3 space-y-2 text-sm text-gray-400">
+              <ul className="mt-3 space-y-2 text-sm text-gray-300">
                 <li>support@gearup.com</li>
                 <li>+123 456 7890</li>
                 <li>Bangkok, Thailand</li>
@@ -81,7 +81,7 @@ export default function HomeFooter() {
           </div>
 
           <div className="mt-10 border-t border-white/10 pt-6">
-            <div className="flex flex-col gap-3 text-xs text-gray-500 md:flex-row md:items-center md:justify-between">
+            <div className="flex flex-col gap-3 text-xs text-gray-300 md:flex-row md:items-center md:justify-between">
               <p>© 2026 Gear Up. All rights reserved.</p>
               <div className="flex gap-4">
                 <Link href="/privacy" className="hover:text-gray-300">

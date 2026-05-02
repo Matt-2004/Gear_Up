@@ -7,12 +7,11 @@ import { usePathname, useRouter } from "next/navigation";
 import { useMemo } from "react";
 import { CarItems } from "@/app/features/car/types/car.types";
 import { useAdminFilterContext } from "../../context/AdminFilterContext";
-import { DashboardCarDTO } from "../../../dealer/types/dashboard-car/dashboard-car.dto";
-import { timeFormat } from "@/app/shared/utils/timeFormat";
+import { CarModel } from "@/app/features/car/types/car.model";
 
 type Car = {
   type: "car";
-  data: Omit<DashboardCarDTO, "thumbnailUrl">[];
+  data: CarModel[];
 };
 
 type Kyc = {
@@ -104,11 +103,7 @@ const KycDataTable = ({ data }: { data: IKycSubmissions[] }) => {
   );
 };
 
-const CarDataTable = ({
-  data,
-}: {
-  data: Omit<DashboardCarDTO, "thumbnailUrl">[];
-}) => {
+const CarDataTable = ({ data }: { data: CarModel[] }) => {
   const { filter } = useAdminFilterContext();
 
   const filteredData = useMemo(() => {
@@ -117,14 +112,13 @@ const CarDataTable = ({
     return data.filter((car) => {
       const matchesSearch =
         searchValue.length === 0 ||
-        [car.title, car.id, car.price]
+        [car.title, car.id, car.price, car.status]
           .join(" ")
           .toLowerCase()
           .includes(searchValue);
 
       const matchesStatus =
-        filter.statusType === "All" ||
-        car.carValidationStatus === filter.statusType;
+        filter.statusType === "All" || car.status === filter.statusType;
 
       return matchesSearch && matchesStatus;
     });
@@ -162,16 +156,12 @@ const CarDataTable = ({
             ${car.price.toLocaleString()}
           </td>
 
-          <td className="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">
-            {timeFormat(car.createdAt, "Hour")}
+          <td className="px-6 py-4 whitespace-nowrap">
+            <StatusUI status={car.status as Status} />
           </td>
 
           <td className="px-6 py-4 text-center whitespace-nowrap">
-            <ReviewBtn
-              type="car"
-              status={car.carValidationStatus as Status}
-              id={car.id}
-            />
+            <ReviewBtn type="car" status={car.status as Status} id={car.id} />
           </td>
         </tr>
       ))}

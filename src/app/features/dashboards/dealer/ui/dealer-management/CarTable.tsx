@@ -12,10 +12,10 @@ import {
   Users,
 } from "lucide-react";
 import Image from "next/image";
-import { DashboardCarDTO } from "../../types/dashboard-car/dashboard-car.dto";
+import { CarModel } from "@/app/features/car/types/car.model";
 
 interface CarTableProps {
-  cars: DashboardCarDTO[];
+  cars: CarModel[];
   onDelete: (carId: string) => void;
   onEdit: (carId: string) => void;
 }
@@ -103,6 +103,7 @@ export default function CarTable({ cars, onDelete, onEdit }: CarTableProps) {
 
         <tbody className="divide-y divide-gray-200 bg-white">
           {cars.map((car) => {
+            const imageUrl = car.imageUrl;
             const carName = `${car.make ?? "Unknown"} ${
               car.model ?? "Vehicle"
             }`;
@@ -145,32 +146,19 @@ export default function CarTable({ cars, onDelete, onEdit }: CarTableProps) {
                 <td className="whitespace-nowrap px-6 py-4">
                   <div className="flex flex-col gap-1.5 text-xs text-gray-600">
                     <div className="flex items-center gap-1.5">
-                      <Settings className="h-3.5 w-3.5 text-gray-400" />
-                      {formatTransmission(car.transmissionType)}
-                    </div>
-
-                    <div className="flex items-center gap-1.5">
-                      <Calendar className="h-3.5 w-3.5 text-gray-400" />
                       {car.mileage?.toLocaleString() ?? 0} km
                     </div>
 
                     <div className="flex items-center gap-1.5">
-                      <Users className="h-3.5 w-3.5 text-gray-400" />
-                      {car.seatingCapacity ?? "N/A"} seats
+                      <Settings className="h-3.5 w-3.5 text-gray-400" />
+                      {car.transmission && car.transmission !== "Default"
+                        ? car.transmission
+                        : "Auto"}{" "}
                     </div>
                   </div>
                 </td>
 
-                <td className="whitespace-nowrap px-6 py-4">
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <Palette className="h-4 w-4 text-gray-400" />
-                    <span>{car.color ?? "N/A"}</span>
-                  </div>
-                </td>
-
-                <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                  {formatDate(car.createdAt)}
-                </td>
+                <td className="whitespace-nowrap px-6 py-4"></td>
 
                 <td className="whitespace-nowrap px-6 py-4 text-right">
                   <div className="font-semibold text-primary">

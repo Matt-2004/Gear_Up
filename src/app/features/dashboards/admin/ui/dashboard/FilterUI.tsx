@@ -25,7 +25,7 @@ type DropdownOption<T extends string = string> = {
 };
 
 const documentTypeOptions: DropdownOption<KycDocumentType>[] = [
-  { label: "All Document Types", value: "All" },
+  { label: "All", value: "All" },
   { label: "Passport", value: "Passport" },
   { label: "National ID", value: "NationalID" },
   { label: "Driver License", value: "DriverLicense" },
@@ -34,14 +34,14 @@ const documentTypeOptions: DropdownOption<KycDocumentType>[] = [
 ];
 
 const kycStatusOptions: DropdownOption<KycStatusType>[] = [
-  { label: "All Status", value: "All" },
+  { label: "All", value: "All" },
   { label: "Pending", value: "Pending" },
   { label: "Approved", value: "Approved" },
   { label: "Rejected", value: "Rejected" },
 ];
 
 const carStatusOptions: DropdownOption<CarStatusType>[] = [
-  { label: "All Status", value: "All" },
+  { label: "All", value: "All" },
   { label: "Pending", value: "Pending" },
   { label: "Approved", value: "Approved" },
   { label: "Rejected", value: "Rejected" },
@@ -81,8 +81,8 @@ export const FilterUI = ({ category }: FilterUIProps) => {
   };
 
   return (
-    <div className="w-full">
-      <div className="flex w-full flex-col gap-4 md:flex-row md:items-end">
+    <div className="w-full max-w-full">
+      <div className="flex w-full flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end">
         {/* Search Input */}
         <div className="min-w-100">
           <FillDetailField>
@@ -99,13 +99,14 @@ export const FilterUI = ({ category }: FilterUIProps) => {
                   : "Search by title, make, model, or status..."
               }
               onChange={handleSearchChange}
+              className="w-full"
             />
           </FillDetailField>
         </div>
 
         {/* KYC Document Type Filter */}
         {filterCategory === "kyc" && (
-          <div className="w-full md:w-64 md:shrink-0">
+          <div className="w-full min-w-0 sm:w-64 sm:shrink-0">
             <FillDetailField>
               <FillDetailLabel label="Document Type" />
 
@@ -124,7 +125,7 @@ export const FilterUI = ({ category }: FilterUIProps) => {
         )}
 
         {/* Status Filter */}
-        <div className="w-full md:w-52 md:shrink-0">
+        <div className="w-full min-w-0 sm:w-52 sm:shrink-0">
           <FillDetailField>
             <FillDetailLabel label="Status" />
 

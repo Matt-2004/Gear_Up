@@ -35,7 +35,7 @@ export default function ValuePropositionSection() {
           <h2 className="inline-flex items-center text-xl font-bold text-gray-900 md:text-3xl">
             Why choose GearUp
           </h2>
-          <p className="text-base text-gray-500">
+          <p className="text-base text-gray-700">
             Built to help buyers and sellers move faster with confidence.
           </p>
         </div>

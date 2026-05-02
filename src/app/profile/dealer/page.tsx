@@ -1,3 +1,5 @@
+import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
+import { getMyCars } from "@/app/shared/utils/API/CarAPI";
 import {
   type PageItem,
   PageSwitcher,
@@ -14,10 +16,88 @@ import {
   DealerTabId,
   DEFAULT_DEALER_TAB,
 } from "@/app/features/dashboards/dealer/utils/dealer-tabs.config";
-
-import AppointmentManagement from "@/app/features/dashboards/dealer/ui/appiontment-management/AppointmentManagement";
+import dynamicImport from "next/dynamic";
+import { dealerAppointments } from "@/app/shared/utils/API/AppointmentAPI";
+import { handleServerError } from "@/app/shared/utils/errors/handleServerError";
+import { AppointmentResponse } from "@/app/features/appointments/types/appointment.types";
+import { CarModel } from "@/app/features/car/types/car.model";
 
 export const dynamic = "force-dynamic";
+
+const DealerCarDashboardPage = dynamicImport(
+  () =>
+    import("@/app/features/dashboards/dealer/ui/dealer-dashboard/DealerCarDashboard"),
+);
+const PostManagementPage = dynamicImport(
+  () =>
+    import("@/app/features/dashboards/dealer/ui/post-management/PostManagement"),
+);
+const AppointmentManagementPage = dynamicImport(
+  () =>
+    import("@/app/features/dashboards/dealer/ui/appointment-management/AppointmentManagement"),
+);
+const RevenueManagementPage = dynamicImport(
+  () =>
+    import("@/app/features/dashboards/dealer/ui/revenue-management/RevenueManagement"),
+);
+const SettingPage = dynamicImport(
+  () =>
+    import("@/app/features/dashboards/dealer/ui/dealer-profile/DealerProfile"),
+);
+
+export async function getAllStatusCars(): Promise<CursorResponse<CarModel[]>> {
+  try {
+    const [pendingData, approvedData, rejectedData] = await Promise.all([
+      getMyCars("Pending", null),
+      getMyCars("Approved", null),
+      getMyCars("Rejected", null),
+    ]);
+
+    const getItems = (response: any): CarModel[] => {
+      if (Array.isArray(response?.items)) return response.items;
+      if (Array.isArray(response?.data?.items)) return response.data.items;
+      if (Array.isArray(response?.data)) return response.data;
+      return [];
+    };
+
+    // Combine all cars from different statuses into items array
+    const allCars: CursorResponse<CarModel[]> = {
+      items: [
+        ...getItems(approvedData),
+        ...getItems(pendingData),
+        ...getItems(rejectedData),
+      ],
+      hasMore: false,
+      nextCursor: "",
+    };
+
+    console.log("allCars:", allCars);
+
+    // Return in CursorBaseDTO format
+    return {
+      items: allCars.items,
+      hasMore: false,
+      nextCursor: "",
+    };
+  } catch (error) {
+    console.error("Error fetching all status cars:", error);
+    return {
+      items: [],
+      hasMore: false,
+      nextCursor: "",
+    };
+  }
+}
+
+export async function getAppointment(): Promise<AppointmentResponse> {
+  try {
+    const res = await dealerAppointments();
+    return res;
+  } catch (error) {
+    handleServerError(error);
+    throw error;
+  }
+}
 
 export const metadata: Metadata = {
   title: "Dealer Dashboard - Gear Up",

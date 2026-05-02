@@ -83,6 +83,7 @@ export const NotificationBell = () => {
   const [token, setToken] = useState<string>("");
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"app" | "chat">("app");
+  const [clientNow, setClientNow] = useState<Date | null>(null);
   const connectionRef = useRef<signalR.HubConnection | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -102,6 +103,10 @@ export const NotificationBell = () => {
   } = useNotificationContext();
 
   const totalUnreadCount = unreadChatCount + unreadAppCount;
+
+  useEffect(() => {
+    setClientNow(new Date());
+  }, []);
 
   // ── fetch app notifications ───────────────────────────────────────────────
 
@@ -388,9 +393,11 @@ export const NotificationBell = () => {
                             {n.title}
                           </p>
                           <p className="mt-0.5 text-xs text-gray-400">
-                            {formatDistanceToNow(new Date(n.sentAt), {
-                              addSuffix: true,
-                            })}
+                            {clientNow
+                              ? formatDistanceToNow(new Date(n.sentAt), {
+                                  addSuffix: true,
+                                })
+                              : ""}
                           </p>
                         </div>
 
@@ -463,9 +470,11 @@ export const NotificationBell = () => {
                               {chat.senderName}
                             </p>
                             <span className="shrink-0 text-xs text-gray-400">
-                              {formatDistanceToNow(new Date(chat.sentAt), {
-                                addSuffix: true,
-                              })}
+                              {clientNow
+                                ? formatDistanceToNow(new Date(chat.sentAt), {
+                                    addSuffix: true,
+                                  })
+                                : ""}
                             </span>
                           </div>
                           <p className="truncate text-xs text-gray-500">

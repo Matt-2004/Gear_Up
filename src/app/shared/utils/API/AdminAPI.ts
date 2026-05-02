@@ -1,5 +1,9 @@
 import { IAdminUpdateStatus } from "@/app/features/dashboards/dealer/types/kyc.types";
 import { getFetch, putFetch } from "./AxiosClient";
+import { MainResponse } from "../../types.ts/main-response";
+import { AdminCarData } from "@/app/features/dashboards/admin/types/admin-car-approval.types";
+import { CursorResponse } from "../../types.ts/cursor-response";
+import { CarDTO } from "@/app/features/car/types/car.dto";
 
 export async function getAllKyc(cursor?: string) {
   const url = cursor
@@ -21,7 +25,9 @@ export async function getKycWithStatus(status: string) {
 }
 
 export async function getAllCars(pageNum: number, limit: number) {
-  return getFetch(`/api/v1/admin/cars?pageNum=${pageNum}&limit=${limit}`);
+  return getFetch<MainResponse<CursorResponse<CarDTO[]>>>(
+    `/api/v1/admin/cars?pageNum=${pageNum}&limit=${limit}`,
+  );
 }
 
 export async function getCarById(carId: string) {

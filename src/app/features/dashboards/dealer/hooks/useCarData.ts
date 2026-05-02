@@ -1,20 +1,19 @@
-import { AppointmentFilterStatus } from "@/app/features/appointments/types/appointment.types";
+import { AppointmentStatus } from "@/app/features/appointments/types/appointment.types";
+import { CarModel } from "@/app/features/car/types/car.model";
 import { CarItems } from "@/app/features/car/types/car.types";
 import { useMemo } from "react";
 import { DashboardCarDTO } from "../types/dashboard-car/dashboard-car.dto";
 
 export function useCarData(
-  cars: DashboardCarDTO[],
-  statusFilter: AppointmentFilterStatus,
+  cars: CarModel[],
+  statusFilter: AppointmentStatus | "All",
 ) {
   const filteredCars = useMemo(
     () =>
       statusFilter === "All"
         ? cars
         : cars.filter(
-            (car) =>
-              car?.carValidationStatus?.toLowerCase() ===
-              statusFilter.toLowerCase(),
+            (car) => car.status?.toLowerCase() === statusFilter.toLowerCase(),
           ),
     [cars, statusFilter],
   );
@@ -23,17 +22,14 @@ export function useCarData(
     () => ({
       total: cars.length || 0,
       pending:
-        cars.filter(
-          (car) => car.carValidationStatus?.toLowerCase() === "pending",
-        ).length || 0,
+        cars.filter((car) => car.status?.toLowerCase() === "pending").length ||
+        0,
       approved:
-        cars.filter(
-          (car) => car.carValidationStatus?.toLowerCase() === "approved",
-        ).length || 0,
+        cars.filter((car) => car.status?.toLowerCase() === "approved").length ||
+        0,
       rejected:
-        cars.filter(
-          (car) => car.carValidationStatus?.toLowerCase() === "rejected",
-        ).length || 0,
+        cars.filter((car) => car.status?.toLowerCase() === "rejected").length ||
+        0,
     }),
     [cars],
   );

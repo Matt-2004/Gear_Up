@@ -13,13 +13,13 @@ import AdminFilterProvider, {
   CarStatusType,
 } from "../../context/AdminFilterContext";
 import { FilterUI } from "../dashboard/FilterUI";
-import { DashboardCarDTO } from "../../../dealer/types/dashboard-car/dashboard-car.dto";
-import { CarStatus } from "@/app/features/car/types/car.types";
+import { IKycSubmissions } from "../../../dealer/types/kyc.types";
+import { CarModel } from "@/app/features/car/types/car.model";
 
 const AdminCarVerification = ({
   cars,
 }: {
-  cars: CursorResponse<DashboardCarDTO[]>;
+  cars: CursorResponse<CarModel[]>;
 }) => {
   if (!cars) {
     return <h3>Car data missing</h3>;
@@ -27,7 +27,7 @@ const AdminCarVerification = ({
   console.log("Car verification data:", cars);
 
   const carFilter = (status: Omit<CarStatusType, "All">) =>
-    cars.items.filter((car) => car.carValidationStatus === status);
+    cars.items.filter((car) => car.status === status);
 
   const carCounts = {
     pending: carFilter("Pending").length,
@@ -49,38 +49,32 @@ const AdminCarVerification = ({
             </p>
           </div>{" "}
           {/* Stats Cards */}
-          <div className="space-y-2">
-            <h3 className="text font-semibold text-gray-900">
-              Car Verification Status
-            </h3>
-
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-              <StatsCard
-                label="All Cars"
-                value={cars.items.length}
-                variant="default"
-                description=""
-                category="Car"
-              />
-              <StatsCard
-                label="Pending Cars"
-                value={carCounts.pending}
-                variant="yellow"
-                description=""
-              />
-              <StatsCard
-                label="Approved Cars"
-                value={carCounts.approved}
-                variant="green"
-                description=""
-              />
-              <StatsCard
-                label="Rejected Cars"
-                value={carCounts.rejected}
-                variant="red"
-                description=""
-              />
-            </div>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <StatsCard
+              label="All"
+              value={cars.items.length}
+              variant="default"
+              description=""
+              category="Car"
+            />
+            <StatsCard
+              label="Pending Cars"
+              value={carCounts.pending}
+              variant="yellow"
+              description=""
+            />
+            <StatsCard
+              label="Approved Cars"
+              value={carCounts.approved}
+              variant="green"
+              description=""
+            />
+            <StatsCard
+              label="Rejected Cars"
+              value={carCounts.rejected}
+              variant="red"
+              description=""
+            />
           </div>
           {/* Filter Section */}
           <div className=" bg-white p-6 shadow-sm shadow-gray-100">

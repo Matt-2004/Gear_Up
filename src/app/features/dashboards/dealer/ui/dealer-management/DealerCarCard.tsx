@@ -5,10 +5,10 @@ import { CarCard } from "@/app/features/car/ui/car-card/CarCard";
 import { MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { getStatusColor } from "@/app/features/dashboards/dealer/utils/getStatusColor";
-import { DashboardCarDTO } from "../../types/dashboard-car/dashboard-car.dto";
+import { CarModel } from "@/app/features/car/types/car.model";
 
 interface DealerCarCardProps {
-  car: DashboardCarDTO;
+  car: CarModel;
   onDelete: (carId: string) => void;
   onEdit: (carId: string) => void;
 }
@@ -30,29 +30,29 @@ export default function DealerCarCard({
         setShowOptions(false);
       }}
     >
-      <CarCard carItem={{
-        id: car.id,
-        title: car.title,
-        make: car.make,
-        model: car.model,
-        price: car.price,
-        mileage: car.mileage,
-        seatingCapacity: car.seatingCapacity,
-        carValidationStatus: car.carValidationStatus,
-        carImages: car.thumbnailUrl,
-        transmissionType: car.transmissionType,
-      }} />
+      <CarCard
+        carItem={{
+          id: car.id,
+          title: car.title,
+          make: car.make,
+          model: car.model,
+          price: car.price,
+          mileage: car.mileage,
+          seatingCapacity: car.seatingCapacity,
+          carValidationStatus: car.carValidationStatus,
+          carImages: car.thumbnailUrl,
+          transmissionType: car.transmissionType,
+        }}
+      />
 
       {/* Status Badge */}
-      {car.carValidationStatus && (
+      {car.status && (
         <div
           className={`absolute top-3 left-3 z-10  border px-3 py-1.5 text-xs font-bold backdrop-blur-sm ${getStatusColor(
-            car.carValidationStatus.charAt(0).toUpperCase() +
-              car.carValidationStatus.slice(1),
+            car.status.charAt(0).toUpperCase() + car.status.slice(1),
           )}`}
         >
-          {car.carValidationStatus.charAt(0).toUpperCase() +
-            car.carValidationStatus.slice(1)}
+          {car.status.charAt(0).toUpperCase() + car.status.slice(1)}
         </div>
       )}
 

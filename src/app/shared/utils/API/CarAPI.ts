@@ -1,11 +1,19 @@
 import { getFetch, postFetch, putFetch, deleteFetch } from "./AxiosClient";
+import { CarItems, CarsResponse } from "@/app/features/car/types/car.types";
+import { MainResponse } from "@/app/shared/types.ts/main-response";
+import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
+import { AdminCarData } from "@/app/features/dashboards/admin/types/admin-car-approval.types";
+import { CarModel } from "@/app/features/car/types/car.model";
+import { CarDTO } from "@/app/features/car/types/car.dto";
 
 export async function addCar(data: FormData) {
   return postFetch<null>("/api/v1/cars", data);
 }
 
 export async function getAllCars(cursor: string | null) {
-  return getFetch(`/api/v1/cars?cursor=${cursor ?? ""}`);
+  return getFetch<MainResponse<CursorResponse<CarDTO[]>>>(
+    `/api/v1/cars?cursor=${cursor ?? ""}`,
+  );
 }
 
 export async function updateCar(carId: string, data: FormData) {
@@ -13,7 +21,7 @@ export async function updateCar(carId: string, data: FormData) {
 }
 
 export async function getCarById(carId: string) {
-  return getFetch(`/api/v1/cars/${carId}`);
+  return getFetch<MainResponse<CarItems>>(`/api/v1/cars/${carId}`);
 }
 
 export async function deleteCarById(carId: string) {
@@ -30,5 +38,7 @@ export async function getMyCars(status: string, cursor: string | null) {
 }
 
 export async function searchCarWithQuery(query: string) {
-  return getFetch(`/api/v1/cars/search?${query}`);
+  return getFetch<MainResponse<CursorResponse<CarDTO[]>>>(
+    `/api/v1/cars/search?${query}`,
+  );
 }

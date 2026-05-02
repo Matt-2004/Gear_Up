@@ -40,11 +40,6 @@ import { formatNumber } from "@/app/shared/utils/numberFormatter";
 
 const DiscoverPost = ({ post }: { post: CursorResponse<PostItem[]> }) => {
   const { user } = useUserData();
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   const { data, fetchNextPage, isFetchingNextPage, hasNextPage, refetch } =
     useInfiniteQuery<
@@ -115,10 +110,6 @@ const DiscoverPost = ({ post }: { post: CursorResponse<PostItem[]> }) => {
       refetch();
     }
   }, [refetch, user]);
-
-  if (!isMounted) {
-    return <div className="min-h-screen w-full bg-gray-50" />;
-  }
 
   if (!user) {
     return <div>User data not exist!</div>;
