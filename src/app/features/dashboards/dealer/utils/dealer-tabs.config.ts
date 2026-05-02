@@ -1,23 +1,23 @@
 export const DEALER_TABS = [
   {
     id: "car-management",
-    label: "Car Management",
+    label: "Vehicles",
   },
   {
     id: "post-management",
-    label: "Post Management",
+    label: "Posts",
   },
   {
     id: "appointment-management",
-    label: "Appointment Management",
+    label: "Appointments",
   },
   {
     id: "revenue-management",
-    label: "Revenue Management",
+    label: "Revenue",
   },
   {
     id: "setting",
-    label: "Setting",
+    label: "Settings",
   },
 ] as const;
 

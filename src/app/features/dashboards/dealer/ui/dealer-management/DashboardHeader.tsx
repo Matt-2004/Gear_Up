@@ -5,7 +5,7 @@ export default function DashboardHeader() {
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between py-2 mb-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-gray-900">
+        <h1 className="text-3xl font-bold tracking-tight text-gray-900">
           Vehicle Inventory
         </h1>
         <p className="mt-1 text-sm text-gray-500">

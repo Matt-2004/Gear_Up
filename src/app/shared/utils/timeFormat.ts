@@ -1,4 +1,4 @@
-export function timeFormat(iso: string, format: "Hour" | "Date") {
+export function timeFormat(iso: Date, format: "Hour" | "Date") {
   const d = new Date(iso);
 
   const year = d.getFullYear();

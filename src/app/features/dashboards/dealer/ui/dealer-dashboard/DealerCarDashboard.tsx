@@ -17,28 +17,38 @@ const DealerCarDashboard = ({
 }: {
   carData: CursorResponse<CarModel[]>;
 }) => {
-  const { isFilterOpen, statusFilter, toggleFilters } = useCarFilters();
+  const { isFilterOpen, statusFilter, toggleFilters, setStatusFilter } =
+    useCarFilters();
 
   const { filteredCars, carCounts } = useCarData(carData.items, statusFilter);
   const { handleDelete, handleEdit } = useCarActions();
 
   return (
-    <div id="car-main-container" className="min-h-screen bg-gray-50 ">
-      <div className="mx-auto max-w-7xl">
+    <div id="car-main-container" className="min-h-screen bg-gray-50">
+      <div className="mx-auto max-w-7xl px-6 pt-4">
         <DashboardHeader />
 
         {/* Stats Cards */}
-        <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <StatsCard
-            label="All Listings"
-            description="View and manage all your listings in one place"
-            value={carCounts.total}
+            label="Needs Attention"
+            value={carCounts.rejected}
+            variant="red"
+            description="Listings that require updates before approval"
+            actionLabel="Review Issues"
+            actionVisible={carCounts.rejected > 0}
+            onAction={() => {
+              setStatusFilter("Rejected");
+              if (!isFilterOpen) {
+                toggleFilters();
+              }
+            }}
           />
           <StatsCard
             label="Under Review"
             value={carCounts.pending}
             variant="yellow"
-            description="We're checking your listing"
+            description="Listings awaiting review"
           />
           <StatsCard
             label="Published"
@@ -47,10 +57,9 @@ const DealerCarDashboard = ({
             description="Visible to customers"
           />
           <StatsCard
-            label="Needs Attention"
-            value={carCounts.rejected}
-            variant="red"
-            description="Please update and resubmit"
+            label="All Listings"
+            description="All listings across every status"
+            value={carCounts.total}
           />
         </div>
 

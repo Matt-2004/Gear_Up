@@ -1,18 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import {
-  MoreHorizontal,
-  Pencil,
-  Trash2,
-  Settings,
-  Calendar,
-  Car,
-  Palette,
-  Users,
-} from "lucide-react";
+import { MoreHorizontal, Pencil, Trash2, Settings, Car } from "lucide-react";
 import Image from "next/image";
 import { CarModel } from "@/app/features/car/types/car.model";
+import { timeFormat } from "@/app/shared/utils/timeFormat";
 
 interface CarTableProps {
   cars: CarModel[];
@@ -20,32 +12,10 @@ interface CarTableProps {
   onEdit: (carId: string) => void;
 }
 
-const formatDate = (date: string) => {
-  if (!date) return "N/A";
-
-  const parsedDate = new Date(date);
-
-  if (Number.isNaN(parsedDate.getTime())) {
-    return "N/A";
-  }
-
-  return parsedDate.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-};
-
-const formatTransmission = (transmissionType?: string) => {
-  if (!transmissionType || transmissionType === "Default") {
-    return "N/A";
-  }
-
-  return transmissionType;
-};
-
 export default function CarTable({ cars, onDelete, onEdit }: CarTableProps) {
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
+
+  console.log("Car data:: ", cars);
 
   const toggleMenu = (id: string) => {
     setActiveMenuId((prev) => (prev === id ? null : id));
@@ -71,7 +41,7 @@ export default function CarTable({ cars, onDelete, onEdit }: CarTableProps) {
   }
 
   return (
-    <div className="overflow-hidden bg-white shadow-sm">
+    <div className="overflow-hidden bg-white shadow-sm ">
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-[#F9F9F6]">
           <tr>
@@ -103,7 +73,6 @@ export default function CarTable({ cars, onDelete, onEdit }: CarTableProps) {
 
         <tbody className="divide-y divide-gray-200 bg-white">
           {cars.map((car) => {
-            const imageUrl = car.imageUrl;
             const carName = `${car.make ?? "Unknown"} ${
               car.model ?? "Vehicle"
             }`;
@@ -157,8 +126,13 @@ export default function CarTable({ cars, onDelete, onEdit }: CarTableProps) {
                     </div>
                   </div>
                 </td>
+                <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-600">
+                  {car.color}
+                </td>
 
-                <td className="whitespace-nowrap px-6 py-4"></td>
+                <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-600">
+                  {timeFormat(new Date(car.createdAt), "Date")}
+                </td>
 
                 <td className="whitespace-nowrap px-6 py-4 text-right">
                   <div className="font-semibold text-primary">
@@ -177,7 +151,7 @@ export default function CarTable({ cars, onDelete, onEdit }: CarTableProps) {
                   </button>
 
                   {activeMenuId === car.id && (
-                    <div className="animate-in fade-in zoom-in-95 absolute right-8 top-10 z-20 w-48 overflow-hidden border border-gray-200 bg-white py-1.5 shadow-sm shadow-gray-200/50 ring-1 ring-black/5 duration-100">
+                    <div className="animate-in fade-in zoom-in-95 absolute right-8 top-0 z-20 w-48 overflow-hidden border border-gray-200 bg-white py-1.5 shadow-sm shadow-gray-200/50 ring-1 ring-black/5 duration-100">
                       <button
                         type="button"
                         onClick={() => onEdit(car.id)}

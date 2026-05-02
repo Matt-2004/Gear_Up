@@ -307,7 +307,7 @@ const HistoryComponent = ({ submittedAt }: { submittedAt: string }) => {
         <div>
           <h2 className={"font-semibold"}>Initial Submission</h2>
           <h3 className={"text-sm text-gray-600"}>
-            {timeFormat(submittedAt, "Hour")}
+            {timeFormat(new Date(submittedAt), "Hour")}
           </h3>
         </div>
       </div>

@@ -16,6 +16,9 @@ import { dealerAppointments } from "@/app/shared/utils/API/AppointmentAPI";
 import { handleServerError } from "@/app/shared/utils/errors/handleServerError";
 import { AppointmentResponse } from "@/app/features/appointments/types/appointment.types";
 import { CarModel } from "@/app/features/car/types/car.model";
+import { carMapper } from "@/app/features/car/types/car.mapper";
+import { MainResponse } from "@/app/shared/types.ts/main-response";
+import { CarDTO } from "@/app/features/car/types/car.dto";
 
 export const dynamic = "force-dynamic";
 
@@ -48,11 +51,10 @@ export async function getAllStatusCars(): Promise<CursorResponse<CarModel[]>> {
       getMyCars("Rejected", null),
     ]);
 
-    const getItems = (response: any): CarModel[] => {
-      if (Array.isArray(response?.items)) return response.items;
-      if (Array.isArray(response?.data?.items)) return response.data.items;
-      if (Array.isArray(response?.data)) return response.data;
-      return [];
+    const getItems = (
+      response: MainResponse<CursorResponse<CarDTO[]>>,
+    ): CarModel[] => {
+      return response.data.items.map(carMapper);
     };
 
     // Combine all cars from different statuses into items array
@@ -129,13 +131,13 @@ export default async function Page() {
 
   return (
     <div className="min-h-screen w-full bg-gray-50">
-      <div className="relative mx-auto w-full">
+      <div className=" mx-auto w-full">
         <div className="border-t border-b border-gray-200 bg-white shadow-sm md:border">
-          <div className="sticky top-17 z-10 border-b border-gray-200 bg-white">
+          <div className="sticky top-16.5 z-10 border-b border-gray-200 bg-white">
             <DealerTabs tabs={DEALER_TABS} />
           </div>
 
-          <div className="w-full bg-gray-50/20 p-0 md:p-6">
+          <div className="w-full bg-gray-50/20">
             <PageSwitcher pages={pages} defaultPageId={DEFAULT_DEALER_TAB} />
           </div>
         </div>
