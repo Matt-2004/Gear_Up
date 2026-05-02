@@ -1,16 +1,16 @@
-import { AppointmentStatus } from "@/app/features/appointments/types/appointment.types";
+import { AppointmentFilterStatus } from "@/app/features/appointments/types/appointment.types";
 import { useState } from "react";
 
 export function useCarFilters() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [statusFilter, setStatusFilter] = useState<AppointmentStatus | "All">(
+  const [statusFilter, setStatusFilter] = useState<AppointmentFilterStatus>(
     "All",
   );
   const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
 
   const toggleFilters = () => setIsFilterOpen((prev) => !prev);
   const toggleStatusDropdown = () => setStatusDropdownOpen((prev) => !prev);
-  const setStatusWithClose = (status: AppointmentStatus | "All") => {
+  const setStatusWithClose = (status: AppointmentFilterStatus) => {
     setStatusFilter(status);
     setStatusDropdownOpen(false);
   };

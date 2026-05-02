@@ -32,7 +32,8 @@ import {
   CarImageUploadSectionFile,
 } from "../add-car-form/CarImageUpload";
 import { GroupInputForm } from "../add-car-form/FillDetailSection";
-import { CarItems } from "@/app/features/car/types/car.types";
+import { CarImages, CarItems } from "@/app/features/car/types/car.types";
+import { useToast } from "@/app/features/toast/hooks/useToast";
 
 interface CarSuggestion {
   make: string;
@@ -51,6 +52,7 @@ interface FileWithId extends CarImageUploadSectionFile {
 
 const EditCarForm = ({ initialData }: EditCarFormProps) => {
   const router = useRouter();
+  const { handleToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState<FileWithId[]>([]);
 
@@ -70,10 +72,6 @@ const EditCarForm = ({ initialData }: EditCarFormProps) => {
   const engineCapacityInputRef = useRef<HTMLInputElement>(null);
   const vinInputRef = useRef<HTMLInputElement>(null);
   const licensePlateInputRef = useRef<HTMLInputElement>(null);
-
-  const [changedFormState, setChangedFormState] = useState<Partial<CarItems>>(
-    {},
-  );
 
   const [formState, setFormState] = useState<FillDetailsFormState>({
     carSuggestions: [] as CarSuggestion[],
@@ -258,8 +256,6 @@ const EditCarForm = ({ initialData }: EditCarFormProps) => {
         String(submittedFormData.get("LicensePlate") || ""),
       );
 
-      setChangedFormState(changedData);
-
       if (Object.keys(changedData).length === 0 && files.length === 0) {
         alert("No changes detected.");
         return;
@@ -299,7 +295,8 @@ const EditCarForm = ({ initialData }: EditCarFormProps) => {
         fd.append("images", fileObj.file);
       });
 
-      await updateCar(initialData.id, fd);
+      const res = await updateCar(initialData.id, fd);
+      handleToast(res, "/profile/dealer?tab=car-management");
       router.push("/profile/dealer?tab=car-management");
     } catch (error: any) {
       console.error("Error updating vehicle:", error);
@@ -882,27 +879,30 @@ const EditCarForm = ({ initialData }: EditCarFormProps) => {
                     These are the current images for this vehicle
                   </p>
                 </div>
-                {initialData.carImages && initialData.carImages.length > 0 && (
-                  <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-                    {initialData.carImages.map((image, index) => (
-                      <div
-                        key={image.id}
-                        className="group relative overflow-hidden rounded-lg border border-gray-200"
-                      >
-                        <Image
-                          src={image.url}
-                          alt={`Car image ${index + 1}`}
-                          width={200}
-                          height={150}
-                          className="h-40 w-full object-cover"
-                        />
-                        <span className="absolute top-2 left-2 flex h-6 w-6 items-center justify-center rounded-full bg-black/70 text-xs font-bold text-white">
-                          {index + 1}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                {Array.isArray(initialData.carImages) &&
+                  initialData.carImages.length > 0 && (
+                    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+                      {initialData.carImages.map(
+                        (image: CarImages, index: number) => (
+                          <div
+                            key={image.id}
+                            className="group relative overflow-hidden rounded-lg border border-gray-200"
+                          >
+                            <Image
+                              src={image.url}
+                              alt={`Car image ${index + 1}`}
+                              width={200}
+                              height={150}
+                              className="h-40 w-full object-cover"
+                            />
+                            <span className="absolute top-2 left-2 flex h-6 w-6 items-center justify-center rounded-full bg-black/70 text-xs font-bold text-white">
+                              {index + 1}
+                            </span>
+                          </div>
+                        ),
+                      )}
+                    </div>
+                  )}
               </div>
 
               <CarImageUploadSection

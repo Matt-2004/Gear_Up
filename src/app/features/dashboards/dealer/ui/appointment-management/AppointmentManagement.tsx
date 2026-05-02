@@ -4,6 +4,7 @@ import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
 import {
   AppointmentStatus,
   AppointmentData,
+  AppointmentResponse,
 } from "@/app/features/appointments/types/appointment.types";
 import SharedAppointmentCard from "@/app/features/appointments/ui/appointment-card/RoleBasedAppointmentCard";
 import {
@@ -188,7 +189,11 @@ const EmptyState = ({ filter }: { filter: AppointmentStatus | "All" }) => (
 
 // ─── main component ───────────────────────────────────────────────────────────
 
-const AppointmentManagement = () => {
+const AppointmentManagement = ({
+  appointmentData,
+}: {
+  appointmentData: AppointmentResponse;
+}) => {
   const [data, setData] = useState<CursorResponse<AppointmentData[]>>({
     items: [],
     nextCursor: null,
@@ -200,30 +205,9 @@ const AppointmentManagement = () => {
   const [filter, setFilter] = useState<AppointmentStatus | "All">("All");
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  const fetchData = async () => {
-    setLoading(true);
-    setFetchError(null);
-    try {
-      const res = await dealerAppointments();
-      setData(res?.data ?? { items: [], nextCursor: null, hasMore: false });
-    } catch (err: unknown) {
-      const errorResponse = err as {
-        response?: { data?: { errorMessage?: string } };
-        message?: string;
-      };
-      setFetchError(
-        errorResponse?.response?.data?.errorMessage ??
-          errorResponse?.message ??
-          "Failed to load appointments.",
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchData();
-  }, []);
+    setData(appointmentData.data);
+  }, [appointmentData]);
 
   // ── action handlers ──────────────────────────────────────────────────────
 
@@ -311,18 +295,6 @@ const AppointmentManagement = () => {
           </div>
 
           <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={fetchData}
-              disabled={loading}
-              className="flex items-center gap-1.5 rounded-lg bg-white px-3 py-2 text-sm font-medium text-gray-600 shadow-sm hover:bg-gray-50 disabled:opacity-50"
-            >
-              <RotateCcw
-                className={`h-4 w-4 ${loading ? "animate-spin" : ""}`}
-              />
-              Refresh
-            </button>
-
             <FilterDropdown
               filter={filter}
               dropdownOpen={dropdownOpen}
@@ -353,14 +325,6 @@ const AppointmentManagement = () => {
             <p className="mb-4 text-sm font-medium text-red-600">
               {fetchError}
             </p>
-            <button
-              type="button"
-              onClick={fetchData}
-              className="flex items-center gap-2 rounded-lg bg-red-500 px-4 py-2 text-sm font-semibold text-white hover:bg-red-600"
-            >
-              <RotateCcw className="h-4 w-4" />
-              Retry
-            </button>
           </div>
         )}
 

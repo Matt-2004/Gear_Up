@@ -1,33 +1,37 @@
 "use client";
-import Image from "next/image";
-import { ImgHTMLAttributes, RefObject, useState } from "react";
 
-interface CarImageProps extends ImgHTMLAttributes<HTMLImageElement> {
+import Image, { ImageProps } from "next/image";
+import { useState } from "react";
+
+interface CarImageProps extends Omit<ImageProps, "src"> {
   src: string;
-  width: number;
-  height: number;
-  priority?: boolean;
-  ref?: RefObject<HTMLImageElement | null>;
 }
 
 const CarImage = ({
   src,
-  ref,
+  alt = "Car image",
   width,
   height,
+  className = "",
   priority,
   ...props
 }: CarImageProps) => {
   const [imgSrc, setImageSrc] = useState(src);
+
   return (
     <Image
       {...props}
-      ref={ref}
       src={imgSrc}
-      onError={() => setImageSrc("/fallback_image.jpg")}
-      alt="fallback_image"
-      fill
+      width={width}
+      height={height}
+      alt={alt}
       priority={priority}
+      className={`object-cover ${className}`}
+      onError={() => {
+        if (imgSrc !== "/fallback_image.jpg") {
+          setImageSrc("/fallback_image.jpg");
+        }
+      }}
     />
   );
 };

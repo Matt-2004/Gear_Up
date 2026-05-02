@@ -7,10 +7,11 @@ import { usePathname, useRouter } from "next/navigation";
 import { useMemo } from "react";
 import { CarItems } from "@/app/features/car/types/car.types";
 import { useAdminFilterContext } from "../../context/AdminFilterContext";
+import { CarModel } from "@/app/features/car/types/car.model";
 
 type Car = {
   type: "car";
-  data: CarItems[];
+  data: CarModel[];
 };
 
 type Kyc = {
@@ -23,6 +24,8 @@ type DataTableProps = {
 };
 
 const DataTable = ({ data }: DataTableProps) => {
+  console.log(data);
+
   if (data.type === "kyc") {
     return <KycDataTable data={data.data} />;
   }
@@ -100,7 +103,7 @@ const KycDataTable = ({ data }: { data: IKycSubmissions[] }) => {
   );
 };
 
-const CarDataTable = ({ data }: { data: CarItems[] }) => {
+const CarDataTable = ({ data }: { data: CarModel[] }) => {
   const { filter } = useAdminFilterContext();
 
   const filteredData = useMemo(() => {
@@ -109,20 +112,26 @@ const CarDataTable = ({ data }: { data: CarItems[] }) => {
     return data.filter((car) => {
       const matchesSearch =
         searchValue.length === 0 ||
-        [car.title, car.id, car.price, car.carValidationStatus]
+        [car.title, car.id, car.price, car.status]
           .join(" ")
           .toLowerCase()
           .includes(searchValue);
 
       const matchesStatus =
-        filter.statusType === "All" ||
-        car.carValidationStatus === filter.statusType;
+        filter.statusType === "All" || car.status === filter.statusType;
 
       return matchesSearch && matchesStatus;
     });
   }, [data, filter]);
 
-  const cols = ["No.", "Car Name", "Dealer / ID", "Price", "Status", "Action"];
+  const cols = [
+    "No.",
+    "Car Name",
+    "Dealer / ID",
+    "Price",
+    "Submitted At",
+    "Action",
+  ];
 
   return (
     <TableLayout cols={cols} isEmpty={filteredData.length === 0}>
@@ -148,15 +157,11 @@ const CarDataTable = ({ data }: { data: CarItems[] }) => {
           </td>
 
           <td className="px-6 py-4 whitespace-nowrap">
-            <StatusUI status={car.carValidationStatus as Status} />
+            <StatusUI status={car.status as Status} />
           </td>
 
           <td className="px-6 py-4 text-center whitespace-nowrap">
-            <ReviewBtn
-              type="car"
-              status={car.carValidationStatus as Status}
-              id={car.id}
-            />
+            <ReviewBtn type="car" status={car.status as Status} id={car.id} />
           </td>
         </tr>
       ))}
@@ -238,7 +243,7 @@ const ReviewBtn = ({
       return;
     }
 
-    router.push(`${currentPath}/management/car/${id}`);
+    router.push(`${currentPath}/cars/${id}`);
   };
 
   return (

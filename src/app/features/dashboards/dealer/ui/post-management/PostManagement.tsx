@@ -31,6 +31,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
 
+export const dynamic = "force-dynamic";
 // ─── types ──────────────────────────────────────────────────────────────────
 
 type Step = "list" | "select-car" | "write-post";
@@ -52,7 +53,8 @@ const SelectableCarCard = ({
   selected: boolean;
   onSelect: (car: CarItems) => void;
 }) => {
-  const firstImage = car.carImages?.[0]?.url;
+  const firstImage =
+    typeof car.carImages === "string" ? car.carImages : car.carImages?.[0]?.url;
   return (
     <button
       type="button"
@@ -861,9 +863,13 @@ const PostManagement = () => {
             {selectedCar && (
               <div className="flex items-center gap-3 rounded-xl border border-gray-200 bg-gray-50 p-3">
                 <div className="relative h-14 w-20 shrink-0 overflow-hidden rounded-lg bg-gray-200">
-                  {selectedCar.carImages?.[0]?.url ? (
+                  {selectedCar.carImages ? (
                     <Image
-                      src={selectedCar.carImages[0].url}
+                      src={
+                        typeof selectedCar.carImages === "string"
+                          ? selectedCar.carImages
+                          : selectedCar.carImages[0].url
+                      }
                       alt={selectedCar.title}
                       fill
                       className="object-cover"

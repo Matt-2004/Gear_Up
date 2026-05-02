@@ -1,4 +1,3 @@
-import { DashboardCarDTO } from "@/app/features/dashboards/dealer/types/dashboard-car/dashboard-car.dto";
 import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
 import { getMyCars } from "@/app/shared/utils/API/CarAPI";
 import {
@@ -16,6 +15,7 @@ import dynamicImport from "next/dynamic";
 import { dealerAppointments } from "@/app/shared/utils/API/AppointmentAPI";
 import { handleServerError } from "@/app/shared/utils/errors/handleServerError";
 import { AppointmentResponse } from "@/app/features/appointments/types/appointment.types";
+import { CarModel } from "@/app/features/car/types/car.model";
 
 export const dynamic = "force-dynamic";
 
@@ -33,16 +33,14 @@ const AppointmentManagementPage = dynamicImport(
 );
 const RevenueManagementPage = dynamicImport(
   () =>
-    import("@/app/features/dashboards/dealer/ui/review-management/RevenueManagement"),
+    import("@/app/features/dashboards/dealer/ui/revenue-management/RevenueManagement"),
 );
 const SettingPage = dynamicImport(
   () =>
     import("@/app/features/dashboards/dealer/ui/dealer-profile/DealerProfile"),
 );
 
-export async function getAllStatusCars(): Promise<
-  CursorResponse<DashboardCarDTO[]>
-> {
+export async function getAllStatusCars(): Promise<CursorResponse<CarModel[]>> {
   try {
     const [pendingData, approvedData, rejectedData] = await Promise.all([
       getMyCars("Pending", null),
@@ -50,7 +48,7 @@ export async function getAllStatusCars(): Promise<
       getMyCars("Rejected", null),
     ]);
 
-    const getItems = (response: any): DashboardCarDTO[] => {
+    const getItems = (response: any): CarModel[] => {
       if (Array.isArray(response?.items)) return response.items;
       if (Array.isArray(response?.data?.items)) return response.data.items;
       if (Array.isArray(response?.data)) return response.data;
@@ -58,7 +56,7 @@ export async function getAllStatusCars(): Promise<
     };
 
     // Combine all cars from different statuses into items array
-    const allCars: CursorResponse<DashboardCarDTO[]> = {
+    const allCars: CursorResponse<CarModel[]> = {
       items: [
         ...getItems(approvedData),
         ...getItems(pendingData),

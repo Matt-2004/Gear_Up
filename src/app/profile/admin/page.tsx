@@ -1,21 +1,26 @@
-import AdminCarVerification from "@/app/features/dashboards/admin/ui/cars/AdminCarVerification";
-import AdminDashboard from "@/app/features/dashboards/admin/ui/dashboard/AdminDashboard";
-import AdminKycVerification from "@/app/features/dashboards/admin/ui/kyc/AdminKycVerification";
-import {
-  type PageItem,
-  PageSwitcher,
-} from "@/app/features/dashboards/admin/ui/dashboard/PageSwitcher";
-import { AdminTabs } from "@/app/features/dashboards/admin/ui/dashboard/AdminTabs";
+import { type PageItem } from "@/app/features/dashboards/admin/ui/dashboard/PageSwitcher";
+import AdminPageShell from "@/app/features/dashboards/admin/ui/dashboard/AdminPageShell";
 import { Metadata } from "next";
 import { getAllKyc } from "@/app/shared/utils/API/AdminAPI";
 import { getAllCars } from "@/app/shared/utils/API/AdminAPI";
-
 import {
   ADMIN_TABS,
   AdminTabId,
   DEFAULT_ADMIN_TAB,
 } from "@/app/features/dashboards/admin/utils/admin-tab.config";
+import dynamicImport from "next/dynamic";
+import { CarModel } from "@/app/features/car/types/car.model";
+import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
 
+const AdminDashboardPage = dynamicImport(
+  () => import("@/app/features/dashboards/admin/ui/dashboard/AdminDashboard"),
+);
+const AdminCarVerificationPage = dynamicImport(
+  () => import("@/app/features/dashboards/admin/ui/cars/AdminCarVerification"),
+);
+const AdminKycVerificationPage = dynamicImport(
+  () => import("@/app/features/dashboards/admin/ui/kyc/AdminKycVerification"),
+);
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
@@ -28,48 +33,37 @@ const getKycData = async () => {
   return res?.data;
 };
 
-const getCarsData = async () => {
+const getCarsData = async (): Promise<CursorResponse<CarModel[]>> => {
   const res = await getAllCars(1, 1000); // Fetch cars for verification
-  return res?.data;
-};
-
-const getDashboardData = async () => {
-  const [kycRes, carsRes] = await Promise.all([
-    getAllKyc(),
-    getAllCars(1, 100), // Fetch first 100 cars for stats
-  ]);
-
   return {
-    kyc: kycRes?.data,
-    cars: carsRes?.data,
+    items: res.data.items.map(carMapper),
+    hasMore: res.data.hasMore,
+    nextCursor: res.data.nextCursor,
   };
 };
 
 export default async function Page() {
   const kyc = await getKycData();
   const cars = await getCarsData();
-  const dashboardData = await getDashboardData();
+  const dashboardData = { kyc, cars };
 
   const pages: PageItem<AdminTabId>[] = [
     {
       id: "dashboard",
-      page: <AdminDashboard dashboardData={dashboardData} />,
+      page: <AdminDashboardPage dashboardData={dashboardData} />,
     },
     {
       id: "kyc-verification",
-      page: <AdminKycVerification kyc={kyc} />,
+      page: <AdminKycVerificationPage kyc={kyc} />,
     },
-    { id: "car-verification", page: <AdminCarVerification cars={cars} /> },
+    { id: "car-verification", page: <AdminCarVerificationPage cars={cars} /> },
   ];
 
   return (
-    <div className="flex min-h-screen bg-linear-to-br from-gray-50 to-gray-100">
-      <div className="w-64 p-4">
-        <AdminTabs tabs={ADMIN_TABS} />
-      </div>
-      <div className="flex-1">
-        <PageSwitcher pages={pages} defaultPageId={DEFAULT_ADMIN_TAB} />
-      </div>
-    </div>
+    <AdminPageShell
+      pages={pages}
+      tabs={ADMIN_TABS}
+      defaultTabId={DEFAULT_ADMIN_TAB}
+    />
   );
 }

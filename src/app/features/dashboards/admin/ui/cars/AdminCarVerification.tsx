@@ -13,41 +13,45 @@ import AdminFilterProvider, {
   CarStatusType,
 } from "../../context/AdminFilterContext";
 import { FilterUI } from "../dashboard/FilterUI";
+import { IKycSubmissions } from "../../../dealer/types/kyc.types";
+import { CarModel } from "@/app/features/car/types/car.model";
 
 const AdminCarVerification = ({
   cars,
 }: {
-  cars: CursorResponse<AdminCarData[]>;
+  cars: CursorResponse<CarModel[]>;
 }) => {
   if (!cars) {
     return <h3>Car data missing</h3>;
   }
+  console.log("Car verification data:", cars);
 
   const carFilter = (status: Omit<CarStatusType, "All">) =>
-    cars.items.filter((car) => car.carValidationStatus === status);
+    cars.items.filter((car) => car.status === status);
 
   const carCounts = {
     pending: carFilter("Pending").length,
     approved: carFilter("Approved").length,
     rejected: carFilter("Rejected").length,
   };
+
   return (
     <AdminFilterProvider>
       <div className="from-primary-50 to-primary-100/50 min-h-screen via-white p-8">
         <div className="mx-auto max-w-7xl space-y-8">
           {/* Header */}
           <div className="space-y-2">
-            <h1 className="text-4xl font-bold text-gray-900">
+            <h1 className="text-2xl font-bold text-gray-900">
               Car Verification
             </h1>
-            <p className="text-lg text-gray-600">
+            <p className="text-sm text-gray-500">
               Review and verify dealer-submitted car listings
             </p>
           </div>{" "}
           {/* Stats Cards */}
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             <StatsCard
-              label="All Cars"
+              label="All"
               value={cars.items.length}
               variant="default"
               description=""

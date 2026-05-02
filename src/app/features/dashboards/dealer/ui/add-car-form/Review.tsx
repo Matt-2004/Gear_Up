@@ -13,8 +13,9 @@ import { CarCard } from "@/app/features/car/ui/car-card/CarCard";
 
 const Review = () => {
   const { addedCar, clearAddedCar, isDraftReady } = useVehicleContext();
+
   const router = useRouter();
-  const { addToastMessage } = useToast({
+  const { handleToast, addToastMessage } = useToast({
     toastType: "info",
     message: null,
   });
@@ -88,52 +89,35 @@ const Review = () => {
 
     setIsSubmitting(true);
 
-    try {
-      // Create FormData for API submission
-      const formData = new FormData();
-      // Append all car details
-      formData.append("Title", addedCar.title);
-      formData.append("Description", addedCar.description);
-      formData.append("Make", addedCar.make);
-      formData.append("Model", addedCar.model);
-      formData.append("Year", addedCar.year.toString());
-      formData.append("Price", addedCar.price.toString());
-      formData.append("Color", addedCar.color);
-      formData.append("Mileage", addedCar.mileage.toString());
-      formData.append("SeatingCapacity", addedCar.seatingCapacity.toString());
-      formData.append("EngineCapacity", addedCar.engineCapacity.toString());
-      formData.append("FuelType", addedCar.fuelType);
-      formData.append("CarCondition", addedCar.carCondition);
-      formData.append("TransmissionType", addedCar.transmissionType);
-      formData.append("Vin", addedCar.vin);
-      formData.append("LicensePlate", addedCar.licensePlate);
+    // Create FormData for API submission
+    const formData = new FormData();
+    // Append all car details
+    formData.append("Title", addedCar.title);
+    formData.append("Description", addedCar.description);
+    formData.append("Make", addedCar.make);
+    formData.append("Model", addedCar.model);
+    formData.append("Year", addedCar.year.toString());
+    formData.append("Price", addedCar.price.toString());
+    formData.append("Color", addedCar.color);
+    formData.append("Mileage", addedCar.mileage.toString());
+    formData.append("SeatingCapacity", addedCar.seatingCapacity.toString());
+    formData.append("EngineCapacity", addedCar.engineCapacity.toString());
+    formData.append("FuelType", addedCar.fuelType);
+    formData.append("CarCondition", addedCar.carCondition);
+    formData.append("TransmissionType", addedCar.transmissionType);
+    formData.append("Vin", addedCar.vin);
+    formData.append("LicensePlate", addedCar.licensePlate);
 
-      // Append images
-      addedCar.carImages.forEach((file) => {
-        formData.append("CarImages", file);
-      });
+    // Append images
+    addedCar.carImages.forEach((file) => {
+      formData.append("CarImages", file);
+    });
 
-      const response = await addCar(formData);
+    const response = await addCar(formData);
 
-      if (response?.isSuccess) {
-        addToastMessage("success", "Vehicle listed successfully!");
-        clearAddedCar();
-        setTimeout(() => {
-          router.push("/profile/dealer?tab=car-management");
-        }, 1500);
-      } else {
-        addToastMessage(
-          "error",
-          response?.message || "Failed to list vehicle. Please try again.",
-        );
-      }
-    } catch (error) {
-      console.error("Error adding car:", error);
-
-      addToastMessage("error", "Server error. Please try again later.");
-    } finally {
-      setIsSubmitting(false);
-    }
+    clearAddedCar();
+    handleToast(response, "/profile/dealer?tab=car-management");
+    setIsSubmitting(false);
   };
 
   return (

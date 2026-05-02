@@ -6,8 +6,7 @@ import { getFetch, putFetch } from "./AxiosClient";
 import { MainResponse } from "../../types.ts/main-response";
 import { AdminCarData } from "@/app/features/dashboards/admin/types/admin-car-approval.types";
 import { CursorResponse } from "../../types.ts/cursor-response";
-import { CarItems } from "@/app/features/car/types/car.types";
-import { DashboardCarDTO } from "@/app/features/dashboards/dealer/types/dashboard-car/dashboard-car.dto";
+import { CarDTO } from "@/app/features/car/types/car.dto";
 
 export async function getAllKyc(cursor?: string) {
   const url = cursor
@@ -29,7 +28,7 @@ export async function getKycWithStatus(status: string) {
 }
 
 export async function getAllCars(pageNum: number, limit: number) {
-  return getFetch<MainResponse<CursorResponse<DashboardCarDTO[]>>>(
+  return getFetch<MainResponse<CursorResponse<CarDTO[]>>>(
     `/api/v1/admin/cars?pageNum=${pageNum}&limit=${limit}`,
   );
 }

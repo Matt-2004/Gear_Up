@@ -8,7 +8,7 @@ export const DEALER_TABS = [
     label: "Post Management",
   },
   {
-    id: "test-drive-management",
+    id: "appointment-management",
     label: "Appointment Management",
   },
   {

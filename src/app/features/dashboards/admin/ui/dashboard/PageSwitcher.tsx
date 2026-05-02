@@ -12,12 +12,14 @@ interface PageSwitcherProps<T extends string = string> {
   pages?: readonly PageItem<T>[];
   defaultPageId?: T;
   queryKey?: string;
+  activePageId?: T;
 }
 
 export const PageSwitcher = <T extends string = string>({
   pages = [],
   defaultPageId,
   queryKey = "tab",
+  activePageId,
 }: PageSwitcherProps<T>) => {
   const searchParams = useSearchParams();
 
@@ -26,7 +28,7 @@ export const PageSwitcher = <T extends string = string>({
       return null;
     }
 
-    const currentTab = searchParams.get(queryKey);
+    const currentTab = activePageId ?? searchParams.get(queryKey);
 
     return (
       pages.find((page) => page.id === currentTab) ??
@@ -35,8 +37,6 @@ export const PageSwitcher = <T extends string = string>({
       null
     );
   }, [pages, searchParams, queryKey, defaultPageId]);
-
-  console.log(activePage);
 
   if (!activePage) {
     return null;
