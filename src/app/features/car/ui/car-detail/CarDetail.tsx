@@ -14,10 +14,12 @@ export default function CarDetail({ car }: { car: CarItems }) {
   const [isFavorite, setIsFavorite] = useState(false);
 
   const nextImage = () => {
+    console.log("Next image");
     setSelectedImage((prev) => (prev + 1) % car.carImages.length);
   };
 
   const prevImage = () => {
+    console.log("Previous image");
     setSelectedImage(
       (prev) => (prev - 1 + car.carImages.length) % car.carImages.length,
     );
