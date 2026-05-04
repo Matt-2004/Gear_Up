@@ -9,6 +9,8 @@ import {
 } from "@/app/shared/utils/AuthUtils/CookieIntegration";
 import { UserFetch } from "@/app/shared/utils/AuthUtils/UserFetch";
 import { encrypt } from "@/app/shared/utils/AuthUtils/encryption";
+import { UserMapper } from "@/app/features/profiles/user/types/user.mapper";
+import { u } from "framer-motion/client";
 
 const initialAdminLoginFormData = {
   email: "",
@@ -40,7 +42,8 @@ export const useAdminLogin = () => {
     if (res.isSuccess && res.data) {
       await token_integration(res.data);
       const userRes = await UserFetch();
-      const encryptedUserData = await encrypt(userRes.data);
+      const userData = UserMapper(userRes.data);
+      const encryptedUserData = await encrypt(userData);
       await user_data_integration(encryptedUserData);
     }
     setIsPending(false);

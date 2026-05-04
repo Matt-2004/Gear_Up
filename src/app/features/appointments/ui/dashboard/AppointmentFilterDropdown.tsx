@@ -1,8 +1,8 @@
+import { ChevronDown, Filter } from "lucide-react";
 import {
   AppointmentFilterStatus,
   AppointmentStatus,
-} from "@/app/features/appointments/types/appointment.types";
-import { ChevronDown, Filter } from "lucide-react";
+} from "../../types/appointment.dto";
 
 interface AppointmentFilterDropdownProps {
   filter: AppointmentFilterStatus;
@@ -26,7 +26,11 @@ const AppointmentFilterDropdown = ({
   onToggleDropdown,
   onFilterChange,
 }: AppointmentFilterDropdownProps) => {
-  const rawOptions: { label: string; status: AppointmentFilterStatus; count: number }[] = [
+  const rawOptions: {
+    label: string;
+    status: AppointmentFilterStatus;
+    count: number;
+  }[] = [
     { label: "All", status: "All", count: appointmentCounts.total },
     { label: "Pending", status: "Pending", count: appointmentCounts.pending },
     {

@@ -1,6 +1,5 @@
 "use client";
 
-import { UserItem } from "@/app/features/navbar/types/user.types";
 import {
   createContext,
   ReactNode,
@@ -8,9 +7,10 @@ import {
   useEffect,
   useState,
 } from "react";
+import { UserModel } from "../../profiles/user/types/user.model";
 
 interface UserDataContextType {
-  user: UserItem | null;
+  user: UserModel | null;
   loading: boolean;
   refreshUserData: () => Promise<void>;
 }
@@ -20,7 +20,7 @@ const UserDataContext = createContext<UserDataContextType | undefined>(
 );
 
 export function UserDataContextProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<UserItem | null>(null);
+  const [user, setUser] = useState<UserModel | null>(null);
   const [loading, setLoading] = useState(true);
 
   async function getEncryptedUserData() {

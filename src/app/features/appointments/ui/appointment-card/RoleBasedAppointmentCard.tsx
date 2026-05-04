@@ -1,9 +1,5 @@
 "use client";
 
-import {
-  AppointmentStatus,
-  AppointmentData,
-} from "@/app/features/appointments/types/appointment.types";
 import { MessageSquareText } from "lucide-react";
 import { AppointmentDateColumn } from "../dashboard/AppointmentDateColumn";
 import { AppointmentHeader } from "../dashboard/AppointmentHeader";
@@ -16,9 +12,11 @@ import { DealerActions } from "../dashboard/DealerActions";
 import { UserActions } from "../dashboard/UserActions";
 import { useAppointmentReviews } from "../../hooks/useAppointmentReviews";
 import { useAppointmentActions } from "../../hooks/useAppointmentActions";
+import { AppointmentStatus } from "../../types/appointment.dto";
+import { AppointmentModel } from "../../types/appointment.model";
 
 interface AppointmentCardProps {
-  appointment: AppointmentData;
+  appointment: AppointmentModel;
   loading: boolean;
   mode: "user" | "dealer";
   getStatusColor: (status: AppointmentStatus) => string;

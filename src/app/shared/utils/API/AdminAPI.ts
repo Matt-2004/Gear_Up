@@ -1,22 +1,23 @@
-import {
-  IAdminUpdateStatus,
-  IKycSubmissions,
-} from "@/app/features/dashboards/dealer/types/kyc.types";
+import { IAdminUpdateStatus } from "@/app/features/profiles/dealer/types/kyc.types";
 import { getFetch, putFetch } from "./AxiosClient";
 import { MainResponse } from "../../types.ts/main-response";
-import { AdminCarData } from "@/app/features/dashboards/admin/types/admin-car-approval.types";
+import { AdminCarData } from "@/app/features/profiles/admin/types/admin-car-approval.types";
 import { CursorResponse } from "../../types.ts/cursor-response";
 import { CarDTO } from "@/app/features/car/types/car.dto";
+import {
+  KycDTO,
+  KYCResponse,
+} from "@/app/features/profiles/dealer/types/kyc.dto";
 
 export async function getAllKyc(cursor?: string) {
   const url = cursor
     ? `/api/v1/admin/kyc?cursor=${cursor}`
     : "/api/v1/admin/kyc";
-  return getFetch<MainResponse<CursorResponse<IKycSubmissions[]>>>(url);
+  return getFetch<KYCResponse>(url);
 }
 
 export async function getKycById(id: string) {
-  return getFetch<MainResponse<IKycSubmissions>>(`/api/v1/admin/kyc/${id}`);
+  return getFetch<MainResponse<KycDTO>>(`/api/v1/admin/kyc/${id}`);
 }
 
 export async function updateKycByAdmin(data: IAdminUpdateStatus, id: string) {

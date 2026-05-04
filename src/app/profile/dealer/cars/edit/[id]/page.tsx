@@ -1,15 +1,15 @@
-import { CarItems } from "@/app/features/car/types/car.types";
 import { redirect } from "next/navigation";
-import EditCarForm from "../../../../../features/dashboards/dealer/ui/edit-car-form/EditCarForm";
+import EditCarForm from "../../../../../features/profiles/dealer/ui/edit-car-form/EditCarForm";
 import { getCarById } from "@/app/shared/utils/API/CarAPI";
-import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
 import { handleServerError } from "@/app/shared/utils/errors/handleServerError";
+import { CarDetailModel } from "@/app/features/car/types/car.model";
+import { carDetailMapper } from "@/app/features/car/types/car.mapper";
 
-async function fetchCarData(carId: string): Promise<CarItems> {
+async function fetchCarData(carId: string): Promise<CarDetailModel> {
   try {
     const result = await getCarById(carId);
-    console.log("result of car edit", result);
-    return result.data;
+    const carDetail = carDetailMapper(result.data);
+    return carDetail;
   } catch (error) {
     handleServerError(error);
     throw error;

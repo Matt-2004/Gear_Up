@@ -3,6 +3,7 @@
 import { InputHTMLAttributes, ReactNode, forwardRef, useState } from "react";
 import { clsx } from "clsx";
 import { Eye, EyeOff } from "lucide-react";
+import { buildClassName, fillDetailInputBaseClass } from "./shared-index";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   type:
@@ -22,7 +23,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   error?: string;
 }
 
-const Input = forwardRef<HTMLInputElement, Partial<InputProps>>(
+const AuthInput = forwardRef<HTMLInputElement, Partial<InputProps>>(
   (props, ref) => {
     const {
       type = "email",
@@ -102,50 +103,35 @@ const Input = forwardRef<HTMLInputElement, Partial<InputProps>>(
     );
   },
 );
-Input.displayName = "Input";
 
-export default Input;
+export default AuthInput;
 
-export const RadioInputContainer = ({
-  title,
-  children,
-}: {
-  title: string;
-  children: ReactNode;
-  error?: string;
+export const Input = ({
+  inputRef,
+  leadingIcon,
+  className,
+  ...props
+}: InputHTMLAttributes<HTMLInputElement> & {
+  inputRef?: React.Ref<HTMLInputElement>;
+  leadingIcon?: ReactNode;
 }) => {
   return (
-    <section className="flex w-full flex-col items-start justify-center">
-      <h1 className="text-sm font-semibold text-gray-500">{title}</h1>
-      <div className="flex w-full justify-between bg-[#E8E9E0] rounded-lg">
-        {children}
-      </div>
-    </section>
-  );
-};
-
-export const RadioInput = ({
-  children,
-  name,
-  value,
-  defaultChecked,
-}: {
-  children: ReactNode;
-  name: string;
-  value: string | number;
-  defaultChecked?: boolean;
-}) => {
-  return (
-    <label className="has-checked:border-primary has-checked:text-white flex w-full max-w-100 flex-1 cursor-pointer items-center text-center justify-center rounded-lg  px-4 py-2 text-gray-400 has-checked:bg-primary">
+    <div className="relative">
+      {leadingIcon && (
+        <span className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-gray-400">
+          {leadingIcon}
+        </span>
+      )}
       <input
         required
-        name={name}
-        value={value}
-        type="radio"
-        defaultChecked={defaultChecked}
-        className="sr-only"
+        ref={inputRef}
+        {...props}
+        className={buildClassName(
+          fillDetailInputBaseClass,
+          leadingIcon ? "py-1.5 pr-4 pl-9" : "px-4 py-1.5",
+          className,
+        )}
       />
-      {children}
-    </label>
+    </div>
   );
 };

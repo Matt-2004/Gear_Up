@@ -1,19 +1,19 @@
 "use client";
 
 import { useToast } from "@/app/features/toast/hooks/useToast";
-import { UserItem } from "@/app/features/navbar/types/user.types";
-import Input from "@/app/shared/ui/Input";
 import { useUserData } from "@/app/features/navbar/context/UserDataContext";
 import { updateUserProfile } from "@/app/shared/utils/API/UserAPI";
 import { Camera, Save, X } from "lucide-react";
 import Image from "next/image";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
+import Input from "@/app/shared/ui/Input";
+import { UserModel } from "../../profiles/user/types/user.model";
 
 const UserProfile = () => {
   const { user } = useUserData();
   const [isDataChange, setIsDataChange] = useState<boolean>(false);
-  const [input, setInput] = useState<UserItem>();
-  const [originalInput, setOriginalInput] = useState<UserItem>();
+  const [input, setInput] = useState<UserModel>();
+  const [originalInput, setOriginalInput] = useState<UserModel>();
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -137,9 +137,11 @@ const UserProfile = () => {
               <div className="group relative">
                 <Image
                   src={
-                    avatarPreview || input?.avatarUrl || "/default_profile.jpg"
+                    avatarPreview ||
+                    input?.profileImage ||
+                    "/default_profile.jpg"
                   }
-                  alt={input?.name || "User Avatar"}
+                  alt={input?.realName || "User Avatar"}
                   width={120}
                   height={120}
                   className="h-32 w-32 rounded-full border-4 border-white object-cover shadow-lg"
@@ -162,7 +164,7 @@ const UserProfile = () => {
                 </button>
               </div>
               <div className="text-center text-white">
-                <h2 className="text-2xl font-bold">{input?.name}</h2>
+                <h2 className="text-2xl font-bold">{input?.realName}</h2>
                 <p className="mt-1 inline-block rounded-full bg-white/20 px-3 py-1 font-medium text-white/90">
                   {input?.role}
                 </p>
@@ -179,7 +181,7 @@ const UserProfile = () => {
               <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                 <Input
                   type="text"
-                  value={input?.name ?? ""}
+                  value={input?.realName ?? ""}
                   placeholder={"John Doe"}
                   onChange={handleInput}
                   name="name"
@@ -199,7 +201,7 @@ const UserProfile = () => {
 
                 <Input
                   type="tel"
-                  value={input?.phoneNumber ?? ""}
+                  value={input?.phone ?? ""}
                   onChange={handleInput}
                   name="phoneNumber"
                   placeholder="+66-XX-XXX-XXXX"

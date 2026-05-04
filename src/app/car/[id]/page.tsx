@@ -2,6 +2,7 @@ import { getCarById } from "@/app/shared/utils/API/CarAPI";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import CarDetail from "../../features/car/ui/car-detail/CarDetail";
+import { carDetailMapper } from "@/app/features/car/types/car.mapper";
 
 export const dynamic = "force-dynamic";
 
@@ -33,7 +34,8 @@ export async function generateMetadata({
 async function getData(id: string) {
   try {
     const res = await getCarById(id);
-    return res.data;
+    const carDetail = carDetailMapper(res.data);
+    return carDetail;
   } catch (error) {
     console.error("Error fetching car:", error);
     return null;

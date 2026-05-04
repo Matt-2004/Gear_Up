@@ -1,10 +1,7 @@
-import { IKycSubmissions } from "@/app/features/dashboards/dealer/types/kyc.types";
+import { KycModel } from "@/app/features/profiles/dealer/types/kyc.model";
 import { CursorResponse } from "../types.ts/cursor-response";
 
-export function kycFilter(
-  kycRes: CursorResponse<IKycSubmissions[]>,
-  status: string,
-) {
+export function kycFilter(kycRes: CursorResponse<KycModel[]>, status: string) {
   if (!kycRes.items) {
     return;
   }

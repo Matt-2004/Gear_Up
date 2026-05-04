@@ -3,7 +3,6 @@
 import { useNotificationContext } from "@/app/features/notification/context/NotificationContext";
 import { useUserData } from "@/app/features/navbar/context/UserDataContext";
 import { IMessageData } from "@/app/features/messaging/types/message.types";
-import { INotificationData } from "@/app/features/notification/types/notification.types";
 import {
   NavbarLoginButton,
   NavbarUserMenu,
@@ -35,6 +34,7 @@ import {
   readAllNotification,
   readNotificationById,
 } from "@/app/shared/utils/API/NotificationAPI";
+import { NotificationModel } from "../../notification/types/notification.model";
 
 export default function NavbarUtility() {
   const { user } = useUserData();
@@ -49,7 +49,7 @@ export default function NavbarUtility() {
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
-type NotifType = keyof INotificationData["notificationType"] extends never
+type NotifType = keyof NotificationModel["notificationType"] extends never
   ? string
   : string;
 
@@ -66,7 +66,7 @@ const getNotifIcon = (type: NotifType) => {
   return <Bell className="h-3.5 w-3.5 text-gray-400" />;
 };
 
-const getNotifLink = (n: INotificationData): string | null => {
+const getNotifLink = (n: NotificationModel): string | null => {
   const t = String(n.notificationType);
   if (
     (t.includes("Comment") || t.includes("Like") || t.includes("Post")) &&
@@ -89,7 +89,7 @@ export const NotificationBell = () => {
   const router = useRouter();
 
   // ── app notifications ──
-  const [notifications, setNotifications] = useState<INotificationData[]>([]);
+  const [notifications, setNotifications] = useState<NotificationModel[]>([]);
   const [unreadAppCount, setUnreadAppCount] = useState(0);
   const [loadingNotifs, setLoadingNotifs] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -114,7 +114,7 @@ export const NotificationBell = () => {
     setLoadingNotifs(true);
     try {
       const res = await getNotification(null, 20);
-      const items: INotificationData[] = res?.data?.items ?? res?.data ?? [];
+      const items: NotificationModel[] = res?.data?.items ?? res?.data ?? [];
       setNotifications(items);
     } catch (err) {
       console.error("Failed to fetch notifications:", err);
@@ -147,7 +147,7 @@ export const NotificationBell = () => {
 
   // ── actions ──────────────────────────────────────────────────────────────
 
-  const handleNotifClick = async (n: INotificationData) => {
+  const handleNotifClick = async (n: NotificationModel) => {
     if (!n.isRead) {
       try {
         await readNotificationById(n.id);
@@ -245,7 +245,7 @@ export const NotificationBell = () => {
     });
 
     // listen for real-time app notifications
-    conn.on("NotificationReceived", (data: INotificationData) => {
+    conn.on("NotificationReceived", (data: NotificationModel) => {
       setNotifications((prev) => [data, ...prev]);
       setUnreadAppCount((c) => c + 1);
     });

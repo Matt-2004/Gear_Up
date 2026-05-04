@@ -3,7 +3,7 @@ import { useToast } from "@/app/features/toast/hooks/useToast";
 import { ResetPasswordSchema } from "@/app/features/auth/utils/typeSchema";
 import { useAuthForm } from "@/app/shared/hooks/useAuthForm";
 import { resetPasswordAction } from "../utils/resetPasswordAction";
-import { ResetPasswordDTO } from "../../types/auth.types";
+import { ResetPasswordInputDTO } from "../../types/auth.types";
 
 const initialResetPasswordFormData = {
   newPassword: "",
@@ -19,7 +19,7 @@ export const useResetPassword = (token: string | null) => {
   });
 
   const { formData, setFormData, validationErrors, isFormValid } =
-    useAuthForm<ResetPasswordDTO>(
+    useAuthForm<ResetPasswordInputDTO>(
       initialResetPasswordFormData,
       ResetPasswordSchema,
     );

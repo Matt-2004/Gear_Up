@@ -1,9 +1,9 @@
-import { CarItems } from "@/app/features/car/types/car.types";
 import { Calendar, CircleCheckBig, Clock } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { CarDetailModel } from "../../types/car.model";
 
 interface CarContactSellerProps {
-  car: CarItems;
+  car: CarDetailModel;
 }
 
 export default function CarContactSeller({ car }: CarContactSellerProps) {
@@ -41,29 +41,25 @@ export default function CarContactSeller({ car }: CarContactSellerProps) {
         <div className="space-y-4 text-[14px]">
           <div className="flex items-center justify-between">
             <span className="text-gray-500 font-medium">Condition</span>
-            <span className="font-semibold text-gray-900">
-              {car.carCondition}
-            </span>
+            <span className="font-semibold text-gray-900">{car.condition}</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-gray-500 font-medium">Status</span>
-            <span className="font-semibold text-gray-900">{car.carStatus}</span>
+            <span className="font-semibold text-gray-900">{car.status}</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-gray-500 font-medium">Validation</span>
             <span
               className={`font-semibold ${
-                car.carValidationStatus === "Approved"
-                  ? "text-green-600"
-                  : "text-yellow-600"
+                car.status === "Approved" ? "text-green-600" : "text-yellow-600"
               }`}
             >
-              {car.carValidationStatus === "Approved" ? (
+              {car.status === "Approved" ? (
                 <CircleCheckBig className="mr-1.5 inline-block h-4.5 w-4.5" />
               ) : (
                 <Clock className="mr-1.5 inline-block h-4.5 w-4.5" />
               )}
-              {car.carValidationStatus}
+              {car.status}
             </span>
           </div>
         </div>

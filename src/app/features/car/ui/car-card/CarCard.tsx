@@ -1,6 +1,5 @@
 "use client";
 
-import { CarItems } from "@/app/features/car/types/car.types";
 import { formatNumber } from "@/app/shared/utils/numberFormatter";
 import Link from "next/link";
 import CarImage from "@/app/shared/ui/Image";

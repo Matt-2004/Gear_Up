@@ -1,9 +1,9 @@
-import { CarItems } from "@/app/features/car/types/car.types";
+import { CarDetailModel } from "@/app/features/car/types/car.model";
 import { formatNumber } from "@/app/shared/utils/numberFormatter";
 import { Car } from "lucide-react";
 
 interface AppointmentCarSummaryProps {
-  car: CarItems;
+  car: CarDetailModel;
 }
 
 export default function AppointmentCarSummary({
@@ -13,11 +13,7 @@ export default function AppointmentCarSummary({
     <div className=" sticky top-20 overflow-hidden rounded-xl bg-white shadow-sm">
       <div className="aspect-video bg-gray-900">
         <img
-          src={
-            typeof car.carImages[0] === "string"
-              ? car.carImages[0]
-              : car.carImages[0]?.url
-          }
+          src={car.images[0].url}
           alt={`${car.make} ${car.model}`}
           className="h-full w-full object-cover"
         />
@@ -26,12 +22,12 @@ export default function AppointmentCarSummary({
         <div className="flex items-center gap-2">
           <span
             className={`rounded-lg px-3 py-1 text-xs font-semibold ${
-              car.carStatus === "Available"
+              car.status === "Available"
                 ? "bg-primary-200 text-primary-800"
                 : "bg-red-100 text-red-800"
             }`}
           >
-            {car.carStatus}
+            {car.status}
           </span>
         </div>
         <h2 className="mb-1 text-xl font-semibold text-gray-900 sm:text-2xl">
@@ -50,7 +46,7 @@ export default function AppointmentCarSummary({
           <div className="flex items-center gap-2 text-gray-600">
             <Car className="h-4 w-4" />
             <span>
-              {car.mileage.toLocaleString()} KM • {car.fuelType}
+              {car.mileage.toLocaleString()} KM • {car.fuel}
             </span>
           </div>
         </div>

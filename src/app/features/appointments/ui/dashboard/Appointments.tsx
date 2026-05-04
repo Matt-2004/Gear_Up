@@ -1,15 +1,15 @@
 "use client";
 
-import {
-  AppointmentFilterStatus,
-  AppointmentResponse,
-  AppointmentData,
-} from "@/app/features/appointments/types/appointment.types";
 import { cancelAppointmentById } from "@/app/shared/utils/API/AppointmentAPI";
 import { useState } from "react";
 import AppointmentEmptyState from "@/app/features/appointments/ui/appointment-card/AppointmentEmptyState";
 import AppointmentFilterDropdown from "@/app/features/appointments/ui/dashboard/AppointmentFilterDropdown";
 import AppointmentCard from "../appointment-card/AppointmentCard";
+import {
+  AppointmentFilterStatus,
+  AppointmentResponse,
+} from "../../types/appointment.dto";
+import { AppointmentModel } from "../../types/appointment.model";
 
 interface AppointmentsProps {
   appointments: AppointmentResponse;
@@ -18,7 +18,7 @@ interface AppointmentsProps {
 const Appointments = ({
   appointments: initialAppointments,
 }: AppointmentsProps) => {
-  const [appointments, setAppointments] = useState<AppointmentData[]>(
+  const [appointments, setAppointments] = useState<AppointmentModel[]>(
     initialAppointments?.data?.items || [],
   );
   const [filter, setFilter] = useState<AppointmentFilterStatus>("All");

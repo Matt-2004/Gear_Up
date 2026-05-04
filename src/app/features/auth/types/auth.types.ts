@@ -1,18 +1,18 @@
-export interface LoginDTO {
+export interface LoginInputDTO {
   usernameOrEmail: string;
   password: string;
 }
 
-export interface ForgetPasswordDTO {
+export interface ForgetPasswordInputDTO {
   email: string;
 }
 
-export interface ResetPasswordDTO {
+export interface ResetPasswordInputDTO {
   newPassword: string;
   confirmedPassword: string;
 }
 
-export interface ProfileDTO {
+export interface ProfileInputDTO {
   NewEmail: string;
   Name: string;
   AvatarImage: string;

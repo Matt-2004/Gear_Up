@@ -1,17 +1,17 @@
 "use client";
 
 import { useToast } from "@/app/features/toast/hooks/useToast";
-import { CarItems } from "@/app/features/car/types/car.types";
 import AppointmentCarSummary from "@/app/features/appointments/ui/appointment-card/AppointmentCarSummary";
 import AppointmentForm from "@/app/features/appointments/ui/appointment-form/AppointmentForm";
 import { createAppointment } from "@/app/shared/utils/API/AppointmentAPI";
 import { ChevronLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
+import { CarDetailModel } from "../../types/car.model";
 
-export default function CarAppointment({ car }: { car: CarItems }) {
+export default function CarAppointment({ car }: { car: CarDetailModel }) {
   const router = useRouter();
-  const { addToastMessage } = useToast({
+  const { addToastMessage, handleToast } = useToast({
     toastType: null,
     message: null,
   });
@@ -45,11 +45,8 @@ export default function CarAppointment({ car }: { car: CarItems }) {
         formData.notes || "",
       );
 
+      handleToast(res, `/car/${car.id}`);
       // Instead of relying on empty body error throwing
-      addToastMessage(
-        "success",
-        "Appointment scheduled successfully! Redirecting...",
-      );
 
       setFormData({
         schedule: "",
@@ -59,16 +56,6 @@ export default function CarAppointment({ car }: { car: CarItems }) {
       });
 
       // Redirect after 2 seconds
-      setTimeout(() => {
-        router.push(`/car/${car.id}`);
-      }, 2500);
-    } catch (err: any) {
-      const errorMessage =
-        err?.response?.data?.message ||
-        err?.message ||
-        "Failed to create appointment. Please try again.";
-      setError(errorMessage);
-      addToastMessage("error", errorMessage);
     } finally {
       setIsSubmitting(false);
     }

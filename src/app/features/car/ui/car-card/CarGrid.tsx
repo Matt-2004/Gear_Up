@@ -1,6 +1,5 @@
 "use client";
 
-import { CarItems } from "@/app/features/car/types/car.types";
 import { CarCard } from "./CarCard";
 import { CarModel } from "../../types/car.model";
 

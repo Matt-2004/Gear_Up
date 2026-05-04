@@ -1,4 +1,4 @@
-import { ResetPasswordDTO } from "@/app/features/auth/types/auth.types";
+import { ResetPasswordInputDTO } from "@/app/features/auth/types/auth.types";
 import { getResetToken } from "@/app/shared/utils/AuthUtils/getClientCookie";
 import { postFetch } from "./AxiosClient";
 
@@ -9,7 +9,7 @@ export async function resendVerificationEmail(email: string) {
   );
 }
 
-export async function updateNewPassword(data: ResetPasswordDTO) {
+export async function updateNewPassword(data: ResetPasswordInputDTO) {
   const reset_token = await getResetToken();
   return postFetch(`/api/v1/auth/reset-password?token=${reset_token}`, data);
 }

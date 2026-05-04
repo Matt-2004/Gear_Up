@@ -1,5 +1,5 @@
 import { Check, CheckCircle, X, XCircle } from "lucide-react";
-import { AppointmentStatus } from "@/app/features/appointments/types/appointment.types";
+import { AppointmentStatus } from "../../types/appointment.dto";
 
 interface DealerActionsProps {
   status: AppointmentStatus;

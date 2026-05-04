@@ -1,12 +1,12 @@
 "use client";
 
-import { CarItems } from "@/app/features/car/types/car.types";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import CarImage from "../../../../shared/ui/Image";
+import { CarDetailModel } from "../../types/car.model";
 
 interface CarImageGalleryProps {
-  car: CarItems;
+  car: CarDetailModel;
   selectedImage: number;
   onSelectImage: (index: number) => void;
   onNextImage: () => void;
@@ -25,7 +25,7 @@ export default function CarImageGallery({
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const programmaticScrollRef = useRef(false);
 
-  const parseImages = (value: CarItems["carImages"]) => {
+  const parseImages = (value: CarDetailModel["images"]) => {
     if (Array.isArray(value)) {
       return value.map((img) => (typeof img === "string" ? { url: img } : img));
     }
@@ -46,7 +46,7 @@ export default function CarImageGallery({
     return [];
   };
 
-  const images = parseImages(car.carImages);
+  const images = parseImages(car.images);
 
   const scrollToIndex = (index: number) => {
     if (!scrollRef.current) return;

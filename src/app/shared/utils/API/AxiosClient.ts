@@ -1,24 +1,25 @@
 "use server";
 
-import { AdminLoginDTO } from "@/app/features/dashboards/admin/types/admin.types";
-import { createAppointmentDTO } from "@/app/features/appointments/types/appointment.types";
+import { AdminLoginDTO } from "@/app/features/profiles/admin/types/admin.types";
 import {
-  LoginDTO,
-  ResetPasswordDTO,
+  LoginInputDTO,
+  ResetPasswordInputDTO,
 } from "@/app/features/auth/types/auth.types";
-import { AddComment } from "@/app/features/comment/types/comment.types";
-import { IAdminUpdateStatus } from "@/app/features/dashboards/dealer/types/kyc.types";
+
+import { IAdminUpdateStatus } from "@/app/features/profiles/dealer/types/kyc.types";
 import { CreateMessageDTO } from "@/app/features/messaging/types/message.types";
-import { CreatePostData } from "@/app/features/post/types/post.types";
-import { IReviewSubmissionDTO } from "@/app/features/review/types/review.types";
 import { BACKEND_API_URL } from "@/app/shared/utils/config";
 import { getServerAccessToken } from "@/app/shared/utils/AuthUtils/tokenUtils";
 import axios, { AxiosError } from "axios";
-import { SubmitVehicle } from "@/app/features/dashboards/dealer/context/AddNewCarContext";
+import { SubmitVehicle } from "@/app/features/profiles/dealer/context/AddNewCarContext";
 import { EmailValidationRequest } from "@/app/features/auth/emailValidation/types/email-validation-request";
 import { SignUpDTO } from "@/app/features/auth/signUp/types/sign-up-dto";
 import { MainResponse } from "@/app/shared/types.ts/main-response";
 import { ErrorResponse } from "../errors/errorResponse";
+import { CreatePostDTO } from "@/app/features/post/types/post.dto";
+import { AddCommentDTO } from "@/app/features/comment/types/comment.dto";
+import { IReviewSubmissionDTO } from "@/app/features/review/types/review.dto";
+import { createAppointmentDTO } from "@/app/features/appointments/types/appointment.dto";
 
 export const api = axios.create({
   baseURL: BACKEND_API_URL,
@@ -130,15 +131,15 @@ export async function getFetch<T>(url: string): Promise<T> {
 type PostFetchAvailableType =
   | SignUpDTO
   | EmailValidationRequest
-  | LoginDTO
-  | ResetPasswordDTO
+  | LoginInputDTO
+  | ResetPasswordInputDTO
   | AdminLoginDTO
   | FormData
   | null
-  | AddComment
+  | AddCommentDTO
   | createAppointmentDTO
-  | CreatePostData
-  | Omit<CreatePostData, "carId">
+  | CreatePostDTO
+  | Omit<CreatePostDTO, "carId">
   | CreateMessageDTO
   | IReviewSubmissionDTO
   | Omit<IReviewSubmissionDTO, "dealerId">
@@ -158,7 +159,7 @@ export async function putFetch(
     | IAdminUpdateStatus
     | string
     | Omit<IReviewSubmissionDTO, "dealerId">
-    | Omit<CreatePostData, "carId">,
+    | Omit<CreatePostDTO, "carId">,
 ) {
   return request<MainResponse<null>>("put", url, data);
 }

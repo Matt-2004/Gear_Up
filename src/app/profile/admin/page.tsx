@@ -1,5 +1,5 @@
-import { type PageItem } from "@/app/features/dashboards/admin/ui/dashboard/PageSwitcher";
-import AdminPageShell from "@/app/features/dashboards/admin/ui/dashboard/AdminPageShell";
+import { type PageItem } from "@/app/features/profiles/admin/ui/dashboard/PageSwitcher";
+import AdminPageShell from "@/app/features/profiles/admin/ui/dashboard/AdminPageShell";
 import { Metadata } from "next";
 import { getAllKyc } from "@/app/shared/utils/API/AdminAPI";
 import { getAllCars } from "@/app/shared/utils/API/AdminAPI";
@@ -7,20 +7,22 @@ import {
   ADMIN_TABS,
   AdminTabId,
   DEFAULT_ADMIN_TAB,
-} from "@/app/features/dashboards/admin/utils/admin-tab.config";
+} from "@/app/features/profiles/admin/utils/admin-tab.config";
 import dynamicImport from "next/dynamic";
 import { CarModel } from "@/app/features/car/types/car.model";
 import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
 import { carMapper } from "@/app/features/car/types/car.mapper";
+import { KycMapper } from "@/app/features/profiles/dealer/types/kyc.mapper";
+import { KycModel } from "@/app/features/profiles/dealer/types/kyc.model";
 
 const AdminDashboardPage = dynamicImport(
-  () => import("@/app/features/dashboards/admin/ui/dashboard/AdminDashboard"),
+  () => import("@/app/features/profiles/admin/ui/dashboard/AdminDashboard"),
 );
 const AdminCarVerificationPage = dynamicImport(
-  () => import("@/app/features/dashboards/admin/ui/cars/AdminCarVerification"),
+  () => import("@/app/features/profiles/admin/ui/cars/AdminCarVerification"),
 );
 const AdminKycVerificationPage = dynamicImport(
-  () => import("@/app/features/dashboards/admin/ui/kyc/AdminKycVerification"),
+  () => import("@/app/features/profiles/admin/ui/kyc/AdminKycVerification"),
 );
 export const dynamic = "force-dynamic";
 
@@ -29,9 +31,13 @@ export const metadata: Metadata = {
   description: "Manage users, dealers, and platform settings.",
 };
 
-const getKycData = async () => {
+const getKycData = async (): Promise<CursorResponse<KycModel[]>> => {
   const res = await getAllKyc();
-  return res?.data;
+  return {
+    items: res.data.items.map(KycMapper),
+    hasMore: res.data.hasMore,
+    nextCursor: res.data.nextCursor,
+  };
 };
 
 const getCarsData = async (): Promise<CursorResponse<CarModel[]>> => {

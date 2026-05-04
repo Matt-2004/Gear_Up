@@ -137,7 +137,7 @@ function NavbarMobileDrawer({ onClose }: { onClose: () => void }) {
         {user && (
           <div className="border-b border-gray-200 bg-gray-50 px-4 py-3">
             <p className="truncate text-sm font-semibold text-gray-900">
-              {user.username}
+              {user.displayName}
             </p>
             <p className="truncate text-xs text-gray-500">{user.email}</p>
           </div>
