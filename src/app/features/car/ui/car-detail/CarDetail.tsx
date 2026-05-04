@@ -26,7 +26,7 @@ export default function CarDetail({ car }: { car: CarDetailModel }) {
   };
 
   return (
-    <div className="min-h-screen bg-white pb-16">
+    <div className="min-h-screen z-10 bg-white pb-16">
       <div className="mx-auto max-w-7xl px-4 py-8">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
           {/* Main Content Area (Left, 66%) */}

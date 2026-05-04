@@ -20,9 +20,10 @@ import { LikeCount } from "../../comment/ui/Comment";
 import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
 import { useRouter } from "next/navigation";
 import { formatNumber } from "@/app/shared/utils/numberFormatter";
-import { PostResponse } from "../types/post.dto";
 import { PostDTO } from "../types/post.dto";
 import { CarImages } from "../../car/types/car.dto";
+import { PostModel } from "../types/post.model";
+import { PostMapper } from "../types/post.mapper";
 
 /* Discover post -> feeds & create post btn
 	
@@ -40,47 +41,41 @@ import { CarImages } from "../../car/types/car.dto";
       only FEEDS
 */
 
-const DiscoverPost = ({ post }: { post: CursorResponse<PostDTO[]> }) => {
+const DiscoverPost = ({ post }: { post: CursorResponse<PostModel[]> }) => {
   const { user } = useUserData();
 
   const { data, fetchNextPage, isFetchingNextPage, hasNextPage, refetch } =
     useInfiniteQuery<
-      PostResponse,
+      CursorResponse<PostModel[]>,
       Error,
-      InfiniteData<PostResponse, string | undefined>,
+      InfiniteData<CursorResponse<PostModel[]>, string | undefined>,
       string[],
       string | undefined
     >({
       queryKey: ["discover-posts"],
       queryFn: async ({ pageParam }) => {
         const result = await getAllPosts(pageParam);
-
-        return result;
+        const data: CursorResponse<PostModel[]> = {
+          items: result.data.items.map(PostMapper),
+          hasMore: result.data.hasMore,
+          nextCursor: result.data.nextCursor,
+        };
+        return data;
       },
       enabled: Boolean(user),
       initialPageParam: undefined,
       initialData: {
-        pages: [
-          {
-            // Wrap the CursorResponse<PostItem[]> into the expected PostRoot shape
-            isSuccess: true,
-            data: post,
-            successMessage: "",
-            errorMessage: "",
-            status: 200,
-          },
-        ],
+        pages: [post],
         pageParams: [undefined],
       },
       getNextPageParam: (lastPage) => {
-        return lastPage.data.hasMore ? lastPage.data.nextCursor : undefined;
+        return lastPage.hasMore ? lastPage.nextCursor : undefined;
       },
       staleTime: 1000 * 60 * 5, // 5 minutes
       refetchOnMount: false,
       refetchOnWindowFocus: false,
     });
-
-  const posts = data?.pages.flatMap((page) => page.data.items) ?? [];
+  const posts = data?.pages.flatMap((page) => page.items) ?? [];
 
   const parentRef = useRef<HTMLDivElement>(null);
   const rowVirtualizer = useVirtualizer({
@@ -202,7 +197,7 @@ const CreatePostButton = () => {
   );
 };
 
-const PostCard = ({ postItem }: { postItem: PostDTO }) => {
+const PostCard = ({ postItem }: { postItem: PostModel }) => {
   if (!postItem) return null;
 
   const router = useRouter();
@@ -218,7 +213,7 @@ const PostCard = ({ postItem }: { postItem: PostDTO }) => {
         <div className="flex gap-4 pl-4">
           <Image
             alt={postItem.authorUsername}
-            src={postItem.authorAvatarUrl}
+            src={postItem.authorProfileImage}
             className="rounded-full w-10 h-10"
             width={40}
             height={40}
@@ -244,7 +239,7 @@ const PostCard = ({ postItem }: { postItem: PostDTO }) => {
         <div className="flex-1 overflow-hidden">
           <CarouselImages
             price={postItem.carDto.price}
-            images={postItem.carDto.carImages || []}
+            images={postItem.carDto.images || []}
           />
         </div>
         {/* Caption and Content */}

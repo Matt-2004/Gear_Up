@@ -20,7 +20,7 @@ export default function CarHeader({
           <div className="mb-3 flex items-center gap-2">
             <span
               className={`rounded-md px-2 py-1 text-[10px] uppercase font-bold tracking-wider ${
-                car.status === "Available"
+                car.status === "Approved"
                   ? "bg-green-100 text-green-800"
                   : "bg-red-100 text-red-800"
               }`}

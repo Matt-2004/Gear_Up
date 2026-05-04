@@ -1,13 +1,19 @@
 import { Calendar, CircleCheckBig, Clock } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { CarDetailModel } from "../../types/car.model";
+import { useUserData } from "@/app/features/navbar/context/UserDataContext";
+import { useState } from "react";
+import SignInOverlay from "@/app/features/home/ui/SignInOverlay";
 
 interface CarContactSellerProps {
   car: CarDetailModel;
 }
 
 export default function CarContactSeller({ car }: CarContactSellerProps) {
+  const { user } = useUserData();
   const router = useRouter();
+
+  const [showAuthModel, setShowAuthModal] = useState(false);
 
   return (
     <div className="space-y-8">
@@ -24,7 +30,13 @@ export default function CarContactSeller({ car }: CarContactSellerProps) {
 
         <div className="space-y-3">
           <button
-            onClick={() => router.push(`/car/${car.id}/appointment`)}
+            onClick={() => {
+              if (user) {
+                router.push(`/car/${car.id}/appointment`);
+              } else {
+                setShowAuthModal(true);
+              }
+            }}
             className="bg-primary-700 hover:bg-primary-600 flex w-full items-center justify-center gap-3 rounded-xl py-4 font-bold text-white shadow-md transition-all hover:scale-[1.02] hover:cursor-pointer hover:shadow-lg active:scale-100"
           >
             <Calendar className="h-5 w-5" />
@@ -64,6 +76,9 @@ export default function CarContactSeller({ car }: CarContactSellerProps) {
           </div>
         </div>
       </div>
+      {showAuthModel && (
+        <SignInOverlay onClose={() => setShowAuthModal(false)} />
+      )}
     </div>
   );
 }
