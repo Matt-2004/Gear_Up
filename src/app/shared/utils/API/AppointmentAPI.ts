@@ -1,9 +1,5 @@
-import {
-  AppointmentData,
-  AppointmentResponse,
-} from "@/app/features/appointments/types/appointment.types";
+import { AppointmentResponse } from "@/app/features/appointments/types/appointment.dto";
 import { getFetch, patchFetch, postFetch } from "./AxiosClient";
-import { CursorResponse } from "../../types.ts/cursor-response";
 
 export async function createAppointment(
   agentId: string,
@@ -12,7 +8,7 @@ export async function createAppointment(
   location: string,
   notes?: string,
 ) {
-  return postFetch("/api/v1/appointments", {
+  return postFetch<null>("/api/v1/appointments", {
     agentId,
     carId,
     schedule,

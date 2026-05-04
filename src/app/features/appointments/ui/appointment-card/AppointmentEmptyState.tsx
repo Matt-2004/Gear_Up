@@ -1,5 +1,5 @@
-import { AppointmentFilterStatus } from "@/app/features/appointments/types/appointment.types";
 import { Calendar } from "lucide-react";
+import { AppointmentFilterStatus } from "../../types/appointment.dto";
 
 interface AppointmentEmptyStateProps {
   filter: AppointmentFilterStatus;

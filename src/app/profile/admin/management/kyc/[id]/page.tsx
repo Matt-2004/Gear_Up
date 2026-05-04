@@ -1,9 +1,11 @@
-import KycDetailPage from "@/app/features/dashboards/admin/ui/kyc/AdminKycDetail";
+import KycDetailPage from "@/app/features/profiles/admin/ui/kyc/AdminKycDetail";
+import { KycMapper } from "@/app/features/profiles/dealer/types/kyc.mapper";
 import { getKycById } from "@/app/shared/utils/API/AdminAPI";
 
 const getKycDataById = async (id: string) => {
   const response = await getKycById(id);
-  return response?.data;
+  const kycData = KycMapper(response.data);
+  return kycData;
 };
 
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {

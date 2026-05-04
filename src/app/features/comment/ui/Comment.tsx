@@ -1,10 +1,6 @@
 "use client";
 
 import {
-  AddComment,
-  CommentData,
-} from "@/app/features/comment/types/comment.types";
-import {
   addComment,
   addLikeToComment,
 } from "@/app/shared/utils/API/CommentAPI";
@@ -15,6 +11,8 @@ import { Heart, Reply } from "lucide-react";
 import Image from "next/image";
 import { useRef, useState } from "react";
 import { ICommentProps, useCommentContext } from "../context/CommentContext";
+import { AddCommentDTO } from "../types/comment.dto";
+import { CommentModel } from "../types/comment.model";
 
 interface ICommnetsProps {
   comment: ICommentProps[];
@@ -35,7 +33,7 @@ export const Comment = ({ comment, level }: ICommnetsProps) => {
     postId,
     text,
     parentCommentId,
-  }: AddComment) => {
+  }: AddCommentDTO) => {
     try {
       await addComment({ postId, text, parentCommentId });
     } catch (err) {
@@ -234,7 +232,7 @@ export const ReplyBtn = ({
   comment,
 }: {
   handleActiveReply: (id: string) => void;
-  comment: CommentData;
+  comment: CommentModel;
 }) => {
   return (
     <button

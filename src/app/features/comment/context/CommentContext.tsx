@@ -1,10 +1,9 @@
 "use client";
 
-import { CommentData } from "@/app/features/comment/types/comment.types";
-
 import { createContext, ReactNode, useContext, useState } from "react";
+import { CommentModel } from "../types/comment.model";
 
-export interface ICommentProps extends CommentData {
+export interface ICommentProps extends CommentModel {
   replies?: ICommentProps[];
 }
 
@@ -12,7 +11,7 @@ interface ICommentContext {
   comments: ICommentProps[];
   // Add a comment (top-level) or insert replies under parent (nested, up to level 3)
   handleComment: (
-    newComment: CommentData | CommentData[],
+    newComment: CommentModel | CommentModel[],
     parentCommentId: string | null,
   ) => void;
 
@@ -36,7 +35,7 @@ const CommentContextProvider = ({ children }: { children: ReactNode }) => {
     useState<string>("");
   const [expandedCommentIds, setExpandedCommentIds] = useState<string[]>([]);
   function handleComment(
-    newComment: CommentData | CommentData[],
+    newComment: CommentModel | CommentModel[],
     parentCommentId: string | null,
   ) {
     const normalized: ICommentProps[] = (

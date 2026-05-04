@@ -1,9 +1,9 @@
-import { CarItems } from "@/app/features/car/types/car.types";
 import { formatNumber } from "@/app/shared/utils/numberFormatter";
 import { Heart } from "lucide-react";
+import { CarDetailModel } from "../../types/car.model";
 
 interface CarHeaderProps {
-  car: CarItems;
+  car: CarDetailModel;
   isFavorite: boolean;
   onToggleFavorite: () => void;
 }
@@ -20,21 +20,21 @@ export default function CarHeader({
           <div className="mb-3 flex items-center gap-2">
             <span
               className={`rounded-md px-2 py-1 text-[10px] uppercase font-bold tracking-wider ${
-                car.carStatus === "Available"
+                car.status === "Available"
                   ? "bg-green-100 text-green-800"
                   : "bg-red-100 text-red-800"
               }`}
             >
-              {car.carStatus}
+              {car.status}
             </span>
             <span
               className={`rounded-md px-2 py-1 text-[10px] uppercase font-bold tracking-wider ${
-                car.carCondition === "New"
+                car.condition === "New"
                   ? "bg-blue-100 text-blue-800"
                   : "bg-gray-100 text-gray-700"
               }`}
             >
-              {car.carCondition}
+              {car.condition}
             </span>
           </div>
           <h1 className=" text-xl font-semibold text-gray-900 ">

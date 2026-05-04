@@ -1,16 +1,19 @@
 import { useCallback, useEffect, useState } from "react";
-import { AppointmentStatus } from "@/app/features/appointments/types/appointment.types";
-import {
-  ReviewResponse,
-  IReviewData,
-  IReviewSubmissionDTO,
-} from "@/app/features/review/types/review.types";
+
 import {
   deleteReview,
   editReview,
   getUserReviews,
   submitReview,
 } from "@/app/shared/utils/API/ReviewAPI";
+import {
+  IReviewSubmissionDTO,
+  ReviewDTO,
+  ReviewResponse,
+} from "../../review/types/review.dto";
+import { ReviewModel } from "../../review/types/review.model";
+import { ReviewMapper } from "../../review/types/review.mapper";
+import { AppointmentStatus } from "../types/appointment.dto";
 
 interface UseAppointmentReviewsProps {
   mode: "user" | "dealer";
@@ -23,7 +26,7 @@ export const useAppointmentReviews = ({
   status,
   agentId,
 }: UseAppointmentReviewsProps) => {
-  const [existingReview, setExistingReview] = useState<IReviewData | null>(
+  const [existingReview, setExistingReview] = useState<ReviewModel | null>(
     null,
   );
   const [loadingReview, setLoadingReview] = useState(false);
@@ -44,9 +47,10 @@ export const useAppointmentReviews = ({
     setLoadingReview(true);
     try {
       const response: ReviewResponse = await getUserReviews();
+      const reviewData = response.data?.items.map(ReviewMapper);
       if (response.isSuccess && response.data?.items) {
-        const review = response.data.items.find(
-          (r: IReviewData) => r.revieweeId === agentId,
+        const review = reviewData.find(
+          (r: ReviewModel) => r.revieweeId === agentId,
         );
         setExistingReview(review || null);
       }

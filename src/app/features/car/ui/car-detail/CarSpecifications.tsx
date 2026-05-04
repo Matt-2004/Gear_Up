@@ -1,8 +1,8 @@
-import { CarItems } from "@/app/features/car/types/car.types";
 import { Calendar, Cog, Fuel, Gauge } from "lucide-react";
+import { CarDetailModel } from "../../types/car.model";
 
 interface CarSpecificationsProps {
-  car: CarItems;
+  car: CarDetailModel;
 }
 
 export default function CarSpecifications({ car }: CarSpecificationsProps) {
@@ -15,12 +15,12 @@ export default function CarSpecifications({ car }: CarSpecificationsProps) {
     {
       icon: Fuel,
       label: "Fuel",
-      value: car.fuelType,
+      value: car.fuel,
     },
     {
       icon: Cog,
       label: "Transmission",
-      value: car.transmissionType,
+      value: car.transmission,
     },
     {
       icon: Calendar,

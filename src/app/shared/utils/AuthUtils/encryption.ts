@@ -1,4 +1,4 @@
-import { UserItem } from "@/app/features/navbar/types/user.types";
+import { UserModel } from "@/app/features/profiles/user/types/user.model";
 
 // Use environment variable for encryption key, fallback to a default for development
 const ENCRYPTION_KEY =
@@ -22,7 +22,7 @@ async function getKey() {
   );
 }
 
-export async function encrypt(data: UserItem): Promise<string> {
+export async function encrypt(data: UserModel): Promise<string> {
   const key = await getKey();
   const iv = crypto.getRandomValues(new Uint8Array(12)); // 12 bytes for GCM
 

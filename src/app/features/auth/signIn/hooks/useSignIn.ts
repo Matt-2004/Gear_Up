@@ -10,6 +10,7 @@ import {
 import { UserFetch } from "@/app/shared/utils/AuthUtils/UserFetch";
 import { encrypt } from "@/app/shared/utils/AuthUtils/encryption";
 import { useUserData } from "@/app/features/navbar/context/UserDataContext";
+import { UserMapper } from "@/app/features/profiles/user/types/user.mapper";
 
 // formData --> handleFromSubmit() --> signUpAction --> toast
 const initialLoginFormData = {
@@ -48,7 +49,8 @@ export const useSignIn = () => {
 
       // promise-chain for setting user data in cookie
       const userRes = await UserFetch();
-      const encryptedUserData = await encrypt(userRes.data);
+      const userData = UserMapper(userRes.data);
+      const encryptedUserData = await encrypt(userData);
       await user_data_integration(encryptedUserData, formData.rememberMe);
 
       await refreshUserData();

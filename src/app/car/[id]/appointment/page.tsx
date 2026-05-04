@@ -1,9 +1,9 @@
-import { CarItems } from "@/app/features/car/types/car.types";
 import { getCarById } from "@/app/shared/utils/API/CarAPI";
 
 export const dynamic = "force-dynamic";
 import { notFound } from "next/navigation";
 import AppointmentPage from "../../../features/car/ui/car-appointment/CarAppointment";
+import { carDetailMapper } from "@/app/features/car/types/car.mapper";
 
 async function getData(id: string) {
   try {
@@ -17,11 +17,13 @@ async function getData(id: string) {
 
 const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
-  const car = await getData(id);
+  const carDetailData = await getData(id);
 
-  if (!car) notFound();
+  if (!carDetailData) notFound();
 
-  return <AppointmentPage car={car as CarItems} />;
+  const car = carDetailMapper(carDetailData);
+
+  return <AppointmentPage car={car} />;
 };
 
 export default Page;

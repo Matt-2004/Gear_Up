@@ -1,9 +1,8 @@
 import {
   IReviewSubmissionDTO,
   ReviewResponse,
-} from "@/app/features/review/types/review.types";
+} from "@/app/features/review/types/review.dto";
 import { deleteFetch, getFetch, putFetch, postFetch } from "./AxiosClient";
-import { MainResponse } from "../../types.ts/main-response";
 
 export async function submitReview(reviewData: IReviewSubmissionDTO) {
   return postFetch("/api/v1/reviews", reviewData);

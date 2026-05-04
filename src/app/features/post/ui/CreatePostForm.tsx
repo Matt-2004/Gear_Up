@@ -1,8 +1,6 @@
 "use client";
 
 import { useToast } from "@/app/features/toast/hooks/useToast";
-import { CarItems } from "@/app/features/car/types/car.types";
-import { CreatePostData } from "@/app/features/post/types/post.types";
 import { CarCard } from "../../car/ui/car-card/CarCard";
 import { createPost } from "@/app/shared/utils/API/PostAPI";
 import {
@@ -17,6 +15,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useCreatePostContext } from "../context/CreatePostContext";
 import { CarModel } from "../../car/types/car.model";
+import { CreatePostDTO } from "../types/post.dto";
 
 interface CreatePostFormProps {
   dealerCars: CarModel[];
@@ -62,7 +61,7 @@ const CreatePostForm = ({ dealerCars }: CreatePostFormProps) => {
     }
   };
 
-  const handlePublish = async (data: CreatePostData) => {
+  const handlePublish = async (data: CreatePostDTO) => {
     try {
       const response = await createPost(data);
 

@@ -1,7 +1,5 @@
 "use client";
 
-import { CommentData } from "@/app/features/comment/types/comment.types";
-import { PostItem } from "@/app/features/post/types/post.types";
 import {
   getCommentsByPostId,
   getNestedCommentsByCommentId,
@@ -11,10 +9,12 @@ import { useEffect } from "react";
 import { Comment } from "../../comment/ui/Comment";
 import { CarouselImages, PostContent } from "./DiscoverPost";
 import { useCommentContext } from "../../comment/context/CommentContext";
+import { PostModel } from "../types/post.model";
+import { CommentModel } from "../../comment/types/comment.model";
 
 interface IDetailProp {
   access_token: string;
-  postData: PostItem;
+  postData: PostModel;
 }
 
 const PostDetails = ({ access_token, postData }: IDetailProp) => {
@@ -40,17 +40,17 @@ const PostDetails = ({ access_token, postData }: IDetailProp) => {
     { Color: color },
   ];
 
-  const { engineCapacity, fuelType, transmissionType } = postData.carDto;
+  const { engine, fuel, transmission } = postData.carDto;
   const performanceSpecTableData = [
-    { EngineCapacity: engineCapacity },
-    { FuelType: fuelType },
-    { TransmissionType: transmissionType },
+    { EngineCapacity: engine },
+    { FuelType: fuel },
+    { TransmissionType: transmission },
   ];
 
-  const { mileage, seatingCapacity } = postData.carDto;
+  const { mileage, seats } = postData.carDto;
   const capacitySpecTableData = [
     { Mileage: mileage + " km" },
-    { SeatingCapacity: seatingCapacity + " seats" },
+    { SeatingCapacity: seats + " seats" },
   ];
   const fetchComments = async (postId: string) => {
     const response = await getCommentsByPostId(postId);
@@ -105,7 +105,7 @@ const PostDetails = ({ access_token, postData }: IDetailProp) => {
     // Join Group
     JoinGroups();
 
-    connection.on("CommentCreated", (data: CommentData) => {
+    connection.on("CommentCreated", (data: CommentModel) => {
       handleComment(data, data.parentCommentId ?? null);
     });
 
@@ -150,7 +150,7 @@ const PostDetails = ({ access_token, postData }: IDetailProp) => {
                   <div className="bg-gray-100">
                     <CarouselImages
                       price={postData.carDto.price}
-                      images={postData.carDto.carImages}
+                      images={postData.carDto.images}
                     />
                   </div>
 

@@ -1,8 +1,8 @@
-import { CarItems } from "@/app/features/car/types/car.types";
 import { Info, Gauge, CarFront, FileText } from "lucide-react";
+import { CarDetailModel } from "../../types/car.model";
 
 interface CarAdditionalDetailsProps {
-  car: CarItems;
+  car: CarDetailModel;
 }
 
 export default function CarAdditionalDetails({
@@ -16,16 +16,16 @@ export default function CarAdditionalDetails({
         { label: "Make", value: car.make },
         { label: "Model", value: car.model },
         { label: "Year", value: car.year },
-        { label: "Condition", value: car.carCondition },
+        { label: "Condition", value: car.condition },
       ],
     },
     {
       title: "Performance & Engine",
       icon: Gauge,
       details: [
-        { label: "Engine Capacity", value: `${car.engineCapacity}L` },
-        { label: "Transmission", value: car.transmissionType },
-        { label: "Fuel Type", value: car.fuelType },
+        { label: "Engine Capacity", value: `${car.engine}L` },
+        { label: "Transmission", value: car.transmission },
+        { label: "Fuel Type", value: car.fuel },
         { label: "Mileage", value: `${car.mileage.toLocaleString()} KM` },
       ],
     },
@@ -34,7 +34,7 @@ export default function CarAdditionalDetails({
       icon: CarFront,
       details: [
         { label: "Exterior Color", value: car.color },
-        { label: "Seating Capacity", value: `${car.seatingCapacity} Seats` },
+        { label: "Seating Capacity", value: `${car.seats} Seats` },
       ],
     },
     {
@@ -42,7 +42,7 @@ export default function CarAdditionalDetails({
       icon: FileText,
       details: [
         { label: "VIN", value: car.vin },
-        { label: "License Plate", value: car.licensePlate },
+        { label: "License Plate", value: car.license },
       ],
     },
   ];

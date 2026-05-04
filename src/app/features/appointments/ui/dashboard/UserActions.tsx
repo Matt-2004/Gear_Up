@@ -1,13 +1,13 @@
 import { CheckCircle, Pencil, Star, Trash2, XCircle } from "lucide-react";
-import { IReviewData } from "@/app/features/review/types/review.types";
-import { AppointmentStatus } from "@/app/features/appointments/types/appointment.types";
+import { ReviewModel } from "@/app/features/review/types/review.model";
+import { AppointmentStatus } from "../../types/appointment.dto";
 
 interface UserActionsProps {
   status: AppointmentStatus;
   loading: boolean;
   onCancel?: () => void;
   loadingReview: boolean;
-  existingReview: IReviewData | null;
+  existingReview: ReviewModel | null;
   handleRateClick: () => void;
   handleEditClick: () => void;
   handleDeleteClick: () => void;

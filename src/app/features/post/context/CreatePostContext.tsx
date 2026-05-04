@@ -1,11 +1,11 @@
 "use client";
 
-import { CreatePostData } from "@/app/features/post/types/post.types";
 import { createContext, ReactNode, useContext, useState } from "react";
+import { CreatePostDTO } from "../types/post.dto";
 
 interface CreatePostContextType {
-  postData: CreatePostData;
-  updatePostData: (data: Partial<CreatePostData>) => void;
+  postData: CreatePostDTO;
+  updatePostData: (data: Partial<CreatePostDTO>) => void;
   resetPostData: () => void;
 }
 
@@ -13,7 +13,7 @@ const CreatePostContext = createContext<CreatePostContextType | undefined>(
   undefined,
 );
 
-const initialPostData: CreatePostData = {
+const initialPostData: CreatePostDTO = {
   caption: "",
   content: "",
   visibility: "Default",
@@ -21,9 +21,9 @@ const initialPostData: CreatePostData = {
 };
 
 export const CreatePostProvider = ({ children }: { children: ReactNode }) => {
-  const [postData, setPostData] = useState<CreatePostData>(initialPostData);
+  const [postData, setPostData] = useState<CreatePostDTO>(initialPostData);
 
-  const updatePostData = (data: Partial<CreatePostData>) => {
+  const updatePostData = (data: Partial<CreatePostDTO>) => {
     setPostData((prev) => ({ ...prev, ...data }));
   };
 

@@ -1,10 +1,8 @@
 "use client";
 
 import carSuggestionsData from "@/../public/carSuggestions.json";
-import { CarItems } from "@/app/features/car/types/car.types";
 import { CarCard } from "@/app/features/car/ui/car-card/CarCard";
 import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
-import { MainResponse } from "@/app/shared/types.ts/main-response";
 import { searchCarWithQuery } from "@/app/shared/utils/API/CarAPI";
 import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";

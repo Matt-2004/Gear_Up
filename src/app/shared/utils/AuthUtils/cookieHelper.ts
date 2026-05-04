@@ -1,4 +1,3 @@
-import { UserItem } from "@/app/features/navbar/types/user.types";
 import { decrypt } from "./encryption";
 
 export async function getDecryptedUserData(

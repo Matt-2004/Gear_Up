@@ -14,7 +14,7 @@ export function NavbarUserMenu() {
 
   if (!user) return null;
 
-  const { avatarUrl, username, role } = user;
+  const { profileImage, displayName, role } = user;
 
   return (
     <div
@@ -28,7 +28,7 @@ export function NavbarUserMenu() {
       >
         <div className="relative">
           <Image
-            src={avatarUrl || "/default_profile.jpg"}
+            src={profileImage || "/default_profile.jpg"}
             alt="Profile Picture"
             width={40}
             height={40}
@@ -38,8 +38,8 @@ export function NavbarUserMenu() {
         </div>
         <div className="hidden items-start md:flex md:flex-col">
           <span className="text-sm font-medium whitespace-nowrap text-gray-900">
-            {username &&
-              username.charAt(0).toUpperCase() + username.substring(1)}
+            {displayName &&
+              displayName.charAt(0).toUpperCase() + displayName.substring(1)}
           </span>
           {role === "Dealer" && (
             <div className="flex items-center gap-1 text-xs text-blue-600">

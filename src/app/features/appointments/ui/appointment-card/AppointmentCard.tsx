@@ -1,9 +1,9 @@
-import { AppointmentData } from "@/app/features/appointments/types/appointment.types";
 import { getStatusColor } from "@/app/features/appointments/utils/appointmentUtils";
 import RoleBasedAppointmentCard from "@/app/features/appointments/ui/appointment-card/RoleBasedAppointmentCard";
+import { AppointmentModel } from "../../types/appointment.model";
 
 interface AppointmentCardProps {
-  appointment: AppointmentData;
+  appointment: AppointmentModel;
   loading: boolean;
   onCancel: (appointmentId: string) => void;
 }

@@ -1,7 +1,8 @@
+import { UserResponse } from "@/app/features/profiles/user/types/user.dto";
 import { getFetch, putFetch, postFetch } from "./AxiosClient";
 
 export async function getUserProfile() {
-  return await getFetch("/api/v1/users/me");
+  return await getFetch<UserResponse>("/api/v1/users/me");
 }
 
 export async function updateUserProfile(formdata: FormData) {

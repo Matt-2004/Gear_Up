@@ -1,10 +1,5 @@
 "use client";
 
-import {
-  CarImageDTO,
-  PostItem,
-  PostRoot,
-} from "@/app/features/post/types/post.types";
 import { useUserData } from "@/app/features/navbar/context/UserDataContext";
 import { DEFAULT_API_URL } from "@/app/shared/utils/config";
 import { getAllPosts } from "@/app/shared/utils/API/PostAPI";
@@ -25,6 +20,9 @@ import { LikeCount } from "../../comment/ui/Comment";
 import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
 import { useRouter } from "next/navigation";
 import { formatNumber } from "@/app/shared/utils/numberFormatter";
+import { PostResponse } from "../types/post.dto";
+import { PostDTO } from "../types/post.dto";
+import { CarImages } from "../../car/types/car.dto";
 
 /* Discover post -> feeds & create post btn
 	
@@ -42,24 +40,20 @@ import { formatNumber } from "@/app/shared/utils/numberFormatter";
       only FEEDS
 */
 
-const DiscoverPost = ({ post }: { post: CursorResponse<PostItem[]> }) => {
+const DiscoverPost = ({ post }: { post: CursorResponse<PostDTO[]> }) => {
   const { user } = useUserData();
 
   const { data, fetchNextPage, isFetchingNextPage, hasNextPage, refetch } =
     useInfiniteQuery<
-      PostRoot,
+      PostResponse,
       Error,
-      InfiniteData<PostRoot, string | undefined>,
+      InfiniteData<PostResponse, string | undefined>,
       string[],
       string | undefined
     >({
       queryKey: ["discover-posts"],
       queryFn: async ({ pageParam }) => {
         const result = await getAllPosts(pageParam);
-
-        if (result instanceof Response) {
-          return (await result.json()) as PostRoot;
-        }
 
         return result;
       },
@@ -208,7 +202,7 @@ const CreatePostButton = () => {
   );
 };
 
-const PostCard = ({ postItem }: { postItem: PostItem }) => {
+const PostCard = ({ postItem }: { postItem: PostDTO }) => {
   if (!postItem) return null;
 
   const router = useRouter();
@@ -250,7 +244,7 @@ const PostCard = ({ postItem }: { postItem: PostItem }) => {
         <div className="flex-1 overflow-hidden">
           <CarouselImages
             price={postItem.carDto.price}
-            images={postItem?.carDto?.carImages}
+            images={postItem.carDto.carImages || []}
           />
         </div>
         {/* Caption and Content */}
@@ -312,7 +306,7 @@ export const PostContent = ({ postContent }: IPostContentProps) => {
   );
 };
 interface ICarouselPostImageProps {
-  images: CarImageDTO[];
+  images: CarImages[];
   price: number;
 }
 

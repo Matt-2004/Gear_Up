@@ -1,6 +1,5 @@
 "use client";
 
-import { CarItems } from "@/app/features/car/types/car.types";
 import CarAdditionalDetails from "@/app/features/car/ui/car-detail/CarAdditionalDetails";
 import CarContactSeller from "@/app/features/car/ui/car-detail/CarContactSeller";
 import CarDescription from "@/app/features/car/ui/car-detail/CarDescription";
@@ -8,20 +7,21 @@ import CarHeader from "@/app/features/car/ui/car-detail/CarHeader";
 import CarImageGallery from "@/app/features/car/ui/car-detail/CarImageGallery";
 import CarSpecifications from "@/app/features/car/ui/car-detail/CarSpecifications";
 import { useState } from "react";
+import { CarDetailModel } from "../../types/car.model";
 
-export default function CarDetail({ car }: { car: CarItems }) {
+export default function CarDetail({ car }: { car: CarDetailModel }) {
   const [selectedImage, setSelectedImage] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
 
   const nextImage = () => {
     console.log("Next image");
-    setSelectedImage((prev) => (prev + 1) % car.carImages.length);
+    setSelectedImage((prev) => (prev + 1) % car.images.length);
   };
 
   const prevImage = () => {
     console.log("Previous image");
     setSelectedImage(
-      (prev) => (prev - 1 + car.carImages.length) % car.carImages.length,
+      (prev) => (prev - 1 + car.images.length) % car.images.length,
     );
   };
 

@@ -1,18 +1,18 @@
 import {
-  AddComment,
-  CommentRoot,
-} from "@/app/features/comment/types/comment.types";
+  CommentResponse,
+  AddCommentDTO,
+} from "@/app/features/comment/types/comment.dto";
 import { deleteFetch, getFetch, postFetch, putFetch } from "./AxiosClient";
 
 export async function getCommentsByPostId(postId: string) {
-  return getFetch<CommentRoot>(`/api/comments/${postId}/top`);
+  return getFetch<CommentResponse>(`/api/comments/${postId}/top`);
 }
 
 export async function getNestedCommentsByCommentId(parentCommentId: string) {
-  return getFetch<CommentRoot>(`/api/comments/${parentCommentId}/children`);
+  return getFetch<CommentResponse>(`/api/comments/${parentCommentId}/children`);
 }
 
-export async function addComment(data: AddComment) {
+export async function addComment(data: AddCommentDTO) {
   return postFetch("/api/comments", data);
 }
 

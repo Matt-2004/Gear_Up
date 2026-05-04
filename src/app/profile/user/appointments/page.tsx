@@ -1,4 +1,4 @@
-import { AppointmentResponse } from "@/app/features/appointments/types/appointment.types";
+import { AppointmentResponse } from "@/app/features/appointments/types/appointment.dto";
 import Appointments from "../../../features/appointments/ui/dashboard/Appointments";
 import { getFetch } from "@/app/shared/utils/API/AxiosClient";
 

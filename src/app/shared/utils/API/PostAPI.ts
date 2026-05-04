@@ -1,10 +1,10 @@
-import {
-  CreatePostData,
-  PostItem,
-  PostRoot,
-} from "@/app/features/post/types/post.types";
 import { deleteFetch, getFetch, putFetch, postFetch } from "./AxiosClient";
 import { MainResponse } from "../../types.ts/main-response";
+import {
+  CreatePostDTO,
+  PostDTO,
+  PostResponse,
+} from "@/app/features/post/types/post.dto";
 
 export async function getAllPosts(cursor?: string) {
   const query = new URLSearchParams();
@@ -12,15 +12,15 @@ export async function getAllPosts(cursor?: string) {
   const url = query.toString()
     ? `/api/v1/posts?${query.toString()}`
     : "/api/v1/posts";
-  return getFetch<PostRoot>(url);
+  return getFetch<PostResponse>(url);
 }
 
-export async function createPost(data: CreatePostData) {
-  return postFetch("/api/v1/posts", data);
+export async function createPost(data: CreatePostDTO) {
+  return postFetch<null>("/api/v1/posts", data);
 }
 
 export async function getPostById(postId: string) {
-  return getFetch<MainResponse<PostItem>>(`/api/v1/posts/${postId}`);
+  return getFetch<MainResponse<PostDTO>>(`/api/v1/posts/${postId}`);
 }
 
 export async function deletePostById(postId: string) {
@@ -29,14 +29,14 @@ export async function deletePostById(postId: string) {
 
 export async function updatePostById(
   postId: string,
-  data: Omit<CreatePostData, "carId">,
+  data: Omit<CreatePostDTO, "carId">,
 ) {
   return putFetch(`/api/v1/posts/${postId}`, data);
 }
 
 export async function myPost(cursor?: string) {
   const url = cursor ? `/api/v1/posts/me?cursor=${cursor}` : "/api/v1/posts/me";
-  return getFetch<PostRoot>(url);
+  return getFetch<PostResponse>(url);
 }
 
 export async function deletePostLike(postId: string) {

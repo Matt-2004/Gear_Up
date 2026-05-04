@@ -1,6 +1,6 @@
 import { Metadata } from "next";
-import KycRegisterFormProvider from "../../../features/dashboards/dealer/context/KycFormContext";
-import KycRegister from "@/app/features/dashboards/dealer/ui/dealer-kyc-register/KycRegister";
+import KycRegisterFormProvider from "../../../features/profiles/dealer/context/KycFormContext";
+import KycRegister from "@/app/features/profiles/dealer/ui/dealer-kyc-register/KycRegister";
 
 export const metadata: Metadata = {
   title: "Dealer Registration - Gear Up",

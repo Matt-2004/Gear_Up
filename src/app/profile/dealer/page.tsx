@@ -3,44 +3,46 @@ import { getMyCars } from "@/app/shared/utils/API/CarAPI";
 import {
   type PageItem,
   PageSwitcher,
-} from "@/app/features/dashboards/admin/ui/dashboard/PageSwitcher";
-import { DealerTabs } from "@/app/features/dashboards/dealer/ui/tabs/DealerTabs";
+} from "@/app/features/profiles/admin/ui/dashboard/PageSwitcher";
+import { DealerTabs } from "@/app/features/profiles/dealer/ui/tabs/DealerTabs";
 import { Metadata } from "next";
 import {
   DEALER_TABS,
   DealerTabId,
   DEFAULT_DEALER_TAB,
-} from "@/app/features/dashboards/dealer/utils/dealer-tabs.config";
+} from "@/app/features/profiles/dealer/utils/dealer-tabs.config";
 import dynamicImport from "next/dynamic";
 import { dealerAppointments } from "@/app/shared/utils/API/AppointmentAPI";
 import { handleServerError } from "@/app/shared/utils/errors/handleServerError";
-import { AppointmentResponse } from "@/app/features/appointments/types/appointment.types";
 import { CarModel } from "@/app/features/car/types/car.model";
 import { carMapper } from "@/app/features/car/types/car.mapper";
 import { MainResponse } from "@/app/shared/types.ts/main-response";
 import { CarDTO } from "@/app/features/car/types/car.dto";
+import { AppointmentResponse } from "@/app/features/appointments/types/appointment.dto";
+import { AppointmentModel } from "@/app/features/appointments/types/appointment.model";
+import { AppointmentMapper } from "@/app/features/appointments/types/appointment.mapper";
 
 export const dynamic = "force-dynamic";
 
 const DealerCarDashboardPage = dynamicImport(
   () =>
-    import("@/app/features/dashboards/dealer/ui/dealer-dashboard/DealerCarDashboard"),
+    import("@/app/features/profiles/dealer/ui/dealer-dashboard/DealerCarDashboard"),
 );
 const PostManagementPage = dynamicImport(
   () =>
-    import("@/app/features/dashboards/dealer/ui/post-management/PostManagement"),
+    import("@/app/features/profiles/dealer/ui/post-management/PostManagement"),
 );
 const AppointmentManagementPage = dynamicImport(
   () =>
-    import("@/app/features/dashboards/dealer/ui/appointment-management/AppointmentManagement"),
+    import("@/app/features/profiles/dealer/ui/appointment-management/AppointmentManagement"),
 );
 const RevenueManagementPage = dynamicImport(
   () =>
-    import("@/app/features/dashboards/dealer/ui/revenue-management/RevenueManagement"),
+    import("@/app/features/profiles/dealer/ui/revenue-management/RevenueManagement"),
 );
 const SettingPage = dynamicImport(
   () =>
-    import("@/app/features/dashboards/dealer/ui/dealer-profile/DealerProfile"),
+    import("@/app/features/profiles/dealer/ui/dealer-profile/DealerProfile"),
 );
 
 export async function getAllStatusCars(): Promise<CursorResponse<CarModel[]>> {
@@ -105,6 +107,11 @@ export const metadata: Metadata = {
 export default async function Page() {
   const carData = await getAllStatusCars();
   const appointmentData = await getAppointment();
+  const appointment: CursorResponse<AppointmentModel[]> = {
+    items: appointmentData.data.items.map(AppointmentMapper),
+    hasMore: appointmentData.data.hasMore,
+    nextCursor: appointmentData.data.nextCursor,
+  };
 
   const pages: PageItem<DealerTabId>[] = [
     {
@@ -117,7 +124,7 @@ export default async function Page() {
     },
     {
       id: "appointment-management",
-      page: <AppointmentManagementPage appointmentData={appointmentData} />,
+      page: <AppointmentManagementPage appointmentData={appointment} />,
     },
     {
       id: "revenue-management",

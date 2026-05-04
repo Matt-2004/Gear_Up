@@ -1,14 +1,11 @@
 import { getAllPosts } from "@/app/shared/utils/API/PostAPI";
 import DiscoverPost from "../../features/post/ui/DiscoverPost";
-import { PostRoot } from "@/app/features/post/types/post.types";
-import { redirect } from "next/dist/server/api-utils";
-import { notFound, unauthorized } from "next/navigation";
-import { ErrorResponse } from "@/app/shared/utils/errors/errorResponse";
 import { handleServerError } from "@/app/shared/utils/errors/handleServerError";
+import { PostResponse } from "@/app/features/post/types/post.dto";
 
 export const dynamic = "force-dynamic";
 
-const getData = async (): Promise<PostRoot> => {
+const getData = async (): Promise<PostResponse> => {
   try {
     const response = await getAllPosts();
     console.log("response:", response);
