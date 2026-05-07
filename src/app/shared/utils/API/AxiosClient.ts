@@ -5,7 +5,6 @@ import {
   LoginInputDTO,
   ResetPasswordInputDTO,
 } from "@/app/features/auth/types/auth.types";
-
 import { IAdminUpdateStatus } from "@/app/features/profiles/dealer/types/kyc.types";
 import { CreateMessageDTO } from "@/app/features/messaging/types/message.types";
 import { BACKEND_API_URL } from "@/app/shared/utils/config";
@@ -20,10 +19,100 @@ import { CreatePostDTO } from "@/app/features/post/types/post.dto";
 import { AddCommentDTO } from "@/app/features/comment/types/comment.dto";
 import { IReviewSubmissionDTO } from "@/app/features/review/types/review.dto";
 import { createAppointmentDTO } from "@/app/features/appointments/types/appointment.dto";
+import { cookies } from "next/headers";
+import { Tokens } from "@/app/features/auth/signIn/types/sign-in-response";
 
 export const api = axios.create({
   baseURL: BACKEND_API_URL,
 });
+
+async function refreshAccessToken(
+  refreshToken: string,
+  isProduction: boolean,
+): Promise<void> {
+  const cookieStore = await cookies();
+  const sameSite = isProduction ? ("none" as const) : ("lax" as const);
+
+  try {
+    const res = await fetch(`${BACKEND_API_URL}/api/v1/auth/refresh`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(refreshToken),
+    });
+
+    if (!res.ok) {
+      console.error(`Token refresh failed: ${res.status} ${res.statusText}`);
+      throw new Error("Token refresh failed");
+    }
+
+    const data = await res.json();
+    const tokenData = data?.data ?? data;
+    const nextAccessToken: string | undefined = tokenData?.accessToken;
+    const nextRefreshToken: string | undefined = tokenData?.refreshToken;
+
+    if (!nextAccessToken || !nextRefreshToken) {
+      console.error("Token refresh response missing tokens");
+      throw new Error("Token refresh failed");
+    }
+
+    cookieStore.set("access_token", nextAccessToken, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite,
+      maxAge: 60 * 5, // 5 minutes
+    });
+    cookieStore.set("refresh_token", nextRefreshToken, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite,
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+    });
+  } catch (error) {
+    console.error(
+      "Error during token refresh:",
+      error instanceof Error ? error.message : "Unknown error",
+    );
+    throw error;
+  }
+}
+
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config as
+      | (typeof error.config & { _retry?: boolean })
+      | undefined;
+    const isProduction = process.env.NODE_ENV === "production";
+    const cookieStore = await cookies();
+    const refreshToken = cookieStore.get("refresh_token")?.value;
+
+    if (
+      error.response?.status === 401 &&
+      refreshToken &&
+      !originalRequest?._retry
+    ) {
+      originalRequest._retry = true;
+      try {
+        await refreshAccessToken(refreshToken, isProduction);
+        const nextAccessToken = cookieStore.get("access_token")?.value;
+
+        if (nextAccessToken && originalRequest) {
+          originalRequest.headers = {
+            ...(originalRequest.headers ?? {}),
+            Authorization: `Bearer ${nextAccessToken}`,
+          };
+          return api.request(originalRequest);
+        }
+      } catch (refreshError) {
+        cookieStore.delete("access_token");
+        cookieStore.delete("refresh_token");
+        return Promise.reject(refreshError);
+      }
+    }
+
+    return Promise.reject(error);
+  },
+);
 
 type ApiErrorPayload = {
   isSuccess?: boolean;

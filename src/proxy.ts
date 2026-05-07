@@ -1,10 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { BACKEND_API_URL } from "./app/shared/utils/config";
 import { getDecryptedFullUserData } from "./app/shared/utils/AuthUtils/cookieHelper";
-
-// ---------------------------------------------------------------------------
-// Constants
-// ---------------------------------------------------------------------------
 
 const PUBLIC_ROUTES = [
   "/",
@@ -14,15 +9,10 @@ const PUBLIC_ROUTES = [
   "/auth/password",
   "/auth/email",
   "/car/search",
-  "/post/discover",
   "/verify",
   "/reset-password",
   "/car",
 ];
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
 
 function isPublicRoute(pathname: string): boolean {
   return PUBLIC_ROUTES.some((route) => {
@@ -43,78 +33,7 @@ function isDealerRoute(pathname: string): boolean {
   );
 }
 
-function clearAuthCookies(response: NextResponse): void {
-  response.cookies.delete("access_token");
-  response.cookies.delete("refresh_token");
-  response.cookies.delete("user_data");
-}
-
-// ---------------------------------------------------------------------------
-// Token refresh
-// ---------------------------------------------------------------------------
-
-type RefreshResult =
-  | { success: true; accessToken: string; response: NextResponse }
-  | { success: false };
-
-async function refreshAccessToken(
-  refreshToken: string,
-  isProduction: boolean,
-): Promise<RefreshResult> {
-  const sameSite = isProduction ? ("none" as const) : ("lax" as const);
-
-  try {
-    const res = await fetch(`${BACKEND_API_URL}/api/v1/auth/refresh`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(refreshToken),
-    });
-
-    if (!res.ok) {
-      console.error(`Token refresh failed: ${res.status} ${res.statusText}`);
-      return { success: false };
-    }
-
-    const data = await res.json();
-    const tokenData = data?.data ?? data;
-    const nextAccessToken: string | undefined = tokenData?.accessToken;
-    const nextRefreshToken: string | undefined = tokenData?.refreshToken;
-
-    if (!nextAccessToken || !nextRefreshToken) {
-      console.error("Token refresh response missing tokens");
-      return { success: false };
-    }
-
-    const response = NextResponse.next();
-    response.cookies.set("access_token", nextAccessToken, {
-      httpOnly: true,
-      secure: isProduction,
-      sameSite,
-      maxAge: 60 * 5, // 5 minutes
-    });
-    response.cookies.set("refresh_token", nextRefreshToken, {
-      httpOnly: true,
-      secure: isProduction,
-      sameSite,
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-    });
-
-    return { success: true, accessToken: nextAccessToken, response };
-  } catch (error) {
-    console.error(
-      "Error during token refresh:",
-      error instanceof Error ? error.message : "Unknown error",
-    );
-    return { success: false };
-  }
-}
-
-// ---------------------------------------------------------------------------
-// Middleware
-// ---------------------------------------------------------------------------
-
 export async function proxy(req: NextRequest) {
-  const isProduction = process.env.NODE_ENV === "production";
   const { pathname } = req.nextUrl;
 
   let accessToken = req.cookies.get("access_token")?.value;
@@ -138,22 +57,6 @@ export async function proxy(req: NextRequest) {
     return response;
   }
 
-  // 3. Refresh token exists but access token is missing → attempt refresh
-  let refreshedResponse: NextResponse | null = null;
-
-  if (refreshToken && !accessToken) {
-    const result = await refreshAccessToken(refreshToken, isProduction);
-
-    if (!result.success) {
-      const response = NextResponse.redirect(new URL("/", req.url));
-      clearAuthCookies(response);
-      return response;
-    }
-
-    accessToken = result.accessToken;
-    refreshedResponse = result.response;
-  }
-
   // 4. Role-based access control
   const userData = await getDecryptedFullUserData(userDataCookie);
 
@@ -174,6 +77,13 @@ export async function proxy(req: NextRequest) {
     );
   }
 
+  // Protect dealer routes from non-dealers
+  if (isDealerRoute(pathname)) {
+    if (!userDataCookie || !userData || userData.role !== "Dealer") {
+      return NextResponse.redirect(new URL("/forbidden", req.url));
+    }
+  }
+
   // Protect admin routes from non-admins
   if (isAdminRoute(pathname)) {
     if (!userDataCookie || !userData || userData.role !== "Admin") {
@@ -181,12 +91,8 @@ export async function proxy(req: NextRequest) {
     }
   }
 
-  return refreshedResponse ?? NextResponse.next();
+  return NextResponse.next();
 }
-
-// ---------------------------------------------------------------------------
-// Route matcher
-// ---------------------------------------------------------------------------
 
 export const config = {
   matcher: [
