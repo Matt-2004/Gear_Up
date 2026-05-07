@@ -1,11 +1,11 @@
-import { CarItems } from "@/app/features/car/types/car.types";
+import { CarModel } from "@/app/features/car/types/car.model";
 import { fireEvent, render, screen } from "@testing-library/react";
 import DealerCarCard from "./DealerCarCard";
 
 // Mock the CarCard component
-jest.mock("@/components/Car/CarCard", () => ({
-  CarCard: ({ carItem }: { carItem: CarItems }) => (
-    <div data-testid="car-card">Car: {carItem.name}</div>
+jest.mock("@/app/features/car/ui/car-card/CarCard", () => ({
+  CarCard: ({ carItem }: { carItem: CarModel }) => (
+    <div data-testid="car-card">Car: {carItem.title}</div>
   ),
 }));
 
@@ -13,23 +13,20 @@ describe("DealerCarCard", () => {
   const mockOnDelete = jest.fn();
   const mockOnEdit = jest.fn();
 
-  const mockCar: CarItems = {
+  const mockCar: CarModel = {
     id: "1",
-    name: "Tesla Model 3",
-    carValidationStatus: "Approved",
-    price: 45000,
-    mileage: 15000,
-    year: 2022,
-    brand: "Tesla",
+    title: "Tesla Model 3",
+    make: "Tesla",
     model: "Model 3",
-    fuelType: "Electric",
     transmission: "Automatic",
-    location: "San Francisco",
+    status: "Approved",
+    mileage: 15000,
+    seats: 5,
+    price: 45000,
+    color: "Red",
     imageUrl: "https://example.com/car.jpg",
-    images: [],
-    description: "Great car",
-    dealerId: "dealer1",
-  } as unknown as CarItems;
+    createdAt: new Date(),
+  };
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -63,8 +60,8 @@ describe("DealerCarCard", () => {
   it("does not render status badge when status is missing", () => {
     const carWithoutStatus = {
       ...mockCar,
-      carValidationStatus: undefined,
-    } as unknown as CarItems;
+      status: "",
+    } as CarModel;
     render(
       <DealerCarCard
         car={carWithoutStatus}
@@ -183,7 +180,7 @@ describe("DealerCarCard", () => {
   it("renders different status badges correctly", () => {
     const { rerender } = render(
       <DealerCarCard
-        car={{ ...mockCar, carValidationStatus: "Pending" }}
+        car={{ ...mockCar, status: "Pending" }}
         onDelete={mockOnDelete}
         onEdit={mockOnEdit}
       />,
@@ -192,7 +189,7 @@ describe("DealerCarCard", () => {
 
     rerender(
       <DealerCarCard
-        car={{ ...mockCar, carValidationStatus: "Rejected" }}
+        car={{ ...mockCar, status: "Rejected" }}
         onDelete={mockOnDelete}
         onEdit={mockOnEdit}
       />,
@@ -203,7 +200,7 @@ describe("DealerCarCard", () => {
   it("capitalizes first letter of status", () => {
     render(
       <DealerCarCard
-        car={{ ...mockCar, carValidationStatus: "approved" as any }}
+        car={{ ...mockCar, status: "approved" }}
         onDelete={mockOnDelete}
         onEdit={mockOnEdit}
       />,

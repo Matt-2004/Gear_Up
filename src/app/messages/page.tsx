@@ -30,7 +30,7 @@ export default async function MessagesPage({
   const searchparam = await searchParams;
   const userId = searchparam.userId;
   const messages = await getData(userId);
-  const access_token = (await cookies()).get("access_token")?.value!;
+  const access_token = (await cookies()).get("access_token")?.value ?? "";
 
   return (
     <MessagesClient

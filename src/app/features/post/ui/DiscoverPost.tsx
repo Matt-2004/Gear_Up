@@ -198,9 +198,8 @@ const CreatePostButton = () => {
 };
 
 const PostCard = ({ postItem }: { postItem: PostModel }) => {
-  if (!postItem) return null;
-
   const router = useRouter();
+  if (!postItem) return null;
   return (
     <section
       className="group relative flex max-w-full min-w-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-md transition-all duration-300 hover:shadow-xl"

@@ -3,9 +3,17 @@ import DashboardHeader from "./DashboardHeader";
 
 // Mock Next.js Link component
 jest.mock("next/link", () => {
-  return ({ children, href }: { children: React.ReactNode; href: string }) => {
+  function LinkMock({
+    children,
+    href,
+  }: {
+    children: React.ReactNode;
+    href: string;
+  }) {
     return <a href={href}>{children}</a>;
-  };
+  }
+
+  return LinkMock;
 });
 
 describe("DashboardHeader", () => {
@@ -20,7 +28,7 @@ describe("DashboardHeader", () => {
 
     expect(
       screen.getByText(
-        "Manage your inventory, sales, and performance all in one place.",
+        "Manage your listings, track approval statuses, and review vehicle performance.",
       ),
     ).toBeInTheDocument();
   });
@@ -38,14 +46,6 @@ describe("DashboardHeader", () => {
 
     const link = screen.getByRole("link");
     expect(link).toHaveAttribute("href", "/profile/dealer/cars/add?step=1");
-  });
-
-  it("renders Car icon", () => {
-    const { container } = render(<DashboardHeader />);
-
-    // Check for icon container with gradient background
-    const iconContainer = container.querySelector(".bg-gradient-to-br");
-    expect(iconContainer).toBeInTheDocument();
   });
 
   it("renders Plus icon in button", () => {

@@ -1,7 +1,7 @@
 # Gear Up — Vehicle Marketplace Frontend
 
-Gear Up is a production-style vehicle marketplace frontend built with **Next.js**, **TypeScript**, **Tailwind CSS**, **React Query**, and **SignalR**.  
-The platform connects car buyers, dealers, and administrators through car listings, appointment booking, KYC verification, community posts, real-time notifications, and role-based dashboards.
+Gear Up is a production-style vehicle marketplace frontend built with **Next.js (App Router)**, **TypeScript**, **Tailwind CSS**, **TanStack React Query**, **Axios**, and **SignalR**.  
+The platform connects car buyers, dealers, and administrators through car listings, appointment booking, KYC verification, community posts, notifications, and role-based dashboards.
 
 > This repository focuses on the frontend application. The backend API is expected to run separately.
 
@@ -10,6 +10,7 @@ The platform connects car buyers, dealers, and administrators through car listin
 ## Table of Contents
 
 - [Overview](#overview)
+- [Getting Started](#getting-started)
 - [My Role](#my-role)
 - [Key Features](#key-features)
 - [Tech Stack](#tech-stack)
@@ -33,6 +34,30 @@ Gear Up is a full-featured vehicle marketplace frontend designed for three main 
 The application uses a feature-based architecture with reusable UI components, typed API responses, protected routes, real-time communication, and test coverage for dashboard-related components.
 
 ---
+
+## Getting Started
+
+This project is a frontend-only app that expects a separate backend API.
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Run the dev server:
+
+```bash
+npm run dev
+```
+
+Other useful commands:
+
+```bash
+npm run lint
+npm run build
+npm run start
+```
 
 ## My Role
 
@@ -59,6 +84,7 @@ I worked as the **frontend developer** responsible for:
 - Access token and refresh token flow
 - Protected routes based on authentication state
 - Role-based redirects for Admin, Dealer, and User accounts
+- App-level providers for shared auth/session state
 
 ### Role-Based Dashboards
 
@@ -88,11 +114,10 @@ I worked as the **frontend developer** responsible for:
 - Admin KYC review interface
 - KYC filtering and status-based dashboard views
 
-### Community & Real-Time Features
+### Community & Notifications
 
 - Community post discovery
 - Comments, likes, and user interactions
-- Real-time updates using SignalR
 - Notification and messaging support
 
 ### Testing
@@ -106,22 +131,22 @@ I worked as the **frontend developer** responsible for:
 
 ## Tech Stack
 
-| Category                | Technology                                        |
-| ----------------------- | ------------------------------------------------- |
-| Framework               | Next.js 16                                        |
-| Language                | TypeScript                                        |
-| UI Library              | React 19                                          |
-| Styling                 | Tailwind CSS v4                                   |
-| Server State            | TanStack React Query                              |
-| Virtualization          | TanStack React Virtual                            |
-| Real-Time Communication | Microsoft SignalR                                 |
-| HTTP Client             | Axios                                             |
-| Validation              | Zod                                               |
-| Animation               | Framer Motion                                     |
-| Icons                   | Lucide React                                      |
-| Utilities               | clsx, date-fns                                    |
-| Testing                 | Jest, React Testing Library, Jest DOM, User Event |
-| Code Quality            | ESLint, Prettier                                  |
+| Category       | Technology                                        |
+| -------------- | ------------------------------------------------- |
+| Framework      | Next.js (App Router)                              |
+| Language       | TypeScript                                        |
+| UI Library     | React                                             |
+| Styling        | Tailwind CSS                                      |
+| Server State   | TanStack React Query                              |
+| Realtime       | SignalR (@microsoft/signalr)                      |
+| HTTP Client    | Axios                                             |
+| Validation     | Zod                                               |
+| Animation      | Framer Motion                                     |
+| Icons          | Lucide React                                      |
+| Virtualization | @tanstack/react-virtual                           |
+| Utilities      | clsx, date-fns                                    |
+| Testing        | Jest, React Testing Library, Jest DOM, User Event |
+| Code Quality   | ESLint, Prettier                                  |
 
 ---
 
@@ -139,10 +164,10 @@ Browser
   │
   ├─► Authentication Layer
   │     │
+  │     ├─► Route handlers + auth helpers
   │     ├─► httpOnly cookies
   │     ├─► access_token
-  │     ├─► refresh_token
-  │     └─► user session data
+  │     └─► refresh_token
   │
   ├─► API Layer
   │     │
@@ -153,7 +178,6 @@ Browser
   ├─► State/Data Layer
   │     │
   │     ├─► React Query
-  │     ├─► React Context
   │     └─► custom hooks
   │
   └─► Gear Up Backend API
@@ -185,21 +209,13 @@ User is redirected based on role
 src/
 ├── app/
 │   ├── api/                  # Route handlers and API proxy routes
-│   ├── auth/                 # Login, register, password reset, and email verification flows
-│   ├── features/             # Feature-based modules
-│   │   ├── car/              # Car listing, detail, card, and car-related types
-│   │   ├── dashboards/       # Admin and dealer dashboard modules
-│   │   ├── post/             # Community post features
-│   │   ├── toast/            # Toast notification system
-│   │   └── ...
-│   ├── shared/               # Shared UI, types, hooks, and utilities
+│   ├── auth/                 # Login, register, reset, and verification flows
+│   ├── features/             # Feature modules (auth, car, post, messaging, etc.)
+│   ├── shared/               # Shared UI, hooks, types, providers, utilities
 │   ├── layout.tsx            # Root layout
 │   └── page.tsx              # Home page
 │
-├── provider/                 # App-level providers
-├── lib/                      # Shared configuration
-├── utils/                    # Utility functions
-└── proxy.ts                  # Route protection and auth middleware logic
+├── proxy.ts                  # API proxy/token helper
 ```
 
 ## Testing
@@ -268,24 +284,12 @@ The project follows a user-focused testing approach:
 
 ## Current Improvements
 
-Recent frontend improvements include:
+Recent updates reflected in the codebase include:
 
-- Refactored dashboard UI components
-- Added dealer dashboard unit and integration tests
-- Improved filter dropdown behavior
-- Added stronger empty states for dashboard pages
-- Improved reusable dashboard components
-- Improved protected route handling
-- Added real-time support with SignalR
-- Improved API integration patterns
-- Improved form validation with Zod
-- Added virtualized rendering support for large UI lists
-- Improved dashboard layout responsiveness
-- Improved type safety for car and dashboard data
-- Improved dealer car card actions
-- Improved test coverage for dashboard-related components
-- Improved user feedback through toast notifications
-- Improved role-based navigation and protected page behavior
+- Real-time messaging and notifications via SignalR
+- Virtualized lists for post discovery using `@tanstack/react-virtual`
+- Token-aware API proxy flow and route handlers
+- Expanded feature modules under `src/app/features`
 
 ---
 
@@ -369,8 +373,6 @@ This project demonstrates my ability to build a real-world frontend application 
 Planned improvements:
 
 - Add Playwright E2E tests for critical user flows
-- Add accessibility tests with `jest-axe`
-- Add API DTO mappers to protect the frontend from backend response changes
 - Improve production error handling for safer toast messages
 - Add better demo data for portfolio and recruiter review
 - Add screenshots and GIFs to this README
@@ -384,7 +386,6 @@ Planned improvements:
 - Add more documentation for authentication and route protection
 - Add more integration tests for appointment and KYC flows
 - Add better error boundaries for page-level failures
-- Improve API request retry and refresh-token handling
 - Add Storybook for reusable UI components
 - Improve SEO metadata for public marketplace pages
 - Add performance monitoring for image-heavy pages
