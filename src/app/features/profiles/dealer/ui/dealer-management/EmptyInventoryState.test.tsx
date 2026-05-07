@@ -3,18 +3,24 @@ import EmptyInventoryState from "./EmptyInventoryState";
 
 // Mock Next.js Link component
 jest.mock("next/link", () => {
-  return ({ children, href }: { children: React.ReactNode; href: string }) => {
+  function LinkMock({
+    children,
+    href,
+  }: {
+    children: React.ReactNode;
+    href: string;
+  }) {
     return <a href={href}>{children}</a>;
-  };
+  }
+
+  return LinkMock;
 });
 
 describe("EmptyInventoryState", () => {
   it("renders the main heading", () => {
     render(<EmptyInventoryState />);
 
-    expect(
-      screen.getByText("No vehicles in inventory yet"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("No vehicles found")).toBeInTheDocument();
   });
 
   it("renders the description text", () => {
@@ -22,7 +28,7 @@ describe("EmptyInventoryState", () => {
 
     expect(
       screen.getByText(
-        "Start building your inventory today and reach thousands of potential buyers.",
+        "Start building your inventory today to reach potential buyers and grow your dealership.",
       ),
     ).toBeInTheDocument();
   });
@@ -31,7 +37,7 @@ describe("EmptyInventoryState", () => {
     render(<EmptyInventoryState />);
 
     expect(
-      screen.getByRole("button", { name: /add your first vehicle/i }),
+      screen.getByRole("button", { name: /add first vehicle/i }),
     ).toBeInTheDocument();
   });
 
@@ -46,27 +52,28 @@ describe("EmptyInventoryState", () => {
     render(<EmptyInventoryState />);
 
     expect(screen.getByText("Easy Listing")).toBeInTheDocument();
-    expect(screen.getByText("Reach More Buyers")).toBeInTheDocument();
-    expect(screen.getByText("Track Performance")).toBeInTheDocument();
+    expect(screen.getByText("Reach Buyers")).toBeInTheDocument();
+    expect(screen.getByText("Track Data")).toBeInTheDocument();
   });
 
   it("renders feature descriptions", () => {
     render(<EmptyInventoryState />);
 
     expect(
-      screen.getByText("Quick and simple vehicle management"),
+      screen.getByText("Quickly upload details & images"),
     ).toBeInTheDocument();
     expect(
-      screen.getByText("Connect with verified customers"),
+      screen.getByText("Connect with interested prospects"),
     ).toBeInTheDocument();
-    expect(screen.getByText("Monitor views and inquiries")).toBeInTheDocument();
+    expect(
+      screen.getByText("Monitor engagement seamlessly"),
+    ).toBeInTheDocument();
   });
 
   it("renders CarFront icon", () => {
     const { container } = render(<EmptyInventoryState />);
 
-    // Check for icon container with gradient background
-    const iconContainer = container.querySelector(".bg-linear-to-br");
+    const iconContainer = container.querySelector(".border-dashed");
     expect(iconContainer).toBeInTheDocument();
   });
 
@@ -96,6 +103,6 @@ describe("EmptyInventoryState", () => {
     const { container } = render(<EmptyInventoryState />);
 
     const featureGrid = container.querySelector(".grid");
-    expect(featureGrid).toHaveClass("grid-cols-1", "md:grid-cols-3");
+    expect(featureGrid).toHaveClass("grid-cols-1", "sm:grid-cols-3");
   });
 });

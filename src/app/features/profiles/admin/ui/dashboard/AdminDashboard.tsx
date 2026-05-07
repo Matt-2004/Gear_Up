@@ -101,7 +101,7 @@ const AdminDashboard = ({ dashboardData }: AdminDashboardProps) => {
         <div className="space-y-2">
           <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
           <p className="text-sm text-gray-500">
-            Welcome back! Here's what's happening today.
+            Welcome back! Here&apos;s what&apos;s happening today.
           </p>
         </div>
 

@@ -151,7 +151,14 @@ describe("useSignIn", () => {
 
     expect(mockedEncrypt).toHaveBeenCalledWith({
       id: "user-1",
-      name: "John Doe",
+      provider: undefined,
+      displayName: undefined,
+      email: undefined,
+      realName: "John Doe",
+      role: undefined,
+      dateOfBirth: undefined,
+      phone: undefined,
+      profileImage: undefined,
     });
 
     expect(mockedUserDataIntegration).toHaveBeenCalledWith(

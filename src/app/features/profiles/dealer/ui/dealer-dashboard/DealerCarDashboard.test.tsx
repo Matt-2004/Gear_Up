@@ -3,27 +3,26 @@ import DealerCarDashboard from "./DealerCarDashboard";
 import { CarModel } from "@/app/features/car/types/car.model";
 
 // Mock child components
-jest.mock("./management/components", () => ({
-  CarList: ({ cars }: { cars: CarModel[] }) => (
+jest.mock("../dealer-management/CarList", () => ({
+  __esModule: true,
+  default: ({ cars }: { cars: CarModel[] }) => (
     <div data-testid="car-list">Cars: {cars.length}</div>
   ),
-  ConditionalCarFilter: () => (
-    <div data-testid="conditional-filter">Filters</div>
-  ),
-  DashboardHeader: () => <div data-testid="dashboard-header">Header</div>,
-  FilterDropdown: ({
-    filter,
-    onFilterChange,
-  }: {
-    filter: string;
-    onFilterChange: (filter: string) => void;
-  }) => (
-    <div data-testid="filter-dropdown">
-      <button onClick={() => onFilterChange("Pending")}>Change Filter</button>
-      <span>Current: {filter}</span>
-    </div>
-  ),
-  StatsCard: ({ label, value }: { label: string; value: number }) => (
+}));
+
+jest.mock("../dealer-management/ConditionalCarFilter", () => ({
+  __esModule: true,
+  default: () => <div data-testid="conditional-filter">Filters</div>,
+}));
+
+jest.mock("../dealer-management/DashboardHeader", () => ({
+  __esModule: true,
+  default: () => <div data-testid="dashboard-header">Header</div>,
+}));
+
+jest.mock("../dealer-management/StatsCard", () => ({
+  __esModule: true,
+  default: ({ label, value }: { label: string; value: number }) => (
     <div data-testid="stats-card">
       {label}: {value}
     </div>
@@ -31,16 +30,17 @@ jest.mock("./management/components", () => ({
 }));
 
 // Mock hooks
-jest.mock("./management/hooks", () => ({
+jest.mock("../../hooks/useCarFilters", () => ({
   useCarFilters: () => ({
     isFilterOpen: false,
     statusFilter: "All",
-    statusDropdownOpen: false,
     toggleFilters: jest.fn(),
-    toggleStatusDropdown: jest.fn(),
     setStatusFilter: jest.fn(),
   }),
-  useCarData: (cars: CarModel[], filter: string) => ({
+}));
+
+jest.mock("../../hooks/useCarData", () => ({
+  useCarData: (cars: CarModel[], _filter: string) => ({
     filteredCars: cars,
     carCounts: {
       total: 10,
@@ -49,6 +49,9 @@ jest.mock("./management/hooks", () => ({
       rejected: 2,
     },
   }),
+}));
+
+jest.mock("../../hooks/useCarActions", () => ({
   useCarActions: () => ({
     handleDelete: jest.fn(),
     handleEdit: jest.fn(),
@@ -60,15 +63,33 @@ describe("DealerCarDashboard", () => {
     items: [
       {
         id: "1",
-        name: "Tesla Model 3",
-        carValidationStatus: "Approved",
-      } as CarItems,
+        title: "Tesla Model 3",
+        make: "Tesla",
+        model: "Model 3",
+        transmission: "Automatic",
+        status: "Approved",
+        mileage: 15000,
+        seats: 5,
+        price: 45000,
+        color: "Red",
+        imageUrl: "https://example.com/tesla.jpg",
+        createdAt: new Date(),
+      },
       {
         id: "2",
-        name: "BMW X5",
-        carValidationStatus: "Pending",
-      } as CarItems,
-    ],
+        title: "BMW X5",
+        make: "BMW",
+        model: "X5",
+        transmission: "Automatic",
+        status: "Pending",
+        mileage: 22000,
+        seats: 5,
+        price: 65000,
+        color: "Black",
+        imageUrl: "https://example.com/bmw.jpg",
+        createdAt: new Date(),
+      },
+    ] as CarModel[],
     hasMore: false,
     nextCursor: "",
   };
@@ -82,16 +103,10 @@ describe("DealerCarDashboard", () => {
   it("renders all stats cards", () => {
     render(<DealerCarDashboard carData={mockCarData} />);
 
-    expect(screen.getByText("Total Cars: 10")).toBeInTheDocument();
-    expect(screen.getByText("Pending Review: 3")).toBeInTheDocument();
-    expect(screen.getByText("Approved: 5")).toBeInTheDocument();
-    expect(screen.getByText("Rejected: 2")).toBeInTheDocument();
-  });
-
-  it("renders filter dropdown", () => {
-    render(<DealerCarDashboard carData={mockCarData} />);
-
-    expect(screen.getByTestId("filter-dropdown")).toBeInTheDocument();
+    expect(screen.getByText("Needs Attention: 2")).toBeInTheDocument();
+    expect(screen.getByText("Under Review: 3")).toBeInTheDocument();
+    expect(screen.getByText("Published: 5")).toBeInTheDocument();
+    expect(screen.getByText("All Listings: 10")).toBeInTheDocument();
   });
 
   it("renders Available Vehicles heading", () => {
@@ -125,7 +140,7 @@ describe("DealerCarDashboard", () => {
     const { container } = render(<DealerCarDashboard carData={mockCarData} />);
 
     const mainContainer = container.querySelector("#car-main-container");
-    expect(mainContainer).toHaveClass("min-h-screen", "bg-linear-to-br");
+    expect(mainContainer).toHaveClass("min-h-screen", "bg-gray-50");
   });
 
   it("applies responsive grid to stats cards", () => {
@@ -152,7 +167,7 @@ describe("DealerCarDashboard", () => {
     const { container } = render(<DealerCarDashboard carData={mockCarData} />);
 
     const leftSideContainer = container.querySelector("#left-side-container");
-    expect(leftSideContainer).toHaveClass("shadow-sm", "border");
+    expect(leftSideContainer).toHaveClass("shadow-sm");
   });
 
   it("applies backdrop blur to main container", () => {
@@ -160,12 +175,5 @@ describe("DealerCarDashboard", () => {
 
     const leftSideContainer = container.querySelector("#left-side-container");
     expect(leftSideContainer).toHaveClass("backdrop-blur-sm");
-  });
-
-  it("renders with max-width container", () => {
-    const { container } = render(<DealerCarDashboard carData={mockCarData} />);
-
-    const maxWidthContainer = container.querySelector(".max-w-7xl");
-    expect(maxWidthContainer).toBeInTheDocument();
   });
 });

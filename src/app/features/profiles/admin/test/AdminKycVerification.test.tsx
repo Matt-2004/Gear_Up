@@ -26,64 +26,89 @@ jest.mock("@/app/shared/ui/StatusUI", () => ({
   ),
 }));
 
-jest.mock(
-  "@/app/features/dashboards/dealer/ui/dealer-management/StatsCard",
-  () => ({
-    __esModule: true,
-    default: ({
-      label,
-      value,
-      variant,
-      category,
-    }: {
-      label: string;
-      value: number;
-      variant: string;
-      category?: string;
-    }) => (
-      <div
-        data-testid="stats-card"
-        data-label={label}
-        data-value={value}
-        data-variant={variant}
-        data-category={category ?? ""}
-      >
-        {label}: {value}
-      </div>
-    ),
-  }),
-);
+jest.mock("../../dealer/ui/dealer-management/StatsCard", () => ({
+  __esModule: true,
+  default: ({
+    label,
+    value,
+    variant,
+    category,
+  }: {
+    label: string;
+    value: number;
+    variant: string;
+    category?: string;
+  }) => (
+    <div
+      data-testid="stats-card"
+      data-label={label}
+      data-value={value}
+      data-variant={variant}
+      data-category={category ?? ""}
+    >
+      {label}: {value}
+    </div>
+  ),
+}));
 
 const createKyc = (): CursorResponse<IKycSubmissions[]> =>
   ({
     items: [
       {
-        id: "kyc-1",
-        fullName: "Mg Mg",
+        kycId: "kyc-1",
+        userId: "user-1",
+        name: "Mg Mg",
         email: "mgmg@example.com",
+        phone: "123456",
+        dateOfBirth: "1990-01-01",
+        status: "Pending",
         documentType: "Passport",
-        status: "Pending",
+        documentUrls: [],
+        selfieUrl: "",
+        submittedAt: "2024-01-01",
+        rejectionReason: null,
       },
       {
-        id: "kyc-2",
-        fullName: "Aung Aung",
+        kycId: "kyc-2",
+        userId: "user-2",
+        name: "Aung Aung",
         email: "aung@example.com",
-        documentType: "NationalID",
+        phone: "222222",
+        dateOfBirth: "1991-02-02",
         status: "Approved",
+        documentType: "NationalID",
+        documentUrls: [],
+        selfieUrl: "",
+        submittedAt: "2024-01-02",
+        rejectionReason: null,
       },
       {
-        id: "kyc-3",
-        fullName: "Hla Hla",
+        kycId: "kyc-3",
+        userId: "user-3",
+        name: "Hla Hla",
         email: "hla@example.com",
-        documentType: "DriverLicense",
+        phone: "333333",
+        dateOfBirth: "1992-03-03",
         status: "Rejected",
+        documentType: "DriverLicense",
+        documentUrls: [],
+        selfieUrl: "",
+        submittedAt: "2024-01-03",
+        rejectionReason: "Blurry document",
       },
       {
-        id: "kyc-4",
-        fullName: "Su Su",
+        kycId: "kyc-4",
+        userId: "user-4",
+        name: "Su Su",
         email: "susu@example.com",
-        documentType: "UtilityBill",
+        phone: "444444",
+        dateOfBirth: "1993-04-04",
         status: "Pending",
+        documentType: "UtilityBill",
+        documentUrls: [],
+        selfieUrl: "",
+        submittedAt: "2024-01-04",
+        rejectionReason: null,
       },
     ],
   }) as unknown as CursorResponse<IKycSubmissions[]>;

@@ -36,7 +36,7 @@ function isDealerRoute(pathname: string): boolean {
 export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  let accessToken = req.cookies.get("access_token")?.value;
+  const accessToken = req.cookies.get("access_token")?.value;
   const refreshToken = req.cookies.get("refresh_token")?.value;
   const userDataCookie = req.cookies.get("user_data")?.value;
 

@@ -32,33 +32,30 @@ jest.mock("../ui/dashboard/DataTable", () => ({
   ),
 }));
 
-jest.mock(
-  "@/app/features/dashboards/dealer/ui/dealer-management/StatsCard",
-  () => ({
-    __esModule: true,
-    default: ({
-      label,
-      value,
-      variant,
-      category,
-    }: {
-      label: string;
-      value: number;
-      variant: string;
-      category?: string;
-    }) => (
-      <div
-        data-testid="stats-card"
-        data-label={label}
-        data-value={value}
-        data-variant={variant}
-        data-category={category ?? ""}
-      >
-        {label}: {value}
-      </div>
-    ),
-  }),
-);
+jest.mock("../../dealer/ui/dealer-management/StatsCard", () => ({
+  __esModule: true,
+  default: ({
+    label,
+    value,
+    variant,
+    category,
+  }: {
+    label: string;
+    value: number;
+    variant: string;
+    category?: string;
+  }) => (
+    <div
+      data-testid="stats-card"
+      data-label={label}
+      data-value={value}
+      data-variant={variant}
+      data-category={category ?? ""}
+    >
+      {label}: {value}
+    </div>
+  ),
+}));
 
 const createCars = (): CursorResponse<AdminCarData[]> =>
   ({
@@ -67,25 +64,25 @@ const createCars = (): CursorResponse<AdminCarData[]> =>
         id: "car-1",
         title: "Toyota Camry",
         price: 20000,
-        carValidationStatus: "Pending",
+        status: "Pending",
       },
       {
         id: "car-2",
         title: "Honda Civic",
         price: 18000,
-        carValidationStatus: "Approved",
+        status: "Approved",
       },
       {
         id: "car-3",
         title: "BMW X5",
         price: 50000,
-        carValidationStatus: "Rejected",
+        status: "Rejected",
       },
       {
         id: "car-4",
         title: "Tesla Model 3",
         price: 42000,
-        carValidationStatus: "Pending",
+        status: "Pending",
       },
     ],
   }) as unknown as CursorResponse<AdminCarData[]>;
@@ -116,7 +113,7 @@ describe("AdminCarVerification", () => {
   it("renders correct car stats counts", () => {
     render(<AdminCarVerification cars={createCars()} />);
 
-    expect(screen.getByText("All Cars: 4")).toBeInTheDocument();
+    expect(screen.getByText("All: 4")).toBeInTheDocument();
     expect(screen.getByText("Pending Cars: 2")).toBeInTheDocument();
     expect(screen.getByText("Approved Cars: 1")).toBeInTheDocument();
     expect(screen.getByText("Rejected Cars: 1")).toBeInTheDocument();

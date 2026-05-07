@@ -1,4 +1,4 @@
-import { CarStatus } from "@/app/features/car/types/car.types";
+import { CarStatus } from "@/app/features/car/types/car.dto";
 import { fireEvent, render, screen } from "@testing-library/react";
 import FilterDropdown from "./FilterDropdown";
 
@@ -48,7 +48,7 @@ describe("FilterDropdown", () => {
     render(<FilterDropdown {...defaultProps} dropdownOpen={true} />);
 
     expect(screen.getByText("Filter by Status")).toBeInTheDocument();
-    expect(screen.getByText("All")).toBeInTheDocument();
+    expect(screen.getByText("All Vehicles")).toBeInTheDocument();
     expect(screen.getByText("Pending")).toBeInTheDocument();
     expect(screen.getByText("Approved")).toBeInTheDocument();
     expect(screen.getByText("Rejected")).toBeInTheDocument();
@@ -90,14 +90,12 @@ describe("FilterDropdown", () => {
     const approvedButton = allButtons.find(
       (btn) =>
         btn.textContent?.includes("Approved") &&
-        btn.classList.contains("bg-linear-to-r"),
+        btn.classList.contains("bg-primary-50"),
     );
 
     expect(approvedButton).toBeDefined();
-    expect(approvedButton).toHaveClass("bg-linear-to-r");
-    expect(approvedButton).toHaveClass("from-blue-500");
-
-    // Should have checkmark icon (Check SVG in the active button)
+    expect(approvedButton).toHaveClass("bg-primary-50");
+    expect(approvedButton).toHaveClass("text-primary-700");
     expect(approvedButton?.querySelector("svg")).toBeInTheDocument();
   });
 

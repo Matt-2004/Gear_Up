@@ -1,5 +1,6 @@
 // jest.setup.ts
 import "@testing-library/jest-dom";
+import "jest-axe/extend-expect";
 
 // Mock window.matchMedia
 Object.defineProperty(window, "matchMedia", {

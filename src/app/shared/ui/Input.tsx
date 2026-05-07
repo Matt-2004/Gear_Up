@@ -104,6 +104,8 @@ const AuthInput = forwardRef<HTMLInputElement, Partial<InputProps>>(
   },
 );
 
+AuthInput.displayName = "AuthInput";
+
 export default AuthInput;
 
 export const Input = ({
@@ -135,3 +137,5 @@ export const Input = ({
     </div>
   );
 };
+
+Input.displayName = "Input";

@@ -389,7 +389,7 @@ export default function CarSearch({
             <div className="mb-6 flex items-center justify-between">
               <div>
                 <h2 className="text-xl font-semibold text-gray-900">
-                  Search Results for "{trimmedQuery}"
+                  Search Results for &quot;{trimmedQuery}&quot;
                 </h2>
 
                 <p className="mt-1 text-sm text-gray-500">

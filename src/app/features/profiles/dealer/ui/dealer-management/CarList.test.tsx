@@ -1,11 +1,11 @@
-import { CarItems } from "@/app/features/car/types/car.types";
+import { CarModel } from "@/app/features/car/types/car.model";
 import { render, screen } from "@testing-library/react";
 import CarList from "./CarList";
 
 // Mock child components
 jest.mock("./DealerCarCard", () => {
-  return function MockDealerCarCard({ car }: { car: CarItems }) {
-    return <div data-testid="dealer-car-card">Car: {car.name}</div>;
+  return function MockDealerCarCard({ car }: { car: CarModel }) {
+    return <div data-testid="dealer-car-card">Car: {car.title}</div>;
   };
 });
 
@@ -19,31 +19,49 @@ describe("CarList", () => {
   const mockOnDelete = jest.fn();
   const mockOnEdit = jest.fn();
 
-  const mockCars: CarItems[] = [
+  const mockCars: CarModel[] = [
     {
       id: "1",
-      name: "Tesla Model 3",
-      carValidationStatus: "Approved",
-      price: 45000,
-      brand: "Tesla",
+      title: "Tesla Model 3",
+      make: "Tesla",
       model: "Model 3",
-    } as unknown as CarItems,
+      transmission: "Automatic",
+      status: "Approved",
+      mileage: 15000,
+      seats: 5,
+      price: 45000,
+      color: "Red",
+      imageUrl: "https://example.com/tesla.jpg",
+      createdAt: new Date(),
+    },
     {
       id: "2",
-      name: "BMW X5",
-      carValidationStatus: "Pending",
-      price: 65000,
-      brand: "BMW",
+      title: "BMW X5",
+      make: "BMW",
       model: "X5",
-    } as unknown as CarItems,
+      transmission: "Automatic",
+      status: "Pending",
+      mileage: 22000,
+      seats: 5,
+      price: 65000,
+      color: "Black",
+      imageUrl: "https://example.com/bmw.jpg",
+      createdAt: new Date(),
+    },
     {
       id: "3",
-      name: "Audi A4",
-      carValidationStatus: "Approved",
-      price: 42000,
-      brand: "Audi",
+      title: "Audi A4",
+      make: "Audi",
       model: "A4",
-    } as unknown as CarItems,
+      transmission: "Automatic",
+      status: "Approved",
+      mileage: 18000,
+      seats: 5,
+      price: 42000,
+      color: "White",
+      imageUrl: "https://example.com/audi.jpg",
+      createdAt: new Date(),
+    },
   ];
 
   beforeEach(() => {
@@ -103,7 +121,7 @@ describe("CarList", () => {
     );
 
     const grid = container.querySelector(".grid");
-    expect(grid).toHaveClass("grid-cols-1", "md:grid-cols-2", "xl:grid-cols-3");
+    expect(grid).toHaveClass("grid-cols-1", "lg:hidden");
   });
 
   it("applies animation classes to grid", () => {
@@ -111,8 +129,8 @@ describe("CarList", () => {
       <CarList cars={mockCars} onDelete={mockOnDelete} onEdit={mockOnEdit} />,
     );
 
-    const grid = container.querySelector(".grid");
-    expect(grid).toHaveClass("animate-in", "fade-in");
+    const wrapper = container.firstChild as HTMLElement;
+    expect(wrapper).toHaveClass("animate-in", "fade-in");
   });
 
   it("applies staggered animation delays to car cards", () => {
@@ -162,10 +180,10 @@ describe("CarList", () => {
   });
 
   it("handles cars without id by using index", () => {
-    const carsWithoutId = mockCars.map((car) => ({ ...car, id: undefined }));
+    const carsWithoutId = mockCars.map((car) => ({ ...car, id: "" }));
     render(
       <CarList
-        cars={carsWithoutId as any}
+        cars={carsWithoutId}
         onDelete={mockOnDelete}
         onEdit={mockOnEdit}
       />,

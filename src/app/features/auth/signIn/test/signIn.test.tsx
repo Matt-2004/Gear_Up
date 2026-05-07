@@ -17,50 +17,65 @@ const mockInitialFormData = {
   rememberMe: false,
 };
 
-jest.mock("next/image", () => ({
-  __esModule: true,
-  default: ({
-    fill,
-    priority,
-    blurDataURL,
-    placeholder,
-    quality,
-    sizes,
+jest.mock("next/image", () => {
+  function ImageMock({
+    fill: _fill,
+    priority: _priority,
+    blurDataURL: _blurDataURL,
+    placeholder: _placeholder,
+    quality: _quality,
+    sizes: _sizes,
     ...props
-  }: any) => {
+  }: React.ComponentProps<"img"> & {
+    fill?: boolean;
+    priority?: boolean;
+    blurDataURL?: string;
+    placeholder?: string;
+    quality?: number;
+    sizes?: string;
+  }) {
     return <img {...props} />;
-  },
-}));
+  }
 
-jest.mock("next/link", () => ({
-  __esModule: true,
-  default: ({ href, children, ...props }: any) => {
+  return {
+    __esModule: true,
+    default: ImageMock,
+  };
+});
+
+jest.mock("next/link", () => {
+  function LinkMock({
+    href,
+    children,
+    ...props
+  }: React.AnchorHTMLAttributes<HTMLAnchorElement> & { href: string }) {
     return (
       <a href={href} {...props}>
         {children}
       </a>
     );
-  },
-}));
-
-jest.mock("../hooks/useSignIn", () => {
-  const React = require("react");
+  }
 
   return {
-    useSignIn: () => {
-      const [formData, setFormData] = React.useState(() => ({
-        ...mockInitialFormData,
-      }));
-
-      return {
-        isPending: mockIsPending,
-        handleFormSubmit: mockHandleFormSubmit,
-        formData,
-        setFormData,
-      };
-    },
+    __esModule: true,
+    default: LinkMock,
   };
 });
+
+jest.mock("../hooks/useSignIn", () => ({
+  useSignIn: () => {
+    const [formData, setFormData] = React.useState(() => ({
+      ...mockInitialFormData,
+    }));
+
+    return {
+      isPending: mockIsPending,
+      handleFormSubmit: mockHandleFormSubmit,
+      formData,
+      setFormData,
+    };
+  },
+}));
 
 describe("Login", () => {
   beforeEach(() => {
