@@ -140,7 +140,7 @@ export default function CarImageGallery({
               ))}
             </div>
 
-            <div className="absolute top-4 right-4 z-10 rounded-full bg-black/60 px-3 py-1 text-sm font-medium text-white backdrop-blur-sm">
+            <div className="absolute top-4 right-4  rounded-full bg-black/60 px-3 py-1 text-sm font-medium text-white backdrop-blur-sm">
               {currentIndex + 1} / {images.length}
             </div>
 
@@ -150,7 +150,7 @@ export default function CarImageGallery({
                   onPrevImage();
                   startAutoScroll();
                 }}
-                className="hover:bg-primary-500 absolute top-1/2 left-4 z-30 -translate-y-1/2 rounded-full bg-white/95 p-2.5 shadow-lg transition-all hover:scale-110 hover:text-white"
+                className="hover:bg-primary-500 absolute top-1/2 left-4 -translate-y-1/2 rounded-full bg-white/95 p-2.5 shadow-lg transition-all hover:scale-110 hover:text-white"
               >
                 <ChevronLeft className="h-6 w-6" />
               </button>
@@ -162,7 +162,7 @@ export default function CarImageGallery({
                   onNextImage();
                   startAutoScroll();
                 }}
-                className="hover:bg-primary-500 absolute top-1/2 right-4 z-30 -translate-y-1/2 rounded-full bg-white/95 p-2.5 shadow-lg transition-all hover:scale-110 hover:text-white"
+                className="hover:bg-primary-500 absolute top-1/2 right-4 -translate-y-1/2 rounded-full bg-white/95 p-2.5 shadow-lg transition-all hover:scale-110 hover:text-white"
               >
                 <ChevronRight className="h-6 w-6" />
               </button>
