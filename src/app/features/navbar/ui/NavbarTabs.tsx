@@ -37,10 +37,10 @@ export default function NavbarTabs() {
                 href={tab.href}
                 aria-current={isActive ? "page" : undefined}
                 className={clsx(
-                  "rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 ease-in-out",
+                  "rounded-lg px-3 py-2 font-medium transition-all duration-200 ease-in-out",
                   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400 focus-visible:ring-offset-2",
                   isActive
-                    ? "bg-primary-50 text-primary-700"
+                    ? "text-primary-700"
                     : "text-gray-600 hover:bg-gray-100 hover:text-gray-900",
                 )}
               >
