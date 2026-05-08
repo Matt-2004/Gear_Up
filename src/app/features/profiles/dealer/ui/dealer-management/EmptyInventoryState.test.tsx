@@ -20,7 +20,7 @@ describe("EmptyInventoryState", () => {
   it("renders the main heading", () => {
     render(<EmptyInventoryState />);
 
-    expect(screen.getByText("No vehicles found")).toBeInTheDocument();
+    expect(screen.getByText("No vehicles yet")).toBeInTheDocument();
   });
 
   it("renders the description text", () => {
@@ -28,7 +28,7 @@ describe("EmptyInventoryState", () => {
 
     expect(
       screen.getByText(
-        "Start building your inventory today to reach potential buyers and grow your dealership.",
+        "Add your first listing to start receiving inquiries and appointments.",
       ),
     ).toBeInTheDocument();
   });
@@ -51,22 +51,22 @@ describe("EmptyInventoryState", () => {
   it("renders all three feature cards", () => {
     render(<EmptyInventoryState />);
 
-    expect(screen.getByText("Easy Listing")).toBeInTheDocument();
+    expect(screen.getByText("Fast Listing")).toBeInTheDocument();
     expect(screen.getByText("Reach Buyers")).toBeInTheDocument();
-    expect(screen.getByText("Track Data")).toBeInTheDocument();
+    expect(screen.getByText("Track Performance")).toBeInTheDocument();
   });
 
   it("renders feature descriptions", () => {
     render(<EmptyInventoryState />);
 
     expect(
-      screen.getByText("Quickly upload details & images"),
+      screen.getByText("Upload photos and details in minutes"),
     ).toBeInTheDocument();
     expect(
-      screen.getByText("Connect with interested prospects"),
+      screen.getByText("Get in front of ready customers"),
     ).toBeInTheDocument();
     expect(
-      screen.getByText("Monitor engagement seamlessly"),
+      screen.getByText("Monitor views, saves, and inquiries"),
     ).toBeInTheDocument();
   });
 

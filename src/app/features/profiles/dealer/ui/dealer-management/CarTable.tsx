@@ -23,18 +23,17 @@ export default function CarTable({ cars, onDelete, onEdit }: CarTableProps) {
 
   if (!Array.isArray(cars) || cars.length === 0) {
     return (
-      <div className="flex min-h-[320px] flex-col items-center justify-center border border-gray-200 bg-white p-8 text-center shadow-sm">
+      <div className="flex min-h-80 flex-col items-center justify-center border border-gray-200 bg-white p-8 text-center shadow-sm">
         <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gray-100">
           <Car className="h-7 w-7 text-gray-400" />
         </div>
 
         <h3 className="text-base font-semibold text-gray-900">
-          No vehicles found
+          No vehicles in this status
         </h3>
 
         <p className="mt-2 max-w-sm text-sm text-gray-500">
-          There are no vehicles available for this status yet. Once vehicles are
-          added or approved, they will appear here.
+          Try a different status filter or add a new listing to see it here.
         </p>
       </div>
     );

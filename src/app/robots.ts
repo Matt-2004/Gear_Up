@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: ["/admin/", "/dashboard/", "/dealer/", "/auth/", "/api/"],
     },
-    sitemap: "https://gear-up-opal.vercel.app/sitemap.xml",
+    sitemap: "https://gear-up-opal.vercel.app",
   };
 }
