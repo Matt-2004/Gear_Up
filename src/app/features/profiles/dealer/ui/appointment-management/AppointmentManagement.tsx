@@ -177,12 +177,12 @@ const EmptyState = ({ filter }: { filter: AppointmentStatus | "All" }) => (
   <div className="rounded-xl border border-gray-200 bg-white p-12 text-center shadow-sm">
     <Calendar className="mx-auto mb-4 h-12 w-12 text-gray-400" />
     <h3 className="mb-2 text-lg font-medium text-gray-900">
-      No appointments found
+      No appointments yet
     </h3>
     <p className="text-gray-500">
       {filter === "All"
-        ? "You don't have any appointments yet."
-        : `No ${filter.toLowerCase()} appointments at the moment.`}
+        ? "Appointments will appear here once customers book a time."
+        : `No ${filter.toLowerCase()} appointments right now. Try another status.`}
     </p>
   </div>
 );

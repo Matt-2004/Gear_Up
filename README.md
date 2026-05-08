@@ -382,7 +382,6 @@ Planned improvements:
 - Improve mobile dashboard navigation
 - Improve reusable form components
 - Add stronger API response validation with Zod
-- Improve empty states across all dashboard pages
 - Add more documentation for authentication and route protection
 - Add more integration tests for appointment and KYC flows
 - Add better error boundaries for page-level failures
