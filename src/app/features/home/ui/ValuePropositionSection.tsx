@@ -1,4 +1,4 @@
-import { ShieldCheck, BarChart3, BadgeCheck, CalendarDays } from "lucide-react";
+import { ShieldCheck, BadgeCheck, CalendarDays } from "lucide-react";
 
 export default function ValuePropositionSection() {
   const items = [

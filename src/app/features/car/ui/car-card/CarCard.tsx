@@ -7,12 +7,9 @@ import { useRouter } from "next/navigation";
 
 export function CarCard({
   carItem,
-
-  priority = true,
 }: {
   carItem: CarModel;
   className?: string;
-  priority?: boolean;
 }) {
   const router = useRouter();
   console.log("carItem Id:", carItem.id);

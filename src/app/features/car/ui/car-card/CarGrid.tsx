@@ -78,8 +78,8 @@ export function CarGrid() {
 
         {!isLoading && !isError && featuredCars.length > 0 && (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 md:grid-cols-3 md:gap-6">
-            {featuredCars.map((car, index) => (
-              <CarCard key={car.id} carItem={car} priority={index === 0} />
+            {featuredCars.map((car) => (
+              <CarCard key={car.id} carItem={car} />
             ))}
           </div>
         )}
