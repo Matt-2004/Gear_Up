@@ -151,21 +151,27 @@ export default function HeroSection() {
               </div>
             ))}
           </div>
+          <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(0,0,0,0.72),rgba(0,0,0,0.28),rgba(0,0,0,0.78))]" />
 
-          <div className="absolute inset-0 bg-linear-to-b from-black/45 via-black/35 to-black/45" />
-
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 p-4">
-            <h1 className="text-center text-3xl font-bold text-white drop-shadow-md md:text-5xl">
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-12 p-4">
+            <h1 className="text-center text-3xl font-bold text-white drop-shadow-md md:text-6xl">
               Find Your Next Car
             </h1>
 
             <form
               onSubmit={handleSearchSubmit}
-              className="relative flex w-full max-w-lg items-center gap-2 rounded-xl border border-white/40 p-2 shadow-lg backdrop-blur-md md:max-w-lg lg:w-2/3 lg:max-w-none"
+              className="
+    relative flex h-14 w-full max-w-3xl items-center gap-3
+    rounded-xl border border-white/10
+    bg-white/10 px-2
+    shadow-2xl backdrop-blur-xl
+  "
             >
-              <Search className="mx-4 h-5 w-5 text-white/90" />
+              {/* Search Icon */}
+              <Search className="ml-2 h-5 w-5 shrink-0 text-white/50" />
 
-              <div ref={searchContainerRef} className="relative w-full">
+              {/* Input Container */}
+              <div ref={searchContainerRef} className="relative flex-1">
                 <input
                   type="text"
                   value={searchQuery}
@@ -174,7 +180,12 @@ export default function HeroSection() {
                     if (suggestions.length > 0) setShowSuggestions(true);
                   }}
                   placeholder="Search by make, model, or year..."
-                  className="w-full bg-transparent text-sm text-white placeholder:text-white/75 focus:outline-none"
+                  className="
+        h-full w-full max-w-3xl bg-transparent
+        text-sm font-medium text-white
+        placeholder:text-white/40
+        focus:outline-none
+      "
                 />
 
                 {showSuggestions && suggestions.length > 0 && (
@@ -194,12 +205,23 @@ export default function HeroSection() {
                 )}
               </div>
 
+              {/* Search Button */}
               <button
                 type="submit"
                 disabled={isPending}
-                className="rounded-lg border border-primary/50 bg-primary-600 px-4 py-2 text-xs font-semibold whitespace-nowrap text-white backdrop-blur-md transition hover:bg-primary disabled:cursor-not-allowed disabled:opacity-70 md:text-sm"
+                className="
+      h-10 shrink-0 rounded-lg
+      bg-primary text-white px-6
+      text-sm font-semibold 
+      transition-all duration-200
+      hover:bg-primary-600 hover:shadow-md
+      active:scale-[0.98]
+      cursor-pointer
+      disabled:cursor-not-allowed
+      disabled:opacity-60
+    "
               >
-                {isPending ? "Searching..." : "Search"}
+                {isPending ? "Searching..." : "Search Here"}
               </button>
             </form>
           </div>

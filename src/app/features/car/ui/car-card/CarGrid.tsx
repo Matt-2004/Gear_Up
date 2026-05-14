@@ -19,14 +19,16 @@ export function CarGrid() {
   const cars = data ?? [];
   const featuredCars = cars
     .filter((car) => car.status?.toLowerCase() === "approved")
-    .slice(0, 3);
+    .slice(0, 4);
 
   return (
     <section className="flex w-full justify-center py-8 bg-[#F2F3FF]" data-testid="featured-cars">
       <div className="w-full px-4 lg:w-[90%] xl:w-[75%]">
         <div className="mb-8">
-          <h2 className="text-3xl font-bold text-gray-900">Featured Cars</h2>
-          <p className="text-base text-gray-700">
+          <h2 className="text-2xl font-semibold text-gray-900">
+            Featured Cars
+          </h2>
+          <p className="text-sm text-gray-700">
             Discover our latest collection of quality vehicles
           </p>
         </div>
@@ -68,8 +70,8 @@ export function CarGrid() {
           </div>
         )}
 
-        {!isLoading && !isError && featuredCars.length > 0 && (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 md:grid-cols-3 md:gap-6">
+        {featuredCars.length > 0 && (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 md:grid-cols-4 md:gap-6">
             {featuredCars.map((car, index) => (
               <CarCard key={car.id} carItem={car} priority={index === 0} />
             ))}
