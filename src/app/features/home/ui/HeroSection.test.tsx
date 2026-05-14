@@ -43,7 +43,7 @@ describe("HeroSection", () => {
       /search by make, model, or year/i,
     );
     await user.type(input, "Toyota Corolla");
-    await user.click(screen.getByRole("button", { name: /^search$/i }));
+    await user.click(screen.getByRole("button", { name: /search here/i }));
 
     expect(mockPush).toHaveBeenCalledWith("/car/search?query=Toyota%20Corolla");
   });
@@ -52,7 +52,7 @@ describe("HeroSection", () => {
     const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
     render(<HeroSection />);
 
-    await user.click(screen.getByRole("button", { name: /^search$/i }));
+    await user.click(screen.getByRole("button", { name: /search here/i }));
 
     expect(mockPush).not.toHaveBeenCalled();
   });

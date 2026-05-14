@@ -158,6 +158,10 @@ describe("CarList", () => {
   });
 
   it("renders cars with unique keys", () => {
+    render(
+      <CarList cars={mockCars} onDelete={mockOnDelete} onEdit={mockOnEdit} />,
+    );
+
     // Each car should be rendered individually
     const carCards = screen.getAllByTestId("dealer-car-card");
     expect(carCards).toHaveLength(mockCars.length);

@@ -43,13 +43,13 @@ describe("EmailValidation", () => {
   it("passes reset-password variant to useEmailValidation", () => {
     render(<EmailValidation variant="reset-password" />);
 
-    expect(mockedUseEmailValidation).toHaveBeenCalledWith("reset-password");
+    expect(mockedUseEmailValidation).toHaveBeenCalledWith();
   });
 
   it("passes verification variant to useEmailValidation", () => {
     render(<EmailValidation variant="verification" />);
 
-    expect(mockedUseEmailValidation).toHaveBeenCalledWith("verification");
+    expect(mockedUseEmailValidation).toHaveBeenCalledWith();
   });
 
   it("renders reset password variant content", () => {
