@@ -32,11 +32,11 @@ export const ResetPasswordSchema = z
       .regex(/[0-9]/, "Must contain at least one number")
       .regex(/[^A-Za-z0-9]/, "Must contain at least one symbol"),
 
-    confirmPassword: z.string().min(1, "Please confirm your password"),
+    confirmedPassword: z.string().min(1, "Please confirm your password"),
   })
-  .refine((data) => data.newPassword === data.confirmPassword, {
+  .refine((data) => data.newPassword === data.confirmedPassword, {
     message: "Passwords don't match",
-    path: ["confirmPassword"],
+    path: ["confirmedPassword"],
   });
 
 export const sendEmailSchema = z.object({

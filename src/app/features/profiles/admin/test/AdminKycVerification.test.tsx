@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import AdminKycVerification from "../ui/kyc/AdminKycVerification";
 import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
-import { IKycSubmissions } from "@/app/features/profiles/dealer/types/kyc.types";
+import { KycModel } from "@/app/features/profiles/dealer/types/kyc.model";
 
 jest.mock("next/navigation", () => ({
   usePathname: () => "/profile/admin",
@@ -51,7 +51,7 @@ jest.mock("../../dealer/ui/dealer-management/StatsCard", () => ({
   ),
 }));
 
-const createKyc = (): CursorResponse<IKycSubmissions[]> =>
+const createKyc = (): CursorResponse<KycModel[]> =>
   ({
     items: [
       {
@@ -111,13 +111,13 @@ const createKyc = (): CursorResponse<IKycSubmissions[]> =>
         rejectionReason: null,
       },
     ],
-  }) as unknown as CursorResponse<IKycSubmissions[]>;
+  }) as unknown as CursorResponse<KycModel[]>;
 
 describe("AdminKycVerification", () => {
   it("renders fallback message when kyc data is missing", () => {
     render(
       <AdminKycVerification
-        kyc={null as unknown as CursorResponse<IKycSubmissions[]>}
+        kyc={null as unknown as CursorResponse<KycModel[]>}
       />,
     );
 

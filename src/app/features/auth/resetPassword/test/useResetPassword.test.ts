@@ -25,7 +25,7 @@ const mockHandleToast = jest.fn();
 
 const defaultFormData = {
   newPassword: "newPassword123",
-  confirmPassword: "newPassword123",
+  confirmedPassword: "newPassword123",
 };
 
 function mockUseAuthFormReturn(overrides = {}) {
@@ -219,7 +219,7 @@ describe("useResetPassword", () => {
     mockUseAuthFormReturn({
       validationErrors: {
         newPassword: "Password must be at least 8 characters",
-        confirmPassword: "Passwords do not match",
+        confirmedPassword: "Passwords do not match",
       },
       isFormValid: false,
     });
@@ -228,7 +228,7 @@ describe("useResetPassword", () => {
 
     expect(result.current.validationErrors).toEqual({
       newPassword: "Password must be at least 8 characters",
-      confirmPassword: "Passwords do not match",
+      confirmedPassword: "Passwords do not match",
     });
 
     expect(result.current.isFormValid).toBe(false);

@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import AdminCarVerification from "../ui/cars/AdminCarVerification";
 import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
-import { AdminCarData } from "@/app/features/profiles/admin/types/admin-car-approval.types";
+import { CarModel } from "@/app/features/car/types/car.model";
 
 jest.mock("../context/AdminFilterContext", () => ({
   __esModule: true,
@@ -57,41 +57,73 @@ jest.mock("../../dealer/ui/dealer-management/StatsCard", () => ({
   ),
 }));
 
-const createCars = (): CursorResponse<AdminCarData[]> =>
+const createCars = (): CursorResponse<CarModel[]> =>
   ({
     items: [
       {
         id: "car-1",
+        imageUrl: "https://example.com/car-1.jpg",
         title: "Toyota Camry",
+        make: "Toyota",
+        model: "Camry",
+        transmission: "Automatic",
         price: 20000,
         status: "Pending",
+        mileage: 25000,
+        seats: 5,
+        color: "Black",
+        createdAt: new Date(),
       },
       {
         id: "car-2",
+        imageUrl: "https://example.com/car-2.jpg",
         title: "Honda Civic",
+        make: "Honda",
+        model: "Civic",
+        transmission: "Automatic",
         price: 18000,
         status: "Approved",
+        mileage: 18000,
+        seats: 5,
+        color: "Blue",
+        createdAt: new Date(),
       },
       {
         id: "car-3",
+        imageUrl: "https://example.com/car-3.jpg",
         title: "BMW X5",
+        make: "BMW",
+        model: "X5",
+        transmission: "Automatic",
         price: 50000,
         status: "Rejected",
+        mileage: 12000,
+        seats: 5,
+        color: "White",
+        createdAt: new Date(),
       },
       {
         id: "car-4",
+        imageUrl: "https://example.com/car-4.jpg",
         title: "Tesla Model 3",
+        make: "Tesla",
+        model: "Model 3",
+        transmission: "Automatic",
         price: 42000,
         status: "Pending",
+        mileage: 8000,
+        seats: 5,
+        color: "Red",
+        createdAt: new Date(),
       },
     ],
-  }) as unknown as CursorResponse<AdminCarData[]>;
+  }) as unknown as CursorResponse<CarModel[]>;
 
 describe("AdminCarVerification", () => {
   it("renders fallback message when cars data is missing", () => {
     render(
       <AdminCarVerification
-        cars={null as unknown as CursorResponse<AdminCarData[]>}
+        cars={null as unknown as CursorResponse<CarModel[]>}
       />,
     );
 

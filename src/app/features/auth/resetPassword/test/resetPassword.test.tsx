@@ -20,7 +20,7 @@ const mockHandleFormSubmit = jest.fn((e) => e.preventDefault());
 
 const defaultFormData = {
   newPassword: "",
-  confirmPassword: "",
+  confirmedPassword: "",
 };
 
 function mockSearchParams(token: string | null = "reset-token-123") {
@@ -154,12 +154,12 @@ describe("ResetPassword", () => {
       handleFormSubmit: mockHandleFormSubmit,
       formData: {
         newPassword: "123",
-        confirmPassword: "456",
+        confirmedPassword: "456",
       },
       setFormData: jest.fn(),
       validationErrors: {
         newPassword: "Password must be at least 8 characters",
-        confirmPassword: "Passwords do not match",
+        confirmedPassword: "Passwords do not match",
       },
       isFormValid: false,
     });

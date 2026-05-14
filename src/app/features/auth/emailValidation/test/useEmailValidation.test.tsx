@@ -55,7 +55,7 @@ describe("useEmailValidation", () => {
   });
 
   it("returns initial hook values", () => {
-    const { result } = renderHook(() => useEmailValidation("reset-password"));
+    const { result } = renderHook(() => useEmailValidation());
 
     expect(result.current.isPending).toBe(false);
     expect(result.current.formData).toEqual(defaultFormData);
@@ -75,7 +75,7 @@ describe("useEmailValidation", () => {
 
     mockedEmailValidationAction.mockResolvedValue(successResponse);
 
-    const { result } = renderHook(() => useEmailValidation("reset-password"));
+    const { result } = renderHook(() => useEmailValidation());
 
     const mockEvent = createMockSubmitEvent();
 
@@ -108,7 +108,7 @@ describe("useEmailValidation", () => {
 
     mockedEmailValidationAction.mockReturnValue(pendingPromise);
 
-    const { result } = renderHook(() => useEmailValidation("reset-password"));
+    const { result } = renderHook(() => useEmailValidation());
 
     const mockEvent = createMockSubmitEvent();
 
@@ -146,7 +146,7 @@ describe("useEmailValidation", () => {
 
     mockedEmailValidationAction.mockResolvedValue(failedResponse);
 
-    const { result } = renderHook(() => useEmailValidation("reset-password"));
+    const { result } = renderHook(() => useEmailValidation());
 
     const mockEvent = createMockSubmitEvent();
 
@@ -169,7 +169,7 @@ describe("useEmailValidation", () => {
       isFormValid: false,
     });
 
-    const { result } = renderHook(() => useEmailValidation("reset-password"));
+    const { result } = renderHook(() => useEmailValidation());
 
     expect(result.current.validationErrors).toEqual({
       email: "Invalid email",

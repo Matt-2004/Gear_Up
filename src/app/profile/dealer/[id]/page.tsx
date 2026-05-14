@@ -158,7 +158,7 @@ export default async function DealerProfilePage({
           ) : (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {carModels.map((car) => (
-                <CarCard key={car.id} carItem={car} priority={false} />
+                <CarCard key={car.id} carItem={car} />
               ))}
             </div>
           )}
