@@ -4,19 +4,19 @@ export class AppointmentPage {
   constructor(readonly page: Page) {}
 
   get dateInput() {
-    return this.page.getByTestId("appointment-date");
+    return this.page.getByTestId("appointment-date").first();
   }
   get timeInput() {
-    return this.page.getByTestId("appointment-time");
+    return this.page.getByTestId("appointment-time").first();
   }
   get locationInput() {
-    return this.page.getByTestId("appointment-location");
+    return this.page.getByTestId("appointment-location").first();
   }
   get notesTextarea() {
-    return this.page.getByTestId("appointment-notes");
+    return this.page.getByTestId("appointment-notes").first();
   }
   get submitButton() {
-    return this.page.getByTestId("appointment-submit");
+    return this.page.getByTestId("appointment-submit").first();
   }
 
   async navigate(carId: string) {

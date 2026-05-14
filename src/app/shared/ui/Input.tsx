@@ -58,6 +58,7 @@ const AuthInput = forwardRef<HTMLInputElement, Partial<InputProps>>(
         <div className="relative w-full flex items-center">
           <input
             id={inputId}
+            name={name}
             {...rest}
             ref={ref}
             type={inputType}

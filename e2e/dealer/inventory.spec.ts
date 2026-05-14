@@ -1,12 +1,12 @@
 import { test, expect } from "@playwright/test";
 import { DealerInventoryPage } from "../pages/dealer-inventory.page";
-import { loginAsUser } from "../pages/shared";
+import { loginAsDealer } from "../pages/shared";
 
 test.describe("Dealer Inventory", () => {
   let inventory: DealerInventoryPage;
 
   test.beforeEach(async ({ page }) => {
-    await loginAsUser(page);
+    await loginAsDealer(page);
     inventory = new DealerInventoryPage(page);
   });
 

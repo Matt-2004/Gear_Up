@@ -1,6 +1,13 @@
 "use client";
 
-import { createContext, ReactNode, useContext, useState } from "react";
+import {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { UserModel } from "../../profiles/user/types/user.model";
 
 interface UserDataContextType {
@@ -17,15 +24,15 @@ export function UserDataContextProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserModel | null>(null);
   const [loading, setLoading] = useState(true);
 
-  async function getEncryptedUserData() {
+  const getEncryptedUserData = useCallback(async () => {
     const res = await fetch("/api/get-user-data", {
       cache: "no-store",
     });
     const response = await res.json();
     return response;
-  }
+  }, []);
 
-  async function refreshUserData() {
+  const refreshUserData = useCallback(async () => {
     setLoading(true);
     try {
       const userDataDecrypted = await getEncryptedUserData();
@@ -35,7 +42,11 @@ export function UserDataContextProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
-  }
+  }, [getEncryptedUserData]);
+
+  useEffect(() => {
+    refreshUserData();
+  }, [refreshUserData]);
 
   return (
     <UserDataContext.Provider value={{ user, loading, refreshUserData }}>

@@ -1,9 +1,9 @@
 import { test, expect } from "@playwright/test";
-import { loginAsUser } from "../pages/shared";
+import { loginAsDealer } from "../pages/shared";
 
 test.describe("KYC Registration", () => {
   test.beforeEach(async ({ page }) => {
-    await loginAsUser(page);
+    await loginAsDealer(page);
   });
 
   test("step 1 shows document type selection", async ({ page }) => {
@@ -12,7 +12,9 @@ test.describe("KYC Registration", () => {
     await expect(
       page.getByRole("heading", { name: /dealership registration/i }),
     ).toBeVisible({ timeout: 5000 });
-    await expect(page.locator('input[name="DocumentType"]').first()).toBeVisible();
+    // Radio inputs are hidden via CSS; the label acts as the visible control.
+    await expect(page.locator('input[name="DocumentType"]').first()).toBeAttached();
+    await expect(page.getByText(/passport/i).first()).toBeVisible();
   });
 
   test("step navigation works between steps", async ({ page }) => {

@@ -1,9 +1,9 @@
 import { test, expect } from "@playwright/test";
-import { loginAsUser } from "../pages/shared";
+import { loginAsDealer } from "../pages/shared";
 
 test.describe("Dealer Appointments", () => {
   test.beforeEach(async ({ page }) => {
-    await loginAsUser(page);
+    await loginAsDealer(page);
   });
 
   test("appointment management tab is visible", async ({ page }) => {

@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { AdminPage } from "../pages/admin.page";
+import { loginAsAdmin } from "../pages/shared";
 
 test.describe("Admin Panel", () => {
   let admin: AdminPage;
@@ -20,6 +21,7 @@ test.describe("Admin Panel", () => {
   });
 
   test("car verification tab shows car list", async ({ page }) => {
+    await loginAsAdmin(page);
     await admin.navigateToTab("car-verification");
 
     await expect(
@@ -28,6 +30,7 @@ test.describe("Admin Panel", () => {
   });
 
   test("kyc verification tab shows kyc list", async ({ page }) => {
+    await loginAsAdmin(page);
     await admin.navigateToTab("kyc-verification");
 
     await expect(

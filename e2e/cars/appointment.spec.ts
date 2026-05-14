@@ -58,8 +58,8 @@ test.describe("Appointment Booking", () => {
   test("car summary card is visible", async () => {
     await appointment.navigate("car-1");
     // The page shows the car info in the left sidebar
-    await expect(appointment.page.getByText("Mock Car Detail")).toBeVisible({
-      timeout: 5000,
-    });
+    await expect(
+      appointment.page.getByText(/Mock Car Detail/).first(),
+    ).toBeVisible({ timeout: 5000 });
   });
 });

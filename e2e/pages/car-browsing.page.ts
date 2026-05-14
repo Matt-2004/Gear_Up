@@ -4,7 +4,7 @@ export class LandingPage {
   constructor(readonly page: Page) {}
 
   get featuredCars() {
-    return this.page.getByTestId("featured-cars");
+    return this.page.getByTestId("featured-cars").first();
   }
   get carCards() {
     return this.page.getByTestId("car-card");
@@ -26,7 +26,7 @@ export class SearchPage {
   constructor(readonly page: Page) {}
 
   get searchInput() {
-    return this.page.getByTestId("search-input");
+    return this.page.getByTestId("search-input").first();
   }
   get searchButton() {
     return this.page.getByTestId("search-button");
@@ -35,7 +35,7 @@ export class SearchPage {
     return this.page.getByTestId("clear-search");
   }
   get startState() {
-    return this.page.getByTestId("start-state");
+    return this.page.getByTestId("start-state").first();
   }
   get searchResults() {
     return this.page.getByTestId("search-results");
@@ -72,10 +72,10 @@ export class CarDetailPage {
     return this.page.getByTestId("gallery-next");
   }
   get galleryCounter() {
-    return this.page.getByTestId("gallery-counter");
+    return this.page.getByTestId("gallery-counter").first();
   }
   get appointmentButton() {
-    return this.page.getByTestId("get-appointment");
+    return this.page.getByTestId("get-appointment").first();
   }
   get carTitle() {
     return this.page.getByTestId("car-title");

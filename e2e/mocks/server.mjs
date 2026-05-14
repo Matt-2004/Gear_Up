@@ -492,6 +492,35 @@ const server = http.createServer(async (req, res) => {
     });
   }
 
+  // --- Posts: Single (GET /api/v1/posts/{id}) ---
+  if (method === "GET") {
+    const postDetailMatch = url.pathname.match(/^\/api\/v1\/posts\/([^/]+)$/);
+    if (postDetailMatch) {
+      const postId = postDetailMatch[1];
+      return json(res, 200, {
+        isSuccess: true,
+        message: "Post retrieved",
+        data: {
+          id: postId,
+          caption: "Check out this amazing car!",
+          content: "Great condition, low mileage.",
+          visibility: "Public",
+          carId: "car-1",
+          authorUsername: "Test User",
+          authorAvatarUrl: "https://i.pravatar.cc/40?u=test",
+          likeCount: 5,
+          commentCount: 2,
+          isLikedByCurrentUser: false,
+          viewCount: 120,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          carDto: mockCarDetail("car-1"),
+        },
+        status: 200,
+      });
+    }
+  }
+
   // --- Posts: Create ---
   if (method === "POST" && url.pathname === "/api/v1/posts") {
     return json(res, 201, {
