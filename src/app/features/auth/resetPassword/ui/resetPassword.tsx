@@ -67,12 +67,12 @@ const ResetPassword = () => {
               autoComplete="new-password"
               type="password"
               placeholder="Re-enter your new password"
-              value={formData.confirmPassword}
+              value={formData.confirmedPassword}
               error={validationErrors.confirmPassword}
               onChange={(e) =>
                 setFormData((prev) => ({
                   ...prev,
-                  confirmPassword: e.target.value.trim(),
+                  confirmedPassword: e.target.value.trim(),
                 }))
               }
             >

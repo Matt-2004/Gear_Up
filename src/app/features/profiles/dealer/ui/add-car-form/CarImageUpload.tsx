@@ -91,7 +91,9 @@ export const CarImageUploadSection = ({
             e.stopPropagation();
             setIsDragOver(false);
             if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-              const input = e.currentTarget.querySelector("input[type='file']") as HTMLInputElement;
+              const input = e.currentTarget.querySelector(
+                "input[type='file']",
+              ) as HTMLInputElement;
               if (input) {
                 const dt = new DataTransfer();
                 for (let i = 0; i < e.dataTransfer.files.length; i++) {
@@ -308,7 +310,7 @@ const CarImageUpload = () => {
         />
       </div>
       <div className="mt-8 flex justify-end border-t border-gray-200 pt-6">
-        <StepNavigation isSubmitForm={true} label="Submit" />
+        <StepNavigation isSubmitForm={true} />
       </div>
     </form>
   );

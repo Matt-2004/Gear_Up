@@ -1,12 +1,13 @@
-import { CarItems } from "@/app/features/car/types/car.types";
 import { getMyCars } from "@/app/shared/utils/API/CarAPI";
-import DealerCarDashboard from "../../../features/dashboards/dealer/ui/dealer-dashboard/DealerCarDashboard";
 import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
+import { CarModel } from "@/app/features/car/types/car.model";
+import { carMapper } from "@/app/features/car/types/car.mapper";
+import DealerCarDashboard from "@/app/features/profiles/dealer/ui/dealer-dashboard/DealerCarDashboard";
 
 export const dynamic = "force-dynamic";
 
 // Fetch all cars (Pending, Approved, Rejected) and combine into CursorBaseDTO format
-export async function getAllStatusCars(): Promise<CursorResponse<CarItems[]>> {
+export async function getAllStatusCars(): Promise<CursorResponse<CarModel[]>> {
   try {
     const [pendingData, approvedData, rejectedData] = await Promise.all([
       getMyCars("Pending", null),
@@ -15,11 +16,11 @@ export async function getAllStatusCars(): Promise<CursorResponse<CarItems[]>> {
     ]);
 
     // Combine all cars from different statuses into items array
-    const allCars: CursorResponse<CarItems[]> = {
+    const allCars: CursorResponse<CarModel[]> = {
       items: [
-        ...pendingData?.data.items,
-        ...approvedData?.data.items,
-        ...rejectedData?.data.items,
+        ...pendingData?.data.items.map(carMapper),
+        ...approvedData?.data.items.map(carMapper),
+        ...rejectedData?.data.items.map(carMapper),
       ],
       hasMore: false,
       nextCursor: "",

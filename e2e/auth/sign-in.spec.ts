@@ -9,7 +9,7 @@ test.describe("Sign In", () => {
     await loginPage.navigate();
   });
 
-  test("successful login redirects to home", async ({ page }) => {
+  test("successful login redirects to home", async () => {
     await loginPage.login("success@test.com", "Password1!");
 
     await loginPage.expectRedirectedToHome();
@@ -25,13 +25,15 @@ test.describe("Sign In", () => {
     await loginPage.expectOnLoginPage();
   });
 
-  test("unverified email triggers resend and shows info message", async ({ page }) => {
+  test("unverified email triggers resend and shows info message", async ({
+    page,
+  }) => {
     await loginPage.login("unverified@test.com", "Password1!");
 
     // The action returns an "email not verified" message
-    await expect(
-      page.getByText(/email is not verified/i).first(),
-    ).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText(/email is not verified/i).first()).toBeVisible({
+      timeout: 5000,
+    });
   });
 
   test("forgot password link navigates to reset password email page", async () => {
@@ -53,7 +55,7 @@ test.describe("Sign In", () => {
     await expect(checkbox).not.toBeChecked();
   });
 
-  test("empty form submission shows validation errors", async ({ page }) => {
+  test("empty form submission shows validation errors", async () => {
     await loginPage.submitButton.click();
 
     // The email input should still be visible (form didn't submit successfully)

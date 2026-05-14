@@ -7,7 +7,7 @@ import { ResetPasswordInputDTO } from "../../types/auth.types";
 
 const initialResetPasswordFormData = {
   newPassword: "",
-  confirmPassword: "",
+  confirmedPassword: "",
 };
 
 export const useResetPassword = (token: string | null) => {
@@ -44,7 +44,7 @@ export const useResetPassword = (token: string | null) => {
 
     const submitData = new FormData();
     submitData.append("newPassword", formData.newPassword);
-    submitData.append("confirmedPassword", formData.confirmPassword);
+    submitData.append("confirmedPassword", formData.confirmedPassword);
     submitData.append("token", normalizedToken);
 
     setIsPending(true);

@@ -1,4 +1,4 @@
-import { renderHook, act, waitFor } from "@testing-library/react";
+import { renderHook, act } from "@testing-library/react";
 import { ReactNode } from "react";
 import KycFormProvider, { useKycSubmit } from "./KycFormContext";
 import { kycRegister } from "@/app/shared/utils/API/UserAPI";
@@ -152,7 +152,9 @@ describe("KycFormContext", () => {
 
     it("returns error when API fails", async () => {
       mockedKycRegister.mockImplementation(() => {
-        const err = new Error("Server unavailable") as Error & { status?: number };
+        const err = new Error("Server unavailable") as Error & {
+          status?: number;
+        };
         err.status = 500;
         throw err;
       });
@@ -187,7 +189,12 @@ describe("KycFormContext", () => {
       });
       expect(result.current.isSubmitting).toBe(true);
       await act(async () => {
-        resolveKyc({ isSuccess: true, message: "KYC submitted", status: 200, data: null });
+        resolveKyc({
+          isSuccess: true,
+          message: "KYC submitted",
+          status: 200,
+          data: null,
+        });
         await submitPromise;
       });
       expect(result.current.isSubmitting).toBe(false);

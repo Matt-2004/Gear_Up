@@ -1,14 +1,14 @@
-import { chromium } from "@playwright/test";
+import { chromium, Page } from "@playwright/test";
 
 const BASE = "http://localhost:3000";
 const OUT = "public/readme";
 
-async function screenshot(page, name: string) {
+async function screenshot(page: Page, name: string) {
   await page.screenshot({ path: `${OUT}/${name}.png`, fullPage: false });
   console.log(`  ✓ ${name}.png`);
 }
 
-async function login(page) {
+async function login(page: Page) {
   await page.goto(`${BASE}/auth/login`);
   await page.getByTestId("email").fill("success@test.com");
   await page.getByTestId("password").fill("Password1!");
@@ -18,8 +18,12 @@ async function login(page) {
 
 (async () => {
   const browser = await chromium.launch({ headless: true });
-  const desktop = await browser.newContext({ viewport: { width: 1440, height: 900 } });
-  const mobile = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  const desktop = await browser.newContext({
+    viewport: { width: 1440, height: 900 },
+  });
+  const mobile = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+  });
 
   console.log("Desktop screenshots (1440×900):");
 
@@ -30,7 +34,9 @@ async function login(page) {
   await d1.close();
 
   const d2 = await desktop.newPage();
-  await d2.goto(BASE + "/car/search?query=Toyota", { waitUntil: "networkidle" });
+  await d2.goto(BASE + "/car/search?query=Toyota", {
+    waitUntil: "networkidle",
+  });
   await screenshot(d2, "car-search");
   await d2.close();
 

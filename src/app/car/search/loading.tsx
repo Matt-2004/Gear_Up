@@ -1,4 +1,4 @@
-import { Skeleton, SkeletonCard } from "@/app/shared/ui/Skeleton";
+import { Skeleton } from "@/app/shared/ui/Skeleton";
 
 export default function SearchLoading() {
   return (
