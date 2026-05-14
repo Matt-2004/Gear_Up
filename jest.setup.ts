@@ -26,7 +26,7 @@ global.IntersectionObserver = class IntersectionObserver {
     return [];
   }
   unobserve() {}
-} as any;
+} as unknown as typeof IntersectionObserver;
 
 // Suppress console errors in tests (optional)
 const originalError = console.error;

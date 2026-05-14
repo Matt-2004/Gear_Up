@@ -5,7 +5,7 @@ import {
   getNestedCommentsByCommentId,
 } from "@/app/shared/utils/API/CommentAPI";
 import * as signalR from "@microsoft/signalr";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { Comment } from "../../comment/ui/Comment";
 import { CarouselImages, PostContent } from "./DiscoverPost";
 import { useCommentContext } from "../../comment/context/CommentContext";
@@ -32,48 +32,53 @@ const PostDetails = ({ access_token, postData }: IDetailProp) => {
   const { comments, handleComment, requestedParentCommentId } =
     useCommentContext();
 
-  const { make, model, year, color } = postData.carDto;
-  const basicSpecTableData = [
-    { Make: make },
-    { Model: model },
-    { Year: year },
-    { Color: color },
-  ];
+  const car = postData.carDto ?? {};
+  const { make, model, year, color } = car as Record<string, unknown>;
+  const basicSpecTableData = car
+    ? [{ Make: make }, { Model: model }, { Year: year }, { Color: color }]
+    : [];
 
-  const { engine, fuel, transmission } = postData.carDto;
-  const performanceSpecTableData = [
-    { EngineCapacity: engine },
-    { FuelType: fuel },
-    { TransmissionType: transmission },
-  ];
+  const { engine, fuel, transmission } = car as Record<string, unknown>;
+  const performanceSpecTableData = car
+    ? [
+        { EngineCapacity: engine },
+        { FuelType: fuel },
+        { TransmissionType: transmission },
+      ]
+    : [];
 
-  const { mileage, seats } = postData.carDto;
-  const capacitySpecTableData = [
-    { Mileage: mileage + " km" },
-    { SeatingCapacity: seats + " seats" },
-  ];
-  const fetchComments = async (postId: string) => {
-    const response = await getCommentsByPostId(postId);
-    handleComment(response?.data, null);
-  };
+  const { mileage, seats } = car as Record<string, unknown>;
+  const capacitySpecTableData = car
+    ? [{ Mileage: mileage + " km" }, { SeatingCapacity: seats + " seats" }]
+    : [];
+  const fetchComments = useCallback(
+    async (postId: string) => {
+      const response = await getCommentsByPostId(postId);
+      handleComment(response?.data, null);
+    },
+    [handleComment],
+  );
 
-  const fetchNestedComments = async (requestedParentCommentId: string) => {
-    const response = await getNestedCommentsByCommentId(
-      requestedParentCommentId,
-    );
-    handleComment(response?.data, requestedParentCommentId);
-  };
+  const fetchNestedComments = useCallback(
+    async (requestedParentCommentId: string) => {
+      const response = await getNestedCommentsByCommentId(
+        requestedParentCommentId,
+      );
+      handleComment(response?.data, requestedParentCommentId);
+    },
+    [handleComment],
+  );
 
   useEffect(() => {
     // Comment fetch on initial load
     fetchComments(postData.id);
-  }, []);
+  }, [fetchComments, postData.id]);
 
   useEffect(() => {
     // Fetch nested comments when requestedParentCommentId changes
     if (!requestedParentCommentId) return;
     fetchNestedComments(requestedParentCommentId);
-  }, [requestedParentCommentId, postData.id]);
+  }, [fetchNestedComments, requestedParentCommentId]);
 
   // SignalR connection for real-time comments
   useEffect(() => {
@@ -117,7 +122,7 @@ const PostDetails = ({ access_token, postData }: IDetailProp) => {
       connection.off("CommentCreated");
       connection.stop();
     };
-  }, []);
+  }, [postData.id, access_token, handleComment]);
 
   if (!postData) {
     return <h3>Loading...</h3>;
@@ -147,12 +152,14 @@ const PostDetails = ({ access_token, postData }: IDetailProp) => {
                   </div>
 
                   {/* Image Carousel */}
-                  <div className="bg-gray-100">
-                    <CarouselImages
-                      price={postData.carDto.price}
-                      images={postData.carDto.images}
-                    />
-                  </div>
+                  {postData.carDto && (
+                    <div className="bg-gray-100">
+                      <CarouselImages
+                        price={postData.carDto.price}
+                        images={postData.carDto.images}
+                      />
+                    </div>
+                  )}
 
                   {/* Specifications Section */}
                   <div className="px-6 py-6">
@@ -184,7 +191,7 @@ const PostDetails = ({ access_token, postData }: IDetailProp) => {
                                   {key}
                                 </td>
                                 <td className="px-4 py-3 text-sm text-gray-900">
-                                  {value}
+                                  {String(value ?? "")}
                                 </td>
                               </tr>
                             );
@@ -201,7 +208,7 @@ const PostDetails = ({ access_token, postData }: IDetailProp) => {
                                   {key}
                                 </td>
                                 <td className="px-4 py-3 text-sm text-gray-900">
-                                  {value}
+                                  {String(value ?? "")}
                                 </td>
                               </tr>
                             );

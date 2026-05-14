@@ -74,7 +74,7 @@ export default function MessageBubble({
           >
             {message.imageUrl && message.imageUrl.trim() !== "" && (
               <div className="mb-2">
-                <img
+                <Image
                   src={message.imageUrl}
                   alt="Message attachment"
                   className="max-h-50 max-w-50 rounded-lg object-cover"

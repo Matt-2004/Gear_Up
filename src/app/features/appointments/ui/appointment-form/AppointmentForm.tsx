@@ -54,6 +54,7 @@ export default function AppointmentForm({
           <Input
             type="date"
             name="schedule"
+            data-testid="appointment-date"
             value={formData.schedule}
             onChange={onChange}
             min={new Date().toISOString().split("T")[0]}
@@ -70,6 +71,7 @@ export default function AppointmentForm({
           <Input
             type="time"
             name="time"
+            data-testid="appointment-time"
             value={formData.time}
             onChange={onChange}
             required
@@ -85,6 +87,7 @@ export default function AppointmentForm({
           <Input
             type="text"
             name="location"
+            data-testid="appointment-location"
             value={formData.location}
             onChange={onChange}
             placeholder="Enter your preferred meeting location"
@@ -104,6 +107,7 @@ export default function AppointmentForm({
           </label>
           <textarea
             name="notes"
+            data-testid="appointment-notes"
             value={formData.notes}
             onChange={onChange}
             placeholder="Any special requests or questions about the car?"
@@ -117,6 +121,7 @@ export default function AppointmentForm({
           <button
             type="submit"
             disabled={isSubmitting}
+            data-testid="appointment-submit"
             className="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-4 rounded-xl transition-all shadow-md hover:shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {isSubmitting ? (

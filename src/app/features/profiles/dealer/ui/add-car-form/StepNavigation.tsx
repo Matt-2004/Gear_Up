@@ -5,11 +5,9 @@ import { AddNewCarSteps } from "../../utils/steps";
 const StepNavigation = ({
   isSubmitForm = false,
   isSubmitting = false,
-  label,
 }: {
   isSubmitForm?: boolean;
   isSubmitting?: boolean;
-  label: string;
 }) => {
   const router = useRouter();
   const searchParams = useSearchParams();

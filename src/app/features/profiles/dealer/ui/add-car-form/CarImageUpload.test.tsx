@@ -1,3 +1,4 @@
+import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import CarImageUpload from "./CarImageUpload";
@@ -23,9 +24,8 @@ jest.mock("../../context/AddNewCarContext", () => ({
 
 jest.mock("next/image", () => ({
   __esModule: true,
-  default: ({ src, alt }: { src: string; alt: string }) => (
-    <img src={src} alt={alt} />
-  ),
+  default: ({ src, alt = "" }: { src: string; alt?: string }) =>
+    React.createElement("img", { src, alt }),
 }));
 
 jest.mock("./StepNavigation", () => ({

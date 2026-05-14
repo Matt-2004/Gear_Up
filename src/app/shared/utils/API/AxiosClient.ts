@@ -20,61 +20,59 @@ import { AddCommentDTO } from "@/app/features/comment/types/comment.dto";
 import { IReviewSubmissionDTO } from "@/app/features/review/types/review.dto";
 import { createAppointmentDTO } from "@/app/features/appointments/types/appointment.dto";
 import { cookies } from "next/headers";
-import { Tokens } from "@/app/features/auth/signIn/types/sign-in-response";
 
 export const api = axios.create({
   baseURL: BACKEND_API_URL,
+  timeout: 15_000,
 });
+
+// ─── Token refresh ───────────────────────────────────────────────────
+
+let refreshPromise: Promise<void> | null = null;
 
 async function refreshAccessToken(
   refreshToken: string,
   isProduction: boolean,
 ): Promise<void> {
-  const cookieStore = await cookies();
   const sameSite = isProduction ? ("none" as const) : ("lax" as const);
 
-  try {
-    const res = await fetch(`${BACKEND_API_URL}/api/v1/auth/refresh`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(refreshToken),
-    });
+  const res = await fetch(`${BACKEND_API_URL}/api/v1/auth/refresh`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ refreshToken }),
+  });
 
-    if (!res.ok) {
-      console.error(`Token refresh failed: ${res.status} ${res.statusText}`);
-      throw new Error("Token refresh failed");
-    }
-
-    const data = await res.json();
-    const tokenData = data?.data ?? data;
-    const nextAccessToken: string | undefined = tokenData?.accessToken;
-    const nextRefreshToken: string | undefined = tokenData?.refreshToken;
-
-    if (!nextAccessToken || !nextRefreshToken) {
-      console.error("Token refresh response missing tokens");
-      throw new Error("Token refresh failed");
-    }
-
-    cookieStore.set("access_token", nextAccessToken, {
-      httpOnly: true,
-      secure: isProduction,
-      sameSite,
-      maxAge: 60 * 5, // 5 minutes
-    });
-    cookieStore.set("refresh_token", nextRefreshToken, {
-      httpOnly: true,
-      secure: isProduction,
-      sameSite,
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-    });
-  } catch (error) {
-    console.error(
-      "Error during token refresh:",
-      error instanceof Error ? error.message : "Unknown error",
-    );
-    throw error;
+  if (!res.ok) {
+    console.error(`Token refresh failed: ${res.status} ${res.statusText}`);
+    throw new Error("Token refresh failed");
   }
+
+  const data = await res.json();
+  const tokenData = data?.data ?? data;
+  const nextAccessToken: string | undefined = tokenData?.accessToken;
+  const nextRefreshToken: string | undefined = tokenData?.refreshToken;
+
+  if (!nextAccessToken || !nextRefreshToken) {
+    console.error("Token refresh response missing tokens");
+    throw new Error("Token refresh failed");
+  }
+
+  const cookieStore = await cookies();
+  cookieStore.set("access_token", nextAccessToken, {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite,
+    maxAge: 60 * 5,
+  });
+  cookieStore.set("refresh_token", nextRefreshToken, {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite,
+    maxAge: 60 * 60 * 24 * 7,
+  });
 }
+
+// ─── Response interceptor ────────────────────────────────────────────
 
 api.interceptors.response.use(
   (response) => response,
@@ -83,30 +81,56 @@ api.interceptors.response.use(
       | (typeof error.config & { _retry?: boolean })
       | undefined;
     const isProduction = process.env.NODE_ENV === "production";
-    const cookieStore = await cookies();
-    const refreshToken = cookieStore.get("refresh_token")?.value;
 
     if (
       error.response?.status === 401 &&
-      refreshToken &&
-      !originalRequest?._retry
+      originalRequest &&
+      !originalRequest._retry
     ) {
-      originalRequest._retry = true;
-      try {
-        await refreshAccessToken(refreshToken, isProduction);
-        const nextAccessToken = cookieStore.get("access_token")?.value;
+      const cookieStore = await cookies();
+      const refreshToken = cookieStore.get("refresh_token")?.value;
 
-        if (nextAccessToken && originalRequest) {
+      if (!refreshToken) {
+        // No token to refresh — just reject. Don't try to delete cookies
+        // here: this may run in a server component where cookie writes
+        // are forbidden.
+        return Promise.reject(error);
+      }
+
+      originalRequest._retry = true;
+
+      try {
+        // Deduplicate concurrent refresh attempts
+        if (!refreshPromise) {
+          refreshPromise = refreshAccessToken(refreshToken, isProduction);
+        }
+        await refreshPromise;
+        refreshPromise = null;
+
+        // Read the fresh token from a new cookie store snapshot
+        const freshCookieStore = await cookies();
+        const nextAccessToken = freshCookieStore.get("access_token")?.value;
+
+        if (nextAccessToken) {
           originalRequest.headers = {
             ...(originalRequest.headers ?? {}),
             Authorization: `Bearer ${nextAccessToken}`,
           };
           return api.request(originalRequest);
         }
-      } catch (refreshError) {
-        cookieStore.delete("access_token");
-        cookieStore.delete("refresh_token");
-        return Promise.reject(refreshError);
+      } catch {
+        refreshPromise = null;
+        // Cookie deletion may fail if this interceptor runs inside a
+        // server component (server components can read cookies but not
+        // write them). Swallow the error — the expired tokens are harmless.
+        try {
+          const cleanupStore = await cookies();
+          cleanupStore.delete("access_token");
+          cleanupStore.delete("refresh_token");
+        } catch {
+          // not a server-action context — ignore
+        }
+        return Promise.reject(error);
       }
     }
 
@@ -121,20 +145,24 @@ type ApiErrorPayload = {
   status?: number;
 };
 
-const buildAuthHeaders = async (
+// ─── Auth headers ────────────────────────────────────────────────────
+
+async function buildAuthHeaders(
   includeJsonContentType = false,
-): Promise<Record<string, string>> => {
+): Promise<Record<string, string>> {
   const accessToken = await getServerAccessToken();
-  const headers: Record<string, string> = {
-    Authorization: `Bearer ${accessToken}`,
-  };
+  const headers: Record<string, string> = {};
+
+  if (accessToken) {
+    headers.Authorization = `Bearer ${accessToken}`;
+  }
 
   if (includeJsonContentType) {
     headers["Content-Type"] = "application/json";
   }
 
   return headers;
-};
+}
 
 const extractErrorMessage = (
   payload: ApiErrorPayload | undefined,
@@ -161,27 +189,27 @@ const normalizeError = (error: unknown, context: string): ErrorResponse => {
   if (axios.isAxiosError(error)) {
     const axiosError = error as AxiosError<ApiErrorPayload>;
     const payload = axiosError.response?.data;
-    const message = extractErrorMessage(
-      payload,
-      axiosError.message || "Request failed",
-    );
-    const statusCode = extractErrorStatus(
-      payload,
-      axiosError.response?.status ?? 500,
-    );
-    console.error(`${context}:`, {
-      statusCode,
-      message,
-      url: axiosError.config?.url,
-      method: axiosError.config?.method,
-    });
+
+    // Network error — no response received
+    if (!axiosError.response) {
+      console.error(`${context}: network error (${axiosError.code ?? "unknown"})`);
+      return new ErrorResponse(
+        axiosError.message || "Network error — check your connection",
+        0,
+        null,
+      );
+    }
+
+    const message = extractErrorMessage(payload, axiosError.message);
+    const statusCode = extractErrorStatus(payload, axiosError.response.status);
+    console.error(`${context}: ${statusCode} — ${message}`);
     return new ErrorResponse(message, statusCode, null);
   }
 
   if (isApiErrorPayload(error)) {
     const message = extractErrorMessage(error, "Request failed");
     const statusCode = extractErrorStatus(error, 500);
-    console.error(`${context}:`, { statusCode, message });
+    console.error(`${context}: ${statusCode} — ${message}`);
     return new ErrorResponse(message, statusCode, null);
   }
 
@@ -192,26 +220,33 @@ const normalizeError = (error: unknown, context: string): ErrorResponse => {
   );
 };
 
-const request = async <T>(
+function isFormData(data: unknown): data is FormData {
+  return typeof FormData !== "undefined" && data instanceof FormData;
+}
+
+async function request<TResponse>(
   method: "get" | "post" | "put" | "patch" | "delete",
   url: string,
   data?: unknown,
-  includeJsonContentType = false,
-): Promise<T> => {
+  forceJsonContentType = false,
+): Promise<TResponse> {
   try {
-    const response = await api.request<T>({
+    // FormData → let the browser set the multipart boundary.
+    // Non-FormData with data → needs Content-Type: application/json.
+    const hasBody = data !== undefined && data !== null;
+    const useJsonHeader =
+      forceJsonContentType || (hasBody && !isFormData(data));
+    const response = await api.request<TResponse>({
       method,
       url,
       data,
-      headers: await buildAuthHeaders(includeJsonContentType),
+      headers: await buildAuthHeaders(useJsonHeader),
     });
-    console.log(`Response for ${method.toUpperCase()} ${url}:`, response.data);
     return response.data;
   } catch (error: unknown) {
-    console.log("Error in request:", error);
-    throw normalizeError(error, `Error in ${method.toUpperCase()} ${url}`);
+    throw normalizeError(error, `${method.toUpperCase()} ${url}`);
   }
-};
+}
 
 export async function getFetch<T>(url: string): Promise<T> {
   return request<T>("get", url);
@@ -249,17 +284,17 @@ export async function putFetch(
     | string
     | Omit<IReviewSubmissionDTO, "dealerId">
     | Omit<CreatePostDTO, "carId">,
-) {
+): Promise<MainResponse<null>> {
   return request<MainResponse<null>>("put", url, data);
 }
 
-export async function deleteFetch(url: string) {
+export async function deleteFetch(url: string): Promise<MainResponse<null>> {
   return request<MainResponse<null>>("delete", url, undefined, true);
 }
 
 export async function patchFetch(
   url: string,
   data?: { rejectionReason: string },
-) {
-  return request("patch", url, data, true);
+): Promise<MainResponse<null>> {
+  return request<MainResponse<null>>("patch", url, data, true);
 }

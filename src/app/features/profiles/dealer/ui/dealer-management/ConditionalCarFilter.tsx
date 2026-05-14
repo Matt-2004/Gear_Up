@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 export default function ConditionalCarFilter() {
   return (
     <div id="filter-container" className="w-full">
@@ -64,15 +62,17 @@ export default function ConditionalCarFilter() {
 
         {/* Brand Group */}
         <div className="space-y-2lg:col-span-1">
-          <label className="text-sm font-semibold text-gray-700">Quick Brands</label>
+          <label className="text-sm font-semibold text-gray-700">
+            Quick Brands
+          </label>
           <div className="flex flex-wrap gap-2">
-            {[ "Tesla", "Toyota", "Honda", "BMW", "Ford" ].map((brand) => (
-               <label key={brand} className="cursor-pointer">
-                  <input type="checkbox" className="peer hidden" value={brand} />
-                  <span className="inline-flex items-center  border border-gray-200 bg-white px-3 py-1.5 text-xs font-semibold text-gray-600 transition-all hover:bg-gray-50 peer-checked:border-primary-500 peer-checked:bg-primary-50 peer-checked:text-primary-700">
-                    {brand}
-                  </span>
-               </label>
+            {["Tesla", "Toyota", "Honda", "BMW", "Ford"].map((brand) => (
+              <label key={brand} className="cursor-pointer">
+                <input type="checkbox" className="peer hidden" value={brand} />
+                <span className="inline-flex items-center  border border-gray-200 bg-white px-3 py-1.5 text-xs font-semibold text-gray-600 transition-all hover:bg-gray-50 peer-checked:border-primary-500 peer-checked:bg-primary-50 peer-checked:text-primary-700">
+                  {brand}
+                </span>
+              </label>
             ))}
           </div>
         </div>

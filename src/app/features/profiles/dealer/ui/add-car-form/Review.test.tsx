@@ -1,3 +1,4 @@
+import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import Review from "./Review";
@@ -73,9 +74,8 @@ jest.mock("@/app/shared/utils/API/CarAPI", () => ({
 
 jest.mock("next/image", () => ({
   __esModule: true,
-  default: ({ src, alt }: { src: string; alt: string }) => (
-    <img src={src} alt={alt} />
-  ),
+  default: ({ src, alt = "" }: { src: string; alt?: string }) =>
+    React.createElement("img", { src, alt }),
 }));
 
 jest.mock("./StepNavigation", () => ({

@@ -20,6 +20,7 @@ import { Field } from "@/app/shared/ui/Field";
 import { Label } from "@/app/shared/ui/Label";
 import Input from "@/app/shared/ui/Input";
 import { UserModel } from "../../../user/types/user.model";
+import { ErrorResponse } from "@/app/shared/utils/errors/errorResponse";
 
 // ─── types ──────────────────────────────────────────────────────────────────
 
@@ -38,9 +39,6 @@ const SectionTitle = ({ children }: { children: React.ReactNode }) => (
     {children}
   </h3>
 );
-
-const inputCls =
-  "focus:ring-primary w-full rounded-lg border border-gray-200 px-4 py-2 text-black placeholder:text-sm placeholder:text-gray-400 focus:bg-green-50 focus:ring-1 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400";
 
 // ─── main component ───────────────────────────────────────────────────────────
 
@@ -80,7 +78,6 @@ const DealerProfile = () => {
     confirmedNewPassword: "",
   });
 
-  const [pwErrors, setPwErrors] = useState<Partial<PasswordForm>>({});
   const [savingPw, setSavingPw] = useState(false);
 
   // ── notifications state ──
@@ -108,11 +105,9 @@ const DealerProfile = () => {
       updateProfileStates({ isDataChange: false });
       return;
     }
-    const changed = Object.keys(profileState.originalInput).some(
-      (k) =>
-        (profileState.originalInput as Record<string, any>)[k] !==
-        (profileState.input as Record<string, any>)[k],
-    );
+    const changed = (
+      Object.keys(profileState.originalInput) as (keyof UserModel)[]
+    ).some((k) => profileState.originalInput?.[k] !== profileState.input?.[k]);
     updateProfileStates({
       isDataChange: changed || profileState.avatarPreview !== null,
     });
@@ -165,11 +160,9 @@ const DealerProfile = () => {
           res?.message ?? "Update failed. Please try again.",
         );
       }
-    } catch (err: any) {
-      addToastMessage(
-        "error",
-        err?.response?.data?.errorMessage ?? err?.message ?? "Update failed.",
-      );
+    } catch (error: unknown) {
+      const err = error as ErrorResponse;
+      addToastMessage("error", err?.message ?? "Update failed.");
     } finally {
       updateProfileStates({ savingProfile: false });
     }
@@ -183,7 +176,7 @@ const DealerProfile = () => {
       errs.newPassword = "At least 8 characters";
     if (pwForm.newPassword !== pwForm.confirmedNewPassword)
       errs.confirmedNewPassword = "Passwords do not match";
-    setPwErrors(errs);
+
     return Object.keys(errs).length === 0;
   };
 
@@ -207,13 +200,9 @@ const DealerProfile = () => {
       } else {
         addToastMessage("error", res?.message ?? "Failed to change password.");
       }
-    } catch (err: any) {
-      addToastMessage(
-        "error",
-        err?.response?.data?.errorMessage ??
-          err?.message ??
-          "Failed to change password.",
-      );
+    } catch (err: unknown) {
+      const error = err as ErrorResponse;
+      addToastMessage("error", error?.message ?? "Failed to change password.");
     } finally {
       setSavingPw(false);
     }
@@ -289,6 +278,7 @@ const DealerProfile = () => {
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
+                    aria-label="Change profile image"
                     className="absolute right-0 bottom-0 rounded-full bg-white p-1.5 shadow-md transition-colors hover:bg-gray-50"
                   >
                     <Camera className="h-4 w-4 text-gray-700" />

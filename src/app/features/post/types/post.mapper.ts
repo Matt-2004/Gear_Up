@@ -1,6 +1,19 @@
-import { carDetailMapper, carMapper } from "../../car/types/car.mapper";
+import { CarDetailDTO } from "../../car/types/car.dto";
+import { CarDetailModel } from "../../car/types/car.model";
+import { carDetailMapper } from "../../car/types/car.mapper";
 import { PostDTO } from "./post.dto";
 import { PostModel } from "./post.model";
+
+function safeCarDetail(dto: unknown): CarDetailModel | null {
+  if (!dto || typeof dto !== "object") return null;
+  const c = dto as Record<string, unknown>;
+  if (!c.id || !c.name || !c.dealerId) return null;
+  try {
+    return carDetailMapper(dto as CarDetailDTO);
+  } catch {
+    return null;
+  }
+}
 
 export function PostMapper(dto: PostDTO): PostModel {
   return {
@@ -10,7 +23,7 @@ export function PostMapper(dto: PostDTO): PostModel {
     authorUsername: dto.authorUsername,
     authorProfileImage: dto.authorAvatarUrl,
     visibility: dto.visibility,
-    carDto: carDetailMapper(dto.carDto),
+    carDto: safeCarDetail(dto.carDto),
     createdAt: dto.createdAt,
     updatedAt: dto.updatedAt,
     likeCount: dto.likeCount,

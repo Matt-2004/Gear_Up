@@ -35,12 +35,13 @@ jest.mock("next/image", () => {
   function ImageMock({
     fill: _fill,
     priority: _priority,
+    alt = "",
     ...props
   }: React.ComponentProps<"img"> & {
     fill?: boolean;
     priority?: boolean;
   }) {
-    return <img {...props} />;
+    return React.createElement("img", { alt, ...props });
   }
 
   return {

@@ -3,7 +3,7 @@
 import { DocId } from "@/app/features/profiles/dealer/types/kycRegister.types";
 import clsx from "clsx";
 import Image from "next/image";
-import { FormEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useKycSubmit } from "@/app/features/profiles/dealer/context/KycFormContext";
 import { CircleCheckBig } from "lucide-react";
 import StepNavigation from "../add-car-form/StepNavigation";
@@ -120,7 +120,7 @@ const DocumentType = () => {
           </label>
         ))}
       </div>
-      <StepNavigation label="Submit" />
+      <StepNavigation />
     </form>
   );
 };

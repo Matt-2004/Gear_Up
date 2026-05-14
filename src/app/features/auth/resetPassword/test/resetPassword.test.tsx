@@ -154,12 +154,12 @@ describe("ResetPassword", () => {
       handleFormSubmit: mockHandleFormSubmit,
       formData: {
         newPassword: "123",
-        confirmedPassword: "456",
+        confirmPassword: "456",
       },
       setFormData: jest.fn(),
       validationErrors: {
         newPassword: "Password must be at least 8 characters",
-        confirmedPassword: "Passwords do not match",
+        confirmPassword: "Passwords do not match",
       },
       isFormValid: false,
     });

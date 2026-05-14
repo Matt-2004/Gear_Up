@@ -43,6 +43,7 @@ export const CarImageUploadSection = ({
   title = "Vehicle Images",
   description = "Upload high-quality photos from multiple angles",
 }: CarImageUploadSectionProps) => {
+  const [isDragOver, setIsDragOver] = useState(false);
   return (
     <div>
       <div className="border-primary-500 mb-6 border-l-4 pl-4">
@@ -64,7 +65,44 @@ export const CarImageUploadSection = ({
         </ul>
       </div>
       <div className="mb-6">
-        <label className="group hover:border-primary hover:bg-primary-50/40 focus-within:ring-primary/30 flex w-full cursor-pointer flex-col items-center rounded-2xl border-2 border-dashed border-gray-300 bg-[#E8E9E0] p-10 text-center transition-all duration-200 hover:shadow-md focus-within:ring-4">
+        <label
+          className={`group flex w-full cursor-pointer flex-col items-center rounded-2xl border-2 border-dashed p-10 text-center transition-all duration-200 ${
+            isDragOver
+              ? "border-primary bg-primary-50/50 scale-[1.01] shadow-lg"
+              : "border-gray-300 bg-[#E8E9E0] hover:border-primary hover:bg-primary-50/40 hover:shadow-md focus-within:ring-primary/30 focus-within:ring-4"
+          }`}
+          onDragOver={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setIsDragOver(true);
+          }}
+          onDragEnter={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setIsDragOver(true);
+          }}
+          onDragLeave={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setIsDragOver(false);
+          }}
+          onDrop={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setIsDragOver(false);
+            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+              const input = e.currentTarget.querySelector("input[type='file']") as HTMLInputElement;
+              if (input) {
+                const dt = new DataTransfer();
+                for (let i = 0; i < e.dataTransfer.files.length; i++) {
+                  dt.items.add(e.dataTransfer.files[i]);
+                }
+                input.files = dt.files;
+                input.dispatchEvent(new Event("change", { bubbles: true }));
+              }
+            }
+          }}
+        >
           <div className="mb-4 rounded-full bg-white p-4 shadow-sm ring-1 ring-gray-200 transition-all group-hover:scale-105 group-hover:ring-primary/30">
             <ImageUp className="text-primary h-10 w-10" />
           </div>

@@ -10,9 +10,12 @@ import { useState } from "react";
 import AppointmentCard from "./AppointmentCard";
 import AppointmentEmptyState from "@/app/features/appointments/ui/appointment-card/AppointmentEmptyState";
 import AppointmentFilterDropdown from "@/app/features/appointments/ui/dashboard/AppointmentFilterDropdown";
+import ConfirmModal from "@/app/shared/ui/ConfirmModal";
 import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
 import { AppointmentFilterStatus } from "@/app/features/appointments/types/appointment.dto";
 import { AppointmentModel } from "@/app/features/appointments/types/appointment.model";
+import { useToast } from "@/app/features/toast/hooks/useToast";
+import { ErrorResponse } from "@/app/shared/utils/errors/errorResponse";
 
 interface AppointmentsProps {
   appointments: CursorResponse<AppointmentModel[]>;
@@ -21,6 +24,7 @@ interface AppointmentsProps {
 const Appointments = ({
   appointments: initialAppointments,
 }: AppointmentsProps) => {
+  const { addToastMessage } = useToast();
   const [appointments, setAppointments] = useState<
     CursorResponse<AppointmentModel[]>
   >(initialAppointments || { items: [] });
@@ -79,9 +83,14 @@ const Appointments = ({
           apt.id === appointmentId ? { ...apt, status: "Rejected" } : apt,
         ),
       }));
-      alert("Appointment rejected successfully");
-    } catch (error: any) {
-      console.error("Failed to reject appointment:", error);
+
+      addToastMessage(
+        "success",
+        result.message || "Appointment rejected successfully",
+      );
+    } catch (error: unknown) {
+      const err = error as ErrorResponse;
+      addToastMessage("error", err.message || "Failed to reject appointment");
     } finally {
       setLoading(null);
     }
@@ -104,10 +113,17 @@ const Appointments = ({
     }
   };
 
-  const handleCancel = async (appointmentId: string) => {
-    if (!confirm("Are you sure you want to cancel this appointment?")) return;
+  const [cancelTarget, setCancelTarget] = useState<string | null>(null);
 
+  const handleCancel = (appointmentId: string) => {
+    setCancelTarget(appointmentId);
+  };
+
+  const confirmCancel = async () => {
+    if (!cancelTarget) return;
+    const appointmentId = cancelTarget;
     setLoading(appointmentId);
+    setCancelTarget(null);
     try {
       await cancelAppointmentById(appointmentId);
       setAppointments((prev) => ({
@@ -118,7 +134,6 @@ const Appointments = ({
       }));
     } catch (error) {
       console.error("Failed to cancel appointment:", error);
-      alert("Failed to cancel appointment. Please try again.");
     } finally {
       setLoading(null);
     }
@@ -172,8 +187,16 @@ const Appointments = ({
           )}
         </div>
       </div>
+      <ConfirmModal
+        open={cancelTarget !== null}
+        title="Cancel Appointment?"
+        message="Are you sure you want to cancel this appointment? This action cannot be undone."
+        confirmLabel="Yes, Cancel"
+        onConfirm={confirmCancel}
+        onCancel={() => setCancelTarget(null)}
+      />
     </div>
   );
-};
+}
 
 export default Appointments;

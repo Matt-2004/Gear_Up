@@ -8,7 +8,7 @@ import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Loader2, Search, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { ReactNode, useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { CarModel } from "../../types/car.model";
 import { carMapper } from "../../types/car.mapper";
 
@@ -241,6 +241,7 @@ export default function CarSearch({
                   <input
                     type="text"
                     value={searchQuery}
+                    data-testid="search-input"
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onFocus={() => {
                       if (suggestions.length > 0) {
@@ -255,7 +256,6 @@ export default function CarSearch({
                     }}
                     placeholder="Search by make, model, year..."
                     aria-label="Search cars"
-                    aria-expanded={showSuggestions}
                     aria-controls={suggestionsId}
                     className="focus:border-primary-500 focus:ring-primary-500/20 w-full rounded-lg border border-gray-200 bg-white py-2.5 px-11 pr-10 text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 hover:border-gray-300 focus:outline-none"
                   />
@@ -268,6 +268,7 @@ export default function CarSearch({
                         setShowSuggestions(false);
                       }}
                       aria-label="Clear search"
+                      data-testid="clear-search"
                       className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-0.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
                     >
                       <X className="h-3.5 w-3.5" />
@@ -327,6 +328,7 @@ export default function CarSearch({
               <motion.button
                 type="submit"
                 disabled={!canSearch}
+                data-testid="search-button"
                 whileHover={canSearch ? { scale: 1.03 } : undefined}
                 whileTap={canSearch ? { scale: 0.96 } : undefined}
                 className="bg-primary-600 hover:bg-primary-700 disabled:hover:bg-primary-600 w-full rounded-lg px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:shadow-md disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
@@ -343,6 +345,7 @@ export default function CarSearch({
             iconClassName="bg-primary-100"
             title="Start Your Search"
             description="Enter a car make, model, or year to find your perfect vehicle."
+            data-testid="start-state"
           />
         )}
 
@@ -363,6 +366,7 @@ export default function CarSearch({
             description={
               error?.message || "Something went wrong while searching cars."
             }
+            data-testid="search-error"
             action={
               <button
                 type="button"
@@ -381,11 +385,12 @@ export default function CarSearch({
             iconClassName="bg-primary-50"
             title="No Cars Found"
             description={`We couldn't find any cars matching "${trimmedQuery}". Try a different keyword, such as Toyota, Honda, SUV, or 2020.`}
+            data-testid="no-results"
           />
         )}
 
         {showResultsState && (
-          <div>
+          <div data-testid="search-results">
             <div className="mb-6 flex items-center justify-between">
               <div>
                 <h2 className="text-xl font-semibold text-gray-900">
@@ -438,6 +443,7 @@ interface SearchFallbackProps {
   description: string;
   helperText?: string;
   action?: React.ReactNode;
+  "data-testid"?: string;
 }
 
 function SearchFallback({
@@ -448,10 +454,11 @@ function SearchFallback({
   description,
   helperText,
   action,
+  "data-testid": dataTestId,
 }: SearchFallbackProps) {
   return (
     <div className="flex items-center justify-center py-10 sm:py-16">
-      <div className="w-full max-w-xl rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
+      <div className="w-full max-w-xl rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8" data-testid={dataTestId}>
         <div className="flex flex-col items-center text-center">
           {/* Icon */}
           <div

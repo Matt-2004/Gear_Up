@@ -106,7 +106,7 @@ export default function KycFormProvider({ children }: { children: ReactNode }) {
 
       localStorage.removeItem("kyc_verficiation");
       return response;
-    } catch (error: any) {
+    } catch (error: unknown) {
       const err = error as ErrorResponse;
 
       return {
@@ -118,7 +118,7 @@ export default function KycFormProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsSubmitting(false);
     }
-  }, [kycData, isStepValid]);
+  }, [kycData]);
 
   // Reset form to initial state
   const resetForm = useCallback(() => {

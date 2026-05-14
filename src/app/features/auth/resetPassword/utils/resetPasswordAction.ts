@@ -1,5 +1,6 @@
 "use server";
 
+import { ErrorResponse } from "@/app/shared/utils/errors/errorResponse";
 import { ResetPasswordResponse } from "../types/reset-password-response";
 import { postFetch } from "@/app/shared/utils/API/AxiosClient";
 
@@ -20,12 +21,13 @@ export async function resetPasswordAction(
     );
 
     return response;
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as ErrorResponse;
     return {
       isSuccess: false,
-      message: error?.message || "An error occurred while validating email.",
+      message: err?.message || "An error occurred while validating email.",
       data: null,
-      status: error?.status || 500,
+      status: err?.status || 500,
     };
   }
 }

@@ -2,6 +2,7 @@
 
 import { Tokens } from "@/app/features/auth/signIn/types/sign-in-response";
 import { MainResponse } from "@/app/shared/types.ts/main-response";
+import { safeErrorMessage, safeSuccessMessage } from "@/app/shared/utils/errors/safeMessage";
 import clsx from "clsx";
 import { AnimatePresence, motion } from "framer-motion";
 import { CheckCircle2, Info, X, XCircle } from "lucide-react";
@@ -72,23 +73,27 @@ export default function ToastProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
-  const handleToast = (
-    res: MainResponse<string | null | Tokens>,
-    pathAfterSuccess?: string,
-  ) => {
-    const duration = DEFAULT_TOAST_DURATION;
+  const handleToast = useCallback(
+    (res: MainResponse<string | null | Tokens>, pathAfterSuccess?: string) => {
+      const duration = DEFAULT_TOAST_DURATION;
 
-    if (res.isSuccess) {
-      addToastMessage("success", res.message, duration);
-      if (pathAfterSuccess) {
-        setTimeout(() => {
-          router.push(pathAfterSuccess);
-        }, duration + 150);
+      if (res.isSuccess) {
+        addToastMessage("success", safeSuccessMessage(res.message), duration);
+        if (pathAfterSuccess) {
+          setTimeout(() => {
+            router.push(pathAfterSuccess);
+          }, duration + 150);
+        }
+      } else {
+        addToastMessage(
+          "error",
+          safeErrorMessage(res.message, res.status),
+          duration,
+        );
       }
-    } else {
-      addToastMessage("error", res.message, duration);
-    }
-  };
+    },
+    [addToastMessage, router],
+  );
 
   useEffect(() => {
     if (!toast.toastType || !toast.message) return;
@@ -110,7 +115,7 @@ export default function ToastProvider({ children }: { children: ReactNode }) {
       removeToastMessage,
       handleToast,
     }),
-    [toast, addToastMessage, removeToastMessage],
+    [toast, addToastMessage, removeToastMessage, handleToast],
   );
 
   return (

@@ -24,7 +24,7 @@ export function ProfileDropDown() {
       await refreshUserData();
       addToastMessage("success", "Logged out successfully.");
       router.push("/");
-    } catch (err) {
+    } catch {
       addToastMessage("error", "Failed to log out. Please try again.");
     }
   };

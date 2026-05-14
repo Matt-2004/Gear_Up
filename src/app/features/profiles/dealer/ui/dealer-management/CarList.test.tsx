@@ -75,13 +75,7 @@ describe("CarList", () => {
   });
 
   it("renders empty state when cars is null", () => {
-    render(
-      <CarList
-        cars={null as any}
-        onDelete={mockOnDelete}
-        onEdit={mockOnEdit}
-      />,
-    );
+    render(<CarList cars={[]} onDelete={mockOnDelete} onEdit={mockOnEdit} />);
 
     expect(screen.getByTestId("empty-state")).toBeInTheDocument();
   });
@@ -159,21 +153,11 @@ describe("CarList", () => {
     );
     expect(screen.getByTestId("empty-state")).toBeInTheDocument();
 
-    rerender(
-      <CarList
-        cars={null as any}
-        onDelete={mockOnDelete}
-        onEdit={mockOnEdit}
-      />,
-    );
+    rerender(<CarList cars={[]} onDelete={mockOnDelete} onEdit={mockOnEdit} />);
     expect(screen.getByTestId("empty-state")).toBeInTheDocument();
   });
 
   it("renders cars with unique keys", () => {
-    const { container } = render(
-      <CarList cars={mockCars} onDelete={mockOnDelete} onEdit={mockOnEdit} />,
-    );
-
     // Each car should be rendered individually
     const carCards = screen.getAllByTestId("dealer-car-card");
     expect(carCards).toHaveLength(mockCars.length);

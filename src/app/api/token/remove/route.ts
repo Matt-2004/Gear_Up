@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 export async function POST() {
   try {
-    const response = await fetch(`${BACKEND_API_URL}/api/v1/auth/logout`, {
+    await fetch(`${BACKEND_API_URL}/api/v1/auth/logout`, {
       method: "POST",
     });
     const res = NextResponse.json({
@@ -16,7 +16,7 @@ export async function POST() {
     res.cookies.delete("user_data");
 
     return res;
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       {
         isSuccess: false,

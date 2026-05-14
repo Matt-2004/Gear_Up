@@ -58,7 +58,7 @@ const ChatWindow = memo(function ChatWindow({
         </div>
 
         <div className="flex items-center gap-2">
-          <button className="rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-100">
+          <button className="rounded-lg p-2 text-gray-600 transition-colors hover:bg-gray-100" aria-label="Chat options">
             <MoreVertical className="h-5 w-5" />
           </button>
         </div>

@@ -16,7 +16,6 @@ import {
   Car,
   CheckCircle2,
   ChevronRight,
-  Fuel,
   Gauge,
   Pencil,
   PenLine,
@@ -32,6 +31,7 @@ import { CarModel } from "@/app/features/car/types/car.model";
 import { carMapper } from "@/app/features/car/types/car.mapper";
 import { PostModel } from "@/app/features/post/types/post.model";
 import { PostMapper } from "@/app/features/post/types/post.mapper";
+import { ErrorResponse } from "@/app/shared/utils/errors/errorResponse";
 
 export const dynamic = "force-dynamic";
 // ─── types ──────────────────────────────────────────────────────────────────
@@ -251,11 +251,9 @@ const EditPostModal = ({
       setTimeout(() => {});
       onSaved({ caption, content, visibility });
       onClose();
-    } catch (err: any) {
-      const msg =
-        err?.response?.data?.errorMessage ??
-        err?.message ??
-        "Failed to update post.";
+    } catch (error: unknown) {
+      const err = error as ErrorResponse;
+      const msg = err?.message ?? "Failed to update post.";
       addToastMessage("error", msg);
     } finally {
       setSaving(false);
@@ -460,11 +458,9 @@ const PostManagement = () => {
 
       if (!data) throw new Error("No data returned");
       setPosts(data?.items ?? []);
-    } catch (err: any) {
-      const msg =
-        err?.response?.data?.errorMessage ??
-        err?.message ??
-        "Failed to load posts. Please try again.";
+    } catch (error: unknown) {
+      const err = error as ErrorResponse;
+      const msg = err?.message ?? "Failed to load posts. Please try again.";
       setPostsError(msg);
       setPosts([]);
     } finally {
@@ -492,11 +488,9 @@ const PostManagement = () => {
       setCars((prev) => (cursor ? [...prev, ...items.items] : items.items));
       setCarCursor(data?.nextCursor ?? undefined);
       setHasMoreCars(data?.hasMore ?? false);
-    } catch (err: any) {
-      const msg =
-        err?.response?.data?.errorMessage ??
-        err?.message ??
-        "Failed to load vehicles. Please try again.";
+    } catch (error: unknown) {
+      const err = error as ErrorResponse;
+      const msg = err?.message ?? "Failed to load vehicles. Please try again.";
       setCarsError(msg);
       if (!cursor) setCars([]);
     } finally {
@@ -535,12 +529,9 @@ const PostManagement = () => {
       }, 2500);
       await fetchMyPosts();
       setStep("list");
-    } catch (err: any) {
-      const msg =
-        err?.response?.data?.errorMessage ??
-        err?.response?.data?.message ??
-        err?.message ??
-        "Failed to publish post. Please try again.";
+    } catch (error: unknown) {
+      const err = error as ErrorResponse;
+      const msg = err?.message ?? "Failed to publish post. Please try again.";
       addToastMessage("error", msg);
       setTimeout(() => {
         removeToastMessage();
@@ -558,13 +549,11 @@ const PostManagement = () => {
     setDeleteError(null);
     try {
       await deletePostById(id);
-    } catch (err: any) {
+    } catch (error: unknown) {
+      const err = error as ErrorResponse;
       // rollback on failure
       setPosts(snapshot);
-      const msg =
-        err?.response?.data?.errorMessage ??
-        err?.message ??
-        "Failed to delete post. Please try again.";
+      const msg = err?.message ?? "Failed to delete post. Please try again.";
       setDeleteError(msg);
     } finally {
       setDeletingId(null);

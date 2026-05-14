@@ -17,7 +17,7 @@ export interface CommentDTO {
   commentedUserProfilePictureUrl: string;
   childCount: number;
   content: string;
-  parentCommentId: any;
+  parentCommentId: string;
   createdAt: string;
   updatedAt: string;
 }

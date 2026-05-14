@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { FormEvent, ReactNode, useEffect, useRef, useState } from "react";
+import { FormEvent, useRef, useState } from "react";
 import {
   FillDetailsFormState,
   handleEnterFocus,
@@ -33,6 +33,7 @@ import { Input } from "@/app/shared/ui/Input";
 import { Dropdown } from "@/app/shared/ui/Dropdown";
 import { Textarea } from "@/app/shared/ui/Textarea";
 import { RadioGroupField, RadioSelection } from "@/app/shared/ui/Radio";
+import { ErrorResponse } from "@/app/shared/utils/errors/errorResponse";
 
 interface CarSuggestion {
   make: string;
@@ -50,6 +51,7 @@ interface FileWithId extends CarImageUploadSectionFile {
 }
 
 const EditCarForm = ({ initialData }: EditCarFormProps) => {
+  const { addToastMessage } = useToast();
   const router = useRouter();
   const { handleToast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -332,9 +334,13 @@ const EditCarForm = ({ initialData }: EditCarFormProps) => {
       const res = await updateCar(initialData.id, fd);
       handleToast(res, "/profile/dealer?tab=car-management");
       router.push("/profile/dealer?tab=car-management");
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as ErrorResponse;
       console.error("Error updating vehicle:", error);
-      alert(error.message || "Failed to update vehicle. Please try again.");
+      addToastMessage(
+        "error",
+        err.message || "Failed to update vehicle. Please try again.",
+      );
     } finally {
       setLoading(false);
     }

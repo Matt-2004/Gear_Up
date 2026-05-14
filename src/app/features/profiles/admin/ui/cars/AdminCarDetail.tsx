@@ -4,6 +4,7 @@ import { AdminCarData } from "@/app/features/profiles/admin/types/admin-car-appr
 import { IAdminUpdateStatus } from "@/app/features/profiles/dealer/types/kyc.types";
 import StatusUI, { Status } from "@/app/shared/ui/StatusUI";
 import { updateCarByAdmin } from "@/app/shared/utils/API/AdminAPI";
+import { safeErrorMessage } from "@/app/shared/utils/errors/safeMessage";
 import { timeFormat } from "@/app/shared/utils/timeFormat";
 import {
   ArrowLeft,
@@ -23,6 +24,7 @@ import {
 import { useRouter } from "next/navigation";
 import { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
 import CarImage from "../../../../../shared/ui/Image";
+import { CarImages } from "@/app/features/car/types/car.dto";
 
 const AdminCarDetail = ({ carData }: { carData: AdminCarData }) => {
   const [text, setText] = useState("");
@@ -56,6 +58,7 @@ const PageHeader = () => {
         <button
           className="flex items-center justify-center rounded-xl bg-gray-100 p-2.5 transition-all hover:scale-105 hover:bg-gray-200"
           onClick={() => router.back()}
+          aria-label="Go back"
         >
           <ArrowLeft className="h-5 w-5 text-gray-700" />
         </button>
@@ -97,13 +100,13 @@ const CarInfoComponent = ({ carData, text }: CarInfoComponentProps) => {
           </h2>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
             {Array.isArray(carData.images) && carData.images.length > 0 ? (
-              carData.images.map((image: any, i: number) => (
+              carData.images.map((image: CarImages, i: number) => (
                 <div
                   key={i}
                   className="group relative aspect-video overflow-hidden rounded-xl bg-gray-100"
                 >
                   <CarImage
-                    alt={image.alt || "Car Image"}
+                    alt={i.toString()}
                     className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
                     src={image.url}
                     width={400}
@@ -333,7 +336,7 @@ const RejectButton = ({ id, data }: IDecision) => {
       if (response?.isSuccess) {
         router.replace("/profile/admin?tab=car-verification");
       } else {
-        alert(response?.message || "Failed to reject car listing");
+        alert(safeErrorMessage(response?.message, response?.status));
         setIsLoading(false);
       }
     } catch (error) {
@@ -369,7 +372,7 @@ const ApprovedButton = ({ id, data }: IDecision) => {
       } else {
         setIsLoading(false);
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error approving car:", error);
       setIsLoading(false);
     }

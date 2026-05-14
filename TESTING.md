@@ -2,133 +2,180 @@
 
 ## Running Tests
 
-To run all tests:
+### Static Analysis
+
+Run TypeScript type checking before tests:
+
+```bash
+npm run typecheck
+npm run lint
+```
+
+### Unit & Integration Tests (Jest)
+
+Run all Jest tests:
 
 ```bash
 npm test
-```
-
-To run tests in watch mode (recommended for development):
-
-```bash
 npm run test:watch
-```
-
-To run tests with coverage:
-
-```bash
 npm test -- --coverage
 ```
 
+### E2E Tests (Playwright)
+
+Run all E2E tests:
+
+```bash
+npm run test:e2e
+```
+
+Run in interactive UI mode:
+
+```bash
+npm run test:e2e:ui
+```
+
+Run a specific feature:
+
+```bash
+npx playwright test --grep "Car Search"
+```
+
+View the HTML report:
+
+```bash
+npx playwright show-report
+```
+
+The E2E test suite requires Playwright browsers installed:
+
+```bash
+npx playwright install --with-deps chromium
+```
+
+---
+
 ## Test Structure
 
-All test files are co-located with their components/modules and follow the naming convention `ComponentName.test.tsx` or `ModuleName.test.ts`.
+### Unit Tests (Jest)
 
-### Component Test Files Created
+Test files are co-located with their components/modules and follow the naming convention `ComponentName.test.tsx` or `ModuleName.test.ts`.
 
-1. **StatsCard.test.tsx** - Tests for the stats card component
-   - Validates rendering of label and value
-   - Tests all variant types (default, yellow, green, red)
-   - Verifies hover effects and icon display
-   - Tests edge cases (zero values, large numbers)
+Jest is configured to ignore the `e2e/` directory via `testPathIgnorePatterns` in `jest.config.ts`.
 
-2. **DashboardHeader.test.tsx** - Tests for the dashboard header
-   - Validates header title and subtitle
-   - Tests Add Vehicle button and link
-   - Verifies icon rendering
-   - Tests responsive layout classes
+### E2E Tests (Playwright)
 
-3. **FilterDropdown.test.tsx** - Tests for the filter dropdown
-   - Tests dropdown open/close functionality
-   - Validates filter status display
-   - Tests filter selection and callbacks
-   - Verifies checkmark for active filter
-   - Tests backdrop click handling
-   - Validates car count display
+All E2E tests live under `e2e/` at the project root:
 
-4. **EmptyInventoryState.test.tsx** - Tests for empty state
-   - Validates all text content
-   - Tests Add Vehicle button and link
-   - Verifies all feature cards render
-   - Tests icon rendering
-   - Validates animation classes
-   - Tests responsive grid layout
+```
+e2e/
+├── auth/              # Auth flow specs (sign-in, sign-up, reset-password, email-verification)
+├── cars/              # Car browsing, search, detail, and appointment specs
+├── dealer/            # Dealer inventory, KYC registration, and appointment management specs
+├── admin/             # Admin login, car verification, and KYC verification specs
+├── social/            # Messaging and posts specs
+├── mocks/
+│   └── server.mjs     # Lightweight mock backend server
+└── pages/             # Page Object Models (POMs) shared across specs
+```
 
-5. **DealerCarCard.test.tsx** - Tests for individual car card
-   - Tests car rendering via CarCard component
-   - Validates status badge display
-   - Tests hover show/hide of options
-   - Tests edit and delete callbacks
-   - Validates options menu functionality
-   - Tests different status badge variants
+#### Page Object Models
 
-6. **CarList.test.tsx** - Tests for car listing
-   - Tests empty state display
-   - Validates car card rendering
-   - Tests grid layout classes
-   - Verifies animation classes
-   - Tests prop passing to child components
-   - Handles edge cases (null, empty array, no IDs)
+Each feature area has a dedicated page object in `e2e/pages/` that encapsulates selectors and actions:
 
-7. **DealerCarDashboard.test.tsx** - Integration tests for main dashboard
-   - Tests all component integrations
-   - Validates stats cards rendering
-   - Tests filter functionality
-   - Verifies layout and styling classes
-   - Tests with empty and populated data
+- `login.page.ts` — Login form
+- `register.page.ts` — Registration form
+- `car-browsing.page.ts` — Landing page, search page, car detail page
+- `appointment.page.ts` — Appointment booking form
+- `dealer-inventory.page.ts` — Dealer inventory dashboard
+- `admin.page.ts` — Admin login and navigation
+- `shared.ts` — Shared helpers (`loginAsUser()`, `assertToast()`, `waitForUrl()`)
 
-## Test Coverage
+#### Mock Backend
 
-The test suite covers:
+The E2E tests use a mock HTTP server (`e2e/mocks/server.mjs`) on port 5555 instead of hitting the real backend API. Key behaviors:
 
-- ✅ Component rendering
-- ✅ User interactions (clicks, hovers)
-- ✅ Props validation
-- ✅ Conditional rendering
-- ✅ Callback functions
-- ✅ Edge cases and error scenarios
-- ✅ Responsive design classes
-- ✅ Animation classes
-- ✅ Integration between components
+- Different test emails trigger different responses (e.g., `wrong@test.com` → 401, `unverified@test.com` → 403)
+- Car data is generated procedurally for search, detail, and inventory endpoints
+- Auth tokens, user profiles, and CRUD operations return controlled responses
+
+The Playwright config starts the mock server and the Next.js dev server automatically via the `webServer` array in `playwright.config.ts`, with `NEXT_Backend_URL` set to `http://localhost:5555`.
+
+#### data-testid Convention
+
+Interactive elements in production components use `data-testid` attributes for stable selectors, following the pattern established by the auth pages:
+
+- Car components: `car-card`, `car-title`, `car-price`, `view-details`, `search-input`, `search-button`, `gallery-prev`, `gallery-next`, `get-appointment`
+- Dealer components: `dealer-dashboard-header`, `add-vehicle-button`, `stat-card`
+- Appointment form: `appointment-date`, `appointment-time`, `appointment-location`, `appointment-notes`, `appointment-submit`
+
+---
+
+## Current Test Coverage
+
+### Unit Tests (Jest) — 261 tests
+
+- ✅ Auth components (sign-in, sign-up, reset password, email validation)
+- ✅ Auth hooks and server actions (useSignIn, useSignUp, useResetPassword, signInAction, etc.)
+- ✅ Shared utilities (debounce, KYC filter, number formatter, time format, appointment utils)
+- ✅ Dealer dashboard components (StatsCard, DashboardHeader, FilterDropdown, CarList, CarCard, EmptyInventory)
+- ✅ Dealer car dashboard integration
+- ✅ Appointment hooks (useAppointmentActions, useAppointmentReviews)
+- ✅ KYC registration context (KycFormContext — step validation, localStorage, API submission)
+
+### E2E Tests (Playwright) — 43 tests passing
+
+| Feature | Spec File | Tests |
+|---|---|---|
+| Sign In | `e2e/auth/sign-in.spec.ts` | 7 |
+| Sign Up | `e2e/auth/sign-up.spec.ts` | 7 |
+| Email Validation | `e2e/auth/email-verification.spec.ts` | 5 |
+| Reset Password | `e2e/auth/reset-password.spec.ts` | 5 |
+| Car Browsing & Search | `e2e/cars/browsing.spec.ts` | 14 |
+| Appointment Booking | `e2e/cars/appointment.spec.ts` | 4 |
+| Admin Login | `e2e/admin/admin.spec.ts` | 1 |
+
+**Pending (needs role config):** dealer inventory (3), KYC registration (3), dealer appointments (2), admin car/KYC verification (2), messaging (1), posts (3) — 14 tests written, awaiting mock user role update.
+
+---
 
 ## Mocking Strategy
 
-### External Dependencies
+### Unit Tests (Jest)
 
 - **next/link**: Mocked to render simple anchor tags
-- **@/components/Car/CarCard**: Mocked in DealerCarCard tests
-- **Custom hooks**: Mocked in DealerCarDashboard tests
+- **Custom hooks**: Mocked when testing component rendering in isolation
+- **API actions**: Mocked to return controlled responses
+- **next/navigation**: `useSearchParams`, `useRouter` mocked
 
-### Test Utilities
+### E2E Tests (Playwright)
 
-- **@testing-library/react**: For rendering and querying
-- **@testing-library/jest-dom**: For additional matchers
-- **jest**: For mocking and assertions
+- **Backend API**: Fully mocked via `e2e/mocks/server.mjs` (Node HTTP server)
+- **No browser-level route interception needed** — server actions go through the mock
+- **Auth state**: Login via the real UI flow, which sets httpOnly cookies through server actions
 
-## Best Practices Followed
+---
 
-1. **Isolation**: Each test is independent and doesn't affect others
-2. **Clarity**: Test names clearly describe what is being tested
-3. **Coverage**: Tests cover happy paths, edge cases, and error scenarios
-4. **Mocking**: External dependencies are properly mocked
-5. **Cleanup**: `beforeEach` and `afterEach` hooks ensure clean state
-6. **Accessibility**: Tests use semantic queries (getByRole, getByText)
+## Best Practices
+
+1. **Isolation**: Each test is independent; `beforeEach`/`afterEach` ensure clean state
+2. **Selector stability**: Prefer `data-testid` over text or class selectors
+3. **Mock fidelity**: Mock server responses match real API shapes (DTO types)
+4. **No hardcoded waits**: Use `waitForURL`, `toBeVisible` with timeouts instead of `page.waitForTimeout`
+5. **Page Objects**: Shared selectors live in page objects, not duplicated in specs
+
+---
 
 ## Continuous Integration
 
-These tests are ready to be integrated into CI/CD pipelines. Update your CI configuration to run:
+All checks run on every push/PR to `main` via `.github/workflows/Ci.yml`:
 
-```yaml
-- npm install
-- npm test -- --ci --coverage --maxWorkers=2
-```
+| Step | Command | Purpose |
+|---|---|---|
+| Type check | `npm run typecheck` | TypeScript compilation |
+| Lint | `npm run lint` | ESLint |
+| Unit tests | `npm test -- --ci --coverage --maxWorkers=2` | Jest (220+ tests) |
+| Build | `npm run build` | Production build check |
+| E2E tests | `npm run test:e2e` | Playwright with mock backend (43+ tests) |
 
-## Future Improvements
-
-Consider adding:
-
-- Snapshot tests for visual regression
-- Integration tests with actual API calls
-- E2E tests using Playwright or Cypress
-- Performance tests for list rendering
-- Accessibility tests with jest-axe
+Coverage reports and Playwright HTML reports are uploaded as CI artifacts on failure.

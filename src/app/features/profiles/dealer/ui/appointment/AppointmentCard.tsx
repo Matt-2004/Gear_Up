@@ -1,9 +1,6 @@
 import { AppointmentModel } from "@/app/features/appointments/types/appointment.model";
 import SharedAppointmentCard from "@/app/features/appointments/ui/appointment-card/RoleBasedAppointmentCard";
-import {
-  formatDate,
-  getStatusColor,
-} from "@/app/features/appointments/utils/appointmentUtils";
+import { getStatusColor } from "@/app/features/appointments/utils/appointmentUtils";
 
 interface AppointmentCardProps {
   appointment: AppointmentModel;

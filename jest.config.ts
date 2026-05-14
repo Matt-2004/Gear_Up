@@ -27,6 +27,8 @@ const config: Config = {
   // Setup files
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
 
+  testPathIgnorePatterns: ["<rootDir>/e2e/"],
+
   // Test environment
   testEnvironment: "jsdom",
 

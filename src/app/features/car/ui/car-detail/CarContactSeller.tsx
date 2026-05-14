@@ -37,6 +37,7 @@ export default function CarContactSeller({ car }: CarContactSellerProps) {
                 setShowAuthModal(true);
               }
             }}
+            data-testid="get-appointment"
             className="bg-primary-700 hover:bg-primary-600 flex w-full items-center justify-center gap-3 rounded-xl py-4 font-bold text-white shadow-md transition-all hover:scale-[1.02] hover:cursor-pointer hover:shadow-lg active:scale-100"
           >
             <Calendar className="h-5 w-5" />

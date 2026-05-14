@@ -11,7 +11,7 @@ import { CarDetailModel } from "../../types/car.model";
 
 export default function CarAppointment({ car }: { car: CarDetailModel }) {
   const router = useRouter();
-  const { addToastMessage, handleToast } = useToast({
+  const { handleToast } = useToast({
     toastType: null,
     message: null,
   });
@@ -40,7 +40,7 @@ export default function CarAppointment({ car }: { car: CarDetailModel }) {
       const res = await createAppointment(
         car.dealerId, // Using car.id as agentId (you might need to adjust this)
         car.id,
-        scheduleDateTime as any, // Cast as any in case the function strictly expects a Date object type
+        new Date(scheduleDateTime),
         formData.location,
         formData.notes || "",
       );

@@ -78,7 +78,7 @@ const StatsCard = ({
   const badge = getBadge();
 
   return (
-    <div className={`border-l-2 ${getTone()} bg-white p-4 shadow-sm`}>
+    <div className={`border-l-2 ${getTone()} bg-white p-4 shadow-sm`} data-testid="stat-card">
       <div className="space-y-3">
         <div className="flex items-start justify-between gap-3">
           <div className="space-y-1">

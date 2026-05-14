@@ -1,23 +1,37 @@
 import { deleteCarById } from "@/app/shared/utils/API/CarAPI";
 import { useRouter } from "next/navigation";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 
 export function useCarActions() {
   const router = useRouter();
+  const [deleteTarget, setDeleteTarget] = useState<{
+    carId: string;
+    loading: boolean;
+  } | null>(null);
 
-  const handleDelete = useCallback(async (carId: string) => {
-    if (!confirm("Are you sure you want to delete this vehicle?")) {
-      return;
-    }
+  const confirmDeleteOpen = deleteTarget !== null;
+  const confirmDeleteLoading = deleteTarget?.loading ?? false;
 
+  const openDeleteConfirm = useCallback((carId: string) => {
+    setDeleteTarget({ carId, loading: false });
+  }, []);
+
+  const cancelDelete = useCallback(() => {
+    setDeleteTarget(null);
+  }, []);
+
+  const handleDelete = useCallback(async () => {
+    if (!deleteTarget) return;
+    setDeleteTarget({ carId: deleteTarget.carId, loading: true });
     try {
-      await deleteCarById(carId);
+      await deleteCarById(deleteTarget.carId);
+      setDeleteTarget(null);
       window.location.reload();
     } catch (error) {
       console.error("Error deleting vehicle:", error);
-      alert("An error occurred while deleting the vehicle");
+      setDeleteTarget(null);
     }
-  }, []);
+  }, [deleteTarget]);
 
   const handleEdit = useCallback(
     (carId: string) => {
@@ -26,5 +40,12 @@ export function useCarActions() {
     [router],
   );
 
-  return { handleDelete, handleEdit };
+  return {
+    handleEdit,
+    openDeleteConfirm,
+    confirmDeleteOpen,
+    confirmDeleteLoading,
+    cancelDelete,
+    handleDelete,
+  };
 }

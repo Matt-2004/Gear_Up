@@ -1,8 +1,8 @@
 "use client";
 
-import { Camera, TriangleAlert, UserCheck } from "lucide-react";
+import { Camera, TriangleAlert } from "lucide-react";
 import Image from "next/image";
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useKycSubmit } from "@/app/features/profiles/dealer/context/KycFormContext";
 import StepNavigation from "../add-car-form/StepNavigation";
 import { DefaultImageUpload } from "./KycUpload";
@@ -200,7 +200,7 @@ const SelfieImageUpload = () => {
           </div>
         </div>
       </div>
-      <StepNavigation label="Submit" />
+      <StepNavigation />
     </form>
   );
 };
