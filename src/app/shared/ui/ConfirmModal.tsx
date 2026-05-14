@@ -1,6 +1,8 @@
 "use client";
 
 import { AlertTriangle } from "lucide-react";
+import { useId } from "react";
+import { useFocusTrap } from "@/app/shared/hooks/useFocusTrap";
 
 export interface ConfirmModalProps {
   open: boolean;
@@ -25,13 +27,24 @@ export default function ConfirmModal({
   onConfirm,
   onCancel,
 }: ConfirmModalProps) {
-  if (!open) return null;
-
   const isDanger = variant === "danger";
+  const titleId = useId();
+  const messageId = useId();
+  const modalRef = useFocusTrap(open, onCancel);
+
+  if (!open) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4 backdrop-blur-sm">
-      <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-2xl">
+      <div
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        aria-describedby={messageId}
+        tabIndex={-1}
+        className="w-full max-w-md rounded-xl bg-white p-6 shadow-2xl"
+      >
         <div className="mb-4 flex items-start gap-4">
           <div
             className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full ${
@@ -43,8 +56,15 @@ export default function ConfirmModal({
             />
           </div>
           <div className="flex-1">
-            <h3 className="mb-2 text-lg font-semibold text-gray-900">{title}</h3>
-            <p className="text-sm text-gray-600">{message}</p>
+            <h3
+              id={titleId}
+              className="mb-2 text-lg font-semibold text-gray-900"
+            >
+              {title}
+            </h3>
+            <p id={messageId} className="text-sm text-gray-600">
+              {message}
+            </p>
           </div>
         </div>
 

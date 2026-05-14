@@ -1,6 +1,7 @@
 "use client";
 
 import { Home, Loader2, LogIn, ShieldUser } from "lucide-react";
+import { Skeleton } from "@/app/shared/ui/Skeleton";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -52,7 +53,7 @@ const Unauthorized = () => {
       <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
         <div className="w-full max-w-lg text-center">
           <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-red-50">
-            <Loader2 className="h-8 w-8 animate-spin text-red-600" />
+            <Skeleton className="h-8 w-8 rounded-full" />
           </div>
 
           <p className="mb-3 text-sm font-semibold uppercase tracking-wide text-red-600">

@@ -113,13 +113,28 @@ export const Input = ({
   inputRef,
   leadingIcon,
   className,
+  label,
+  labelClassName,
+  id,
+  name,
+  placeholder,
   ...props
 }: InputHTMLAttributes<HTMLInputElement> & {
   inputRef?: React.Ref<HTMLInputElement>;
   leadingIcon?: ReactNode;
+  label?: string;
+  labelClassName?: string;
 }) => {
+  const inputId = id ?? name;
+  const ariaLabel =
+    props["aria-label"] ?? label ?? placeholder ?? name ?? undefined;
   return (
     <div className="relative">
+      {label && inputId && (
+        <label htmlFor={inputId} className={clsx("sr-only", labelClassName)}>
+          {label}
+        </label>
+      )}
       {leadingIcon && (
         <span className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-gray-400">
           {leadingIcon}
@@ -128,6 +143,10 @@ export const Input = ({
       <input
         required
         ref={inputRef}
+        id={inputId}
+        name={name}
+        placeholder={placeholder}
+        aria-label={ariaLabel}
         {...props}
         className={buildClassName(
           fillDetailInputBaseClass,

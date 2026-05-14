@@ -7,6 +7,7 @@ import { searchCarWithQuery } from "@/app/shared/utils/API/CarAPI";
 import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Loader2, Search, X } from "lucide-react";
+import { SkeletonCard } from "@/app/shared/ui/Skeleton";
 import { useRouter } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
 import { CarModel } from "../../types/car.model";
@@ -350,12 +351,11 @@ export default function CarSearch({
         )}
 
         {showLoadingState && (
-          <SearchFallback
-            icon={<Loader2 className="text-primary-600 h-8 w-8 animate-spin" />}
-            iconClassName="bg-primary-100"
-            title="Searching cars..."
-            description="Please wait while we look for matching vehicles."
-          />
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <SkeletonCard key={i} />
+            ))}
+          </div>
         )}
 
         {showErrorState && (

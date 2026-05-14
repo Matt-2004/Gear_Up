@@ -1,6 +1,7 @@
 import { CheckCircle, Pencil, Star, Trash2, XCircle } from "lucide-react";
 import { ReviewModel } from "@/app/features/review/types/review.model";
 import { AppointmentStatus } from "../../types/appointment.dto";
+import { SkeletonText } from "@/app/shared/ui/Skeleton";
 
 interface UserActionsProps {
   status: AppointmentStatus;
@@ -44,11 +45,9 @@ export const UserActions = ({
     return (
       <div className="w-full border-t border-gray-100 sm:border-t-0 sm:pt-0 pt-4 mt-2 sm:mt-0">
         {loadingReview ? (
-          <div className="flex items-center gap-2 rounded-lg bg-blue-50 px-4 py-4">
-            <div className="h-5 w-5 animate-spin rounded-full border-b-2 border-blue-500"></div>
-            <span className="text-sm font-medium text-gray-600">
-              Loading review status...
-            </span>
+          <div className="rounded-lg bg-blue-50 px-4 py-4 space-y-2">
+            <SkeletonText className="w-1/2" />
+            <SkeletonText className="w-3/4" />
           </div>
         ) : existingReview ? (
           <div className="rounded-lg bg-linear-to-r from-blue-50 to-purple-50 p-4">

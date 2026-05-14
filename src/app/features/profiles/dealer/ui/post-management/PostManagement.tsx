@@ -25,13 +25,14 @@ import {
   Trash2,
 } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
 import { CarModel } from "@/app/features/car/types/car.model";
 import { carMapper } from "@/app/features/car/types/car.mapper";
 import { PostModel } from "@/app/features/post/types/post.model";
 import { PostMapper } from "@/app/features/post/types/post.mapper";
 import { ErrorResponse } from "@/app/shared/utils/errors/errorResponse";
+import { useFocusTrap } from "@/app/shared/hooks/useFocusTrap";
 
 export const dynamic = "force-dynamic";
 // ─── types ──────────────────────────────────────────────────────────────────
@@ -208,6 +209,7 @@ const PostRow = ({
           disabled={isDeleting}
           className="rounded-lg p-1.5 text-red-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:opacity-50"
           title="Delete post"
+          aria-label="Delete post"
         >
           {isDeleting ? (
             <RotateCcw className="h-4 w-4 animate-spin" />
@@ -233,6 +235,13 @@ const EditPostModal = ({
   onSaved: (updated: Partial<PostModel>) => void;
   addToastMessage: (type: "success" | "error" | "info", msg: string) => void;
 }) => {
+  const titleId = useId();
+  const captionLabelId = useId();
+  const contentLabelId = useId();
+  const visibilityLabelId = useId();
+  const captionInputId = useId();
+  const contentInputId = useId();
+  const visibilitySelectId = useId();
   const [caption, setCaption] = useState(post.caption);
   const [content, setContent] = useState(post.content);
   const [visibility, setVisibility] = useState<Visibility>(
@@ -241,6 +250,7 @@ const EditPostModal = ({
   const [saving, setSaving] = useState(false);
   const MAX_CAPTION = 150;
   const MAX_CONTENT = 1000;
+  const modalRef = useFocusTrap(true, onClose);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -265,16 +275,26 @@ const EditPostModal = ({
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="w-full max-w-lg rounded-2xl bg-white shadow-2xl">
+      <div
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        tabIndex={-1}
+        className="w-full max-w-lg rounded-2xl bg-white shadow-2xl"
+      >
         {/* modal header */}
         <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
           <div className="flex items-center gap-2">
             <Pencil className="text-primary-500 h-5 w-5" />
-            <h2 className="text-lg font-bold text-gray-900">Edit Post</h2>
+            <h2 id={titleId} className="text-lg font-bold text-gray-900">
+              Edit Post
+            </h2>
           </div>
           <button
             type="button"
             onClick={onClose}
+            aria-label="Close edit post"
             className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
           >
             ✕
@@ -311,7 +331,11 @@ const EditPostModal = ({
         <form onSubmit={handleSubmit} className="space-y-4 px-6 py-5">
           {/* caption */}
           <div className="flex flex-col gap-1">
-            <label className="flex items-center justify-between text-sm font-semibold text-gray-600">
+            <label
+              id={captionLabelId}
+              htmlFor={captionInputId}
+              className="flex items-center justify-between text-sm font-semibold text-gray-600"
+            >
               <span>
                 Caption <span className="text-red-500">*</span>
               </span>
@@ -322,6 +346,8 @@ const EditPostModal = ({
               </span>
             </label>
             <input
+              id={captionInputId}
+              aria-labelledby={captionLabelId}
               type="text"
               value={caption}
               onChange={(e) => setCaption(e.target.value)}
@@ -334,7 +360,11 @@ const EditPostModal = ({
 
           {/* content */}
           <div className="flex flex-col gap-1">
-            <label className="flex items-center justify-between text-sm font-semibold text-gray-600">
+            <label
+              id={contentLabelId}
+              htmlFor={contentInputId}
+              className="flex items-center justify-between text-sm font-semibold text-gray-600"
+            >
               <span>
                 Description <span className="text-red-500">*</span>
               </span>
@@ -345,6 +375,8 @@ const EditPostModal = ({
               </span>
             </label>
             <textarea
+              id={contentInputId}
+              aria-labelledby={contentLabelId}
               value={content}
               onChange={(e) => setContent(e.target.value)}
               maxLength={MAX_CONTENT}
@@ -356,10 +388,18 @@ const EditPostModal = ({
 
           {/* visibility */}
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-semibold text-gray-600">
+            <label
+              id={visibilityLabelId}
+              htmlFor={visibilitySelectId}
+              className="text-sm font-semibold text-gray-600"
+            >
               Visibility
             </label>
-            <div className="flex gap-3">
+            <div
+              className="flex gap-3"
+              role="group"
+              aria-labelledby={visibilityLabelId}
+            >
               {VISIBILITY_OPTIONS.map((v) => (
                 <button
                   key={v}

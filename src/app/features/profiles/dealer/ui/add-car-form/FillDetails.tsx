@@ -26,6 +26,7 @@ import { Input } from "@/app/shared/ui/Input";
 import { Textarea } from "@/app/shared/ui/Textarea";
 import { Dropdown } from "@/app/shared/ui/Dropdown";
 import { RadioGroupField, RadioSelection } from "@/app/shared/ui/Radio";
+import { Skeleton, SkeletonText } from "@/app/shared/ui/Skeleton";
 
 interface CarSuggestion {
   make: string;
@@ -242,8 +243,25 @@ const FillDetails = () => {
 
   if (!isDraftReady) {
     return (
-      <div className="p-6 text-sm text-gray-500 sm:p-8 lg:p-10">
-        Loading your saved draft...
+      <div className="p-6 sm:p-8 lg:p-10 space-y-8">
+        <div className="space-y-4">
+          <Skeleton className="h-6 w-1/3" />
+          <SkeletonText className="w-2/3" />
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <Skeleton className="h-10 w-full rounded-lg" />
+            <Skeleton className="h-10 w-full rounded-lg" />
+          </div>
+        </div>
+        <div className="space-y-4">
+          <Skeleton className="h-6 w-1/3" />
+          <SkeletonText className="w-2/3" />
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <Skeleton className="h-10 w-full rounded-lg" />
+            <Skeleton className="h-10 w-full rounded-lg" />
+            <Skeleton className="h-10 w-full rounded-lg" />
+            <Skeleton className="h-10 w-full rounded-lg" />
+          </div>
+        </div>
       </div>
     );
   }
