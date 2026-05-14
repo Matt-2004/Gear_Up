@@ -8,7 +8,8 @@ import {
   rejectAppointmentById,
 } from "@/app/shared/utils/API/AppointmentAPI";
 import { getStatusColor } from "@/app/features/appointments/utils/appointmentUtils";
-import { Calendar, ChevronDown, Filter, RotateCcw } from "lucide-react";
+import { Calendar, ChevronDown, Filter } from "lucide-react";
+import { Skeleton, SkeletonText } from "@/app/shared/ui/Skeleton";
 import { useEffect, useState } from "react";
 import StatsCard, {
   StatsCardProps,
@@ -311,9 +312,22 @@ const AppointmentManagement = ({
 
         {/* loading */}
         {loading && (
-          <div className="flex flex-col items-center justify-center py-24 text-gray-400">
-            <RotateCcw className="mb-3 h-8 w-8 animate-spin" />
-            <p className="text-sm">Loading appointments…</p>
+          <div className="space-y-4">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div
+                key={i}
+                className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm"
+              >
+                <div className="flex items-center gap-4">
+                  <Skeleton className="h-12 w-12 rounded-full" />
+                  <div className="flex-1 space-y-2">
+                    <SkeletonText className="w-1/3" />
+                    <SkeletonText className="w-2/3" />
+                  </div>
+                  <Skeleton className="h-8 w-24 rounded-lg" />
+                </div>
+              </div>
+            ))}
           </div>
         )}
 

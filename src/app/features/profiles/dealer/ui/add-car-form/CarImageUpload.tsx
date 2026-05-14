@@ -11,6 +11,7 @@ import {
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useVehicleContext } from "../../context/AddNewCarContext";
 import StepNavigation from "./StepNavigation";
+import { Skeleton } from "@/app/shared/ui/Skeleton";
 
 export interface IFileProps {
   id: number;
@@ -172,8 +173,8 @@ export const CarImageUploadSection = ({
                     {file.progress && (
                       <div className="mt-1 flex items-center gap-2">
                         {file.progress === "Uploading..." && (
-                          <span className="flex items-center gap-1 text-xs text-blue-600">
-                            <span className="animate-spin">⏳</span>{" "}
+                          <span className="flex items-center gap-2 text-xs text-blue-600">
+                            <Skeleton className="h-2 w-24 rounded-full" />
                             Uploading...
                           </span>
                         )}
@@ -294,8 +295,13 @@ const CarImageUpload = () => {
 
   if (!isDraftReady) {
     return (
-      <div className="p-6 text-sm text-gray-500 sm:p-8 lg:p-10">
-        Loading your saved draft...
+      <div className="p-6 sm:p-8 lg:p-10 space-y-6">
+        <Skeleton className="h-8 w-1/3" />
+        <div className="rounded-2xl border-2 border-dashed border-gray-200 p-10 space-y-4">
+          <Skeleton className="mx-auto h-16 w-16 rounded-full" />
+          <Skeleton className="mx-auto h-4 w-1/2" />
+          <Skeleton className="mx-auto h-4 w-1/3" />
+        </div>
       </div>
     );
   }

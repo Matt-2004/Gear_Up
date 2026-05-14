@@ -156,6 +156,7 @@ describe("Review", () => {
 
     render(<Review />);
 
-    expect(screen.getByText("Loading your saved draft...")).toBeInTheDocument();
+    expect(screen.queryByText("Review Your Listing")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("car-card")).not.toBeInTheDocument();
   });
 });

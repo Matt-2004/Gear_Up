@@ -1,4 +1,6 @@
 import { Star } from "lucide-react";
+import { useId } from "react";
+import { useFocusTrap } from "@/app/shared/hooks/useFocusTrap";
 
 export interface RatingModalProps {
   showInfo: boolean;
@@ -29,17 +31,33 @@ export const RatingModal = ({
   onClose,
   onSubmit,
 }: RatingModalProps) => {
+  const titleId = useId();
+  const ratingLabelId = useId();
+  const reviewLabelId = useId();
+  const reviewInputId = useId();
+  const modalRef = useFocusTrap(showInfo, onClose);
+
   if (!showInfo) return null;
 
   return (
     <div className="bg-opacity-30 fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-      <div className="w-full max-w-lg transform rounded-xl bg-white p-6 shadow-2xl transition-all">
+      <div
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        tabIndex={-1}
+        className="w-full max-w-lg transform rounded-xl bg-white p-6 shadow-2xl transition-all"
+      >
         <div className="mb-6 flex items-start gap-4">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-blue-100 to-purple-100">
             <Star className="h-6 w-6 text-blue-600" />
           </div>
           <div className="flex-1">
-            <h3 className="mb-1 text-lg font-semibold text-gray-900">
+            <h3
+              id={titleId}
+              className="mb-1 text-lg font-semibold text-gray-900"
+            >
               {isEditMode ? "Edit Your Review" : "Rate Your Experience"}
             </h3>
             <p className="text-sm text-gray-600">
@@ -51,10 +69,16 @@ export const RatingModal = ({
 
         {/* Star Rating */}
         <div className="mb-6">
-          <label className="mb-3 block text-sm font-medium text-gray-700">
+          <label
+            id={ratingLabelId}
+            className="mb-3 block text-sm font-medium text-gray-700"
+          >
             Your Rating
           </label>
-          <div className="flex items-center gap-2">
+          <div
+            className="flex items-center gap-2"
+            aria-labelledby={ratingLabelId}
+          >
             {[1, 2, 3, 4, 5].map((star) => (
               <button
                 key={star}
@@ -64,6 +88,7 @@ export const RatingModal = ({
                 onMouseLeave={() => setHoverRating(0)}
                 disabled={submittingReview}
                 className="transition-transform hover:scale-110 disabled:cursor-not-allowed"
+                aria-label={`Rate ${star} ${star === 1 ? "star" : "stars"}`}
               >
                 <Star
                   className={`h-8 w-8 ${
@@ -84,16 +109,22 @@ export const RatingModal = ({
 
         {/* Review Text */}
         <div className="mb-6">
-          <label className="mb-2 block text-sm font-medium text-gray-700">
+          <label
+            id={reviewLabelId}
+            htmlFor={reviewInputId}
+            className="mb-2 block text-sm font-medium text-gray-700"
+          >
             Your Review
           </label>
           <textarea
+            id={reviewInputId}
             value={reviewText}
             onChange={(e) => setReviewText(e.target.value)}
             placeholder="Share details of your experience with this dealer..."
             className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none"
             rows={4}
             disabled={submittingReview}
+            aria-labelledby={reviewLabelId}
           />
         </div>
 

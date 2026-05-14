@@ -11,6 +11,7 @@ import { CarouselImages, PostContent } from "./DiscoverPost";
 import { useCommentContext } from "../../comment/context/CommentContext";
 import { PostModel } from "../types/post.model";
 import { CommentModel } from "../../comment/types/comment.model";
+import { Skeleton, SkeletonText } from "@/app/shared/ui/Skeleton";
 
 interface IDetailProp {
   access_token: string;
@@ -125,7 +126,46 @@ const PostDetails = ({ access_token, postData }: IDetailProp) => {
   }, [postData.id, access_token, handleComment]);
 
   if (!postData) {
-    return <h3>Loading...</h3>;
+    return (
+      <div className="min-h-screen bg-linear-to-br from-gray-50 via-gray-100 to-gray-50">
+        <div className="mx-auto max-w-7xl px-4">
+          <div className="flex h-full flex-col lg:flex-row">
+            <div className="flex-1 lg:max-w-2xl">
+              <div className="overflow-hidden border border-gray-200 bg-white shadow-sm">
+                <div className="border-b border-gray-200 px-6 py-6 space-y-3">
+                  <Skeleton className="h-8 w-2/3" />
+                  <SkeletonText className="w-full" />
+                  <SkeletonText className="w-4/5" />
+                </div>
+                <Skeleton className="aspect-video w-full" />
+                <div className="px-6 py-6 space-y-3">
+                  <Skeleton className="h-6 w-1/3" />
+                  <Skeleton className="h-48 w-full rounded-xl" />
+                </div>
+              </div>
+            </div>
+            <div className="flex-1 lg:max-w-md">
+              <div className="overflow-hidden border border-gray-200 bg-white shadow-md" style={{ height: "100vh" }}>
+                <div className="border-b border-gray-200 px-6 py-3">
+                  <SkeletonText className="w-1/4" />
+                </div>
+                <div className="space-y-4 px-4 py-4">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <div key={i} className="flex gap-3">
+                      <Skeleton className="h-10 w-10 shrink-0 rounded-full" />
+                      <div className="flex-1 space-y-2">
+                        <SkeletonText className="w-1/3" />
+                        <SkeletonText className="w-full" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (

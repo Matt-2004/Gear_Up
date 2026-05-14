@@ -1,10 +1,10 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { Loader2 } from "lucide-react";
 import { CarCard } from "./CarCard";
 import { getAllCars } from "@/app/shared/utils/API/CarAPI";
 import { carMapper } from "../../types/car.mapper";
+import { SkeletonCard } from "@/app/shared/ui/Skeleton";
 
 export function CarGrid() {
   const { data, isLoading, isError, refetch } = useQuery({
@@ -37,11 +37,10 @@ export function CarGrid() {
         </div>
 
         {isLoading && (
-          <div className="flex min-h-100 items-center justify-center">
-            <div className="flex flex-col items-center gap-3 text-gray-500">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              <p className="text-sm">Loading featured cars...</p>
-            </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 md:grid-cols-3 md:gap-6">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <SkeletonCard key={i} />
+            ))}
           </div>
         )}
 

@@ -8,6 +8,7 @@ import StepNavigation from "./StepNavigation";
 import { addCar } from "@/app/shared/utils/API/CarAPI";
 import { CarCard } from "@/app/features/car/ui/car-card/CarCard";
 import { CarModel } from "@/app/features/car/types/car.model";
+import { Skeleton, SkeletonText } from "@/app/shared/ui/Skeleton";
 
 const Review = () => {
   const { addedCar, clearAddedCar, isDraftReady } = useVehicleContext();
@@ -40,16 +41,34 @@ const Review = () => {
 
   if (!isDraftReady) {
     return (
-      <div className="flex items-center justify-center p-6 sm:p-8 lg:p-10">
-        <p className="text-gray-500">Loading your saved draft...</p>
+      <div className="p-6 sm:p-8 lg:p-10 space-y-6">
+        <Skeleton className="h-8 w-1/3" />
+        <div className="space-y-4 rounded-lg border border-gray-200 bg-white p-6">
+          <SkeletonText className="w-1/4" />
+          <SkeletonText className="w-full" />
+          <SkeletonText className="w-2/3" />
+        </div>
+        <div className="space-y-4 rounded-lg border border-gray-200 bg-white p-6">
+          <SkeletonText className="w-1/4" />
+          <div className="grid grid-cols-3 gap-4">
+            <Skeleton className="h-20 w-full" />
+            <Skeleton className="h-20 w-full" />
+            <Skeleton className="h-20 w-full" />
+          </div>
+        </div>
       </div>
     );
   }
 
   if (!addedCar) {
     return (
-      <div className="flex items-center justify-center p-6 sm:p-8 lg:p-10">
-        <p className="text-gray-500">Loading car data...</p>
+      <div className="p-6 sm:p-8 lg:p-10 space-y-6">
+        <Skeleton className="h-8 w-1/3" />
+        <div className="space-y-4 rounded-lg border border-gray-200 bg-white p-6">
+          <SkeletonText className="w-1/4" />
+          <SkeletonText className="w-full" />
+          <SkeletonText className="w-2/3" />
+        </div>
       </div>
     );
   }
