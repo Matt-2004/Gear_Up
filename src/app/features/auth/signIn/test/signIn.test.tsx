@@ -25,6 +25,7 @@ jest.mock("next/image", () => {
     placeholder: _placeholder,
     quality: _quality,
     sizes: _sizes,
+    alt = "",
     ...props
   }: React.ComponentProps<"img"> & {
     fill?: boolean;
@@ -34,7 +35,7 @@ jest.mock("next/image", () => {
     quality?: number;
     sizes?: string;
   }) {
-    return <img {...props} />;
+    return React.createElement("img", { alt, ...props });
   }
 
   return {

@@ -1,4 +1,4 @@
-import { Home, LogIn, ShieldUser } from "lucide-react";
+import { Home, ShieldUser } from "lucide-react";
 import Link from "next/link";
 
 const Forbidden = () => {

@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function DashboardHeader() {
   return (
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between py-2 mb-6">
+    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between py-2 mb-6" data-testid="dealer-dashboard-header">
       <div>
         <h1 className="text-3xl font-bold tracking-tight text-gray-900">
           Vehicle Inventory
@@ -17,7 +17,7 @@ export default function DashboardHeader() {
         href="/profile/dealer/cars/add?step=1"
         className="shrink-0 w-full sm:w-auto"
       >
-        <button className="flex w-full items-center justify-center gap-2 cursor-pointer  bg-primary hover:bg-primary-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all  hover:shadow-sm disabled:opacity-50 ">
+        <button className="flex w-full items-center justify-center gap-2 cursor-pointer  bg-primary hover:bg-primary-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all  hover:shadow-sm disabled:opacity-50 " data-testid="add-vehicle-button">
           <Plus className="-ml-0.5 h-4 w-4" />
           Add Vehicle
         </button>

@@ -144,6 +144,7 @@ export default function CarTable({ cars, onDelete, onEdit }: CarTableProps) {
                     type="button"
                     onClick={() => toggleMenu(car.id)}
                     onBlur={() => setTimeout(() => setActiveMenuId(null), 200)}
+                    aria-label="Car options"
                     className="p-2 text-gray-400 hover:bg-gray-100 cursor-pointer hover:text-gray-600 focus:outline-none"
                   >
                     <MoreHorizontal className="h-5 w-5" />

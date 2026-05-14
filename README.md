@@ -54,9 +54,12 @@ npm run dev
 Other useful commands:
 
 ```bash
+npm run typecheck
 npm run lint
 npm run build
 npm run start
+npm run test
+npm run test:e2e
 ```
 
 ## My Role
@@ -122,10 +125,11 @@ I worked as the **frontend developer** responsible for:
 
 ### Testing
 
-- Component tests for dashboard UI
-- Integration tests for dashboard behavior
-- User interaction tests with React Testing Library
-- Mocked dependencies for isolated and reliable test cases
+- Unit and integration tests with Jest and React Testing Library (220+ tests)
+- E2E tests with Playwright for critical user flows (43+ tests)
+- Page Object Model pattern for maintainable E2E selectors
+- Mock backend server for isolated, repeatable E2E test runs
+- CI pipeline with automated Jest and Playwright test execution
 
 ---
 
@@ -145,7 +149,7 @@ I worked as the **frontend developer** responsible for:
 | Icons          | Lucide React                                      |
 | Virtualization | @tanstack/react-virtual                           |
 | Utilities      | clsx, date-fns                                    |
-| Testing        | Jest, React Testing Library, Jest DOM, User Event |
+| Testing        | Jest, React Testing Library, Jest DOM, User Event, Playwright |
 | Code Quality   | ESLint, Prettier                                  |
 
 ---
@@ -220,25 +224,31 @@ src/
 
 ## Testing
 
-This project uses **Jest** and **React Testing Library** for unit and integration testing.
+This project uses **Jest + React Testing Library** for unit/integration tests and **Playwright** for end-to-end tests.
 
-The test setup focuses on verifying UI behavior, user interactions, conditional rendering, and dashboard component reliability.
+### Unit & Integration Tests
 
-### Current Test Coverage
+Run all Jest tests:
 
-Current test coverage includes:
+```bash
+npm test
+npm run test:watch
+npm test -- --coverage
+```
 
-- Dashboard statistic cards
-- Dashboard header rendering
-- Filter dropdown behavior
-- Empty inventory states
-- Dealer car card rendering
-- Dealer car edit and delete interactions
-- Car list rendering
-- Dealer dashboard integration behavior
-- User interaction tests with React Testing Library
-- Conditional rendering and edge case handling
-- Mocked components and context providers for isolated tests
+Unit tests cover auth components, shared utilities, dealer dashboard components, and UI interactions. Tests are co-located with their components.
+
+### E2E Tests
+
+Run all Playwright tests:
+
+```bash
+npm run test:e2e
+npm run test:e2e:ui          # interactive debug mode
+npx playwright show-report   # view HTML report
+```
+
+E2E tests cover auth flows (sign up, sign in, reset password, email verification), car browsing/search/detail, and appointment booking — 43 tests across 8 spec files. A mock backend server provides controlled API responses for fast, repeatable runs. See [TESTING.md](./TESTING.md) for full details.
 
 ### Testing Tools
 
@@ -248,37 +258,7 @@ Current test coverage includes:
 | React Testing Library | Component rendering and user-focused testing |
 | Jest DOM              | Custom DOM matchers                          |
 | User Event            | Realistic user interaction testing           |
-
-### Run Tests
-
-Run all tests:
-
-```bash
-npm run test
-```
-
-Run tests in watch mode:
-
-```bash
-npm run test:watch
-```
-
-Run tests with coverage:
-
-```bash
-npm run test -- --coverage
-```
-
-### Testing Strategy
-
-The project follows a user-focused testing approach:
-
-- Test what the user sees and interacts with
-- Avoid testing internal implementation details
-- Mock external dependencies when needed
-- Keep dashboard and UI tests isolated
-- Verify important user actions such as filtering, editing, deleting, and rendering empty states
-- Use integration tests for larger dashboard flows
+| Playwright            | End-to-end browser testing                   |
 
 ---
 
@@ -286,64 +266,55 @@ The project follows a user-focused testing approach:
 
 Recent updates reflected in the codebase include:
 
-- Real-time messaging and notifications via SignalR
-- Virtualized lists for post discovery using `@tanstack/react-virtual`
-- Token-aware API proxy flow and route handlers
-- Expanded feature modules under `src/app/features`
+- E2E test suite with Playwright (43+ tests) and a mock backend server
+- Production-safe error handling — server errors are mapped to generic user-facing messages
+- Skeleton loading states for home page, car detail, and search pages
+- Accessibility pass — `aria-label` on all icon-only buttons (10 across 8 components)
+- Drag-and-drop file upload for car images
+- Dealer public profile page with listings grid
+- Styled confirmation modals replacing native `window.confirm()` dialogs
+- CarGrid refactored to client-side data fetching with React Query
+- AxiosClient hardened — concurrent refresh dedup, cookie mutation safety, FormData auto-detection
+- TypeScript type checking (`npm run typecheck`) in CI pipeline
+- Error boundaries on all routes — contextual recovery UI for auth, cars, posts, messages, and profile pages
+- SEO metadata — dynamic Open Graph images for car listings, proper `metadataBase`, `robots`, and canonical URLs
+- Integration tests for appointment hooks and KYC registration context (42 new tests)
 
 ---
 
-## Recommended Screenshots
-
-Adding screenshots will make the project more recruiter-friendly and easier to understand at a glance.
-
-Recommended screenshot structure:
-
-```txt
-public/readme/
-├── home-page.png
-├── car-detail.png
-├── dealer-dashboard.png
-├── admin-dashboard.png
-├── kyc-review.png
-├── appointment-flow.png
-├── community-posts.png
-└── mobile-view.png
-```
-
-Example README screenshot section:
-
-```md
 ## Screenshots
 
 ### Home Page
 
-![Home Page](public/readme/home-page.png)
+![Gear Up Home Page](public/readme/home-page.png)
 
-### Dealer Dashboard
+### Car Search
 
-![Dealer Dashboard](public/readme/dealer-dashboard.png)
+![Car Search](public/readme/car-search.png)
 
-### Car Detail Page
+### Car Detail
 
 ![Car Detail Page](public/readme/car-detail.png)
 
-### Admin KYC Review
+### Appointment Booking
 
-![Admin KYC Review](public/readme/kyc-review.png)
-```
+![Appointment Booking](public/readme/appointment-flow.png)
 
-Recommended screenshots to add:
+### Community Posts
 
-- Home page
-- Featured car listings
-- Car detail page
-- Dealer dashboard
-- Admin dashboard
-- KYC verification page
-- Appointment booking flow
-- Community post/discover page
-- Mobile responsive layout
+![Community Posts](public/readme/community-posts.png)
+
+### Login Page
+
+![Login Page](public/readme/login-page.png)
+
+### Register Page
+
+![Register Page](public/readme/register-page.png)
+
+### Mobile View
+
+![Mobile View](public/readme/mobile-view.png)
 
 ---
 
@@ -364,7 +335,12 @@ This project demonstrates my ability to build a real-world frontend application 
 - Feature-based project organization
 - Reusable UI component design
 - Responsive layouts for multiple screen sizes
-- Production-style error handling and loading states
+- Production-safe error handling with sanitized user-facing messages
+- Skeleton loading states for key pages
+- Accessibility (aria-labels on icon-only buttons)
+- CI/CD pipeline with lint, type-check, test, build, and E2E stages
+- Route-level error boundaries with contextual recovery UI
+- SEO metadata with dynamic Open Graph images and canonical URLs
 
 ---
 
@@ -372,19 +348,12 @@ This project demonstrates my ability to build a real-world frontend application 
 
 Planned improvements:
 
-- Add Playwright E2E tests for critical user flows
-- Improve production error handling for safer toast messages
 - Add better demo data for portfolio and recruiter review
-- Add screenshots and GIFs to this README
-- Add CI workflow for linting, testing, and building
-- Improve image fallback handling
-- Add stronger loading and skeleton states
+- Improve image fallback handling (add `images.qualities` defaults)
 - Improve mobile dashboard navigation
 - Improve reusable form components
 - Add stronger API response validation with Zod
 - Add more documentation for authentication and route protection
-- Add more integration tests for appointment and KYC flows
-- Add better error boundaries for page-level failures
 - Add Storybook for reusable UI components
-- Improve SEO metadata for public marketplace pages
 - Add performance monitoring for image-heavy pages
+- Replace remaining `alert()` calls in admin panel with styled modals/toasts

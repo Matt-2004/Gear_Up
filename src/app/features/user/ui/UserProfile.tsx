@@ -52,8 +52,8 @@ const UserProfile = () => {
 
     const changed = Object.keys(originalInput).some(
       (key) =>
-        (originalInput as Record<string, any>)[key] !==
-        (input as Record<string, any>)[key],
+        (originalInput as unknown as Record<string, unknown>)[key] !==
+        (input as unknown as Record<string, unknown>)[key],
     );
 
     setIsDataChange(changed || !!avatarFile);
@@ -85,9 +85,13 @@ const UserProfile = () => {
     const formData = new FormData();
 
     Object.keys(originalInput).forEach((key) => {
-      const prev = (originalInput as Record<string, any>)[key];
-      const next = (input as Record<string, any>)[key];
-      if (prev !== next) formData.set(key, next ?? "");
+      const prev = (originalInput as unknown as Record<string, unknown>)[key];
+      const next = (input as unknown as Record<string, unknown>)[key];
+      if (prev !== next) {
+        const value =
+          typeof next === "string" ? next : next === null ? "" : String(next);
+        formData.set(key, value);
+      }
     });
 
     if (avatarFile) formData.set("AvaterImage", avatarFile);

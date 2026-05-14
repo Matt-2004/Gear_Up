@@ -10,7 +10,6 @@ import {
 import { UserFetch } from "@/app/shared/utils/AuthUtils/UserFetch";
 import { encrypt } from "@/app/shared/utils/AuthUtils/encryption";
 import { UserMapper } from "@/app/features/profiles/user/types/user.mapper";
-import { u } from "framer-motion/client";
 
 const initialAdminLoginFormData = {
   email: "",
@@ -58,6 +57,3 @@ export const useAdminLogin = () => {
     setFormData,
   };
 };
-function refreshUserData() {
-  throw new Error("Function not implemented.");
-}

@@ -87,6 +87,7 @@ export default function MessageInput({
 
         <button
           onClick={handleSend}
+          aria-label="Send message"
           disabled={!message.trim() || disabled || sending || !receiverId}
           className="shrink-0 rounded-lg bg-blue-500 p-2 text-white transition-colors hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-gray-300"
         >

@@ -1,5 +1,5 @@
 import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
-import { CarDetailDTO, CarDTO } from "../../car/types/car.dto";
+import { CarDetailDTO } from "../../car/types/car.dto";
 
 export interface PostResponse {
   isSuccess: boolean;

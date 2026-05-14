@@ -36,7 +36,7 @@ export const PageSwitcher = <T extends string = string>({
       pages[0] ??
       null
     );
-  }, [pages, searchParams, queryKey, defaultPageId]);
+  }, [pages, searchParams, queryKey, defaultPageId, activePageId]);
 
   if (!activePage) {
     return null;

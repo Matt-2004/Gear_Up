@@ -6,13 +6,7 @@ import { getAllPosts } from "@/app/shared/utils/API/PostAPI";
 import { formatRelativeTime } from "@/app/shared/utils/timeFormat";
 import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import {
-  ChevronLeft,
-  ChevronRight,
-  MessageCircleMore,
-  MessageSquare,
-  Plus,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, MessageSquare, Plus } from "lucide-react";
 import Image from "next/image";
 
 import { useEffect, useRef, useState } from "react";
@@ -20,7 +14,6 @@ import { LikeCount } from "../../comment/ui/Comment";
 import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
 import { useRouter } from "next/navigation";
 import { formatNumber } from "@/app/shared/utils/numberFormatter";
-import { PostDTO } from "../types/post.dto";
 import { CarImages } from "../../car/types/car.dto";
 import { PostModel } from "../types/post.model";
 import { PostMapper } from "../types/post.mapper";
@@ -133,7 +126,7 @@ const DiscoverPost = ({ post }: { post: CursorResponse<PostModel[]> }) => {
               position: "relative",
             }}
           >
-            {virtualItems.map(({ index, start, key, size }) => {
+            {virtualItems.map(({ index, start, key }) => {
               console.log(`Rendering item at index: ${index}`);
               const postItem = posts[index];
 
@@ -235,12 +228,14 @@ const PostCard = ({ postItem }: { postItem: PostModel }) => {
         </div>
 
         {/* Image Section */}
+        {postItem.carDto && (
         <div className="flex-1 overflow-hidden">
           <CarouselImages
             price={postItem.carDto.price}
             images={postItem.carDto.images || []}
           />
         </div>
+        )}
         {/* Caption and Content */}
         <div className="flex w-full flex-col gap-3 p-4">
           <h1 className="hover:text-primary-600 line-clamp-2 text-lg leading-tight font-bold text-gray-900 transition-colors sm:text-xl md:text-2xl">
@@ -366,6 +361,7 @@ export const CarouselImages = ({ images, price }: ICarouselPostImageProps) => {
         {currentIndex !== 0 && (
           <button
             onClick={(e) => scrollPrevious(e)}
+            aria-label="Previous image"
             className="absolute top-1/2 left-4 z-30 -translate-y-1/2 rounded-full bg-white/90 p-3 shadow-xl backdrop-blur-sm transition-all duration-200 hover:scale-110 hover:bg-white"
           >
             <ChevronLeft className="text-primary-600 h-6 w-6" />
@@ -374,6 +370,7 @@ export const CarouselImages = ({ images, price }: ICarouselPostImageProps) => {
         {currentIndex < images?.length - 1 && (
           <button
             onClick={(e) => scrollNext(e)}
+            aria-label="Next image"
             className="absolute top-1/2 right-4 z-30 -translate-y-1/2 rounded-full bg-white/90 p-3 shadow-xl backdrop-blur-sm transition-all duration-200 hover:scale-110 hover:bg-white"
           >
             <ChevronRight className="text-primary-600 h-6 w-6" />

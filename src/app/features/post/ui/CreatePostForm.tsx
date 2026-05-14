@@ -23,7 +23,7 @@ interface CreatePostFormProps {
 
 const CreatePostForm = ({ dealerCars }: CreatePostFormProps) => {
   const router = useRouter();
-  const { postData, updatePostData, resetPostData } = useCreatePostContext();
+  const { postData, updatePostData } = useCreatePostContext();
   const [currentStep, setCurrentStep] = useState(1);
   const { addToastMessage } = useToast({
     toastType: null,
@@ -71,7 +71,7 @@ const CreatePostForm = ({ dealerCars }: CreatePostFormProps) => {
           router.push("/post/discover");
         }, 2500);
       }
-    } catch (error) {
+    } catch {
       addToastMessage("error", "Failed to publish post. Please try again.");
     }
   };

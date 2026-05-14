@@ -47,6 +47,7 @@ export default function CarHeader({
         <div className="flex gap-3">
           <button
             onClick={onToggleFavorite}
+            aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
             className={`cursor-pointer rounded-full p-2 transition-all hover:bg-gray-50 hover:shadow-sm ${
               isFavorite ? "bg-red-50 text-red-500" : "text-gray-400"
             }`}

@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { createContext, ReactNode, useContext, useState } from "react";
 import { UserModel } from "../../profiles/user/types/user.model";
 
 interface UserDataContextType {
@@ -42,10 +36,6 @@ export function UserDataContextProvider({ children }: { children: ReactNode }) {
       setLoading(false);
     }
   }
-
-  useEffect(() => {
-    refreshUserData();
-  }, []);
 
   return (
     <UserDataContext.Provider value={{ user, loading, refreshUserData }}>

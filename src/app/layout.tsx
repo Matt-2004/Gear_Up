@@ -16,7 +16,7 @@ const roboto = Roboto({
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_Backend_URL ?? "http://localhost:5255",
+    process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000",
   ),
   title: {
     default: "Gear Up - Your Ultimate Car Marketplace",
@@ -39,7 +39,15 @@ export const metadata: Metadata = {
       url: "/favicon.ico",
     },
   ],
+  robots: {
+    index: true,
+    follow: true,
+  },
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
+    siteName: "Gear Up",
     title: "Gear Up - Your Ultimate Car Marketplace",
     description:
       "Discover, buy, and sell amazing vehicles on Gear Up. Your trusted platform for automotive excellence.",
@@ -52,6 +60,7 @@ export const metadata: Metadata = {
       },
     ],
     type: "website",
+    locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",

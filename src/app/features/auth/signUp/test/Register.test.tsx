@@ -10,8 +10,8 @@ jest.mock("../hooks/useSignUp", () => ({
 
 jest.mock("next/image", () => ({
   __esModule: true,
-  default: ({ src, alt, ...props }: any) => {
-    return <img src={src} alt={alt} {...props} />;
+  default: ({ src, alt = "", ...props }: React.ComponentProps<"img">) => {
+    return React.createElement("img", { src, alt, ...props });
   },
 }));
 

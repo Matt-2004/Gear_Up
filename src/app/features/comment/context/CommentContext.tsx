@@ -27,7 +27,7 @@ interface ICommentContext {
 }
 // comment + replies
 
-export const CommentContext = createContext<ICommentContext>(null as any);
+export const CommentContext = createContext<ICommentContext | null>(null);
 
 const CommentContextProvider = ({ children }: { children: ReactNode }) => {
   const [comments, setComments] = useState<ICommentProps[]>([]);
@@ -38,9 +38,9 @@ const CommentContextProvider = ({ children }: { children: ReactNode }) => {
     newComment: CommentModel | CommentModel[],
     parentCommentId: string | null,
   ) {
-    const normalized: ICommentProps[] = (
-      Array.isArray(newComment) ? newComment : [newComment]
-    ) as any;
+    const normalized: ICommentProps[] = Array.isArray(newComment)
+      ? newComment
+      : [newComment];
 
     // Level meaning:
     // - Top-level comments are level 1

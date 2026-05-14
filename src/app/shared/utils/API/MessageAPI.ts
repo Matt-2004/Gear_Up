@@ -1,7 +1,6 @@
 import {
   CreateMessageDTO,
   MessageDetailResponse,
-  MessageResponses,
 } from "@/app/features/messaging/types/message.types";
 
 import { getFetch, postFetch } from "./AxiosClient";

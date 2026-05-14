@@ -8,7 +8,6 @@ import {
 } from "@/app/shared/utils/API/ReviewAPI";
 import {
   IReviewSubmissionDTO,
-  ReviewDTO,
   ReviewResponse,
 } from "../../review/types/review.dto";
 import { ReviewModel } from "../../review/types/review.model";

@@ -1,12 +1,7 @@
 "use client";
 
 import clsx from "clsx";
-import {
-  BarChart3,
-  ClipboardCheck,
-  LayoutDashboard,
-  UserRoundCheck,
-} from "lucide-react";
+import { ClipboardCheck, LayoutDashboard, UserRoundCheck } from "lucide-react";
 import { ReactNode } from "react";
 import { type AdminTabId } from "../../utils/admin-tab.config";
 

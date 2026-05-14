@@ -3,13 +3,12 @@ import { useToast } from "@/app/features/toast/hooks/useToast";
 import { sendEmailSchema } from "@/app/features/auth/utils/typeSchema";
 import { useAuthForm } from "@/app/shared/hooks/useAuthForm";
 import { emailValidationAction } from "../utils/emailValidationAction";
-import { EmailValidationVariant } from "../types/email-validation-request";
 
 const initialEmailValidationFormData = {
   email: "",
 };
 
-export const useEmailValidation = (variant: EmailValidationVariant) => {
+export const useEmailValidation = () => {
   const [isPending, setIsPending] = useState(false);
 
   const { handleToast } = useToast({

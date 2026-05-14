@@ -1,6 +1,7 @@
 import { CarDetailModel } from "@/app/features/car/types/car.model";
 import { formatNumber } from "@/app/shared/utils/numberFormatter";
 import { Car } from "lucide-react";
+import Image from "next/image";
 
 interface AppointmentCarSummaryProps {
   car: CarDetailModel;
@@ -12,10 +13,12 @@ export default function AppointmentCarSummary({
   return (
     <div className=" sticky top-20 overflow-hidden rounded-xl bg-white shadow-sm">
       <div className="aspect-video bg-gray-900">
-        <img
+        <Image
           src={car.images[0].url}
           alt={`${car.make} ${car.model}`}
           className="h-full w-full object-cover"
+          width={400}
+          height={300}
         />
       </div>
       <div className="py-2 px-4">

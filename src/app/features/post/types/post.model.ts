@@ -1,4 +1,4 @@
-import { CarDetailModel, CarModel } from "../../car/types/car.model";
+import { CarDetailModel } from "../../car/types/car.model";
 
 export interface PostModel {
   id: string;
@@ -7,7 +7,7 @@ export interface PostModel {
   authorUsername: string;
   authorProfileImage: string;
   visibility: string;
-  carDto: CarDetailModel;
+  carDto: CarDetailModel | null;
   createdAt: string;
   updatedAt: string;
   likeCount: number;

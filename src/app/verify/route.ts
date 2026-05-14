@@ -1,4 +1,4 @@
-import { BACKEND_API_URL } from "@/app/shared/utils/config";
+import { BACKEND_API_URL, DEFAULT_API_URL } from "@/app/shared/utils/config";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
@@ -31,9 +31,8 @@ export async function GET(request: Request) {
       });
     }
 
-    const data = await response.json();
-
-    return NextResponse.redirect(new URL("http://localhost:3000/"));
+    const redirectUrl = DEFAULT_API_URL ?? request.url;
+    return NextResponse.redirect(redirectUrl);
   } catch (error) {
     return new NextResponse(JSON.stringify({ message: error }), {
       status: 500,

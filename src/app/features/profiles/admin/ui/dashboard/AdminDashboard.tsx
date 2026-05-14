@@ -321,13 +321,7 @@ interface QuickActionButtonProps {
   color: "orange" | "blue" | "green";
 }
 
-const QuickActionButton = ({
-  icon,
-  label,
-  count,
-  href,
-  color,
-}: QuickActionButtonProps) => {
+const QuickActionButton = ({ icon, label, href }: QuickActionButtonProps) => {
   return (
     <Link href={href}>
       <button

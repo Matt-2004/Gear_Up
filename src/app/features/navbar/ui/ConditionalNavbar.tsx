@@ -1,6 +1,5 @@
 "use client";
 
-import { useUserData } from "@/app/features/navbar/context/UserDataContext";
 import { usePathname } from "next/navigation";
 import Navbar from "./Navbar";
 

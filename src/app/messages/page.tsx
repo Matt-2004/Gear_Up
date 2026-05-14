@@ -2,10 +2,6 @@ import MessagesClient from "@/app/features/messaging/ui/MessagesClient";
 
 import { cookies } from "next/headers";
 import {
-  IMessageData,
-  IMessageDetailData,
-} from "../features/messaging/types/message.types";
-import {
   getConversationByOtherUserId,
   getConversationsByConversationId,
 } from "../shared/utils/API/MessageAPI";

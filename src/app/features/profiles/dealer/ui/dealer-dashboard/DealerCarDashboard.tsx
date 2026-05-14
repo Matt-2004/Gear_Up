@@ -5,6 +5,7 @@ import DashboardHeader from "../dealer-management/DashboardHeader";
 import StatsCard from "../dealer-management/StatsCard";
 import ConditionalCarFilter from "../dealer-management/ConditionalCarFilter";
 import CarList from "../dealer-management/CarList";
+import ConfirmModal from "@/app/shared/ui/ConfirmModal";
 import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
 import { useCarActions } from "../../hooks/useCarActions";
 import { useCarData } from "../../hooks/useCarData";
@@ -20,7 +21,14 @@ const DealerCarDashboard = ({
     useCarFilters();
 
   const { filteredCars, carCounts } = useCarData(carData.items, statusFilter);
-  const { handleDelete, handleEdit } = useCarActions();
+  const {
+    openDeleteConfirm,
+    handleEdit,
+    confirmDeleteOpen,
+    confirmDeleteLoading,
+    cancelDelete,
+    handleDelete,
+  } = useCarActions();
 
   return (
     <div id="car-main-container" className="min-h-screen bg-gray-50">
@@ -103,13 +111,22 @@ const DealerCarDashboard = ({
             <div id="cars">
               <CarList
                 cars={filteredCars}
-                onDelete={handleDelete}
+                onDelete={openDeleteConfirm}
                 onEdit={handleEdit}
               />
             </div>
           </div>
         </div>
       </div>
+      <ConfirmModal
+        open={confirmDeleteOpen}
+        title="Delete Vehicle?"
+        message="Are you sure you want to delete this vehicle? This action cannot be undone."
+        confirmLabel="Delete"
+        loading={confirmDeleteLoading}
+        onConfirm={handleDelete}
+        onCancel={cancelDelete}
+      />
     </div>
   );
 };

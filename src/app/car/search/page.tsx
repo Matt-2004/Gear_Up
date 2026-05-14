@@ -17,7 +17,16 @@ interface SearchPageProps {
 
 export default async function Page({ searchParams }: SearchPageProps) {
   const params = await searchParams;
-  const query = params.query;
+  const query = params.query ?? "";
+
+  if (!query) {
+    return (
+      <SearchPage
+        query=""
+        searchResults={{ items: [], hasMore: false, nextCursor: null }}
+      />
+    );
+  }
 
   const response = await searchCarWithQuery(`query=${query}`);
   const searchResults: CursorResponse<CarModel[]> = {

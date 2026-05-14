@@ -4,7 +4,7 @@ import { CarDetailModel } from "@/app/features/car/types/car.model";
 
 export interface AdminCarData extends CarDetailModel {
   documentType: string;
-  fullName: any;
+  fullName: string;
   status: string;
   createdAt: string;
   updatedAt: string;

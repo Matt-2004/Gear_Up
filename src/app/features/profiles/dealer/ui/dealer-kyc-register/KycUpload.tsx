@@ -155,7 +155,7 @@ const KycUpload = () => {
       <UploadTips />
       <Disclaimer />
       {/* Step Navigation*/}
-      <StepNavigation label="Submit" />
+      <StepNavigation />
     </form>
   );
 };

@@ -1,7 +1,6 @@
 "use client";
 
 import { CarDetailDTO } from "@/app/features/car/types/car.dto";
-import { CarDetailModel } from "@/app/features/car/types/car.model";
 import {
   createContext,
   ReactNode,
@@ -34,10 +33,6 @@ const VEHICLE_DRAFT_STORAGE_KEY = "gearup:add-car-draft";
 const sanitizeYear = (value: unknown): number => {
   const parsedValue = Number(value);
   return Number.isFinite(parsedValue) ? parsedValue : 0;
-};
-
-const sanitizeName = (value: unknown): string => {
-  return typeof value === "string" ? value : "";
 };
 
 const defaultVehicleData: SubmitVehicle = {

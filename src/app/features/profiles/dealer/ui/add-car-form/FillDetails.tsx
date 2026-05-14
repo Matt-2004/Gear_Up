@@ -760,7 +760,7 @@ const FillDetails = () => {
         </GroupInputForm>
 
         <div className="mt-8 flex justify-end border-t border-gray-200 pt-6">
-          <StepNavigation isSubmitForm={true} label="Submit Listing" />
+          <StepNavigation isSubmitForm={true} />
         </div>
       </main>
     </form>

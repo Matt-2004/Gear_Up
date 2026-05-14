@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import Button from "@/app/shared/ui/Button";
 import Input from "@/app/shared/ui/Input";
 import { AuthPageCaption, AuthPageContainer } from "../../ui/AuthComponents";

@@ -5,7 +5,6 @@ import SharedAppointmentCard from "@/app/features/appointments/ui/appointment-ca
 import {
   acceptAppointmentById,
   cancelAppointmentById,
-  dealerAppointments,
   rejectAppointmentById,
 } from "@/app/shared/utils/API/AppointmentAPI";
 import { getStatusColor } from "@/app/features/appointments/utils/appointmentUtils";
@@ -14,10 +13,7 @@ import { useEffect, useState } from "react";
 import StatsCard, {
   StatsCardProps,
 } from "@/app/features/profiles/dealer/ui/dealer-management/StatsCard";
-import {
-  AppointmentResponse,
-  AppointmentStatus,
-} from "@/app/features/appointments/types/appointment.dto";
+import { AppointmentStatus } from "@/app/features/appointments/types/appointment.dto";
 import { AppointmentModel } from "@/app/features/appointments/types/appointment.model";
 // ─── sub-components ───────────────────────────────────────────────────────────
 

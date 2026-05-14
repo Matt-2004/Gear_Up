@@ -1,22 +1,35 @@
 import { getPostById } from "@/app/shared/utils/API/PostAPI";
-import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { cookies } from "next/headers";
 import CommentContextProvider from "../../features/comment/context/CommentContext";
 import Details from "../../features/post/ui/PostDetails";
 import { PostMapper } from "@/app/features/post/types/post.mapper";
 
-export async function generateMetadata() {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
   try {
+    const res = await getPostById(id);
+    const post = res?.data;
+    if (!post) {
+      return { title: "Post not found", description: "This post could not be found." };
+    }
+    const title = `${post.caption?.substring(0, 60) ?? "Post"} | Gear Up`;
+    const description = post.content?.substring(0, 160) ?? "Read this post on Gear Up";
     return {
-      title: "Post - Gear Up",
-      description: "Read this post on Gear Up",
+      title,
+      description,
+      openGraph: {
+        title,
+        description,
+        type: "article",
+      },
     };
   } catch {
-    return {
-      title: "Post - Gear Up",
-      description: "Read this post on Gear Up",
-    };
+    return { title: "Post - Gear Up", description: "Read this post on Gear Up" };
   }
 }
 

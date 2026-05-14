@@ -68,7 +68,7 @@ const ResetPassword = () => {
               type="password"
               placeholder="Re-enter your new password"
               value={formData.confirmedPassword}
-              error={validationErrors.confirmedPassword}
+              error={validationErrors.confirmPassword}
               onChange={(e) =>
                 setFormData((prev) => ({
                   ...prev,

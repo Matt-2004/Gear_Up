@@ -1,5 +1,7 @@
+import React from "react";
 import { act, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import type { ImgHTMLAttributes } from "react";
 import HeroSection from "./HeroSection";
 
 const mockPush = jest.fn();
@@ -11,10 +13,10 @@ jest.mock("next/navigation", () => ({
     prefetch: mockPrefetch,
   }),
 }));
-
 jest.mock("next/image", () => ({
   __esModule: true,
-  default: ({ fill, priority, ...props }: any) => <img {...props} />,
+  default: ({ alt = "", ...props }: ImgHTMLAttributes<HTMLImageElement>) =>
+    React.createElement("img", { alt, ...props }),
 }));
 
 describe("HeroSection", () => {
@@ -37,7 +39,9 @@ describe("HeroSection", () => {
     const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
     render(<HeroSection />);
 
-    const input = screen.getByPlaceholderText(/search by make, model, or year/i);
+    const input = screen.getByPlaceholderText(
+      /search by make, model, or year/i,
+    );
     await user.type(input, "Toyota Corolla");
     await user.click(screen.getByRole("button", { name: /^search$/i }));
 
@@ -57,7 +61,9 @@ describe("HeroSection", () => {
     const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
     render(<HeroSection />);
 
-    const input = screen.getByPlaceholderText(/search by make, model, or year/i);
+    const input = screen.getByPlaceholderText(
+      /search by make, model, or year/i,
+    );
     await user.type(input, "toyota");
 
     act(() => {

@@ -1,5 +1,6 @@
 import { UserResponse } from "@/app/features/profiles/user/types/user.dto";
 import { getFetch, putFetch, postFetch } from "./AxiosClient";
+import { CarResponse } from "@/app/features/car/types/car.dto";
 
 export async function getUserProfile() {
   return await getFetch<UserResponse>("/api/v1/users/me");
@@ -10,7 +11,7 @@ export async function updateUserProfile(formdata: FormData) {
 }
 
 export async function getUserByUserId(userId: string) {
-  return getFetch(`/api/v1/users/${userId}`);
+  return getFetch<UserResponse>(`/api/v1/users/${userId}`);
 }
 
 export async function getPostByUserId(userId: string, cursor?: string) {
@@ -18,7 +19,7 @@ export async function getPostByUserId(userId: string, cursor?: string) {
 }
 
 export async function getCarByUserId(userId: string, cursor?: string) {
-  return getFetch(`/api/v1/users/${userId}/cars?cursor=${cursor}`);
+  return getFetch<CarResponse>(`/api/v1/users/${userId}/cars?cursor=${cursor}`);
 }
 
 export async function kycRegister(data: FormData) {

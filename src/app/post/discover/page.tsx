@@ -1,8 +1,15 @@
+import { Metadata } from "next";
 import { getAllPosts } from "@/app/shared/utils/API/PostAPI";
 import DiscoverPost from "../../features/post/ui/DiscoverPost";
 import { handleServerError } from "@/app/shared/utils/errors/handleServerError";
 import { PostResponse } from "@/app/features/post/types/post.dto";
 import { PostMapper } from "@/app/features/post/types/post.mapper";
+
+export const metadata: Metadata = {
+  title: "Discover",
+  description:
+    "Explore the latest car listings and community posts on Gear Up. Connect with dealers and fellow car enthusiasts.",
+};
 
 export const dynamic = "force-dynamic";
 

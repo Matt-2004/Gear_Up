@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { AlertTriangle, RefreshCcw, Home } from "lucide-react";
 import Link from "next/link";
 
@@ -8,7 +9,10 @@ interface ErrorProps {
   reset: () => void;
 }
 
-export default function GlobalError({ error, reset }: ErrorProps) {
+export default function RootError({ error, reset }: ErrorProps) {
+  useEffect(() => {
+    console.error("[Root Error]", error);
+  }, [error]);
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-sm text-center">

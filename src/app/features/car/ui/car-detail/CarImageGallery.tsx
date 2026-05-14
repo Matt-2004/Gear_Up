@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import CarImage from "../../../../shared/ui/Image";
 import { CarDetailModel } from "../../types/car.model";
 
@@ -25,7 +25,7 @@ export default function CarImageGallery({
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const programmaticScrollRef = useRef(false);
 
-  const parseImages = (value: CarDetailModel["images"]) => {
+  const parseImages = useCallback((value: CarDetailModel["images"]) => {
     if (Array.isArray(value)) {
       return value.map((img) => (typeof img === "string" ? { url: img } : img));
     }
@@ -44,11 +44,14 @@ export default function CarImageGallery({
     }
 
     return [];
-  };
+  }, []);
 
-  const images = parseImages(car.images);
+  const images = useMemo(
+    () => parseImages(car.images),
+    [car.images, parseImages],
+  );
 
-  const scrollToIndex = (index: number) => {
+  const scrollToIndex = useCallback((index: number) => {
     if (!scrollRef.current) return;
     programmaticScrollRef.current = true;
     scrollRef.current.scrollTo({
@@ -58,9 +61,9 @@ export default function CarImageGallery({
     window.setTimeout(() => {
       programmaticScrollRef.current = false;
     }, 400);
-  };
+  }, []);
 
-  const startAutoScroll = () => {
+  const startAutoScroll = useCallback(() => {
     // Clear existing interval if any
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
@@ -79,7 +82,7 @@ export default function CarImageGallery({
         onNextImage();
       }
     }, 6000);
-  };
+  }, [images.length, onNextImage, onSelectImage]);
 
   // Track current index based on scroll position
   useEffect(() => {
@@ -96,12 +99,12 @@ export default function CarImageGallery({
 
     container.addEventListener("scroll", handleScroll);
     return () => container.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [onSelectImage]);
 
   useEffect(() => {
     setCurrentIndex(selectedImage);
     scrollToIndex(selectedImage);
-  }, [selectedImage]);
+  }, [scrollToIndex, selectedImage]);
 
   // Auto-scroll every 3 seconds
   useEffect(() => {
@@ -112,7 +115,7 @@ export default function CarImageGallery({
         clearInterval(intervalRef.current);
       }
     };
-  }, []);
+  }, [startAutoScroll]);
 
   return (
     <div className="overflow-hidden">
@@ -140,7 +143,7 @@ export default function CarImageGallery({
               ))}
             </div>
 
-            <div className="absolute top-4 right-4  rounded-full bg-black/60 px-3 py-1 text-sm font-medium text-white backdrop-blur-sm">
+            <div data-testid="gallery-counter" className="absolute top-4 right-4  rounded-full bg-black/60 px-3 py-1 text-sm font-medium text-white backdrop-blur-sm">
               {currentIndex + 1} / {images.length}
             </div>
 
@@ -150,6 +153,8 @@ export default function CarImageGallery({
                   onPrevImage();
                   startAutoScroll();
                 }}
+                data-testid="gallery-prev"
+                aria-label="Previous image"
                 className="hover:bg-primary-500 absolute top-1/2 left-4 -translate-y-1/2 rounded-full bg-white/95 p-2.5 shadow-lg transition-all hover:scale-110 hover:text-white"
               >
                 <ChevronLeft className="h-6 w-6" />
@@ -162,6 +167,8 @@ export default function CarImageGallery({
                   onNextImage();
                   startAutoScroll();
                 }}
+                data-testid="gallery-next"
+                aria-label="Next image"
                 className="hover:bg-primary-500 absolute top-1/2 right-4 -translate-y-1/2 rounded-full bg-white/95 p-2.5 shadow-lg transition-all hover:scale-110 hover:text-white"
               >
                 <ChevronRight className="h-6 w-6" />

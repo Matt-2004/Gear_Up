@@ -2,6 +2,7 @@
 
 import { MainResponse } from "@/app/shared/types.ts/main-response";
 import { postFetch } from "@/app/shared/utils/API/AxiosClient";
+import { ErrorResponse } from "@/app/shared/utils/errors/errorResponse";
 
 export async function signUpAction(
   formData: FormData,
@@ -34,12 +35,13 @@ export async function signUpAction(
     }
 
     return res;
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as ErrorResponse;
     return {
       isSuccess: false,
-      message: error?.message || "Registration failed",
+      message: err?.message || "Registration failed",
       data: null,
-      status: error?.status || 500,
+      status: err?.status || 500,
     };
   }
 }
