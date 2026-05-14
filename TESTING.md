@@ -125,15 +125,15 @@ Interactive elements in production components use `data-testid` attributes for s
 
 ### E2E Tests (Playwright) — 43 tests passing
 
-| Feature | Spec File | Tests |
-|---|---|---|
-| Sign In | `e2e/auth/sign-in.spec.ts` | 7 |
-| Sign Up | `e2e/auth/sign-up.spec.ts` | 7 |
-| Email Validation | `e2e/auth/email-verification.spec.ts` | 5 |
-| Reset Password | `e2e/auth/reset-password.spec.ts` | 5 |
-| Car Browsing & Search | `e2e/cars/browsing.spec.ts` | 14 |
-| Appointment Booking | `e2e/cars/appointment.spec.ts` | 4 |
-| Admin Login | `e2e/admin/admin.spec.ts` | 1 |
+| Feature               | Spec File                             | Tests |
+| --------------------- | ------------------------------------- | ----- |
+| Sign In               | `e2e/auth/sign-in.spec.ts`            | 7     |
+| Sign Up               | `e2e/auth/sign-up.spec.ts`            | 7     |
+| Email Validation      | `e2e/auth/email-verification.spec.ts` | 5     |
+| Reset Password        | `e2e/auth/reset-password.spec.ts`     | 5     |
+| Car Browsing & Search | `e2e/cars/browsing.spec.ts`           | 14    |
+| Appointment Booking   | `e2e/cars/appointment.spec.ts`        | 4     |
+| Admin Login           | `e2e/admin/admin.spec.ts`             | 1     |
 
 **Pending (needs role config):** dealer inventory (3), KYC registration (3), dealer appointments (2), admin car/KYC verification (2), messaging (1), posts (3) — 14 tests written, awaiting mock user role update.
 
@@ -168,14 +168,99 @@ Interactive elements in production components use `data-testid` attributes for s
 
 ## Continuous Integration
 
-All checks run on every push/PR to `main` via `.github/workflows/Ci.yml`:
+All checks run on every push and pull request to `main` via `.github/workflows/Ci.yml`.
 
-| Step | Command | Purpose |
-|---|---|---|
-| Type check | `npm run typecheck` | TypeScript compilation |
-| Lint | `npm run lint` | ESLint |
-| Unit tests | `npm test -- --ci --coverage --maxWorkers=2` | Jest (220+ tests) |
-| Build | `npm run build` | Production build check |
-| E2E tests | `npm run test:e2e` | Playwright with mock backend (43+ tests) |
+### Pipeline Flow
 
-Coverage reports and Playwright HTML reports are uploaded as CI artifacts on failure.
+```txt
+PUSH / PR to main
+      │
+      ▼
+┌─────────────────┐
+│  Checkout code  │  actions/checkout@v4
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│  Setup Node.js  │  actions/setup-node@v4 (Node 20, npm cache)
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│  Install deps   │  npm ci
+└────────┬────────┘
+         │
+    ┌────┴────┐
+    ▼         ▼
+┌─────────┐ ┌──────┐
+│TypeCheck│ │Lint  │  Static analysis (parallel)
+└───┬─────┘ └──┬───┘
+    │         │
+    └────┬────┘
+         │
+         ▼
+┌─────────────────┐
+│   Unit Tests    │  Jest + React Testing Library
+│                 │  --ci --coverage --maxWorkers=2
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│     Build       │  next build (production)
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│   E2E Tests     │  Playwright (Chromium)
+│                 │  Mock backend on port 5555
+└────────┬────────┘
+         │
+    ┌────┴────┐
+    ▼         ▼
+┌────────┐ ┌──────────┐
+│  PASS  │ │  FAIL    │
+│  ✅    | │  ❌       │
+└────────┘ └────┬─────┘
+                │
+                ▼
+         ┌──────────────────┐
+         │ Upload artifacts │
+         │ - coverage/      │
+         │ - playwright-    │
+         │   report/        │
+         └──────────────────┘
+```
+
+### Step Details
+
+| Step           | Command                                      | Purpose                                                                         | On Failure                                            |
+| -------------- | -------------------------------------------- | ------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| **Type check** | `npm run typecheck`                          | TypeScript compilation — catches type errors, missing exports, invalid props    | Blocks pipeline                                       |
+| **Lint**       | `npm run lint`                               | ESLint — enforces code style, catches unused vars, hook violations              | Blocks pipeline                                       |
+| **Unit tests** | `npm test -- --ci --coverage --maxWorkers=2` | Jest (260+ tests) — component rendering, hooks, utilities, auth actions         | Blocks pipeline; coverage report uploaded as artifact |
+| **Build**      | `npm run build`                              | Production `next build` — verifies the app compiles with no route/config errors | Blocks pipeline                                       |
+| **E2E tests**  | `npm run test:e2e`                           | Playwright (43+ tests) — full browser flows against mock backend                | Blocks pipeline; HTML report uploaded as artifact     |
+
+### Triggers
+
+```yaml
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+```
+
+### Environment Variables
+
+The CI runner injects these at the job level:
+
+| Variable              | Value                              |
+| --------------------- | ---------------------------------- |
+| `NEXT_Backend_URL`    | `https://gearup-1lj2.onrender.com` |
+| `NEXT_PUBLIC_API_URL` | `http://localhost:3000`            |
+
+### Artifacts
+
+- **Coverage report** (`coverage/`) — uploaded on every run, retained 7 days
+- **Playwright report** (`playwright-report/`) — uploaded only on E2E failure, retained 7 days
