@@ -72,7 +72,7 @@ const ResetPassword = () => {
               onChange={(e) =>
                 setFormData((prev) => ({
                   ...prev,
-                  confirmedPassword: e.target.value.trim(),
+                  confirmPassword: e.target.value.trim(),
                 }))
               }
             >
