@@ -57,7 +57,7 @@ export function NavbarUserMenu() {
 export function NavbarLoginButton() {
   return (
     <Link href="/auth/login" className="shrink-0">
-      <button className="bg-primary-600 hover:bg-primary-700 cursor-pointer rounded-lg px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:shadow-md active:scale-95 sm:px-5">
+      <button className="bg-primary-700 h-10 hover:bg-primary-700 cursor-pointer rounded-lg px-6 py-2  font-medium text-white shadow-sm transition-all duration-200 hover:shadow-md active:scale-95 text-sm">
         Sign In
       </button>
     </Link>

@@ -57,13 +57,13 @@ export default function NavbarBrand() {
 
       <Link
         href="/"
-        className="flex h-16 w-24 items-center justify-center transition-transform hover:scale-[1.02]"
+        className="flex h-16 w-28 items-center justify-center transition-transform hover:scale-[1.02]"
       >
         <Image
           src="/logo_dark.png"
           priority
           alt="Gear Up Logo"
-          width={70}
+          width={100}
           height={40}
           className="h-auto w-auto object-contain"
         />
