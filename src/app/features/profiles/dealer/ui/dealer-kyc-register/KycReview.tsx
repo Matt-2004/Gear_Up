@@ -125,11 +125,7 @@ const KycReview = () => {
           </p>
         </div>
       </div>
-      <StepNavigation
-        isSubmitForm={true}
-        isSubmitting={isSubmitting}
-        label="Submit"
-      />
+      <StepNavigation isSubmitForm={true} isSubmitting={isSubmitting} />
     </form>
   );
 };

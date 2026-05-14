@@ -37,7 +37,7 @@ const EmailValidation = ({ variant }: { variant: EmailValidationVariant }) => {
     setFormData,
     validationErrors,
     isFormValid,
-  } = useEmailValidation(variant);
+  } = useEmailValidation();
 
   const content = textByVariant[variant];
 

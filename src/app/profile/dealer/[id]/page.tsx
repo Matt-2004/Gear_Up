@@ -1,12 +1,16 @@
-import { getUserByUserId, getCarByUserId } from "@/app/shared/utils/API/UserAPI";
+import {
+  getUserByUserId,
+  getCarByUserId,
+} from "@/app/shared/utils/API/UserAPI";
 import { CarCard } from "@/app/features/car/ui/car-card/CarCard";
 import { carMapper } from "@/app/features/car/types/car.mapper";
-import { CarDTO } from "@/app/features/car/types/car.dto";
-import { UserDTO } from "@/app/features/profiles/user/types/user.dto";
 import { User, Mail, Car, Phone } from "lucide-react";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
+import { UserMapper } from "@/app/features/profiles/user/types/user.mapper";
+import { UserModel } from "@/app/features/profiles/user/types/user.model";
+import { CarModel } from "@/app/features/car/types/car.model";
 
 export const dynamic = "force-dynamic";
 
@@ -18,8 +22,9 @@ export async function generateMetadata({
   const { id } = await params;
   try {
     const userRes = await getUserByUserId(id);
-    const user = userRes?.data as UserDTO | undefined;
-    const name = user?.name ?? "Dealer";
+    const userData = UserMapper(userRes.data);
+    const user = userData;
+    const name = user.realName ?? "Dealer";
     const description = user
       ? `${name} — ${user.role} on Gear Up. Browse their vehicle listings and get in touch.`
       : "View this dealer's vehicle listings on Gear Up.";
@@ -39,32 +44,33 @@ export default async function DealerProfilePage({
 }) {
   const { id } = await params;
 
-  let user: UserDTO | null = null;
-  let cars: CarDTO[] = [];
+  let user: UserModel | null = null;
+  let cars: CarModel[] = [];
 
   try {
     const userRes = await getUserByUserId(id);
-    user = (userRes?.data as UserDTO) ?? null;
+    const userData = UserMapper(userRes.data);
+    user = userData;
   } catch {
     // user stays null
   }
 
+  if (!user) {
+    return notFound();
+  }
+
   try {
     const carsRes = await getCarByUserId(id);
-    const data = carsRes?.data;
-    cars = (data?.items as CarDTO[]) ?? [];
+    const data = carsRes.data.items.map(carMapper);
+    cars = data;
   } catch {
     // cars stays empty
   }
 
-  if (!user) {
-    notFound();
-  }
-
   const approvedCars = cars.filter(
-    (c) => c.carValidationStatus?.toLowerCase() === "approved",
+    (c) => c.status?.toLowerCase() === "approved",
   );
-  const carModels = approvedCars.map(carMapper);
+  const carModels = approvedCars;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -74,25 +80,25 @@ export default async function DealerProfilePage({
           <div className="flex flex-col items-center sm:flex-row sm:gap-6">
             <div className="relative h-24 w-24 overflow-hidden rounded-full border-4 border-white shadow-lg sm:h-28 sm:w-28">
               <Image
-                src={user.avatarUrl || "/default_profile.jpg"}
-                alt={user.name}
+                src={user.profileImage || "/default_profile.jpg"}
+                alt={user.displayName}
                 fill
                 className="object-cover"
               />
             </div>
             <div className="mt-4 text-center sm:mt-0 sm:text-left">
               <h1 className="text-2xl font-bold text-white sm:text-3xl">
-                {user.name}
+                {user.realName}
               </h1>
               <div className="mt-2 flex flex-wrap items-center justify-center gap-3 text-sm text-white/80 sm:justify-start">
                 <span className="flex items-center gap-1">
                   <Mail className="h-4 w-4" />
                   {user.email}
                 </span>
-                {user.phoneNumber && (
+                {user.phone && (
                   <span className="flex items-center gap-1">
                     <Phone className="h-4 w-4" />
-                    {String(user.phoneNumber)}
+                    {String(user.phone)}
                   </span>
                 )}
                 <span className="rounded-full bg-white/20 px-3 py-0.5 text-xs font-semibold text-white">

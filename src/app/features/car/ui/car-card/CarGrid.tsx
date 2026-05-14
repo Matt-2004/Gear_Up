@@ -22,7 +22,10 @@ export function CarGrid() {
     .slice(0, 4);
 
   return (
-    <section className="flex w-full justify-center py-8 bg-[#F2F3FF]" data-testid="featured-cars">
+    <section
+      className="flex w-full justify-center py-8 bg-[#F2F3FF]"
+      data-testid="featured-cars"
+    >
       <div className="w-full px-4 lg:w-[90%] xl:w-[75%]">
         <div className="mb-8">
           <h2 className="text-2xl font-semibold text-gray-900">
@@ -60,7 +63,10 @@ export function CarGrid() {
         )}
 
         {!isLoading && !isError && featuredCars.length === 0 && (
-          <div className="flex min-h-100 items-center justify-center" data-testid="no-cars">
+          <div
+            className="flex min-h-100 items-center justify-center"
+            data-testid="no-cars"
+          >
             <div className="text-center">
               <p className="text-xl text-gray-700">No cars available</p>
               <p className="mt-2 text-sm text-gray-600">
@@ -70,8 +76,8 @@ export function CarGrid() {
           </div>
         )}
 
-        {featuredCars.length > 0 && (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 md:grid-cols-4 md:gap-6">
+        {!isLoading && !isError && featuredCars.length > 0 && (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 md:grid-cols-3 md:gap-6">
             {featuredCars.map((car, index) => (
               <CarCard key={car.id} carItem={car} priority={index === 0} />
             ))}
