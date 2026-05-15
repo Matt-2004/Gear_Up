@@ -23,21 +23,26 @@ export function CarGrid() {
 
   return (
     <section
-      className="flex w-full justify-center py-8 bg-[#F2F3FF]"
+      className="flex w-full justify-center bg-gray-50 py-16 md:py-20"
       data-testid="featured-cars"
     >
       <div className="w-full px-4 lg:w-[90%] xl:w-[75%]">
-        <div className="mb-8">
-          <h2 className="text-2xl font-semibold text-gray-900">
-            Featured Cars
+        {/* Section Header */}
+        <div className="mb-10 flex flex-col items-center text-center">
+          <span className="mb-2 inline-flex items-center rounded-full bg-primary-50 px-3 py-1 text-xs font-semibold tracking-wide text-primary-700">
+            Featured Vehicles
+          </span>
+          <h2 className="text-2xl font-bold text-gray-900 md:text-3xl">
+            Handpicked for You
           </h2>
-          <p className="text-sm text-gray-700">
-            Discover our latest collection of quality vehicles
+          <p className="mt-2 max-w-md text-sm text-gray-500">
+            Discover our latest collection of quality vehicles, verified and
+            ready for you.
           </p>
         </div>
 
         {isLoading && (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 md:grid-cols-3 md:gap-6">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {Array.from({ length: 4 }).map((_, i) => (
               <SkeletonCard key={i} />
             ))}
@@ -45,15 +50,15 @@ export function CarGrid() {
         )}
 
         {isError && (
-          <div className="flex min-h-100 items-center justify-center">
+          <div className="flex min-h-80 items-center justify-center">
             <div className="text-center">
               <p className="text-xl text-gray-700">Failed to load cars</p>
-              <p className="mt-2 text-sm text-gray-600">
+              <p className="mt-2 text-sm text-gray-500">
                 Something went wrong while fetching listings.
               </p>
               <button
                 onClick={() => refetch()}
-                className="mt-4 rounded-lg bg-primary px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-primary-600"
+                className="mt-4 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-700"
               >
                 Try Again
               </button>
@@ -63,12 +68,12 @@ export function CarGrid() {
 
         {!isLoading && !isError && featuredCars.length === 0 && (
           <div
-            className="flex min-h-100 items-center justify-center"
+            className="flex min-h-80 items-center justify-center"
             data-testid="no-cars"
           >
             <div className="text-center">
               <p className="text-xl text-gray-700">No cars available</p>
-              <p className="mt-2 text-sm text-gray-600">
+              <p className="mt-2 text-sm text-gray-500">
                 Check back later for new listings
               </p>
             </div>
@@ -76,7 +81,7 @@ export function CarGrid() {
         )}
 
         {!isLoading && !isError && featuredCars.length > 0 && (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 md:grid-cols-3 md:gap-6">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {featuredCars.map((car) => (
               <CarCard key={car.id} carItem={car} />
             ))}

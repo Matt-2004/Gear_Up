@@ -2,22 +2,13 @@
 
 import { usePathname } from "next/navigation";
 import Navbar from "./Navbar";
+import { NAVBAR_HIDDEN_ROUTES } from "../constants";
 
-const ConditionalNavbar = () => {
+export default function ConditionalNavbar() {
   const currentPath = usePathname();
 
-  const listPath = [
-    "/auth/login",
-    "/auth/register",
-    "/auth/forgot-password",
-    "/auth/reset-password",
-    "/profile/admin",
-  ];
-
-  if (listPath.includes(currentPath)) {
+  if (NAVBAR_HIDDEN_ROUTES.includes(currentPath as (typeof NAVBAR_HIDDEN_ROUTES)[number])) {
     return null;
   }
   return <Navbar />;
-};
-
-export default ConditionalNavbar;
+}

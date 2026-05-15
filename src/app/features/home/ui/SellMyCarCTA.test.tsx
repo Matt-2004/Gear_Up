@@ -57,17 +57,17 @@ describe("SellMyCarCTA", () => {
     render(<SellMyCarCTA />);
 
     expect(
-      screen.getByText(/maximize your vehicle's worth/i),
+      screen.getByRole("heading", { name: /sell your car faster/i }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/industry's most precise marketing platform/i),
+      screen.getByText(/most trusted automotive marketplace/i),
     ).toBeInTheDocument();
   });
 
   it("renders CTA link with dealer registration path", async () => {
     render(<SellMyCarCTA />);
 
-    const ctaLink = screen.getByRole("link", { name: /sell my car now/i });
+    const ctaLink = screen.getByRole("link", { name: /list your car/i });
     expect(ctaLink).toHaveAttribute("href", "/profile/dealer/register?step=1");
   });
 

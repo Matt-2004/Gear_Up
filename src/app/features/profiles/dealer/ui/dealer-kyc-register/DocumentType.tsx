@@ -50,7 +50,7 @@ const DOCUMENT_TYPES: IDocType[] = [
 ];
 
 const DocumentType = () => {
-  const { kycData, updateKycData } = useKycSubmit();
+  const { kycData, updateKycData, isStepValid } = useKycSubmit();
   const [selected, setSelected] = useState<DocId>(null);
   const pathname = usePathname();
   const router = useRouter();
@@ -72,24 +72,24 @@ const DocumentType = () => {
         e.preventDefault();
         router.push(`${pathname}?step=${currentStep + 1}`);
       }}
-      className="w-full max-w-2xl rounded-2xl border border-gray-200 bg-white p-8 shadow-sm"
+      className="w-full max-w-2xl rounded-2xl border border-zinc-200 bg-white p-6 sm:p-8 shadow-[0_1px_3px_rgba(0,0,0,0.03),0_4px_12px_rgba(0,0,0,0.04)]"
     >
-      <h3 className="mb-1 text-3xl font-bold text-gray-900">
+      <h3 className="mb-1 text-2xl font-bold tracking-tight text-zinc-900 sm:text-3xl">
         Select Document Type
       </h3>
-      <p className="mb-6 text-sm text-gray-500">
+      <p className="mb-7 text-sm text-zinc-500">
         Choose the type of identification document you will be uploading
       </p>
 
-      <div className="grid gap-4">
+      <div className="grid gap-3">
         {DOCUMENT_TYPES.map((doc) => (
           <label
             key={doc.id}
             className={clsx(
-              "block cursor-pointer px-4 py-2 rounded-xl border bg-foreground transition-all duration-200 hover:border-primary",
+              "block cursor-pointer rounded-xl border px-5 py-4 transition-all duration-300",
               selected === doc.id
-                ? "border-primary-500 ring-primary bg-white shadow-sm ring-1"
-                : " border-gray-200 ",
+                ? "border-primary/40 bg-primary-50/50 shadow-[0_0_0_1px_rgba(0,0,0,0.02)]"
+                : "border-zinc-200 bg-white hover:border-zinc-300 hover:bg-zinc-50/50",
             )}
           >
             <input
@@ -102,25 +102,30 @@ const DocumentType = () => {
             />{" "}
             <div className="flex justify-between items-center">
               <div className="flex gap-4 items-center">
-                <Image
-                  alt={doc.id as string}
-                  src={doc.pathIcon}
-                  width={40}
-                  height={40}
-                />
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-100">
+                  <Image
+                    alt={doc.id as string}
+                    src={doc.pathIcon}
+                    width={24}
+                    height={24}
+                  />
+                </div>
 
-                <h4 className="text-lg items-center text-gray-900">
-                  {doc.label}
-                </h4>
+                <div>
+                  <h4 className="text-sm font-semibold text-zinc-900">
+                    {doc.label}
+                  </h4>
+                  <p className="text-xs text-zinc-500">{doc.description}</p>
+                </div>
               </div>
               {selected === doc.id && (
-                <CircleCheckBig className="text-primary" />
+                <CircleCheckBig className="h-5 w-5 text-primary shrink-0" />
               )}
             </div>
           </label>
         ))}
       </div>
-      <StepNavigation />
+      <StepNavigation disableContinue={!isStepValid(1)} />
     </form>
   );
 };

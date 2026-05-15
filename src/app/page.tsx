@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function HOME() {
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen">
       <HeroSection />
       <CarGrid />
       <ValuePropositionSection />

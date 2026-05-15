@@ -1,25 +1,6 @@
-export type NavbarLink = {
-  id: string;
-  label: string;
-  href: string;
-};
+import { PRIMARY_NAVBAR_LINKS } from "../constants";
+import type { NavbarLink } from "../types";
 
-export const getPrimaryNavbarLinks = (
-  appointmentPath?: string,
-): NavbarLink[] => {
-  const baseLinks: NavbarLink[] = [
-    { id: "home", label: "Home", href: "/" },
-    { id: "discover", label: "Discover", href: "/post/discover" },
-  ];
+export type { NavbarLink };
 
-  if (!appointmentPath) return baseLinks;
-
-  return [
-    ...baseLinks,
-    {
-      id: "appointments",
-      label: "Appointments",
-      href: appointmentPath,
-    },
-  ];
-};
+export const getPrimaryNavbarLinks = (): NavbarLink[] => PRIMARY_NAVBAR_LINKS;

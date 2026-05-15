@@ -12,6 +12,10 @@ const PUBLIC_ROUTES = [
   "/verify",
   "/reset-password",
   "/car",
+  "/profile/dealer/register",
+  "/about",
+  "/financing",
+  "/contact",
 ];
 
 function isPublicRoute(pathname: string): boolean {
@@ -28,6 +32,7 @@ function isAdminRoute(pathname: string): boolean {
 }
 
 function isDealerRoute(pathname: string): boolean {
+  if (pathname === "/profile/dealer/register") return false;
   return (
     pathname === "/profile/dealer" || pathname.startsWith("/profile/dealer/")
   );
@@ -60,9 +65,12 @@ export async function proxy(req: NextRequest) {
   // 4. Role-based access control
   const userData = await getDecryptedFullUserData(userDataCookie);
 
-  // Dealer: restrict to dealer profile (messages are an exception)
+  // Dealer: restrict to dealer profile (messages & registration are exceptions)
   if (userData?.role === "Dealer" && !isDealerRoute(pathname)) {
-    if (pathname.startsWith("/messages")) {
+    if (
+      pathname.startsWith("/messages") ||
+      pathname.startsWith("/profile/dealer/register")
+    ) {
       return NextResponse.next();
     }
     return NextResponse.redirect(

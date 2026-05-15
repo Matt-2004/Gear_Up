@@ -1,21 +1,32 @@
 "use client";
 
-import { ReactNode } from "react";
+import clsx from "clsx";
+import type { ReactNode } from "react";
+import { useScrollAware } from "../hooks/useScrollAware";
 
 export function NavbarContainer({ children }: { children: ReactNode }) {
+  const scrolled = useScrollAware();
+
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-gray-100/80 bg-white/95 shadow-sm backdrop-blur supports-backdrop-filter:bg-white/80">
+    <nav
+      className={clsx(
+        "sticky top-0 z-50 w-full transition-all duration-300",
+        scrolled
+          ? "border-b border-gray-200/60 bg-white/80 shadow-lg shadow-gray-200/20 backdrop-blur-xl"
+          : "border-b border-transparent bg-white/95",
+      )}
+    >
       <div className="w-full px-4">
-        <div className="relative mx-auto flex h-16 w-full items-center justify-between gap-3 lg:w-[90%] xl:w-[75%]">
-          <div className="flex h-full w-full items-center justify-between gap-3">
-            {children}
-          </div>
+        <div
+          className={clsx(
+            "relative mx-auto flex w-full items-center justify-between gap-3 transition-all duration-300",
+            scrolled ? "h-14" : "h-16",
+            "lg:w-[90%] xl:w-[75%]",
+          )}
+        >
+          {children}
         </div>
       </div>
     </nav>
   );
 }
-
-export const NavbarItems = ({ children }: { children: ReactNode }) => {
-  return <div className="items-center">{children}</div>;
-};

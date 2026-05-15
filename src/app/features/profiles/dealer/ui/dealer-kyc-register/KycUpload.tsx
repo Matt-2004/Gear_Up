@@ -17,7 +17,7 @@ interface FileItem {
 }
 
 const KycUpload = () => {
-  const { kycData, updateKycData } = useKycSubmit();
+  const { kycData, updateKycData, isStepValid } = useKycSubmit();
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -67,17 +67,17 @@ const KycUpload = () => {
         e.preventDefault();
         router.push(`${pathname}?step=${currentStep + 1}`);
       }}
-      className="w-full max-w-2xl rounded-xl bg-white shadow-sm border border-gray-200 p-8"
+      className="w-full max-w-2xl rounded-2xl border border-zinc-200 bg-white p-6 sm:p-8 shadow-[0_1px_3px_rgba(0,0,0,0.03),0_4px_12px_rgba(0,0,0,0.04)]"
     >
-      <h3 className="mb-1 text-2xl font-bold text-gray-900">
+      <h3 className="mb-1 text-2xl font-bold tracking-tight text-zinc-900">
         Verify Your Identity
       </h3>
-      <p className="text-sm text-gray-500">
+      <p className="text-sm text-zinc-500">
         {/* Please upload clear photos of your {getDocumentLabel().toLowerCase()}. */}
         You can add multiple documents.
       </p>
 
-      <div className="space-y-4">
+      <div className="mt-6 space-y-5">
         {fileItems.map((item) => (
           <div key={item.id} className="">
             <div className="mb-3 flex items-center justify-between">
@@ -85,7 +85,7 @@ const KycUpload = () => {
                 <button
                   type="button"
                   // onClick={() => handleRemoveFile(item.id)}
-                  className="ml-3 text-sm font-medium text-red-400 hover:text-red-300"
+                  className="ml-3 text-sm font-medium text-red-500 hover:text-red-400"
                 >
                   Remove
                 </button>
@@ -96,14 +96,14 @@ const KycUpload = () => {
               className={clsx(
                 "rounded-lg transition-all duration-200 h-full w-full",
                 item.file
-                  ? "border-green-500 bg-foreground"
-                  : "border-gray-200 hover:border-gray-500",
+                  ? "border-green-500/60 bg-transparent"
+                  : "border-zinc-200 hover:border-zinc-300",
               )}
             >
               {item.preview ? (
-                <div className="group relative  overflow-hidden rounded-xl border border-gray-200 bg-foreground shadow-sm">
+                <div className="group relative overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm">
                   {/* Image Area */}
-                  <div className="relative h-80 w-full overflow-hidden bg-foreground">
+                  <div className="relative h-80 w-full overflow-hidden bg-zinc-100">
                     <CarImage
                       src={item.preview}
                       alt={`${item.label} preview`}
@@ -114,11 +114,11 @@ const KycUpload = () => {
                   </div>
 
                   {/* Divider */}
-                  <div className="h-px w-full bg-gray-200" />
+                  <div className="h-px w-full bg-zinc-200" />
 
                   {/* Footer */}
-                  <div className="flex items-center gap-2 bg-foreground px-3 py-2.5">
-                    <span className="flex-1 truncate text-sm text-gray-900">
+                  <div className="flex items-center gap-2 bg-white px-3 py-2.5">
+                    <span className="flex-1 truncate text-sm text-zinc-700">
                       {item.file?.name ?? "No file selected"}
                     </span>
 
@@ -155,7 +155,7 @@ const KycUpload = () => {
       <UploadTips />
       <Disclaimer />
       {/* Step Navigation*/}
-      <StepNavigation />
+      <StepNavigation disableContinue={!isStepValid(2)} />
     </form>
   );
 };
@@ -172,16 +172,16 @@ export const DefaultImageUpload = ({
   handleFileChange: (id: string, file: File | null) => void;
 }) => {
   return (
-    <label className="group space-y-2 hover:border-primary hover:bg-primary-50/40 focus-within:ring-primary/30 flex w-full cursor-pointer flex-col items-center rounded-2xl border-2 border-dashed border-gray-300 bg-[#E8E9E0] p-10 text-center transition-all duration-200 hover:shadow-md focus-within:ring-4">
-      <div className="p-4 bg-primary-50/70 rounded-full">
-        <Upload className=" h-6 w-6 text-primary" />
+    <label className="group flex w-full cursor-pointer flex-col items-center rounded-2xl border-2 border-dashed border-zinc-300 bg-zinc-50/80 p-10 text-center transition-all duration-300 hover:border-primary/40 hover:bg-primary-50/30 focus-within:border-primary/50 focus-within:ring-1 focus-within:ring-primary/20">
+      <div className="rounded-full bg-primary-50 p-4">
+        <Upload className="h-6 w-6 text-primary" />
       </div>
-      <h1 className="font-semibold text-gray-900">{label}</h1>
-      <h3 className="text-sm w-[75%] text-gray-500">{description}</h3>
-      <span className="mb-1 cursor-pointer uppercase px-4 text-xs font-semibold py-1 rounded-full text-primary  bg-primary-50/70 group-hover:bg-foreground group-hover:text-gray-900">
+      <h1 className="mt-3 font-semibold text-zinc-900">{label}</h1>
+      <h3 className="mt-1 text-sm text-zinc-500 w-[75%]">{description}</h3>
+      <span className="mb-1 mt-3 cursor-pointer rounded-full bg-primary-50 px-4 py-1 text-xs font-semibold uppercase text-primary transition-colors group-hover:bg-primary-100">
         Click to upload
       </span>
-      <span className="text-xs text-gray-500 mt-1">
+      <span className="mt-1 text-xs text-zinc-400">
         PNG, JPG, PDF up to 10MB
       </span>
       <input
@@ -195,37 +195,33 @@ export const DefaultImageUpload = ({
 };
 
 const UploadSummary = ({ fileItems }: { fileItems: FileItem[] }) => {
+  const uploadedCount = fileItems.filter((item) => item.file).length;
+  const progressPct = Math.round((uploadedCount / fileItems.length) * 100);
+
   return (
-    <div className="mt-6 rounded-lg border border-primary-200 bg-primary-50 p-4">
+    <div className="mt-6 rounded-xl border border-zinc-200 bg-zinc-50 p-4">
       {/* Header */}
       <div className="mb-3 flex items-center justify-between">
-        <p className="text-sm font-medium text-primary-800">Upload Summary</p>
-        <span className="text-sm font-medium text-primary-700">
-          {Math.round(
-            (fileItems.filter((item) => item.file).length / fileItems.length) *
-              100,
-          )}
-          %
+        <p className="text-sm font-medium text-zinc-700">Upload Summary</p>
+        <span className="text-sm font-medium text-zinc-500">
+          {progressPct}%
         </span>
       </div>
 
       {/* Progress Bar */}
-      <div className="mb-3 h-2 w-full overflow-hidden rounded-full bg-primary-200">
+      <div className="mb-3 h-1.5 w-full overflow-hidden rounded-full bg-zinc-200">
         <div
-          className="h-full rounded-full bg-primary-600 transition-all duration-500 ease-out"
-          style={{
-            width: `${Math.round((fileItems.filter((item) => item.file).length / fileItems.length) * 100)}%`,
-          }}
+          className="h-full rounded-full bg-primary transition-all duration-700 ease-out"
+          style={{ width: `${progressPct}%` }}
         />
       </div>
 
       {/* Footer */}
       <div className="flex items-center justify-between">
-        <p className="text-xs text-primary-700">
-          {fileItems.filter((item) => item.file).length} of {fileItems.length}{" "}
-          files uploaded
+        <p className="text-xs text-zinc-500">
+          {uploadedCount} of {fileItems.length} files uploaded
         </p>
-        <p className="text-xs text-primary-700">
+        <p className="text-xs text-zinc-500">
           {(
             fileItems.reduce((sum, item) => sum + (item.file?.size || 0), 0) /
             1024 /
@@ -240,7 +236,7 @@ const UploadSummary = ({ fileItems }: { fileItems: FileItem[] }) => {
 
 const Disclaimer = () => {
   return (
-    <div className="mt-4 flex items-start gap-2.5 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3">
+    <div className="mt-4 flex items-start gap-2.5 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
       <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
       <div>
         <p className="text-sm font-medium text-amber-800">Disclaimer</p>
@@ -255,7 +251,7 @@ const Disclaimer = () => {
 
 const UploadTips = () => {
   return (
-    <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-4">
+    <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-4">
       <div className="flex items-start gap-3">
         <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" />
         <div>
