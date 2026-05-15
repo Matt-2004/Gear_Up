@@ -52,26 +52,26 @@ const KycRegister = ({ step }: { step: string }) => {
   // Passing useState to child components to get data
 
   return (
-    <div className="flex min-h-screen flex-col items-center bg-background px-4 py-12">
+    <div className="flex min-h-screen flex-col items-center bg-white px-4 py-12 sm:py-16">
       <div className="w-full max-w-6xl">
         {/* Header */}
-        <div className="mb-12 text-center">
-          <div className="mb-4 inline-block rounded-full bg-primary-100 px-4 py-2 border border-primary-200">
-            <span className="text-sm font-semibold text-primary-700">
+        <div className="mb-14 text-center">
+          <div className="mb-5 inline-flex rounded-full border border-zinc-200 bg-zinc-50 px-4 py-1.5">
+            <span className="text-xs font-medium tracking-wider text-zinc-500 uppercase">
               Dealer Registration
             </span>
           </div>
-          <h1 className="mb-3 text-3xl font-bold md:text-4xl text-gray-900">
+          <h1 className="mb-3 text-3xl font-bold tracking-tight text-zinc-900 md:text-4xl">
             Dealership Registration
           </h1>
-          <p className="text-gray-600 md:text-lg">
+          <p className="text-zinc-500 md:text-lg">
             Complete your identity verification to access all features
           </p>
         </div>
 
         {/* Progress Steps */}
-        <div className="mb-8 flex justify-center">
-          <ProgressSteps Steps={Steps} />
+        <div className="mb-10 flex justify-center">
+          <ProgressSteps Steps={Steps} currentStep={step || "1"} />
         </div>
 
         {/* Step Content */}
@@ -84,12 +84,12 @@ const KycRegister = ({ step }: { step: string }) => {
         </div>
 
         {/* Help Text */}
-        <div className="mt-12 text-center">
-          <p className="text-sm text-gray-600">
+        <div className="mt-14 text-center">
+          <p className="text-sm text-zinc-400">
             Need help? Contact our{" "}
             <a
               href="/support"
-              className="text-primary-600 underline hover:text-primary-700 transition-colors font-medium"
+              className="text-zinc-600 underline decoration-zinc-300 underline-offset-4 transition-colors hover:text-zinc-900 hover:decoration-zinc-400 font-medium"
             >
               support team
             </a>

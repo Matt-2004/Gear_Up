@@ -5,13 +5,22 @@ import { UserDataProvider } from "@/app/features/navbar/context/UserDataContext"
 import ReactQueryProvider from "@/app/shared/provider/ReactQueryProvider";
 import ToastProvider from "@/app/features/toast/provider/ToastProvider";
 import type { Metadata } from "next";
-import { Roboto } from "next/font/google";
+import { DM_Sans, DM_Serif_Display } from "next/font/google";
 import { ReactNode } from "react";
 import "./globals.css";
 
-const roboto = Roboto({
+const dmSans = DM_Sans({
   subsets: ["latin"],
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-dm-sans",
+  display: "swap",
+});
+
+const dmSerifDisplay = DM_Serif_Display({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-dm-serif-display",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -76,13 +85,9 @@ export default async function RootLayout({
 }: Readonly<{
   children: ReactNode;
 }>) {
-  // check access and refresh token
-  // if exist, fetch user data
-  // add data in UserDataContext
-
   return (
-    <html lang="en" className={`${roboto.className}`}>
-      <body className={`antialiased`}>
+    <html lang="en" className={`${dmSans.variable} ${dmSerifDisplay.variable}`}>
+      <body className="antialiased font-sans">
         <ToastProvider>
           <ReactQueryProvider>
             <UserDataProvider>

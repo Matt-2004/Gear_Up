@@ -9,7 +9,7 @@ import { DefaultImageUpload } from "./KycUpload";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const SelfieImageUpload = () => {
-  const { updateKycData } = useKycSubmit();
+  const { updateKycData, isStepValid } = useKycSubmit();
   const [preview, setPreview] = useState<string>("");
   const [file, setFile] = useState<File | null>(null);
   const [useCameraMode, setUseCameraMode] = useState(false);
@@ -81,10 +81,10 @@ const SelfieImageUpload = () => {
         e.preventDefault();
         router.push(`${pathname}?step=${currentStep + 1}`);
       }}
-      className="w-full max-w-2xl rounded-xl bg-white shadow-sm border border-gray-200 p-8"
+      className="w-full max-w-2xl rounded-2xl border border-zinc-200 bg-white p-6 sm:p-8 shadow-[0_1px_3px_rgba(0,0,0,0.03),0_4px_12px_rgba(0,0,0,0.04)]"
     >
-      <h3 className="mb-3 text-2xl font-bold text-gray-900">Take a Selfie</h3>
-      <p className="mb-6 text-gray-600">
+      <h3 className="mb-1 text-2xl font-bold tracking-tight text-zinc-900">Take a Selfie</h3>
+      <p className="mb-6 text-zinc-500">
         Take a clear photo of your face for identity verification
       </p>
 
@@ -101,13 +101,13 @@ const SelfieImageUpload = () => {
 
             {/* Or use Camera */}
             <div className="text-center">
-              <span className="text-gray-500 font-medium">or</span>
+              <span className="text-zinc-400 font-medium">or</span>
             </div>
 
             <button
               type="button"
               onClick={startCamera}
-              className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary-600 text-white py-4 font-medium transition-colors hover:bg-primary-700"
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-zinc-900 py-3.5 text-sm font-semibold text-white transition-all hover:bg-zinc-800 active:scale-[0.99]"
             >
               <Camera className="h-5 w-5" />
               Use Camera
@@ -118,27 +118,27 @@ const SelfieImageUpload = () => {
         {/* Camera View */}
         {useCameraMode && (
           <div className="space-y-4">
-            <div className="relative overflow-hidden rounded-lg bg-black">
+            <div className="relative overflow-hidden rounded-xl bg-black">
               <video
                 ref={videoRef}
                 autoPlay
                 playsInline
                 className="h-96 w-full object-cover"
               />
-              <div className="pointer-events-none absolute inset-0 rounded-lg border-4 border-primary-500" />
+              <div className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-inset ring-white/20" />
             </div>
             <div className="flex gap-3">
               <button
                 type="button"
                 onClick={capturePhoto}
-                className="flex-1 rounded-lg bg-primary-600 text-white py-3 font-medium transition-colors hover:bg-primary-700"
+                className="flex-1 rounded-xl bg-zinc-900 py-3 text-sm font-semibold text-white transition-all hover:bg-zinc-800 active:scale-[0.99]"
               >
                 Capture Photo
               </button>
               <button
                 type="button"
                 onClick={stopCamera}
-                className="rounded-lg bg-white border-2 border-gray-300 text-gray-700 px-6 py-3 font-medium transition-colors hover:bg-gray-100"
+                className="rounded-xl border border-zinc-300 bg-white px-6 py-3 text-sm font-medium text-zinc-700 transition-all hover:bg-zinc-50"
               >
                 Cancel
               </button>
@@ -149,7 +149,7 @@ const SelfieImageUpload = () => {
         {/* Preview */}
         {preview && (
           <div>
-            <div className="relative overflow-hidden rounded-lg border-2 border-primary-500 bg-primary-50 p-4">
+            <div className="relative overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50 p-4">
               <Image
                 src={preview}
                 alt="Selfie preview"
@@ -158,11 +158,11 @@ const SelfieImageUpload = () => {
                 width={50}
               />
             </div>
-            <div className="mt-4 flex items-center justify-between rounded-lg bg-gray-100 border border-gray-200 p-3">
-              <span className="flex-1 truncate text-sm text-gray-900">
+            <div className="mt-4 flex items-center justify-between rounded-xl border border-zinc-200 bg-white p-3">
+              <span className="flex-1 truncate text-sm text-zinc-700">
                 {file?.name || "selfie.jpg"}
               </span>
-              <label className="ml-3 cursor-pointer rounded-lg bg-primary text-white px-4 py-2 text-sm font-medium transition-colors hover:bg-primary-600">
+              <label className="ml-3 cursor-pointer rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-600">
                 Retake
                 <input
                   type="file"
@@ -184,14 +184,14 @@ const SelfieImageUpload = () => {
         )}
       </div>
 
-      <div className="mt-6 rounded-lg border-2 border-amber-200 bg-amber-50 p-4">
+      <div className="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-4">
         <div className="flex items-start gap-3">
-          <TriangleAlert className="h-4 w-4 text-amber-700" />
+          <TriangleAlert className="h-4 w-4 shrink-0 text-amber-500" />
           <div>
             <p className="text-sm font-medium text-amber-800">
               Selfie Requirements
             </p>
-            <ul className="mt-1 list-inside list-disc space-y-1 text-sm text-amber-700">
+            <ul className="mt-1 list-inside list-disc space-y-1 text-xs text-amber-700">
               <li>Face the camera directly</li>
               <li>Remove glasses and hats</li>
               <li>Ensure good lighting</li>
@@ -200,7 +200,7 @@ const SelfieImageUpload = () => {
           </div>
         </div>
       </div>
-      <StepNavigation />
+      <StepNavigation disableContinue={!isStepValid(3)} />
     </form>
   );
 };

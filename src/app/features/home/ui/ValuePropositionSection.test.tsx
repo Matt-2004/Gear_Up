@@ -6,11 +6,11 @@ describe("ValuePropositionSection", () => {
     render(<ValuePropositionSection />);
 
     expect(
-      screen.getByRole("heading", { name: /why choose gearup/i }),
+      screen.getByRole("heading", { name: /built for trust, speed, and ease/i }),
     ).toBeInTheDocument();
     expect(
       screen.getByText(
-        /built to help buyers and sellers move faster with confidence/i,
+        /everything you need to find, book, and buy your next car/i,
       ),
     ).toBeInTheDocument();
   });
@@ -18,8 +18,9 @@ describe("ValuePropositionSection", () => {
   it("renders all value proposition cards", () => {
     render(<ValuePropositionSection />);
 
-    expect(screen.getByText(/trust/i)).toBeInTheDocument();
-    expect(screen.getByText(/secure & verified listings/i)).toBeInTheDocument();
-    expect(screen.getByText(/instance booking system/i)).toBeInTheDocument();
+    expect(screen.getByText(/verified listings/i)).toBeInTheDocument();
+    expect(screen.getByText(/secure transactions/i)).toBeInTheDocument();
+    expect(screen.getByText(/instant booking/i)).toBeInTheDocument();
+    expect(screen.getByText(/financing support/i)).toBeInTheDocument();
   });
 });

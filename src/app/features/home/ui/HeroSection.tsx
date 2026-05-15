@@ -6,12 +6,15 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useRef, useState, useTransition } from "react";
 import carSuggestionsData from "@/../public/carSuggestions.json";
 
+const FILTER_CHIPS = ["SUV", "Sedan", "EV", "Luxury", "Sports"] as const;
+
 export default function HeroSection() {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [activeChip, setActiveChip] = useState<string | null>(null);
   const searchContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -35,7 +38,6 @@ export default function HeroSection() {
         if (carGroup.make.toLowerCase().includes(lowerQuery)) {
           filtered.push(carGroup.make);
         }
-
         for (const model of carGroup.model) {
           const fullName = `${carGroup.make} ${model}`;
           if (fullName.toLowerCase().includes(lowerQuery)) {
@@ -43,7 +45,6 @@ export default function HeroSection() {
           }
           if (filtered.length >= 6) break;
         }
-
         if (filtered.length >= 6) break;
       }
 
@@ -64,18 +65,13 @@ export default function HeroSection() {
         setShowSuggestions(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const goToSearch = (value: string) => {
     const normalizedValue = value.trim();
     if (!normalizedValue) return;
-
     setShowSuggestions(false);
     startTransition(() => {
       router.push(`/car/search?query=${encodeURIComponent(normalizedValue)}`);
@@ -92,139 +88,100 @@ export default function HeroSection() {
     goToSearch(suggestion);
   };
 
-  const heroImages = [
-    {
-      src: "/carImages/1.jpg",
-      layout:
-        "col-span-2 row-span-2 md:col-span-2 md:row-span-2 lg:col-span-4 lg:row-span-2",
-    },
-    {
-      src: "/carImages/2.jpg",
-      layout:
-        "col-span-1 row-span-1 md:col-span-2 md:row-span-1 lg:col-span-4 lg:row-span-1",
-    },
-    {
-      src: "/carImages/3.jpg",
-      layout:
-        "col-span-1 row-span-1 md:col-span-2 md:row-span-1 lg:col-span-4 lg:row-span-1",
-    },
-    {
-      src: "/carImages/4.jpg",
-      layout:
-        "col-span-1 row-span-1 md:col-span-2 md:row-span-1 lg:col-span-4 lg:row-span-1",
-    },
-    {
-      src: "/carImages/5.jpg",
-      layout:
-        "col-span-1 row-span-1 md:col-span-2 md:row-span-1 lg:col-span-4 lg:row-span-1",
-    },
-    {
-      src: "/carImages/6.jpg",
-      layout:
-        "col-span-2 row-span-1 md:col-span-3 md:row-span-1 lg:col-span-6 lg:row-span-1",
-    },
-    {
-      src: "/carImages/7.jpg",
-      layout:
-        "col-span-2 row-span-1 md:col-span-3 md:row-span-1 lg:col-span-6 lg:row-span-1",
-    },
-  ];
+  const handleChipClick = (chip: string) => {
+    setActiveChip(chip);
+    goToSearch(chip);
+  };
 
   return (
-    <section className="w-full px-4 py-6 md:py-10">
-      <div className="mx-auto w-full lg:w-[90%] xl:w-[75%]">
-        <div className="relative overflow-hidden rounded-2xl">
-          <div className="grid grid-flow-dense auto-rows-[110px] grid-cols-2 gap-2 md:auto-rows-[130px] md:grid-cols-6 md:gap-3 lg:auto-rows-[140px] lg:grid-cols-12">
-            {heroImages.map((item, index) => (
-              <div
-                key={`${item.src}-${index}`}
-                className={`relative overflow-hidden rounded-xl ${item.layout}`}
-              >
-                <Image
-                  src={item.src}
-                  alt={`Car image ${index + 1}`}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                  priority={index < 2}
-                />
-              </div>
-            ))}
-          </div>
-          <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(0,0,0,0.72),rgba(0,0,0,0.28),rgba(0,0,0,0.78))]" />
+    <section className="relative flex min-h-[85vh] items-center justify-center overflow-hidden">
+      {/* Background Image */}
+      <Image
+        src="/carImages/9.jpg"
+        alt="Premium vehicle showcase"
+        fill
+        quality={100}
+        className="object-cover object-center"
+        priority
+        sizes="100vw"
+      />
+      {/* Gradient Overlay */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(0,0,0,0.55),rgba(0,0,0,0.35),rgba(0,0,0,0.7))]" />
 
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-12 p-4">
-            <h1 className="text-center text-3xl font-bold text-white drop-shadow-md md:text-6xl">
-              Find Your Next Car
-            </h1>
+      {/* Content */}
+      <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-4 text-center">
+        <span className="mb-4 inline-flex items-center rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-medium text-white backdrop-blur-md">
+          Trusted by thousands of buyers &amp; sellers
+        </span>
 
-            <form
-              onSubmit={handleSearchSubmit}
-              className="
-    relative flex h-14 w-full max-w-3xl items-center gap-3
-    rounded-xl border border-white/10
-    bg-white/10 px-2
-    shadow-2xl backdrop-blur-xl
-  "
+        <h1 className="max-w-3xl text-4xl font-bold leading-tight tracking-tight text-white md:text-6xl lg:text-7xl">
+          Find Your Next Car
+        </h1>
+
+        <p className="mt-4 max-w-xl text-base text-white/80 md:text-lg">
+          The most trusted automotive marketplace. Browse verified listings,
+          book test drives instantly, and drive away with confidence.
+        </p>
+
+        {/* Search Bar */}
+        <form onSubmit={handleSearchSubmit} className="mt-10 w-full max-w-2xl">
+          <div
+            ref={searchContainerRef}
+            className="relative flex items-center rounded-2xl border border-white/10 bg-white/15 p-1.5 shadow-2xl backdrop-blur-2xl transition-all focus-within:bg-white/20 focus-within:shadow-[0_0_0_2px_rgba(255,255,255,0.15)]"
+          >
+            <Search className="ml-3 h-5 w-5 shrink-0 text-white/60" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onFocus={() => {
+                if (suggestions.length > 0) setShowSuggestions(true);
+              }}
+              placeholder="Search by make, model, or year..."
+              className="h-12 flex-1 bg-transparent px-3 text-sm font-medium text-white placeholder:text-white/40 focus:outline-none"
+            />
+            <button
+              type="submit"
+              disabled={isPending}
+              className="h-11 shrink-0 rounded-xl bg-white px-6 text-sm font-semibold text-gray-900 transition-all hover:bg-gray-100 hover:shadow-lg active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {/* Search Icon */}
-              <Search className="ml-2 h-5 w-5 shrink-0 text-white/50" />
+              {isPending ? "Searching..." : "Search"}
+            </button>
 
-              {/* Input Container */}
-              <div ref={searchContainerRef} className="relative flex-1">
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onFocus={() => {
-                    if (suggestions.length > 0) setShowSuggestions(true);
-                  }}
-                  placeholder="Search by make, model, or year..."
-                  className="
-        h-full w-full max-w-3xl bg-transparent
-        text-sm font-medium text-white
-        placeholder:text-white/40
-        focus:outline-none
-      "
-                />
-
-                {showSuggestions && suggestions.length > 0 && (
-                  <div className="absolute top-11 z-50 max-h-64 w-full overflow-y-auto rounded-xl border border-white/15 bg-black/85 py-1 shadow-2xl backdrop-blur-xl">
-                    {suggestions.map((suggestion) => (
-                      <button
-                        key={suggestion}
-                        type="button"
-                        onClick={() => handleSuggestionClick(suggestion)}
-                        className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-white transition-colors hover:bg-white/10"
-                      >
-                        <Search className="h-4 w-4 shrink-0 text-white/70" />
-                        <span>{suggestion}</span>
-                      </button>
-                    ))}
-                  </div>
-                )}
+            {showSuggestions && suggestions.length > 0 && (
+              <div className="absolute left-0 top-full z-50 mt-2 max-h-64 w-full overflow-y-auto rounded-xl border border-white/15 bg-gray-900/95 py-1 shadow-2xl backdrop-blur-xl">
+                {suggestions.map((suggestion) => (
+                  <button
+                    key={suggestion}
+                    type="button"
+                    onClick={() => handleSuggestionClick(suggestion)}
+                    className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm text-white transition-colors hover:bg-white/10"
+                  >
+                    <Search className="h-4 w-4 shrink-0 text-white/50" />
+                    <span>{suggestion}</span>
+                  </button>
+                ))}
               </div>
-
-              {/* Search Button */}
-              <button
-                type="submit"
-                disabled={isPending}
-                className="
-      h-10 shrink-0 rounded-lg
-      bg-primary text-white px-6
-      text-sm font-semibold 
-      transition-all duration-200
-      hover:bg-primary-600 hover:shadow-md
-      active:scale-[0.98]
-      cursor-pointer
-      disabled:cursor-not-allowed
-      disabled:opacity-60
-    "
-              >
-                {isPending ? "Searching..." : "Search Here"}
-              </button>
-            </form>
+            )}
           </div>
+        </form>
+
+        {/* Filter Chips */}
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
+          {FILTER_CHIPS.map((chip) => (
+            <button
+              key={chip}
+              type="button"
+              onClick={() => handleChipClick(chip)}
+              className={`rounded-full border px-4 py-2 text-xs font-medium transition-all hover:scale-105 ${
+                activeChip === chip
+                  ? "border-white bg-white text-gray-900"
+                  : "border-white/20 bg-white/10 text-white backdrop-blur-md hover:border-white/40 hover:bg-white/15"
+              }`}
+            >
+              {chip}
+            </button>
+          ))}
         </div>
       </div>
     </section>

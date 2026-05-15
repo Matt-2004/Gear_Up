@@ -8,14 +8,15 @@ import NavbarTabs from "./NavbarTabs";
 export default function Navbar() {
   return (
     <NavbarContainer>
-      <div className="flex h-full items-center gap-3">
-        <NavbarBrand />
-      </div>
+      {/* Left: Brand */}
+      <NavbarBrand />
 
+      {/* Center: Navigation links */}
       <div className="hidden min-w-0 flex-1 items-center justify-center md:flex">
         <NavbarTabs />
       </div>
 
+      {/* Right: Search, Wishlist, Notifications, Auth, CTA */}
       <NavbarUtility />
     </NavbarContainer>
   );

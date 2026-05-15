@@ -5,16 +5,21 @@ import { AddNewCarSteps } from "../../utils/steps";
 const StepNavigation = ({
   isSubmitForm = false,
   isSubmitting = false,
+  disableContinue = false,
+  submitLabel,
 }: {
   isSubmitForm?: boolean;
   isSubmitting?: boolean;
+  disableContinue?: boolean;
+  submitLabel?: string;
 }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const currentStep = Number(searchParams.get("step") ?? 1);
   const currentPath = usePathname();
   const isFinalStep = currentStep === AddNewCarSteps.length;
-  const submitLabel = isFinalStep ? "Publish Listing" : "Continue →";
+  const defaultSubmitLabel = isFinalStep ? "Publish Listing" : "Continue →";
+  const resolvedSubmitLabel = submitLabel ?? defaultSubmitLabel;
 
   const onBack = () => {
     if (currentStep > 1) {
@@ -25,20 +30,26 @@ const StepNavigation = ({
   };
 
   return (
-    <div className="flex mt-4  flex-col sm:flex-row gap-3 w-full sm:w-auto">
+    <div className="mt-6 flex flex-col gap-3 w-full sm:flex-row">
       <button
         type="button"
         onClick={onBack}
-        className="rounded-lg min-w-[50%] border border-gray-300 cursor-pointer px-6 py-2 font-semibold text-gray-700 transition-colors hover:bg-gray-50"
+        className="rounded-xl border border-zinc-300 bg-white px-6 py-2.5 text-sm font-semibold text-zinc-700 transition-all hover:border-zinc-400 hover:bg-zinc-50 hover:text-zinc-900 active:scale-[0.99] sm:min-w-[50%]"
       >
         {currentStep === 1 ? "Cancel" : "Back"}
       </button>
       {isSubmitForm ? (
-        <Button width="half" type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Submitting..." : submitLabel}
+        <Button
+          width="half"
+          type="submit"
+          disabled={isSubmitting || disableContinue}
+        >
+          {isSubmitting ? "Submitting..." : resolvedSubmitLabel}
         </Button>
       ) : (
-        <Button width="half">Continue →</Button>
+        <Button width="half" disabled={disableContinue}>
+          Continue →
+        </Button>
       )}
     </div>
   );
