@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, MessageCircle, CheckCheck, Trash2 } from "lucide-react";
+import { Bell, MessageCircle } from "lucide-react";
 import Image from "next/image";
 import { formatDistanceToNow } from "date-fns";
 import type { NotificationTab } from "../types";
@@ -45,8 +45,6 @@ export default function NavbarNotificationList({
   hasChatNotifications,
   onReadOne,
   onDeleteOne,
-  onReadAll,
-  onDeleteAll,
   onChatClick,
 }: NavbarNotificationListProps) {
   const counts: Record<NotificationTab, number> = {
@@ -86,7 +84,11 @@ export default function NavbarNotificationList({
             {loading ? (
               <NotificationSkeleton />
             ) : !hasNotifications ? (
-              <EmptyState icon={Bell} title="No notifications yet" description="We'll let you know when something happens" />
+              <EmptyState
+                icon={Bell}
+                title="No notifications yet"
+                description="We'll let you know when something happens"
+              />
             ) : (
               <div className="divide-y divide-gray-100">
                 {notifications.map((n) => (
@@ -106,11 +108,15 @@ export default function NavbarNotificationList({
         {activeTab === "chat" && (
           <>
             {!hasChatNotifications ? (
-              <EmptyState icon={MessageCircle} title="No new messages" description="Your inbox is empty" />
+              <EmptyState
+                icon={MessageCircle}
+                title="No new messages"
+                description="Your inbox is empty"
+              />
             ) : (
               <div className="divide-y divide-gray-100">
                 {chatNotifications.slice(0, 10).map((chat) => (
-                  <div
+                  <button
                     key={chat.id}
                     onClick={() => onChatClick(chat)}
                     className={`flex cursor-pointer items-center gap-3 px-4 py-3 transition-colors hover:bg-gray-50 ${
@@ -141,15 +147,19 @@ export default function NavbarNotificationList({
                           {chat.senderName}
                         </p>
                         <span className="shrink-0 text-xs text-gray-400">
-                          {formatDistanceToNow(new Date(chat.sentAt), { addSuffix: true })}
+                          {formatDistanceToNow(new Date(chat.sentAt), {
+                            addSuffix: true,
+                          })}
                         </span>
                       </div>
-                      <p className="truncate text-xs text-gray-500">Sent you a message</p>
+                      <p className="truncate text-xs text-gray-500">
+                        Sent you a message
+                      </p>
                     </div>
                     {!chat.isMine && (
                       <span className="h-2 w-2 shrink-0 rounded-full bg-blue-500" />
                     )}
-                  </div>
+                  </button>
                 ))}
               </div>
             )}

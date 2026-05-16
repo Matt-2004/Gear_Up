@@ -45,8 +45,6 @@ export default function CarSearch({
     allItems,
     hasNextPage,
     isFetchingNextPage,
-    isLoading,
-    isError,
     error,
     showStartState,
     showLoadingState,
@@ -312,7 +310,10 @@ function FilterBar({
   showFilters: boolean;
   setShowFilters: (v: boolean) => void;
   activeFilterCount: number;
-  updateFilter: (key: "price" | "color" | "sortBy" | "sortOrder", value: string) => void;
+  updateFilter: (
+    key: "price" | "color" | "sortBy" | "sortOrder",
+    value: string,
+  ) => void;
   clearFilters: () => void;
 }) {
   return (
@@ -351,7 +352,12 @@ function FilterBar({
                   {value}
                   <button
                     type="button"
-                    onClick={() => updateFilter(key as "price" | "color" | "sortBy" | "sortOrder", "")}
+                    onClick={() =>
+                      updateFilter(
+                        key as "price" | "color" | "sortBy" | "sortOrder",
+                        "",
+                      )
+                    }
                     className="ml-0.5 rounded-full p-0.5 text-zinc-400 hover:bg-zinc-200 hover:text-zinc-600"
                   >
                     <X className="h-3 w-3" />

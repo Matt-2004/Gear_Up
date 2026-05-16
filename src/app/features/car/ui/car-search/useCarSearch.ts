@@ -5,7 +5,7 @@ import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
 import { searchCarWithQuery } from "@/app/shared/utils/API/CarAPI";
 import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { CarModel } from "../../types/car.model";
 import { carMapper } from "../../types/car.mapper";
 import { PRICE_RANGES } from "./filter-options";
@@ -48,27 +48,28 @@ export function useCarSearch({ query, initialData }: UseCarSearchParams) {
   }, [query]);
 
   // Build URL with query + filters
-  const buildUrl = (queryOverride?: string) => {
-    const q = queryOverride ?? trimmedQuery;
-    const hasFilters = activeFilterCount > 0;
-    if (!q && !hasFilters) return "";
-    const params = new URLSearchParams();
-    if (q) params.set("query", q);
-    if (filters.price) params.set("price", filters.price);
-    if (filters.color) params.set("color", filters.color);
-    if (filters.sortBy) params.set("sortBy", filters.sortBy);
-    if (filters.sortOrder) params.set("sortOrder", filters.sortOrder);
-    return `/car/search?${params.toString()}`;
-  };
+  const buildUrl = useCallback(
+    (queryOverride?: string) => {
+      const q = queryOverride ?? trimmedQuery;
+      const hasFilters = activeFilterCount > 0;
+      if (!q && !hasFilters) return "";
+      const params = new URLSearchParams();
+      if (q) params.set("query", q);
+      if (filters.price) params.set("price", filters.price);
+      if (filters.color) params.set("color", filters.color);
+      if (filters.sortBy) params.set("sortBy", filters.sortBy);
+      if (filters.sortOrder) params.set("sortOrder", filters.sortOrder);
+      return `/car/search?${params.toString()}`;
+    },
+    [trimmedQuery, activeFilterCount, filters],
+  );
 
   // Sync filters to URL
   useEffect(() => {
-    if (!trimmedQuery && activeFilterCount === 0) return;
     const url = buildUrl();
-    if (url) {
-      router.replace(url, { scroll: false });
-    }
-  }, [filters]);
+    if (!url) return;
+    router.replace(url, { scroll: false });
+  }, [buildUrl, router]);
 
   // Build API query string
   const buildQueryString = (cursor?: string) => {
@@ -251,7 +252,8 @@ export function useCarSearch({ query, initialData }: UseCarSearchParams) {
   const showStartState = !hasActiveSearch;
   const showLoadingState = hasActiveSearch && isLoading && !hasResults;
   const showErrorState = hasActiveSearch && isError;
-  const showEmptyState = hasActiveSearch && !isLoading && !isError && !hasResults;
+  const showEmptyState =
+    hasActiveSearch && !isLoading && !isError && !hasResults;
   const showResultsState = hasActiveSearch && hasResults;
 
   return {

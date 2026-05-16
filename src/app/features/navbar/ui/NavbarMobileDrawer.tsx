@@ -58,6 +58,7 @@ export default function NavbarMobileDrawer({
       <div
         className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
         onClick={onClose}
+        aria-hidden="true"
       />
 
       {/* Drawer */}
