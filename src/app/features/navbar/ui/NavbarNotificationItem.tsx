@@ -1,7 +1,15 @@
 "use client";
 
 import { formatDistanceToNow } from "date-fns";
-import { Heart, MessageSquare, Calendar, Bell, ShieldCheck, RotateCcw, X } from "lucide-react";
+import {
+  Heart,
+  MessageSquare,
+  Calendar,
+  Bell,
+  ShieldCheck,
+  RotateCcw,
+  X,
+} from "lucide-react";
 import type { NotificationModel } from "../../notification/types/notification.model";
 
 interface NavbarNotificationItemProps {
@@ -12,7 +20,8 @@ interface NavbarNotificationItemProps {
 }
 
 const getIcon = (type: string) => {
-  if (type.includes("Like")) return <Heart className="h-3.5 w-3.5 text-pink-500" />;
+  if (type.includes("Like"))
+    return <Heart className="h-3.5 w-3.5 text-pink-500" />;
   if (type.includes("Comment") || type.includes("Replied"))
     return <MessageSquare className="h-3.5 w-3.5 text-blue-500" />;
   if (type.includes("Appointment"))
@@ -29,7 +38,7 @@ export default function NavbarNotificationItem({
   onDelete,
 }: NavbarNotificationItemProps) {
   return (
-    <div
+    <button
       onClick={() => onClick(notification)}
       className={`group flex cursor-pointer items-start gap-3 px-4 py-3 transition-colors hover:bg-gray-50 ${
         !notification.isRead ? "bg-blue-50/40" : ""
@@ -45,9 +54,13 @@ export default function NavbarNotificationItem({
       </div>
 
       <div className="min-w-0 flex-1">
-        <p className="line-clamp-2 text-sm text-gray-800">{notification.title}</p>
+        <p className="line-clamp-2 text-sm text-gray-800">
+          {notification.title}
+        </p>
         <p className="mt-0.5 text-xs text-gray-400">
-          {formatDistanceToNow(new Date(notification.sentAt), { addSuffix: true })}
+          {formatDistanceToNow(new Date(notification.sentAt), {
+            addSuffix: true,
+          })}
         </p>
       </div>
 
@@ -63,6 +76,6 @@ export default function NavbarNotificationItem({
           <X className="h-3.5 w-3.5" />
         )}
       </button>
-    </div>
+    </button>
   );
 }
