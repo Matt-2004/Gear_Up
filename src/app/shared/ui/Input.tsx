@@ -71,7 +71,7 @@ const AuthInput = forwardRef<HTMLInputElement, Partial<InputProps>>(
               onBlur?.(e);
             }}
             className={clsx(
-              "w-full focus:ring-primary bg-[#E8E9E0] focus:text-primary rounded-lg border px-4 py-2 text-black placeholder:text-sm placeholder:text-gray-400 focus:ring-1 focus:outline-none focus:placeholder:text-gray-500 transition-colors",
+              "w-full focus:ring-primary bg-[#E8E9E0] focus:text-primary rounded-lg border px-4 py-2 text-black placeholder:text-sm placeholder:text-gray-400 focus:outline-none focus:placeholder:text-gray-500 transition-colors",
               type === "password" && "pr-10",
               shouldShowError
                 ? "border-red-400 bg-red-50/70 text-red-900 placeholder:text-red-300 focus:border-red-500 focus:bg-white focus:ring-2 focus:ring-red-500/20"

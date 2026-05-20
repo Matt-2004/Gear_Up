@@ -293,7 +293,7 @@ const EditCarForm = ({ initialData }: EditCarFormProps) => {
       );
 
       if (Object.keys(changedData).length === 0 && files.length === 0) {
-        alert("No changes detected.");
+        addToastMessage("info", "No changes detected.");
         return;
       }
 

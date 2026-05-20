@@ -15,8 +15,6 @@ interface CarTableProps {
 export default function CarTable({ cars, onDelete, onEdit }: CarTableProps) {
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
 
-  console.log("Car data:: ", cars);
-
   const toggleMenu = (id: string) => {
     setActiveMenuId((prev) => (prev === id ? null : id));
   };

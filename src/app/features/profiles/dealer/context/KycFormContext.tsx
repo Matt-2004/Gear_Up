@@ -75,7 +75,6 @@ export default function KycFormProvider({ children }: { children: ReactNode }) {
 
   // Submit KYC data to backend
   const submitKycData = useCallback(async (): Promise<MainResponse<null>> => {
-    console.log("Calling submitKycData");
     setIsSubmitting(true);
 
     try {

@@ -4,7 +4,6 @@ import {
   Home,
   Newspaper,
   Search,
-  User,
   type LucideIcon,
 } from "lucide-react";
 import type { NavbarLink } from "./types";
@@ -14,7 +13,6 @@ import type { NavbarLink } from "./types";
 export const PRIMARY_NAVBAR_LINKS: NavbarLink[] = [
   { id: "home", label: "Home", href: "/" },
   { id: "browse", label: "Browse Cars", href: "/car/search" },
-  { id: "dealers", label: "Dealers", href: "/dealers" },
   { id: "financing", label: "Financing", href: "/financing" },
   { id: "about", label: "About", href: "/about" },
 ];
@@ -30,7 +28,6 @@ export const MOBILE_LINK_ICONS: Record<string, LucideIcon> = {
   home: Home,
   browse: Search,
   sell: CarFront,
-  dealers: User,
   financing: CalendarDays,
   about: Newspaper,
 };

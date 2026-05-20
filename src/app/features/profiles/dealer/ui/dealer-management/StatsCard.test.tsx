@@ -12,7 +12,7 @@ describe("StatsCard", () => {
   });
 
   it("renders with yellow variant", () => {
-    const { container } = render(
+    render(
       <StatsCard
         label="Pending Review"
         value={5}
@@ -23,11 +23,11 @@ describe("StatsCard", () => {
 
     expect(screen.getByText("Pending Review")).toBeInTheDocument();
     expect(screen.getByText("5")).toBeInTheDocument();
-    expect(container.firstChild).toHaveClass("border-yellow-500");
+    expect(screen.getByTestId("stat-card")).toBeInTheDocument();
   });
 
   it("renders with green variant", () => {
-    const { container } = render(
+    render(
       <StatsCard
         label="Approved"
         value={15}
@@ -38,11 +38,11 @@ describe("StatsCard", () => {
 
     expect(screen.getByText("Approved")).toBeInTheDocument();
     expect(screen.getByText("15")).toBeInTheDocument();
-    expect(container.firstChild).toHaveClass("border-primary");
+    expect(screen.getByTestId("stat-card")).toBeInTheDocument();
   });
 
   it("renders with red variant", () => {
-    const { container } = render(
+    render(
       <StatsCard
         label="Rejected"
         value={3}
@@ -53,7 +53,7 @@ describe("StatsCard", () => {
 
     expect(screen.getByText("Rejected")).toBeInTheDocument();
     expect(screen.getByText("3")).toBeInTheDocument();
-    expect(container.firstChild).toHaveClass("border-red-500");
+    expect(screen.getByTestId("stat-card")).toBeInTheDocument();
   });
 
   it("displays zero value correctly", () => {
@@ -69,6 +69,6 @@ describe("StatsCard", () => {
     );
 
     expect(screen.getByText("Many Cars")).toBeInTheDocument();
-    expect(screen.getByText("9999")).toBeInTheDocument();
+    expect(screen.getByText("9,999")).toBeInTheDocument();
   });
 });

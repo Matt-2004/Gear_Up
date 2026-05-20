@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/app/features/toast/hooks/useToast";
 
 interface UseAppointmentActionsProps {
   appointmentId: string;
@@ -21,6 +22,7 @@ export const useAppointmentActions = ({
   onCancel,
 }: UseAppointmentActionsProps) => {
   const router = useRouter();
+  const { addToastMessage } = useToast();
 
   const [showRejectInput, setShowRejectInput] = useState(false);
   const [rejectionReason, setRejectionReason] = useState("");
@@ -34,7 +36,7 @@ export const useAppointmentActions = ({
       return;
     }
     if (!rejectionReason.trim()) {
-      alert("Please provide a rejection reason");
+      addToastMessage("error", "Please provide a rejection reason");
       return;
     }
     onReject(appointmentId, rejectionReason);

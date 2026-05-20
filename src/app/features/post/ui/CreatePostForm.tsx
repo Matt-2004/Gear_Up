@@ -40,14 +40,14 @@ const CreatePostForm = ({ dealerCars }: CreatePostFormProps) => {
 
   const handleNext = () => {
     if (currentStep === 1 && !postData.carId) {
-      alert("Please select a car");
+      addToastMessage("error", "Please select a car");
       return;
     }
     if (
       currentStep === 2 &&
       (!postData.caption.trim() || !postData.content.trim())
     ) {
-      alert("Please fill in caption and content");
+      addToastMessage("error", "Please fill in caption and content");
       return;
     }
     if (currentStep < 3) {

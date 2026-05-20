@@ -75,6 +75,12 @@ export const Comment = ({ comment, level }: ICommnetsProps) => {
         />
       )}
 
+      {comment.length === 0 && level === 0 && (
+        <p className="py-8 text-center text-sm text-gray-400">
+          No comments yet. Be the first to share your thoughts.
+        </p>
+      )}
+
       {comment.map((c, i) => (
         <div key={i} className="relative">
           {/* connector from vertical guide to this comment */}

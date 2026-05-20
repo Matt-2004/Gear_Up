@@ -3,8 +3,17 @@
 import { CarCard } from "@/app/features/car/ui/car-card/CarCard";
 import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Loader2, Search, SlidersHorizontal, X } from "lucide-react";
+import {
+  ArrowLeft,
+  Loader2,
+  RefreshCcw,
+  Search,
+  SlidersHorizontal,
+  X,
+} from "lucide-react";
 import { SkeletonCard } from "@/app/shared/ui/Skeleton";
+import SectionErrorFallback from "@/app/shared/ui/SectionErrorFallback";
+import StaleDataBanner from "@/app/shared/ui/StaleDataBanner";
 import { useId } from "react";
 import { CarModel } from "../../types/car.model";
 import { useCarSearch } from "./useCarSearch";
@@ -45,7 +54,10 @@ export default function CarSearch({
     allItems,
     hasNextPage,
     isFetchingNextPage,
-    error,
+    isRefetching,
+
+    isError,
+    hasItems,
     showStartState,
     showLoadingState,
     showErrorState,
@@ -223,25 +235,22 @@ export default function CarSearch({
           </div>
         )}
 
-        {showErrorState && (
-          <SearchFallback
-            icon={<X className="h-8 w-8 text-red-500" />}
-            iconClassName="bg-red-100"
-            title="Search Failed"
-            description={
-              error?.message || "Something went wrong while searching cars."
-            }
-            data-testid="search-error"
-            action={
-              <button
-                type="button"
-                onClick={handleRetry}
-                className="rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-600"
-              >
-                Try Again
-              </button>
-            }
+        {/* Error — no existing data to fall back on */}
+        {showErrorState && !hasItems && (
+          <SectionErrorFallback
+            onRetry={handleRetry}
+            isRetrying={isRefetching}
           />
+        )}
+
+        {/* Stale data banner — error but we have existing results */}
+        {showErrorState && hasItems && (
+          <div className="mb-6">
+            <StaleDataBanner
+              onRefresh={handleRetry}
+              isRefreshing={isRefetching}
+            />
+          </div>
         )}
 
         {showEmptyState && (
@@ -281,6 +290,26 @@ export default function CarSearch({
                 {isFetchingNextPage && (
                   <div className="col-span-full flex items-center justify-center py-8">
                     <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  </div>
+                )}
+
+                {isError && hasItems && hasNextPage && (
+                  <div className="col-span-full flex items-center justify-center py-6">
+                    <button
+                      type="button"
+                      onClick={handleRetry}
+                      disabled={isRefetching}
+                      className="inline-flex items-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-60"
+                    >
+                      {isRefetching ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <RefreshCcw className="h-4 w-4" />
+                      )}
+                      {isRefetching
+                        ? "Retrying..."
+                        : "Failed to load more — tap to retry"}
+                    </button>
                   </div>
                 )}
 

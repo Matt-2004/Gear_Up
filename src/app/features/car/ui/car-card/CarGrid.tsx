@@ -5,9 +5,14 @@ import { CarCard } from "./CarCard";
 import { getAllCars } from "@/app/shared/utils/API/CarAPI";
 import { carMapper } from "../../types/car.mapper";
 import { SkeletonCard } from "@/app/shared/ui/Skeleton";
+import SectionErrorBoundary from "@/app/shared/ui/SectionErrorBoundary";
+import SectionErrorFallback from "@/app/shared/ui/SectionErrorFallback";
+import EmptyState from "@/app/shared/ui/EmptyState";
+import StaleDataBanner from "@/app/shared/ui/StaleDataBanner";
+import { Car } from "lucide-react";
 
 export function CarGrid() {
-  const { data, isLoading, isError, refetch } = useQuery({
+  const { data, isLoading, isError, isRefetching, refetch } = useQuery({
     queryKey: ["featured-cars"],
     queryFn: async () => {
       const res = await getAllCars(null);
@@ -20,6 +25,8 @@ export function CarGrid() {
   const featuredCars = cars
     .filter((car) => car.status?.toLowerCase() === "approved")
     .slice(0, 4);
+
+  const hasStaleData = isError && featuredCars.length > 0;
 
   return (
     <section
@@ -41,52 +48,53 @@ export function CarGrid() {
           </p>
         </div>
 
-        {isLoading && (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <SkeletonCard key={i} />
-            ))}
+        {/* Stale data banner */}
+        {hasStaleData && (
+          <div className="mb-6">
+            <StaleDataBanner
+              onRefresh={() => refetch()}
+              isRefreshing={isRefetching}
+            />
           </div>
         )}
 
-        {isError && (
-          <div className="flex min-h-80 items-center justify-center">
-            <div className="text-center">
-              <p className="text-xl text-gray-700">Failed to load cars</p>
-              <p className="mt-2 text-sm text-gray-500">
-                Something went wrong while fetching listings.
-              </p>
-              <button
-                onClick={() => refetch()}
-                className="mt-4 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-700"
-              >
-                Try Again
-              </button>
+        <SectionErrorBoundary>
+          {/* Loading */}
+          {isLoading && (
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <SkeletonCard key={i} />
+              ))}
             </div>
-          </div>
-        )}
+          )}
 
-        {!isLoading && !isError && featuredCars.length === 0 && (
-          <div
-            className="flex min-h-80 items-center justify-center"
-            data-testid="no-cars"
-          >
-            <div className="text-center">
-              <p className="text-xl text-gray-700">No cars available</p>
-              <p className="mt-2 text-sm text-gray-500">
-                Check back later for new listings
-              </p>
+          {/* Error (no stale data to fall back on) */}
+          {isError && !hasStaleData && (
+            <SectionErrorFallback
+              onRetry={() => refetch()}
+              isRetrying={isRefetching}
+            />
+          )}
+
+          {/* Empty */}
+          {!isLoading && !isError && featuredCars.length === 0 && (
+            <EmptyState
+              icon={<Car className="h-6 w-6" />}
+              title="No cars available"
+              description="Check back later for new listings."
+              data-testid="no-cars"
+            />
+          )}
+
+          {/* Results (or stale results during error) */}
+          {!isLoading && featuredCars.length > 0 && (
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+              {featuredCars.map((car) => (
+                <CarCard key={car.id} carItem={car} />
+              ))}
             </div>
-          </div>
-        )}
-
-        {!isLoading && !isError && featuredCars.length > 0 && (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {featuredCars.map((car) => (
-              <CarCard key={car.id} carItem={car} />
-            ))}
-          </div>
-        )}
+          )}
+        </SectionErrorBoundary>
       </div>
     </section>
   );

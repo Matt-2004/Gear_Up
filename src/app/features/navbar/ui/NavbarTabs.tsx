@@ -4,14 +4,22 @@ import clsx from "clsx";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { PRIMARY_NAVBAR_LINKS } from "../constants";
+import { useUserData } from "../context/UserDataContext";
+
+const DISCOVER_LINK = { id: "discover", label: "Discover", href: "/post/discover" };
 
 export default function NavbarTabs() {
+  const { user } = useUserData();
   const pathname = usePathname();
+
+  const links = user
+    ? [...PRIMARY_NAVBAR_LINKS, DISCOVER_LINK]
+    : PRIMARY_NAVBAR_LINKS;
 
   return (
     <nav aria-label="Primary" className="hidden md:block">
       <ol className="flex items-center gap-0.5">
-        {PRIMARY_NAVBAR_LINKS.map((tab) => {
+        {links.map((tab) => {
           const isActive =
             pathname === tab.href ||
             (tab.href !== "/" && pathname?.startsWith(`${tab.href}/`));

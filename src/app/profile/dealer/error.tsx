@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
-import { Store, RefreshCcw, Home } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Loader2, RefreshCcw, Store, Home } from "lucide-react";
 import Link from "next/link";
 
 interface ErrorProps {
@@ -10,6 +10,8 @@ interface ErrorProps {
 }
 
 export default function DealerError({ error, reset }: ErrorProps) {
+  const [isRetrying, setIsRetrying] = useState(false);
+
   useEffect(() => {
     console.error("[Dealer Profile Error]", error);
   }, [error]);
@@ -18,55 +20,80 @@ export default function DealerError({ error, reset }: ErrorProps) {
     .toLowerCase()
     .includes("failed to find server action");
 
-  const onHardRefresh = () => {
+  const handleHardRefresh = () => {
     window.location.reload();
   };
 
+  const handleRetry = () => {
+    setIsRetrying(true);
+    setTimeout(() => reset(), 600);
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-sm text-center">
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-blue-100">
-          <Store className="h-7 w-7 text-blue-600" />
+    <div className="flex items-center justify-center py-24">
+      <div className="w-full max-w-md rounded-2xl border border-gray-100 bg-white p-8 shadow-[0_1px_3px_rgba(0,0,0,0.03),0_4px_12px_rgba(0,0,0,0.04)] text-center">
+        <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-100">
+          <Store className="h-7 w-7 text-gray-500" />
         </div>
-        <h1 className="mb-2 text-xl font-bold text-gray-900">
+
+        <h1 className="text-lg font-semibold text-gray-900">
           Dealer dashboard unavailable
         </h1>
+
         {isServerActionMismatch ? (
-          <p className="mb-6 text-sm text-amber-700">
-            Your session is using an outdated page build. Refresh to sync with
-            the latest deployment.
-          </p>
+          <>
+            <p className="mt-2 text-sm leading-relaxed text-amber-600">
+              Your session is using an outdated page build. Refresh to sync with
+              the latest deployment.
+            </p>
+            <div className="mt-6 flex items-center justify-center gap-3">
+              <Link
+                href="/"
+                className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50"
+              >
+                <Home className="h-4 w-4" />
+                Go home
+              </Link>
+              <button
+                type="button"
+                onClick={handleHardRefresh}
+                className="inline-flex items-center gap-2 rounded-xl bg-gray-900 px-4 py-2.5 text-sm font-medium text-white transition-all hover:bg-gray-700"
+              >
+                <RefreshCcw className="h-4 w-4" />
+                Refresh page
+              </button>
+            </div>
+          </>
         ) : (
-          <p className="mb-6 text-sm text-gray-500">
-            We couldn&apos;t load your dealer dashboard. Please try again.
-          </p>
+          <>
+            <p className="mt-2 text-sm leading-relaxed text-gray-500">
+              We couldn&apos;t load your dealer dashboard. Please try again in a
+              moment.
+            </p>
+            <div className="mt-6 flex items-center justify-center gap-3">
+              <Link
+                href="/"
+                className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50"
+              >
+                <Home className="h-4 w-4" />
+                Go home
+              </Link>
+              <button
+                type="button"
+                onClick={handleRetry}
+                disabled={isRetrying}
+                className="inline-flex items-center gap-2 rounded-xl bg-gray-900 px-4 py-2.5 text-sm font-medium text-white transition-all hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {isRetrying ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <RefreshCcw className="h-4 w-4" />
+                )}
+                {isRetrying ? "Retrying..." : "Try again"}
+              </button>
+            </div>
+          </>
         )}
-        <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
-          {isServerActionMismatch ? (
-            <button
-              onClick={onHardRefresh}
-              className="inline-flex items-center justify-center gap-2 rounded-lg bg-gray-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-gray-700"
-            >
-              <RefreshCcw className="h-4 w-4" />
-              Refresh page
-            </button>
-          ) : (
-            <button
-              onClick={reset}
-              className="inline-flex items-center justify-center gap-2 rounded-lg bg-gray-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-gray-700"
-            >
-              <RefreshCcw className="h-4 w-4" />
-              Try again
-            </button>
-          )}
-          <Link
-            href="/"
-            className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
-          >
-            <Home className="h-4 w-4" />
-            Go home
-          </Link>
-        </div>
       </div>
     </div>
   );

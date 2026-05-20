@@ -16,6 +16,7 @@ import {
   Fuel,
   Gauge,
   Info,
+  Loader2,
   MapPin,
   Package,
   Settings,
@@ -323,70 +324,102 @@ interface IDecision {
 const RejectButton = ({ id, data }: IDecision) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [rejectError, setRejectError] = useState<string | null>(null);
 
   const onSubmit = async () => {
+    setRejectError(null);
     if (!data.rejectionReason && data.status === "Rejected") {
-      alert("Please provide a rejection reason");
+      setRejectError("Please provide a rejection reason before submitting.");
       return;
     }
     setIsLoading(true);
     try {
       const response = await updateCarByAdmin(data, id);
-
       if (response?.isSuccess) {
         router.replace("/profile/admin?tab=car-verification");
       } else {
-        alert(safeErrorMessage(response?.message, response?.status));
+        setRejectError(
+          safeErrorMessage(response?.message, response?.status) ||
+            "Failed to reject. Please try again.",
+        );
         setIsLoading(false);
       }
     } catch (error) {
       console.error("Error rejecting car:", error);
-      alert("An error occurred while rejecting the car listing");
+      setRejectError("An error occurred. Please try again.");
       setIsLoading(false);
     }
   };
 
   return (
-    <button
-      className="flex items-center gap-2 rounded-xl bg-red-600 px-6 py-3 font-semibold text-white shadow-lg transition-all hover:bg-red-700 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50"
-      onClick={onSubmit}
-      disabled={isLoading}
-    >
-      <X className="h-5 w-5" />
-      {isLoading ? "Rejecting..." : "Reject"}
-    </button>
+    <div className="space-y-2">
+      {rejectError && (
+        <p className="rounded-lg bg-red-50 px-3 py-2 text-xs text-red-600">
+          {rejectError}
+        </p>
+      )}
+      <button
+        className="flex items-center gap-2 rounded-xl bg-red-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
+        onClick={onSubmit}
+        disabled={isLoading}
+      >
+        {isLoading ? (
+          <Loader2 className="h-4 w-4 animate-spin" />
+        ) : (
+          <X className="h-4 w-4" />
+        )}
+        {isLoading ? "Rejecting..." : "Reject"}
+      </button>
+    </div>
   );
 };
 
 const ApprovedButton = ({ id, data }: IDecision) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [approveError, setApproveError] = useState<string | null>(null);
 
   const onSubmit = async () => {
+    setApproveError(null);
     setIsLoading(true);
     try {
       const response = await updateCarByAdmin(data, id);
-
       if (response?.isSuccess) {
         router.replace("/profile/admin?tab=car-verification");
       } else {
+        setApproveError(
+          safeErrorMessage(response?.message, response?.status) ||
+            "Failed to approve. Please try again.",
+        );
         setIsLoading(false);
       }
     } catch (error) {
       console.error("Error approving car:", error);
+      setApproveError("An error occurred. Please try again.");
       setIsLoading(false);
     }
   };
 
   return (
-    <button
-      className="bg-primary-600 hover:bg-primary-700 flex items-center gap-2 rounded-xl px-6 py-3 font-semibold text-white shadow-lg transition-all hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50"
-      onClick={onSubmit}
-      disabled={isLoading}
-    >
-      <Check className="h-5 w-5" />
-      {isLoading ? "Approving..." : "Approve"}
-    </button>
+    <div className="space-y-2">
+      {approveError && (
+        <p className="rounded-lg bg-red-50 px-3 py-2 text-xs text-red-600">
+          {approveError}
+        </p>
+      )}
+      <button
+        className="flex items-center gap-2 rounded-xl bg-primary-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-50"
+        onClick={onSubmit}
+        disabled={isLoading}
+      >
+        {isLoading ? (
+          <Loader2 className="h-4 w-4 animate-spin" />
+        ) : (
+          <Check className="h-4 w-4" />
+        )}
+        {isLoading ? "Approving..." : "Approve"}
+      </button>
+    </div>
   );
 };
 

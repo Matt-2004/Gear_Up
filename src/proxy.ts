@@ -56,7 +56,7 @@ export async function proxy(req: NextRequest) {
   // 2. No tokens + protected route → redirect home
   const hasTokens = accessToken || refreshToken;
   if (!hasTokens && !isPublicRoute(pathname)) {
-    console.log(`Access denied to ${pathname} — no authentication tokens`);
+    console.warn(`Access denied to ${pathname} — no authentication tokens`);
     const response = NextResponse.redirect(new URL("/", req.url));
     response.cookies.delete("user_data");
     return response;

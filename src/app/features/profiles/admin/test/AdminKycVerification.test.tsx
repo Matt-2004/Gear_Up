@@ -121,7 +121,7 @@ describe("AdminKycVerification", () => {
       />,
     );
 
-    expect(screen.getByText("Kyc data missing")).toBeInTheDocument();
+    expect(screen.getByText("KYC data is currently unavailable.")).toBeInTheDocument();
   });
 
   it("renders the page heading and description", () => {

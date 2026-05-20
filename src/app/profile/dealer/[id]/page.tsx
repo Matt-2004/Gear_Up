@@ -11,6 +11,7 @@ import Image from "next/image";
 import { UserMapper } from "@/app/features/profiles/user/types/user.mapper";
 import { UserModel } from "@/app/features/profiles/user/types/user.model";
 import { CarModel } from "@/app/features/car/types/car.model";
+import { ErrorResponse } from "@/app/shared/utils/errors/errorResponse";
 
 export const dynamic = "force-dynamic";
 
@@ -51,20 +52,21 @@ export default async function DealerProfilePage({
     const userRes = await getUserByUserId(id);
     const userData = UserMapper(userRes.data);
     user = userData;
-  } catch {
-    // user stays null
-  }
-
-  if (!user) {
-    return notFound();
+  } catch (error) {
+    if (error instanceof ErrorResponse && error.status === 404) {
+      return notFound();
+    }
+    throw error;
   }
 
   try {
     const carsRes = await getCarByUserId(id);
     const data = carsRes.data.items.map(carMapper);
     cars = data;
-  } catch {
-    // cars stays empty
+  } catch (error) {
+    console.error("Error fetching dealer cars:", error);
+    // Cars section failure shouldn't crash the whole page —
+    // the dealer profile is still visible with an empty cars state.
   }
 
   const approvedCars = cars.filter(

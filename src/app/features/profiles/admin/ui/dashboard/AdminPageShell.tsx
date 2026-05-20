@@ -61,20 +61,25 @@ export default function AdminPageShell({
 
   return (
     <div className="flex min-h-screen bg-linear-to-br from-gray-50 to-gray-100">
-      <div className="w-64 p-4">
-        <AdminTabs
-          tabs={tabs}
-          activeTab={activeTab}
-          onTabChange={handleTabChange}
-        />
-      </div>
-      <div className="flex-1">
+      {/* Sidebar */}
+      <aside className="w-60 shrink-0 border-r border-gray-100 bg-white p-4 lg:w-64">
+        <div className="sticky top-4">
+          <AdminTabs
+            tabs={tabs}
+            activeTab={activeTab}
+            onTabChange={handleTabChange}
+          />
+        </div>
+      </aside>
+
+      {/* Content */}
+      <main className="min-w-0 flex-1">
         <PageSwitcher
           pages={pages}
           defaultPageId={defaultTabId}
           activePageId={activeTab}
         />
-      </div>
+      </main>
     </div>
   );
 }

@@ -42,11 +42,7 @@ export default function NavbarUserMenu() {
   ];
 
   return (
-    <div
-      className="relative"
-      onMouseEnter={() => setIsOpen(true)}
-      onMouseLeave={() => setIsOpen(false)}
-    >
+    <div className="relative" onMouseEnter={() => setIsOpen(true)}>
       <button
         type="button"
         className="flex cursor-pointer items-center gap-2 rounded-xl px-2 py-1.5 transition-colors hover:bg-gray-100"
@@ -64,13 +60,17 @@ export default function NavbarUserMenu() {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-full z-30 mt-2 w-56 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl">
+        <div
+          onMouseLeave={() => setIsOpen(false)}
+          className="absolute right-0 top-full z-30 mt-2 w-56 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl"
+        >
           <div className="border-b border-gray-100 px-4 py-3">
             <p className="truncate text-sm font-semibold text-gray-900">
               {user.displayName}
             </p>
             <p className="truncate text-xs text-gray-500">
-              {user.role && user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+              {user.role &&
+                user.role.charAt(0).toUpperCase() + user.role.slice(1)}
             </p>
           </div>
 

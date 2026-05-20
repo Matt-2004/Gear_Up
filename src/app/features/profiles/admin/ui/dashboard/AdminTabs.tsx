@@ -2,15 +2,15 @@
 
 import clsx from "clsx";
 import { ClipboardCheck, LayoutDashboard, UserRoundCheck } from "lucide-react";
-import { ReactNode } from "react";
-import { type AdminTabId } from "../../utils/admin-tab.config";
+import type { ReactNode } from "react";
+import type { AdminTabId } from "../../utils/admin-tab.config";
 
 interface AdminTab {
   id: AdminTabId;
   label: string;
 }
 
-interface AdminTabProps {
+interface AdminTabsProps {
   tabs: readonly AdminTab[];
   panelTitle?: string;
   description?: string;
@@ -30,18 +30,19 @@ export const AdminTabs = ({
   description = "Manage your platform",
   activeTab,
   onTabChange,
-}: AdminTabProps) => {
+}: AdminTabsProps) => {
   return (
-    <div className="h-full bg-white p-2 sm:p-4">
-      <div className="mb-4 p-2 sm:mb-8 sm:p-4">
-        <h2 className="text-lg font-bold text-gray-900 sm:text-xl">
+    <div>
+      {/* Branding */}
+      <div className="mb-6">
+        <h2 className="text-lg font-bold tracking-tight text-gray-900">
           {panelTitle} Panel
         </h2>
-
-        <p className="mt-1 text-xs text-gray-600 sm:text-sm">{description}</p>
+        <p className="mt-0.5 text-xs text-gray-500">{description}</p>
       </div>
 
-      <nav className="space-y-1 sm:space-y-2" aria-label={`${panelTitle} tabs`}>
+      {/* Navigation */}
+      <nav className="space-y-1" aria-label={`${panelTitle} tabs`}>
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
 
@@ -51,23 +52,22 @@ export const AdminTabs = ({
               type="button"
               onClick={() => onTabChange(tab.id)}
               className={clsx(
-                "group flex w-full cursor-pointer items-center gap-2 px-2 py-2 text-left font-medium transition-all duration-200 sm:gap-3 sm:px-4 sm:py-3",
+                "group flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium transition-all duration-200",
                 isActive
                   ? "bg-primary text-white shadow-sm"
-                  : "text-gray-700 hover:bg-gray-100",
+                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
               )}
               aria-current={isActive ? "page" : undefined}
             >
               <span
                 className={clsx(
                   "shrink-0 transition-transform duration-200",
-                  isActive ? "scale-110" : "group-hover:scale-110",
+                  isActive ? "scale-110" : "group-hover:scale-105",
                 )}
               >
                 {tabIcons[tab.id]}
               </span>
-
-              <span className="truncate text-xs sm:text-sm">{tab.label}</span>
+              <span className="truncate">{tab.label}</span>
             </button>
           );
         })}

@@ -4,6 +4,7 @@ import { UserDataProvider } from "@/app/features/navbar/context/UserDataContext"
 
 import ReactQueryProvider from "@/app/shared/provider/ReactQueryProvider";
 import ToastProvider from "@/app/features/toast/provider/ToastProvider";
+import SectionErrorBoundary from "@/app/shared/ui/SectionErrorBoundary";
 import type { Metadata } from "next";
 import { DM_Sans, DM_Serif_Display } from "next/font/google";
 import { ReactNode } from "react";
@@ -92,9 +93,8 @@ export default async function RootLayout({
           <ReactQueryProvider>
             <UserDataProvider>
               <NotificationProvider>
-                {/* TODO: Navbar not tested yet - needs testing before production */}
                 <ConditionalNavbar />
-                {children}
+                <SectionErrorBoundary>{children}</SectionErrorBoundary>
               </NotificationProvider>
             </UserDataProvider>
           </ReactQueryProvider>

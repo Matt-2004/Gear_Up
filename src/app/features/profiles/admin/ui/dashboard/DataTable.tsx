@@ -1,6 +1,8 @@
 "use client";
 
 import StatusUI, { Status } from "@/app/shared/ui/StatusUI";
+import PaginationControls from "@/app/shared/ui/PaginationControls";
+import { useVirtualPagination } from "@/app/shared/hooks/useVirtualPagination";
 import { ArrowUpRight, Check, Search } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useMemo } from "react";
@@ -22,9 +24,9 @@ type DataTableProps = {
   data: Car | Kyc;
 };
 
-const DataTable = ({ data }: DataTableProps) => {
-  console.log(data);
+const DEFAULT_PAGE_SIZE = 15;
 
+const DataTable = ({ data }: DataTableProps) => {
   if (data.type === "kyc") {
     return <KycDataTable data={data.data} />;
   }
@@ -63,17 +65,45 @@ const KycDataTable = ({ data }: { data: KycModel[] }) => {
     });
   }, [data, filter]);
 
+  const pagination = useVirtualPagination({
+    totalItems: filteredData.length,
+    pageSize: DEFAULT_PAGE_SIZE,
+  });
+
+  const pageItems = filteredData.slice(
+    pagination.startIndex,
+    pagination.endIndex,
+  );
+
   const cols = ["No.", "Name", "Document Type", "Email", "Status", "Action"];
 
   return (
-    <TableLayout cols={cols} isEmpty={filteredData.length === 0}>
-      {filteredData.map((submission, index) => (
+    <TableLayout
+      cols={cols}
+      isEmpty={filteredData.length === 0}
+      pagination={
+        filteredData.length > DEFAULT_PAGE_SIZE && (
+          <PaginationControls
+            currentPage={pagination.currentPage}
+            totalPages={pagination.totalPages}
+            hasPrev={pagination.hasPrev}
+            hasNext={pagination.hasNext}
+            onPrev={pagination.goPrev}
+            onNext={pagination.goNext}
+            startIndex={pagination.startIndex}
+            endIndex={pagination.endIndex}
+            totalItems={filteredData.length}
+          />
+        )
+      }
+    >
+      {pageItems.map((submission) => (
         <tr
           key={submission.kycId}
           className="transition-colors hover:bg-gray-50"
         >
           <td className="px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900">
-            {index + 1}
+            {submission.kycId}
           </td>
 
           <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
@@ -126,6 +156,16 @@ const CarDataTable = ({ data }: { data: CarModel[] }) => {
     });
   }, [data, filter]);
 
+  const pagination = useVirtualPagination({
+    totalItems: filteredData.length,
+    pageSize: DEFAULT_PAGE_SIZE,
+  });
+
+  const pageItems = filteredData.slice(
+    pagination.startIndex,
+    pagination.endIndex,
+  );
+
   const cols = [
     "No.",
     "Car Name",
@@ -136,14 +176,32 @@ const CarDataTable = ({ data }: { data: CarModel[] }) => {
   ];
 
   return (
-    <TableLayout cols={cols} isEmpty={filteredData.length === 0}>
-      {filteredData.map((car, index) => (
+    <TableLayout
+      cols={cols}
+      isEmpty={filteredData.length === 0}
+      pagination={
+        filteredData.length > DEFAULT_PAGE_SIZE && (
+          <PaginationControls
+            currentPage={pagination.currentPage}
+            totalPages={pagination.totalPages}
+            hasPrev={pagination.hasPrev}
+            hasNext={pagination.hasNext}
+            onPrev={pagination.goPrev}
+            onNext={pagination.goNext}
+            startIndex={pagination.startIndex}
+            endIndex={pagination.endIndex}
+            totalItems={filteredData.length}
+          />
+        )
+      }
+    >
+      {pageItems.map((car, index) => (
         <tr
           key={car.id}
-          className={`${index % 2 === 0 ? "bg-white" : "bg-gray-100"} transition-colors hover:bg-gray-50`}
+          className="transition-colors hover:bg-gray-50"
         >
           <td className="px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900">
-            {index + 1}
+            {pagination.startIndex + index + 1}
           </td>
 
           <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
@@ -175,10 +233,12 @@ const TableLayout = ({
   cols,
   isEmpty,
   children,
+  pagination,
 }: {
   cols: string[];
   isEmpty: boolean;
   children: React.ReactNode;
+  pagination?: React.ReactNode;
 }) => {
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
@@ -223,6 +283,7 @@ const TableLayout = ({
           </tbody>
         </table>
       </div>
+      {pagination}
     </div>
   );
 };

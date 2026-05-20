@@ -3,6 +3,8 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import CarDetail from "../../features/car/ui/car-detail/CarDetail";
 import { carDetailMapper } from "@/app/features/car/types/car.mapper";
+import SectionErrorBoundary from "@/app/shared/ui/SectionErrorBoundary";
+import { ErrorResponse } from "@/app/shared/utils/errors/errorResponse";
 
 export const dynamic = "force-dynamic";
 
@@ -55,7 +57,13 @@ async function getData(id: string) {
     return carDetail;
   } catch (error) {
     console.error("Error fetching car:", error);
-    return null;
+    // Only treat a genuine 404 as "car not found".
+    // Server errors (500, network failures, etc.) should propagate
+    // so the error.tsx boundary catches them and shows the error UI.
+    if (error instanceof ErrorResponse && error.status === 404) {
+      return null;
+    }
+    throw error;
   }
 }
 
@@ -65,7 +73,11 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 
   if (!car) notFound();
 
-  return <CarDetail car={car} />;
+  return (
+    <SectionErrorBoundary>
+      <CarDetail car={car} />
+    </SectionErrorBoundary>
+  );
 };
 
 export default Page;

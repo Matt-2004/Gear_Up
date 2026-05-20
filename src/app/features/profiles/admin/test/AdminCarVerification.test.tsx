@@ -127,7 +127,7 @@ describe("AdminCarVerification", () => {
       />,
     );
 
-    expect(screen.getByText("Car data missing")).toBeInTheDocument();
+    expect(screen.getByText("Car data is currently unavailable.")).toBeInTheDocument();
   });
 
   it("renders the page heading and description", () => {
@@ -145,7 +145,7 @@ describe("AdminCarVerification", () => {
   it("renders correct car stats counts", () => {
     render(<AdminCarVerification cars={createCars()} />);
 
-    expect(screen.getByText("All: 4")).toBeInTheDocument();
+    expect(screen.getByText("All Cars: 4")).toBeInTheDocument();
     expect(screen.getByText("Pending Cars: 2")).toBeInTheDocument();
     expect(screen.getByText("Approved Cars: 1")).toBeInTheDocument();
     expect(screen.getByText("Rejected Cars: 1")).toBeInTheDocument();

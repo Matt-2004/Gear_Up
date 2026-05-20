@@ -84,7 +84,7 @@ const PostDetails = ({ access_token, postData }: IDetailProp) => {
   // SignalR connection for real-time comments
   useEffect(() => {
     if (!postData.id) {
-      console.log("Id doesn't exist");
+      // No post ID available — skip SignalR connection
       return;
     }
 
@@ -115,8 +115,8 @@ const PostDetails = ({ access_token, postData }: IDetailProp) => {
       handleComment(data, data.parentCommentId ?? null);
     });
 
-    connection.on("CommentLikeUpdated", (data) => {
-      console.log(data);
+    connection.on("CommentLikeUpdated", (_data) => {
+      // Like count handled by comment context
     });
 
     return () => {

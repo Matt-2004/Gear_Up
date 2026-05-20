@@ -1,5 +1,7 @@
 import { Metadata } from "next";
 import { getCarById } from "@/app/shared/utils/API/CarAPI";
+import { ErrorResponse } from "@/app/shared/utils/errors/errorResponse";
+import SectionErrorBoundary from "@/app/shared/ui/SectionErrorBoundary";
 
 export const dynamic = "force-dynamic";
 import { notFound } from "next/navigation";
@@ -33,7 +35,10 @@ async function getData(id: string) {
     return res?.data ?? null;
   } catch (error) {
     console.error("Error fetching car data:", error);
-    return null;
+    if (error instanceof ErrorResponse && error.status === 404) {
+      return null;
+    }
+    throw error;
   }
 }
 
@@ -45,7 +50,11 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
 
   const car = carDetailMapper(carDetailData);
 
-  return <AppointmentPage car={car} />;
+  return (
+    <SectionErrorBoundary>
+      <AppointmentPage car={car} />
+    </SectionErrorBoundary>
+  );
 };
 
 export default Page;

@@ -14,6 +14,12 @@ jest.mock("@/app/shared/utils/API/ReviewAPI", () => ({
   submitReview: jest.fn(),
 }));
 
+const mockAddToastMessage = jest.fn();
+
+jest.mock("@/app/features/toast/hooks/useToast", () => ({
+  useToast: () => ({ addToastMessage: mockAddToastMessage }),
+}));
+
 const mockedGetUserReviews = getUserReviews as jest.Mock;
 const mockedSubmitReview = submitReview as jest.Mock;
 const mockedEditReview = editReview as jest.Mock;
@@ -93,8 +99,8 @@ describe("useAppointmentReviews", () => {
   });
 
   describe("submit review", () => {
-    it("alerts when rating is 0", async () => {
-      window.alert = jest.fn();
+    it("shows toast when rating is 0", async () => {
+      mockAddToastMessage.mockClear();
       const { result } = setup();
       act(() => {
         result.current.handleRateClick();
@@ -105,11 +111,11 @@ describe("useAppointmentReviews", () => {
       await act(async () => {
         await result.current.handleSubmitReview();
       });
-      expect(window.alert).toHaveBeenCalledWith("Please select a rating");
+      expect(mockAddToastMessage).toHaveBeenCalledWith("error", "Please select a rating");
     });
 
     it("submits review successfully", async () => {
-      window.alert = jest.fn();
+      mockAddToastMessage.mockClear();
       mockedSubmitReview.mockResolvedValue({ isSuccess: true });
       mockedGetUserReviews.mockResolvedValue({
         isSuccess: true,

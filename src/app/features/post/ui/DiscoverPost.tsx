@@ -107,13 +107,33 @@ const DiscoverPost = ({ post }: { post: CursorResponse<PostModel[]> }) => {
   }, [refetch, user]);
 
   if (!user) {
-    return <div>User data not exist!</div>;
+    return (
+      <div className="flex min-h-[60vh] items-center justify-center bg-linear-to-br from-gray-50 to-gray-100">
+        <p className="text-sm text-gray-500">Sign in to discover posts.</p>
+      </div>
+    );
+  }
+
+  if (posts.length === 0 && !isFetchingNextPage) {
+    return (
+      <div className="flex min-h-[60vh] items-center justify-center bg-linear-to-br from-gray-50 via-gray-100 to-gray-50">
+        <div className="w-full max-w-md rounded-2xl border border-gray-100 bg-white p-8 text-center shadow-[0_1px_3px_rgba(0,0,0,0.03),0_4px_12px_rgba(0,0,0,0.04)]">
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-100">
+            <MessageSquare className="h-7 w-7 text-gray-400" />
+          </div>
+          <h2 className="text-lg font-semibold text-gray-900">No posts yet</h2>
+          <p className="mt-2 text-sm text-gray-500">
+            When dealers share content, it will appear here. Check back soon.
+          </p>
+        </div>
+      </div>
+    );
   }
 
   return (
     <div
       ref={parentRef}
-      className="relative   min-h-screen w-full overflow-y-auto bg-linear-to-br from-gray-50 via-gray-100 to-gray-50"
+      className="relative min-h-screen w-full overflow-y-auto bg-linear-to-br from-gray-50 via-gray-100 to-gray-50"
       style={{ scrollbarGutter: "stable" }}
     >
       <div className="flex h-full w-full justify-center px-3 py-4 sm:px-4 sm:py-6">
@@ -127,7 +147,6 @@ const DiscoverPost = ({ post }: { post: CursorResponse<PostModel[]> }) => {
             }}
           >
             {virtualItems.map(({ index, start, key }) => {
-              console.log(`Rendering item at index: ${index}`);
               const postItem = posts[index];
 
               // if (!postItem) {

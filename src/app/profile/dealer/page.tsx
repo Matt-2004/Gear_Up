@@ -1,5 +1,6 @@
 import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
 import { getMyCars } from "@/app/shared/utils/API/CarAPI";
+import SectionErrorBoundary from "@/app/shared/ui/SectionErrorBoundary";
 import {
   type PageItem,
   PageSwitcher,
@@ -69,8 +70,6 @@ export async function getAllStatusCars(): Promise<CursorResponse<CarModel[]>> {
       hasMore: false,
       nextCursor: "",
     };
-
-    console.log("allCars:", allCars);
 
     // Return in CursorBaseDTO format
     return {
@@ -145,7 +144,9 @@ export default async function Page() {
           </div>
 
           <div className="w-full bg-gray-50/20">
-            <PageSwitcher pages={pages} defaultPageId={DEFAULT_DEALER_TAB} />
+            <SectionErrorBoundary>
+              <PageSwitcher pages={pages} defaultPageId={DEFAULT_DEALER_TAB} />
+            </SectionErrorBoundary>
           </div>
         </div>
       </div>

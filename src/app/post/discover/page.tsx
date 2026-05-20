@@ -4,6 +4,7 @@ import DiscoverPost from "../../features/post/ui/DiscoverPost";
 import { handleServerError } from "@/app/shared/utils/errors/handleServerError";
 import { PostResponse } from "@/app/features/post/types/post.dto";
 import { PostMapper } from "@/app/features/post/types/post.mapper";
+import SectionErrorBoundary from "@/app/shared/ui/SectionErrorBoundary";
 
 export const metadata: Metadata = {
   title: "Discover",
@@ -33,7 +34,11 @@ const Page = async () => {
     nextCursor: res.data.nextCursor,
   };
 
-  return <DiscoverPost post={initialPostData} />;
+  return (
+    <SectionErrorBoundary>
+      <DiscoverPost post={initialPostData} />
+    </SectionErrorBoundary>
+  );
 };
 
 export default Page;

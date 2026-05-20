@@ -6,6 +6,12 @@ jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),
 }));
 
+const mockAddToastMessage = jest.fn();
+
+jest.mock("@/app/features/toast/hooks/useToast", () => ({
+  useToast: () => ({ addToastMessage: mockAddToastMessage }),
+}));
+
 const mockedUseRouter = useRouter as jest.Mock;
 
 const mockPush = jest.fn();
@@ -64,8 +70,8 @@ describe("useAppointmentActions", () => {
     expect(result.current.rejectionReason).toBe("");
   });
 
-  it("alerts when rejecting without a reason", () => {
-    window.alert = jest.fn();
+  it("shows toast when rejecting without a reason", () => {
+    mockAddToastMessage.mockClear();
     const { result, onReject } = setup();
     act(() => {
       result.current.handleReject(); // show input
@@ -73,7 +79,8 @@ describe("useAppointmentActions", () => {
     act(() => {
       result.current.handleReject(); // submit without reason
     });
-    expect(window.alert).toHaveBeenCalledWith(
+    expect(mockAddToastMessage).toHaveBeenCalledWith(
+      "error",
       "Please provide a rejection reason",
     );
     expect(onReject).not.toHaveBeenCalled();

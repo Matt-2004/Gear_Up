@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { useToast } from "@/app/features/toast/hooks/useToast";
 
 import {
   deleteReview,
@@ -25,6 +26,7 @@ export const useAppointmentReviews = ({
   status,
   agentId,
 }: UseAppointmentReviewsProps) => {
+  const { addToastMessage } = useToast();
   const [existingReview, setExistingReview] = useState<ReviewModel | null>(
     null,
   );
@@ -111,12 +113,12 @@ export const useAppointmentReviews = ({
 
   const handleSubmitReview = async () => {
     if (rating === 0) {
-      alert("Please select a rating");
+      addToastMessage("error", "Please select a rating");
       return;
     }
 
     if (!reviewText.trim()) {
-      alert("Please provide a review");
+      addToastMessage("error", "Please provide a review");
       return;
     }
 

@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import CommentContextProvider from "../../features/comment/context/CommentContext";
 import Details from "../../features/post/ui/PostDetails";
 import { PostMapper } from "@/app/features/post/types/post.mapper";
+import { ErrorResponse } from "@/app/shared/utils/errors/errorResponse";
 
 export async function generateMetadata({
   params,
@@ -39,7 +40,10 @@ const getData = async (id: string) => {
     return res?.data ?? null;
   } catch (error) {
     console.error("Error fetching post:", error);
-    return null;
+    if (error instanceof ErrorResponse && error.status === 404) {
+      return null;
+    }
+    throw error;
   }
 };
 

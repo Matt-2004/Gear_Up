@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
-import { FileText, RefreshCcw, Home } from "lucide-react";
+import { useEffect, useState } from "react";
+import { FileText, Loader2, RefreshCcw, Home } from "lucide-react";
 import Link from "next/link";
 
 interface ErrorProps {
@@ -10,36 +10,53 @@ interface ErrorProps {
 }
 
 export default function PostError({ error, reset }: ErrorProps) {
+  const [isRetrying, setIsRetrying] = useState(false);
+
   useEffect(() => {
     console.error("[Post Page Error]", error);
   }, [error]);
 
+  const handleRetry = () => {
+    setIsRetrying(true);
+    setTimeout(() => reset(), 600);
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-sm text-center">
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-purple-100">
-          <FileText className="h-7 w-7 text-purple-600" />
+    <div className="flex items-center justify-center py-24">
+      <div className="w-full max-w-md rounded-2xl border border-zinc-200 bg-white px-6 py-10 text-center shadow-[0_1px_3px_rgba(0,0,0,0.03),0_4px_12px_rgba(0,0,0,0.04)]">
+        <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-zinc-100">
+          <FileText className="h-7 w-7 text-zinc-500" />
         </div>
-        <h1 className="mb-2 text-xl font-bold text-gray-900">Post not found</h1>
-        <p className="mb-6 text-sm text-gray-500">
-          This post doesn&apos;t exist or may have been deleted. Browse other
-          listings below.
+
+        <h1 className="text-lg font-semibold text-zinc-900">
+          We&apos;re having trouble loading this post
+        </h1>
+        <p className="mt-2 text-sm leading-relaxed text-zinc-500">
+          It may have been deleted or there was a connection problem. Please try
+          again in a moment.
         </p>
-        <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
-          <button
-            onClick={reset}
-            className="inline-flex items-center justify-center gap-2 rounded-lg bg-gray-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-gray-700"
-          >
-            <RefreshCcw className="h-4 w-4" />
-            Try again
-          </button>
+
+        <div className="mt-6 flex items-center justify-center gap-3">
           <Link
             href="/"
-            className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+            className="inline-flex items-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-50"
           >
             <Home className="h-4 w-4" />
             Go home
           </Link>
+          <button
+            type="button"
+            onClick={handleRetry}
+            disabled={isRetrying}
+            className="inline-flex items-center gap-2 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white transition-all hover:bg-zinc-700 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {isRetrying ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <RefreshCcw className="h-4 w-4" />
+            )}
+            {isRetrying ? "Retrying..." : "Try again"}
+          </button>
         </div>
       </div>
     </div>

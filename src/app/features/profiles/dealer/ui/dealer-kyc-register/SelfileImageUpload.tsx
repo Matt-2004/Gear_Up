@@ -4,12 +4,14 @@ import { Camera, TriangleAlert } from "lucide-react";
 import Image from "next/image";
 import { useRef, useState } from "react";
 import { useKycSubmit } from "@/app/features/profiles/dealer/context/KycFormContext";
+import { useToast } from "@/app/features/toast/hooks/useToast";
 import StepNavigation from "../add-car-form/StepNavigation";
 import { DefaultImageUpload } from "./KycUpload";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const SelfieImageUpload = () => {
   const { updateKycData, isStepValid } = useKycSubmit();
+  const { addToastMessage } = useToast();
   const [preview, setPreview] = useState<string>("");
   const [file, setFile] = useState<File | null>(null);
   const [useCameraMode, setUseCameraMode] = useState(false);
@@ -41,7 +43,7 @@ const SelfieImageUpload = () => {
       setUseCameraMode(true);
     } catch (error) {
       console.error("Error accessing camera:", error);
-      alert("Unable to access camera. Please use file upload instead.");
+      addToastMessage("error", "Unable to access camera. Please use file upload instead.");
     }
   };
 

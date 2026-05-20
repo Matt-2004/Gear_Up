@@ -3,6 +3,7 @@ import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
 import { CarModel } from "@/app/features/car/types/car.model";
 import { carMapper } from "@/app/features/car/types/car.mapper";
 import DealerCarDashboard from "@/app/features/profiles/dealer/ui/dealer-dashboard/DealerCarDashboard";
+import SectionErrorBoundary from "@/app/shared/ui/SectionErrorBoundary";
 
 export const dynamic = "force-dynamic";
 
@@ -45,7 +46,11 @@ export async function getAllStatusCars(): Promise<CursorResponse<CarModel[]>> {
 const Page = async () => {
   const cars = await getAllStatusCars();
 
-  return <DealerCarDashboard carData={cars} />;
+  return (
+    <SectionErrorBoundary>
+      <DealerCarDashboard carData={cars} />
+    </SectionErrorBoundary>
+  );
 };
 
 export default Page;

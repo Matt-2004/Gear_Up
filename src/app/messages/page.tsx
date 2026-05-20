@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 const getData = async (otherUserId: string) => {
   const res = await getConversationByOtherUserId(otherUserId);
   if (!res) {
-    console.log("No response from getConversationByOtherUserId");
+    console.error("No response from getConversationByOtherUserId");
   }
   const conversationId = res.data.conversationId;
   const resp = await getConversationsByConversationId(conversationId);

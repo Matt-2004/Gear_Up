@@ -4,190 +4,272 @@ import { IAdminUpdateStatus } from "@/app/features/profiles/dealer/types/kyc.typ
 import StatusUI from "@/app/shared/ui/StatusUI";
 import { updateKycByAdmin } from "@/app/shared/utils/API/AdminAPI";
 import { timeFormat } from "@/app/shared/utils/timeFormat";
-import clsx from "clsx";
-import { ArrowLeft, Check, FileCheck, UserCheck, X } from "lucide-react";
+import {
+  ArrowLeft,
+  Calendar,
+  Check,
+  Clock,
+  FileCheck,
+  Loader2,
+  Mail,
+  Phone,
+  User,
+  X,
+} from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
+import { type ChangeEvent, type Dispatch, type SetStateAction, useState } from "react";
 import { KycModel } from "../../../dealer/types/kyc.model";
 
 const AdminKycDetail = ({ kycById }: { kycById: KycModel }) => {
   const [text, setText] = useState("");
 
-  /*
-   *  Pending - Orange
-   *  Approved - Green
-   *  Rejected - Red
-   */
-
   return (
-    <div className={"flex h-full w-full flex-col items-center justify-center"}>
-      <div className={"h-full w-8/10"}>
-        <PageHeader />
-        <div className={"grid w-full grid-cols-3 grid-rows-4 gap-4"}>
-          <PersonalInfoComponent kycData={kycById} text={text} />
-          <div className={"w-96 rounded-lg border border-gray-200 bg-white"}>
-            01
+    <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 p-6 md:p-8">
+      <div className="mx-auto max-w-7xl">
+        <PageHeader kycData={kycById} />
+
+        <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
+          {/* Main Content */}
+          <div className="space-y-6 lg:col-span-2">
+            <PersonalInfoCard kycData={kycById} />
+            <DocumentsCard kycData={kycById} />
           </div>
-          <RejectReasonComponent text={text} setText={setText} />
-          <HistoryComponent submittedAt={kycById.submittedAt ?? "12345"} />
+
+          {/* Sidebar */}
+          <div className="space-y-6">
+            <ActionCard kycData={kycById} text={text} setText={setText} />
+            <HistoryCard submittedAt={kycById.submittedAt} />
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-const PageHeader = () => {
+/* ─── Page Header ─────────────────────────────────────────────────── */
+
+const PageHeader = ({ kycData }: { kycData: KycModel }) => {
   const router = useRouter();
+
   return (
-    <div className={"flex items-center gap-6 py-4 pr-4"}>
-      <div
-        className={"cursor-pointer rounded-full p-2 hover:bg-blue-50"}
+    <div className="flex flex-wrap items-center gap-4">
+      <button
+        type="button"
         onClick={() => router.back()}
+        className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3.5 py-2 text-sm font-medium text-gray-600 transition-all hover:border-gray-300 hover:bg-gray-50"
       >
-        <ArrowLeft className={"h-7 w-7 text-blue-600"} />
-      </div>
-      <div className={"flex flex-col"}>
-        <h1 className={"text-2xl font-semibold text-gray-900"}>
-          User Detail Review
+        <ArrowLeft className="h-4 w-4" />
+        Back
+      </button>
+
+      <div className="min-w-0">
+        <h1 className="text-2xl font-bold tracking-tight text-gray-900">
+          KYC Verification
         </h1>
-        <h3 className={"text-gray-600"}>
-          Review and approve user verification
-        </h3>
+        <p className="text-sm text-gray-500">
+          Reviewing{" "}
+          <span className="font-semibold text-gray-700">{kycData.name}</span>
+        </p>
+      </div>
+
+      <div className="ml-auto">
+        <StatusUI status={kycData.status} />
       </div>
     </div>
   );
 };
 
-interface PersonalInfoComponentProps {
-  kycData: KycModel;
-  text: string;
+/* ─── Personal Info Card ──────────────────────────────────────────── */
+
+interface FieldProps {
+  label: string;
+  value: string;
+  icon: React.ReactNode;
 }
 
-const PersonalInfoComponent = ({
-  kycData,
-  text,
-}: PersonalInfoComponentProps) => {
-  return (
-    <div
-      className={
-        "col-span-2 row-span-4 mb-4 rounded-lg border border-gray-200 bg-white p-10"
-      }
-    >
-      <div className={"mb-4 flex flex-col justify-center"}>
-        <h1
-          className={
-            "mb-4 flex items-center gap-2 py-2 text-xl font-semibold text-gray-900"
-          }
-        >
-          <UserCheck className={"text-blue-600"} />
-          Personal Information
-        </h1>
-        <div className={"grid grid-flow-col grid-cols-2 grid-rows-3 gap-4"}>
-          {Object.entries(kycData).map((item, i: number) => {
-            return (
-              <div key={i}>
-                {item[0] === "status" ? (
-                  <div className={""}>
-                    <label className={"font-normal text-gray-600"}>
-                      Status
-                    </label>{" "}
-                    <StatusUI status={item[1]} />
-                  </div>
-                ) : (
-                  (item[0] === "email" ||
-                    item[0] === "fullName" ||
-                    item[0] === "phoneNumber" ||
-                    item[0] === "dateOfBirth") && (
-                    <div key={i} className={""}>
-                      <label className={"font-normal text-gray-600"}>
-                        {(item[0] === "email" && "Email") ||
-                          (item[0] === "fullName" && "Full Name") ||
-                          (item[0] === "phoneNumber" && "Phone Number") ||
-                          (item[0] === "dateOfBirth" && "BirthDay")}
-                      </label>
-                      <div
-                        className={clsx(
-                          item[1] === "" ? "text-red-500" : "text-gray-900",
-                          "w-[200px] font-medium",
-                        )}
-                      >
-                        {item[1] === "" ? "No Data" : item[1]}
-                      </div>
-                    </div>
-                  )
-                )}
-              </div>
-            );
-          })}
-          ;
-        </div>
+const InfoField = ({ label, value, icon }: FieldProps) => (
+  <div className="flex items-start gap-3">
+    <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-gray-500">
+      {icon}
+    </div>
+    <div className="min-w-0">
+      <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+        {label}
+      </p>
+      <p className="text-sm font-semibold text-gray-900 truncate">
+        {value || "—"}
+      </p>
+    </div>
+  </div>
+);
+
+const PersonalInfoCard = ({ kycData }: { kycData: KycModel }) => (
+  <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+    <h2 className="mb-6 flex items-center gap-2 text-lg font-bold text-gray-900">
+      <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary-50">
+        <User className="h-4 w-4 text-primary-600" />
       </div>
-      <div id={"spacer"} className={"my-8 h-1 border-b border-gray-200"} />
-      <div className={"flex flex-col justify-center text-gray-900"}>
-        <h1
-          className={"mb-4 flex items-center gap-2 py-2 text-xl font-semibold"}
-        >
-          <FileCheck className={"text-blue-600"} />
-          Documents Review
-        </h1>
-        <div className={"w-full gap-7"}>
-          <div className={"flex w-full flex-col justify-between gap-4"}>
-            <div className={"flex flex-col gap-2"}>
-              <h1>KYC documents</h1>
+      Personal Information
+    </h2>
+
+    <div className="grid gap-6 sm:grid-cols-2">
+      <InfoField
+        label="Full Name"
+        value={kycData.name}
+        icon={<User className="h-4 w-4" />}
+      />
+      <InfoField
+        label="Email"
+        value={kycData.email}
+        icon={<Mail className="h-4 w-4" />}
+      />
+      <InfoField
+        label="Phone Number"
+        value={kycData.phone}
+        icon={<Phone className="h-4 w-4" />}
+      />
+      <InfoField
+        label="Date of Birth"
+        value={kycData.dateOfBirth}
+        icon={<Calendar className="h-4 w-4" />}
+      />
+    </div>
+  </div>
+);
+
+/* ─── Documents Card ───────────────────────────────────────────────── */
+
+const DocumentsCard = ({ kycData }: { kycData: KycModel }) => (
+  <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+    <h2 className="mb-6 flex items-center gap-2 text-lg font-bold text-gray-900">
+      <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary-50">
+        <FileCheck className="h-4 w-4 text-primary-600" />
+      </div>
+      Documents Review
+    </h2>
+
+    {/* KYC Documents */}
+    <div className="mb-8">
+      <h3 className="mb-3 text-sm font-semibold text-gray-700">
+        Identification Documents
+      </h3>
+      {kycData.documentUrls.length > 0 ? (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {kycData.documentUrls.map((url, i) =>
+            url ? (
               <div
-                className={
-                  "grid h-80 w-full grid-cols-2 gap-4 rounded-lg border border-gray-200"
-                }
-              >
-                {kycData.documentUrls.map((items: string, i: number) => {
-                  if (items) {
-                    return (
-                      <Image
-                        className={"h-full w-fit object-cover"}
-                        key={i}
-                        src={items}
-                        alt={"Document-image"}
-                        width={200}
-                        height={300}
-                      />
-                    );
-                  }
-                })}
-              </div>
-            </div>
-            <div className={"flex flex-col gap-2"}>
-              <label className={"font-normal"}>Selfie Image</label>
-              <div
-                className={
-                  "flex h-80 w-80 justify-center rounded-lg border-gray-400 shadow-sm"
-                }
+                key={i}
+                className="overflow-hidden rounded-xl border border-gray-100 bg-gray-50"
               >
                 <Image
-                  className={"h-full w-full object-contain"}
-                  src={kycData.selfieUrl}
-                  alt={"selfie-image"}
-                  width={300}
+                  src={url}
+                  alt={`Document ${i + 1}`}
+                  width={400}
                   height={300}
+                  className="h-64 w-full object-cover"
                 />
               </div>
-            </div>
-          </div>
+            ) : null,
+          )}
         </div>
+      ) : (
+        <p className="py-8 text-center text-sm text-gray-400">
+          No documents uploaded
+        </p>
+      )}
+    </div>
+
+    {/* Selfie */}
+    <div>
+      <h3 className="mb-3 text-sm font-semibold text-gray-700">
+        Selfie Verification
+      </h3>
+      {kycData.selfieUrl ? (
+        <div className="overflow-hidden rounded-xl border border-gray-100 bg-gray-50">
+          <Image
+            src={kycData.selfieUrl}
+            alt="Selfie"
+            width={300}
+            height={300}
+            className="h-64 w-full object-contain sm:w-80"
+          />
+        </div>
+      ) : (
+        <p className="py-8 text-center text-sm text-gray-400">
+          No selfie uploaded
+        </p>
+      )}
+    </div>
+  </div>
+);
+
+/* ─── Action Card (Sidebar) ────────────────────────────────────────── */
+
+const ActionCard = ({
+  kycData,
+  text,
+  setText,
+}: {
+  kycData: KycModel;
+  text: string;
+  setText: Dispatch<SetStateAction<string>>;
+}) => {
+  const wordCount = text.trim().split(/\s+/).filter(Boolean).length;
+
+  const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    const newValue = e.target.value;
+    if (newValue.length < text.length) {
+      setText(newValue);
+      return;
+    }
+    const newWords = newValue.trim().split(/\s+/).filter(Boolean);
+    if (newWords.length <= 150) {
+      setText(newValue);
+    }
+  };
+
+  return (
+    <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+      <h2 className="mb-5 flex items-center gap-2 text-lg font-bold text-gray-900">
+        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-rose-50">
+          <X className="h-4 w-4 text-rose-600" />
+        </div>
+        Decision
+      </h2>
+
+      {/* Rejection reason */}
+      <div className="mb-5">
+        <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-gray-500">
+          Rejection Reason
+        </label>
+        <textarea
+          value={text}
+          onChange={handleChange}
+          className="h-36 w-full rounded-xl border border-gray-200 bg-gray-50 p-4 text-sm text-gray-900 placeholder:text-gray-400 transition-all focus:border-rose-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-rose-100"
+          placeholder="Explain why this KYC submission is being rejected..."
+        />
+        <p className="mt-1.5 text-right text-xs text-gray-400">
+          {wordCount} / 150 words
+        </p>
       </div>
-      <div className={"my-6 flex justify-end gap-4"}>
+
+      {/* Buttons */}
+      <div className="space-y-3">
         <RejectButton
           id={kycData.kycId}
           data={{ status: "Rejected", rejectionReason: text }}
         />
         <ApprovedButton
           id={kycData.kycId}
-          data={{ status: "Approved", rejectionReason: text }}
+          data={{ status: "Approved", rejectionReason: "" }}
         />
       </div>
     </div>
   );
 };
+
+/* ─── Decision Buttons ─────────────────────────────────────────────── */
 
 interface IDecision {
   id: string;
@@ -196,121 +278,110 @@ interface IDecision {
 
 const RejectButton = ({ id, data }: IDecision) => {
   const router = useRouter();
-  const onSubmit = () => {
-    const reject = async () => {
-      await updateKycByAdmin(data, id);
-      router.replace("/profile/admin?tab=kyc-verification");
-    };
-    reject();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const onSubmit = async () => {
+    if (!data.rejectionReason) return;
+    setIsLoading(true);
+    try {
+      const response = await updateKycByAdmin(data, id);
+      if (response?.isSuccess) {
+        router.replace("/profile/admin?tab=kyc-verification");
+      } else {
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error("Error rejecting KYC:", error);
+      setIsLoading(false);
+    }
   };
 
   return (
     <button
-      className={
-        "flex cursor-pointer items-center gap-1 rounded-lg bg-red-600 px-4 py-2 text-white"
-      }
+      type="button"
       onClick={onSubmit}
+      disabled={isLoading || !data.rejectionReason}
+      className="flex w-full items-center justify-center gap-2 rounded-xl bg-rose-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-50"
     >
-      <X className="h-5 w-5" />
-      Reject
+      {isLoading ? (
+        <Loader2 className="h-4 w-4 animate-spin" />
+      ) : (
+        <X className="h-4 w-4" />
+      )}
+      {isLoading ? "Rejecting..." : "Reject"}
     </button>
   );
 };
 
 const ApprovedButton = ({ id, data }: IDecision) => {
   const router = useRouter();
-  const onSubmit = () => {
-    const approve = async () => {
-      await updateKycByAdmin(data, id);
+  const [isLoading, setIsLoading] = useState(false);
 
-      router.replace("/profile/admin?tab=kyc-verification");
-    };
-    approve();
+  const onSubmit = async () => {
+    setIsLoading(true);
+    try {
+      const response = await updateKycByAdmin(data, id);
+      if (response?.isSuccess) {
+        router.replace("/profile/admin?tab=kyc-verification");
+      } else {
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error("Error approving KYC:", error);
+      setIsLoading(false);
+    }
   };
 
   return (
     <button
-      className={
-        "flex cursor-pointer items-center gap-1 rounded-lg bg-green-600 px-4 py-2 text-white"
-      }
+      type="button"
       onClick={onSubmit}
+      disabled={isLoading}
+      className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-50"
     >
-      <Check className="h-5 w-5" />
-      Approve
+      {isLoading ? (
+        <Loader2 className="h-4 w-4 animate-spin" />
+      ) : (
+        <Check className="h-4 w-4" />
+      )}
+      {isLoading ? "Approving..." : "Approve"}
     </button>
   );
 };
 
-interface ITextArea {
-  text: string;
-  setText: Dispatch<SetStateAction<string>>;
-}
+/* ─── History Card ─────────────────────────────────────────────────── */
 
-const RejectReasonComponent = ({ text, setText }: ITextArea) => {
-  const wordCount = text.trim().split(/\s+/).filter(Boolean).length;
-
-  const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    const newValue = e.target.value;
-    const newWords = newValue.trim().split(/\s+/).filter(Boolean);
-
-    // CASE 1: User is deleting or reducing text → ALWAYS ALLOW
-    if (newValue.length < text.length) {
-      setText(newValue);
-      return;
-    }
-
-    // CASE 2: New words <= max → ALLOW
-    if (newWords.length <= 150) {
-      setText(newValue);
-      return;
-    }
-  };
-  return (
-    <div
-      className={
-        "row-span-2 flex w-96 flex-col gap-2 rounded-lg border border-gray-200 bg-white p-4 text-gray-900"
-      }
-    >
-      <h1 className={"text-xl font-semibold"}>Reject Reasons</h1>
-      <textarea
-        value={text}
-        onChange={handleChange}
-        className={
-          "h-full w-full rounded-md border border-gray-200 bg-gray-50 p-4 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none"
-        }
-        name={"reject-textarea"}
-        id={"reject-textarea"}
-        placeholder={"Type your message here..."}
-      ></textarea>
-      <div className={"flex justify-between"}>
-        <label className={"text-gray-600"}>{wordCount} /150 words </label>
-        <button className={"cursor-pointer text-blue-600 hover:text-blue-700"}>
-          Save Draft
-        </button>
+const HistoryCard = ({ submittedAt }: { submittedAt: string }) => (
+  <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+    <h2 className="mb-5 flex items-center gap-2 text-lg font-bold text-gray-900">
+      <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-50">
+        <Clock className="h-4 w-4 text-blue-600" />
       </div>
-    </div>
-  );
-};
+      Timeline
+    </h2>
 
-const HistoryComponent = ({ submittedAt }: { submittedAt: string }) => {
-  return (
-    <div
-      className={
-        "flex w-96 flex-col gap-4 rounded-lg border border-gray-200 bg-white p-4 text-gray-900"
-      }
-    >
-      <h1 className={"text-xl font-semibold"}>History</h1>
-      <div className={"flex gap-4"}>
-        <div className={"h-full w-1 bg-blue-500"} />
-        <div>
-          <h2 className={"font-semibold"}>Initial Submission</h2>
-          <h3 className={"text-sm text-gray-600"}>
-            {timeFormat(new Date(submittedAt), "Hour")}
-          </h3>
+    <div className="flex gap-4">
+      <div className="flex flex-col items-center">
+        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-50">
+          <Clock className="h-4 w-4 text-primary-600" />
+        </div>
+        <div className="mt-2 h-full w-0.5 bg-gradient-to-b from-primary-100 to-transparent" />
+      </div>
+      <div className="pb-4">
+        <h3 className="text-sm font-semibold text-gray-900">
+          Initial Submission
+        </h3>
+        <p className="mt-0.5 text-sm text-gray-500">
+          {timeFormat(new Date(submittedAt), "Hour")}
+        </p>
+        <div className="mt-3 rounded-lg bg-primary-50/50 px-3 py-2">
+          <p className="text-xs text-primary-800">
+            KYC documents submitted for verification
+          </p>
         </div>
       </div>
     </div>
-  );
-};
+  </div>
+);
 
 export default AdminKycDetail;

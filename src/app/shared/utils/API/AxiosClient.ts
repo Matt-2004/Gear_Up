@@ -72,7 +72,46 @@ async function refreshAccessToken(
   });
 }
 
-// ─── Response interceptor ────────────────────────────────────────────
+// ─── Retry config ─────────────────────────────────────────────────────
+
+const RETRY_STATUS_CODES = new Set([429, 500, 502, 503, 504]);
+const MAX_RETRIES = 2;
+const RETRY_DELAY_MS = [1000, 2000, 4000];
+
+const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+// ─── Response interceptor: retry on transient failures ───────────────
+
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const config = error.config as
+      | (typeof error.config & { _retry?: boolean; _retryCount?: number })
+      | undefined;
+
+    if (!config) return Promise.reject(error);
+
+    const retryCount = config._retryCount ?? 0;
+    const isGet = config.method?.toLowerCase() === "get";
+    const isRetryableStatus =
+      error.response?.status && RETRY_STATUS_CODES.has(error.response.status);
+    const isNetworkError = !error.response;
+
+    if (
+      isGet &&
+      (isRetryableStatus || isNetworkError) &&
+      retryCount < MAX_RETRIES
+    ) {
+      config._retryCount = retryCount + 1;
+      await delay(RETRY_DELAY_MS[retryCount] ?? 4000);
+      return api.request(config);
+    }
+
+    return Promise.reject(error);
+  },
+);
+
+// ─── Response interceptor: 401 token refresh ─────────────────────────
 
 api.interceptors.response.use(
   (response) => response,

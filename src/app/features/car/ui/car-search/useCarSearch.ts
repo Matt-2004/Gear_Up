@@ -100,6 +100,8 @@ export function useCarSearch({ query, initialData }: UseCarSearchParams) {
     isFetchingNextPage,
     isLoading,
     isError,
+    isRefetching,
+    refetch,
     error,
   } = useInfiniteQuery<
     SearchPage,
@@ -238,7 +240,7 @@ export function useCarSearch({ query, initialData }: UseCarSearchParams) {
   };
 
   const handleGoBack = () => router.back();
-  const handleRetry = () => router.refresh();
+  const handleRetry = () => refetch();
 
   const clearFilters = () => {
     setFilters({ price: "", color: "", sortBy: "", sortOrder: "" });
@@ -255,6 +257,7 @@ export function useCarSearch({ query, initialData }: UseCarSearchParams) {
   const showEmptyState =
     hasActiveSearch && !isLoading && !isError && !hasResults;
   const showResultsState = hasActiveSearch && hasResults;
+  const hasItems = allItems.length > 0;
 
   return {
     // State
@@ -280,11 +283,14 @@ export function useCarSearch({ query, initialData }: UseCarSearchParams) {
     isFetchingNextPage,
     isLoading,
     isError,
+    isRefetching,
+    refetch,
     error,
 
     // Derived state
     hasActiveSearch,
     hasResults,
+    hasItems,
     showStartState,
     showLoadingState,
     showErrorState,
