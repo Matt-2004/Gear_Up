@@ -9,12 +9,13 @@ import { IAdminUpdateStatus } from "@/app/features/profiles/dealer/types/kyc.typ
 import { CreateMessageDTO } from "@/app/features/messaging/types/message.types";
 import { BACKEND_API_URL } from "@/app/shared/utils/config";
 import { getServerAccessToken } from "@/app/shared/utils/AuthUtils/tokenUtils";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { SubmitVehicle } from "@/app/features/profiles/dealer/context/AddNewCarContext";
 import { EmailValidationRequest } from "@/app/features/auth/emailValidation/types/email-validation-request";
 import { SignUpDTO } from "@/app/features/auth/signUp/types/sign-up-dto";
 import { MainResponse } from "@/app/shared/types.ts/main-response";
-import { ErrorResponse } from "../errors/errorResponse";
+// Note: keep sync helpers (e.g., normalizeError) in non-server modules.
+import { normalizeError } from "./axios-error";
 import { CreatePostDTO } from "@/app/features/post/types/post.dto";
 import { AddCommentDTO } from "@/app/features/comment/types/comment.dto";
 import { IReviewSubmissionDTO } from "@/app/features/review/types/review.dto";
@@ -166,6 +167,7 @@ api.interceptors.response.use(
           const cleanupStore = await cookies();
           cleanupStore.delete("access_token");
           cleanupStore.delete("refresh_token");
+          cleanupStore.delete("user_data");
         } catch {
           // not a server-action context — ignore
         }
@@ -176,13 +178,6 @@ api.interceptors.response.use(
     return Promise.reject(error);
   },
 );
-
-type ApiErrorPayload = {
-  isSuccess?: boolean;
-  message?: string;
-  data?: null;
-  status?: number;
-};
 
 // ─── Auth headers ────────────────────────────────────────────────────
 
@@ -202,62 +197,6 @@ async function buildAuthHeaders(
 
   return headers;
 }
-
-const extractErrorMessage = (
-  payload: ApiErrorPayload | undefined,
-  fallback: string,
-): string => {
-  if (payload?.message) return payload.message;
-  return fallback;
-};
-
-const extractErrorStatus = (
-  payload: ApiErrorPayload | undefined,
-  fallback: number,
-): number => {
-  if (typeof payload?.status === "number") return payload.status;
-  return fallback;
-};
-
-const isApiErrorPayload = (value: unknown): value is ApiErrorPayload => {
-  if (!value || typeof value !== "object") return false;
-  return "message" in value || "status" in value || "isSuccess" in value;
-};
-
-const normalizeError = (error: unknown, context: string): ErrorResponse => {
-  if (axios.isAxiosError(error)) {
-    const axiosError = error as AxiosError<ApiErrorPayload>;
-    const payload = axiosError.response?.data;
-
-    // Network error — no response received
-    if (!axiosError.response) {
-      console.error(`${context}: network error (${axiosError.code ?? "unknown"})`);
-      return new ErrorResponse(
-        axiosError.message || "Network error — check your connection",
-        0,
-        null,
-      );
-    }
-
-    const message = extractErrorMessage(payload, axiosError.message);
-    const statusCode = extractErrorStatus(payload, axiosError.response.status);
-    console.error(`${context}: ${statusCode} — ${message}`);
-    return new ErrorResponse(message, statusCode, null);
-  }
-
-  if (isApiErrorPayload(error)) {
-    const message = extractErrorMessage(error, "Request failed");
-    const statusCode = extractErrorStatus(error, 500);
-    console.error(`${context}: ${statusCode} — ${message}`);
-    return new ErrorResponse(message, statusCode, null);
-  }
-
-  return new ErrorResponse(
-    error instanceof Error ? error.message : "Request failed",
-    500,
-    null,
-  );
-};
 
 function isFormData(data: unknown): data is FormData {
   return typeof FormData !== "undefined" && data instanceof FormData;

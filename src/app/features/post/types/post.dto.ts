@@ -1,5 +1,4 @@
 import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
-import { CarDetailDTO } from "../../car/types/car.dto";
 
 export interface PostResponse {
   isSuccess: boolean;
@@ -9,6 +8,14 @@ export interface PostResponse {
   status: number;
 }
 
+interface CarImagesDTO {
+  id: string;
+  carId: string;
+  url: string;
+  status: string;
+  errorMessage: null;
+}
+
 export interface PostDTO {
   id: string;
   caption: string;
@@ -16,7 +23,8 @@ export interface PostDTO {
   authorUsername: string;
   authorAvatarUrl: string;
   visibility: string;
-  carDto: CarDetailDTO;
+  carId: string;
+  carImages: CarImagesDTO[];
   createdAt: string;
   updatedAt: string;
   likeCount: number;

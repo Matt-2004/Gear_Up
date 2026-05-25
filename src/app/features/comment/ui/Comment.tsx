@@ -7,9 +7,10 @@ import {
 import { formatRelativeTime } from "@/app/shared/utils/timeFormat";
 import { addUserPostLikes } from "@/app/shared/utils/API/PostAPI";
 import clsx from "clsx";
-import { Heart, Reply } from "lucide-react";
+import { ChevronDown, Heart, Reply } from "lucide-react";
 import Image from "next/image";
 import { useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { ICommentProps, useCommentContext } from "../context/CommentContext";
 import { AddCommentDTO } from "../types/comment.dto";
 import { CommentModel } from "../types/comment.model";
@@ -49,6 +50,11 @@ export const Comment = ({ comment, level }: ICommnetsProps) => {
   // level: 0 => comment level 1, 1 => level 2, 2 => level 3 (stop)
   const canExpandMore = level < 2;
 
+  const replyItemVariants = {
+    hidden: { opacity: 0, y: -6 },
+    visible: { opacity: 1, y: 0 },
+  };
+
   const handleToggleShowReplies = (c: ICommentProps) => {
     if (!canExpandMore) return;
     const id = String(c.id);
@@ -81,17 +87,8 @@ export const Comment = ({ comment, level }: ICommnetsProps) => {
         </p>
       )}
 
-      {comment.map((c, i) => (
-        <div key={i} className="relative">
-          {/* connector from vertical guide to this comment */}
-
-          {level > 0 && (
-            <div
-              className={`absolute -top-2 -left-8 h-10 w-7 rounded-bl-xl border-b border-l border-gray-300 bg-white`}
-              aria-hidden
-            />
-          )}
-
+      {comment.map((c, i) => {
+        const commentBody = (
           <div className="w-full">
             <div className="flex w-full gap-4">
               <Image
@@ -152,35 +149,98 @@ export const Comment = ({ comment, level }: ICommnetsProps) => {
                     </div>
                   )}
                 </div>
-                {canExpandMore &&
-                  c.childCount > 0 &&
-                  !expandedCommentIds.includes(String(c.id)) && (
-                    <>
-                      <div
-                        className="absolute top-14 bottom-0 left-4 h-[calc(100%-4.9rem)] w-px bg-gray-300"
-                        aria-hidden
+                {canExpandMore && c.childCount > 0 && (
+                  <div className="mt-3">
+                    <button
+                      type="button"
+                      onClick={() => handleToggleShowReplies(c)}
+                      aria-expanded={expandedCommentIds.includes(String(c.id))}
+                      aria-controls={`replies-${c.id}`}
+                      className="inline-flex items-center gap-1.5 text-xs text-gray-600 transition-colors hover:text-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/30 focus-visible:ring-offset-2"
+                    >
+                      <ChevronDown
+                        className={clsx(
+                          "h-3.5 w-3.5 transition-transform duration-200",
+                          expandedCommentIds.includes(String(c.id))
+                            ? "rotate-180"
+                            : "rotate-0",
+                        )}
                       />
-                      <div
-                        className="absolute top-[calc(100%-1.4rem)] left-4 h-4 w-7 rounded-bl-full border-b border-l border-gray-300"
-                        aria-hidden
-                      />
-                      <button
-                        onClick={() => handleToggleShowReplies(c)}
-                        className="mt-3 cursor-pointer text-start text-xs text-gray-600 hover:underline"
-                      >
-                        Show {c.childCount} replies
-                      </button>
-                    </>
-                  )}
+                      {expandedCommentIds.includes(String(c.id))
+                        ? "Hide replies"
+                        : "View replies"}
+                      <span className="text-gray-400">({c.childCount})</span>
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
 
-            {expandedCommentIds.includes(String(c.id)) && c.replies && (
-              <Comment comment={c.replies} level={level + 1} />
-            )}
+            <AnimatePresence initial={false}>
+              {expandedCommentIds.includes(String(c.id)) && c.replies && (
+                <motion.div
+                  id={`replies-${c.id}`}
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.25, ease: "easeOut" }}
+                  className="relative overflow-hidden"
+                >
+                  <div
+                    className="absolute left-4 top-0 h-full w-px bg-gray-200"
+                    aria-hidden
+                  />
+                  <motion.div
+                    initial="hidden"
+                    animate="visible"
+                    exit="hidden"
+                    variants={{
+                      hidden: { opacity: 0 },
+                      visible: {
+                        opacity: 1,
+                        transition: { staggerChildren: 0.06 },
+                      },
+                    }}
+                    className="relative"
+                  >
+                    <Comment comment={c.replies} level={level + 1} />
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
-        </div>
-      ))}
+        );
+
+        const wrapper =
+          level > 0 ? (
+            <motion.div
+              key={i}
+              variants={replyItemVariants}
+              className="relative"
+            >
+              {/* connector from vertical guide to this comment */}
+              <div
+                className="absolute -top-2 -left-8 h-10 w-7 rounded-bl-xl border-b border-l border-gray-300 bg-white"
+                aria-hidden
+              />
+              {commentBody}
+            </motion.div>
+          ) : (
+            <div key={i} className="relative">
+              {/* connector from vertical guide to this comment */}
+
+              {level > 0 && (
+                <div
+                  className={`absolute -top-2 -left-8 h-10 w-7 rounded-bl-xl border-b border-l border-gray-300 bg-white`}
+                  aria-hidden
+                />
+              )}
+              {commentBody}
+            </div>
+          );
+
+        return wrapper;
+      })}
     </div>
   );
 };
@@ -277,17 +337,17 @@ export const LikeCount = ({
   return (
     <button
       onClick={() => handelSubmit(type, id)}
-      className="hover:bg-primary-50 hover:text-primary-600 flex cursor-pointer items-center gap-1 rounded-lg px-3 text-gray-600 transition-all duration-200"
+      className="hover:bg-primary-50 hover:text-primary-600 flex cursor-pointer items-center gap-2 rounded-lg px-3 text-gray-600 transition-all duration-200"
     >
       {/* TODO: if isLikedByCurrentUser is true, change the heart icon to a filled heart */}
-      <span className="flex h-5 w-5 items-center justify-center">
+      <span className="flex  h-5 w-5 items-center justify-center">
         <Heart
           className={`w-6 h-6 transition ${
-            liked ? "fill-red-500 text-red-500" : "fill-none text-gray-400"
+            liked ? "fill-red-500 text-red-500" : "fill-none "
           }`}
         />
       </span>
-      <span className="text-sm font-medium">{count}</span>
+      {count > 0 && <span className="text-sm font-medium">{count}</span>}
     </button>
   );
 };

@@ -463,6 +463,7 @@ const server = http.createServer(async (req, res) => {
 
   // --- Posts: List ---
   if (method === "GET" && url.pathname === "/api/v1/posts") {
+    const detail = mockCarDetail("car-1");
     return json(res, 200, {
       isSuccess: true,
       message: "Posts retrieved",
@@ -474,6 +475,13 @@ const server = http.createServer(async (req, res) => {
             content: "Great condition, low mileage.",
             visibility: "Public",
             carId: "car-1",
+            carImages: (detail.carImages || []).map((img) => ({
+              id: img.id,
+              carId: img.carId,
+              url: img.url,
+              status: "Active",
+              errorMessage: null,
+            })),
             authorUsername: "Test User",
             authorAvatarUrl: "https://i.pravatar.cc/40?u=test",
             likeCount: 5,
@@ -482,7 +490,6 @@ const server = http.createServer(async (req, res) => {
             viewCount: 120,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
-            carDto: mockCarDetail("car-1"),
           },
         ],
         nextCursor: null,
@@ -497,6 +504,7 @@ const server = http.createServer(async (req, res) => {
     const postDetailMatch = url.pathname.match(/^\/api\/v1\/posts\/([^/]+)$/);
     if (postDetailMatch) {
       const postId = postDetailMatch[1];
+      const detail = mockCarDetail("car-1");
       return json(res, 200, {
         isSuccess: true,
         message: "Post retrieved",
@@ -506,6 +514,13 @@ const server = http.createServer(async (req, res) => {
           content: "Great condition, low mileage.",
           visibility: "Public",
           carId: "car-1",
+          carImages: (detail.carImages || []).map((img) => ({
+            id: img.id,
+            carId: img.carId,
+            url: img.url,
+            status: "Active",
+            errorMessage: null,
+          })),
           authorUsername: "Test User",
           authorAvatarUrl: "https://i.pravatar.cc/40?u=test",
           likeCount: 5,
@@ -514,7 +529,6 @@ const server = http.createServer(async (req, res) => {
           viewCount: 120,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
-          carDto: mockCarDetail("car-1"),
         },
         status: 200,
       });

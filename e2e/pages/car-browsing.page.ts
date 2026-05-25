@@ -66,10 +66,10 @@ export class CarDetailPage {
   constructor(readonly page: Page) {}
 
   get galleryPrev() {
-    return this.page.getByTestId("gallery-prev");
+    return this.page.getByTestId("gallery-prev").first();
   }
   get galleryNext() {
-    return this.page.getByTestId("gallery-next");
+    return this.page.getByTestId("gallery-next").first();
   }
   get galleryCounter() {
     return this.page.getByTestId("gallery-counter").first();

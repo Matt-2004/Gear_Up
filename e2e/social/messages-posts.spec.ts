@@ -30,11 +30,12 @@ test.describe("Posts", () => {
     });
   });
 
-  test("post detail page shows content", async ({ page }) => {
+  test("post detail page redirects or shows not-found", async ({ page }) => {
     await page.goto("/post/post-1");
 
+    // Post detail route was removed — should show 404 or redirect
     await expect(
-      page.getByRole("heading", { name: /check out this amazing car/i }),
+      page.getByRole("heading", { name: /page not found/i }),
     ).toBeVisible({ timeout: 8000 });
   });
 });

@@ -13,7 +13,7 @@ const CarImage = ({
   width,
   height,
   className = "",
-  priority,
+
   ...props
 }: CarImageProps) => {
   const [imgSrc, setImageSrc] = useState(src);
@@ -25,7 +25,7 @@ const CarImage = ({
       width={width}
       height={height}
       alt={alt}
-      priority={priority}
+      quality={100}
       className={`object-cover ${className}`}
       onError={() => {
         if (imgSrc !== "/fallback_image.jpg") {

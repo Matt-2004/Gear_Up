@@ -1,22 +1,27 @@
 "use client";
 
 import { useUserData } from "@/app/features/navbar/context/UserDataContext";
-import { DEFAULT_API_URL } from "@/app/shared/utils/config";
 import { getAllPosts } from "@/app/shared/utils/API/PostAPI";
+import {
+  getCommentsByPostId,
+  getNestedCommentsByCommentId,
+} from "@/app/shared/utils/API/CommentAPI";
+import { addComment } from "@/app/shared/utils/API/CommentAPI";
 import { formatRelativeTime } from "@/app/shared/utils/timeFormat";
 import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { ChevronLeft, ChevronRight, MessageSquare, Plus } from "lucide-react";
 import Image from "next/image";
 
-import { useEffect, useRef, useState } from "react";
-import { LikeCount } from "../../comment/ui/Comment";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Comment, CommentTextBox, LikeCount } from "../../comment/ui/Comment";
 import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
 import { useRouter } from "next/navigation";
-import { formatNumber } from "@/app/shared/utils/numberFormatter";
-import { CarImages } from "../../car/types/car.dto";
-import { PostModel } from "../types/post.model";
+import { CarImagesModel, PostModel } from "../types/post.model";
 import { PostMapper } from "../types/post.mapper";
+import CommentContextProvider, {
+  useCommentContext,
+} from "../../comment/context/CommentContext";
 
 /* Discover post -> feeds & create post btn
 	
@@ -211,10 +216,11 @@ const CreatePostButton = () => {
 
 const PostCard = ({ postItem }: { postItem: PostModel }) => {
   const router = useRouter();
+  const [showComments, setShowComments] = useState(false);
   if (!postItem) return null;
   return (
     <section
-      className="group relative flex max-w-full min-w-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-md transition-all duration-300 hover:shadow-xl"
+      className="group relative flex max-w-full min-w-full cursor-pointer flex-col overflow-hidden shadow-sm bg-white"
       style={{ minHeight: "480px" }}
     >
       {/* Header Section with Date */}
@@ -247,13 +253,10 @@ const PostCard = ({ postItem }: { postItem: PostModel }) => {
         </div>
 
         {/* Image Section */}
-        {postItem.carDto && (
-        <div className="flex-1 overflow-hidden">
-          <CarouselImages
-            price={postItem.carDto.price}
-            images={postItem.carDto.images || []}
-          />
-        </div>
+        {postItem.carImages && (
+          <div className="flex-1 overflow-hidden">
+            <CarouselImages images={postItem.carImages} />
+          </div>
         )}
         {/* Caption and Content */}
         <div className="flex w-full flex-col gap-3 p-4">
@@ -266,15 +269,31 @@ const PostCard = ({ postItem }: { postItem: PostModel }) => {
 
       {/* Actions Section */}
 
-      <div className="flex gap-4 px-3 pb-3 sm:gap-4 sm:px-4 sm:pb-4">
+      <div className="flex px-3 pb-3 sm:gap-2 sm:px-4 sm:pb-4">
         <LikeCount
           type="post"
           id={postItem.id}
           isLikedByCurrentUser={postItem.isLikedByCurrentUser}
           likeCount={postItem.likeCount}
         />
-        <CommentCount id={postItem.id} commentCount={postItem.commentCount} />
+        <CommentCount
+          id={postItem.id}
+          commentCount={postItem.commentCount}
+          isExpanded={showComments}
+          onToggle={() => setShowComments((prev) => !prev)}
+        />
       </div>
+
+      {showComments && (
+        <div
+          id={`post-comments-${postItem.id}`}
+          className="border-t border-gray-100 bg-white"
+        >
+          <CommentContextProvider>
+            <PostComments postId={postItem.id} />
+          </CommentContextProvider>
+        </div>
+      )}
     </section>
   );
 };
@@ -314,11 +333,10 @@ export const PostContent = ({ postContent }: IPostContentProps) => {
   );
 };
 interface ICarouselPostImageProps {
-  images: CarImages[];
-  price: number;
+  images: CarImagesModel[];
 }
 
-export const CarouselImages = ({ images, price }: ICarouselPostImageProps) => {
+export const CarouselImages = ({ images }: ICarouselPostImageProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
@@ -358,9 +376,6 @@ export const CarouselImages = ({ images, price }: ICarouselPostImageProps) => {
   }, []);
   return (
     <div className="relative z-10 bg-gray-100">
-      <div className="absolute bottom-4 right-4 bg-white/40 border border-white/30 rounded-full backdrop-blur-md shadow-sm px-4 py-1">
-        <h3 className="text-primary text-xl">฿ {formatNumber(price)}</h3>
-      </div>
       <div
         ref={scrollRef}
         className="flex snap-x snap-mandatory items-center overflow-x-scroll scroll-smooth"
@@ -403,22 +418,92 @@ export const CarouselImages = ({ images, price }: ICarouselPostImageProps) => {
 const CommentCount = ({
   commentCount,
   id,
+  isExpanded = false,
+  onToggle,
 }: {
   commentCount: number;
   id: string;
+  isExpanded?: boolean;
+  onToggle?: () => void;
 }) => {
-  const router = useRouter();
   return (
     <button
-      onClick={() => {
-        router.push(`${DEFAULT_API_URL}/post/${id}`);
+      type="button"
+      onClick={(e) => {
+        e.stopPropagation();
+        onToggle?.();
       }}
-      className="hover:bg-primary-50 hover:text-primary-600 flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-gray-600 transition-all duration-200"
+      aria-expanded={isExpanded}
+      aria-controls={`post-comments-${id}`}
+      className="hover:bg-primary-50 hover:text-primary-600 flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-gray-600 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/30 focus-visible:ring-offset-2"
     >
-      <MessageSquare className="h-6 w-6 fill-gray-800 stroke-0" />
+      <MessageSquare className="h-5 w-5 fill-none  " />
 
-      <span className="text-sm font-medium">{commentCount}</span>
+      {commentCount > 0 && (
+        <span className="text-sm font-medium">{commentCount}</span>
+      )}
     </button>
+  );
+};
+
+const PostComments = ({ postId }: { postId: string }) => {
+  const { comments, handleComment, requestedParentCommentId } =
+    useCommentContext();
+  const [commentText, setCommentText] = useState("");
+
+  const handleSubmit = useCallback(async () => {
+    if (!commentText.trim()) return;
+    try {
+      await addComment({
+        postId,
+        text: commentText.trim(),
+        parentCommentId: null,
+      });
+      setCommentText("");
+    } catch (err) {
+      console.error("Error in creating comment:: ", err);
+    }
+  }, [commentText, postId]);
+
+  const fetchComments = useCallback(
+    async (id: string) => {
+      const response = await getCommentsByPostId(id);
+      handleComment(response?.data, null);
+    },
+    [handleComment],
+  );
+
+  const fetchNestedComments = useCallback(
+    async (parentId: string) => {
+      const response = await getNestedCommentsByCommentId(parentId);
+      handleComment(response?.data, parentId);
+    },
+    [handleComment],
+  );
+
+  useEffect(() => {
+    fetchComments(postId);
+  }, [fetchComments, postId]);
+
+  useEffect(() => {
+    if (!requestedParentCommentId) return;
+    fetchNestedComments(requestedParentCommentId);
+  }, [fetchNestedComments, requestedParentCommentId]);
+
+  return (
+    <div className="px-2 pb-4 pt-2 sm:px-4">
+      {comments.length === 0 && (
+        <div className="mt-2">
+          <CommentTextBox
+            value={commentText}
+            onChange={setCommentText}
+            onSubmit={handleSubmit}
+            onCancel={() => setCommentText("")}
+          />
+        </div>
+      )}
+      <Comment comment={comments} level={0} />
+    </div>
   );
 };
 

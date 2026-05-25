@@ -155,7 +155,7 @@ const PostRow = ({
   onEdit: (post: PostModel) => void;
   deletingId: string | null;
 }) => {
-  const firstImage = post.carDto?.images?.[0]?.url;
+  const firstImage = post.carImages?.[0]?.url;
   const isDeleting = deletingId === post.id;
   return (
     <div className="flex items-center gap-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md">
@@ -163,7 +163,7 @@ const PostRow = ({
         {firstImage ? (
           <Image
             src={firstImage}
-            alt={post.carDto?.title ?? "car"}
+            alt="Car image"
             fill
             className="object-cover"
           />
@@ -179,9 +179,6 @@ const PostRow = ({
         </p>
         <p className="line-clamp-1 text-sm text-gray-500">{post.content}</p>
         <div className="mt-1 flex items-center gap-3 text-xs text-gray-400">
-          <span>
-            {post.carDto?.make} {post.carDto?.model} · {post.carDto?.year}
-          </span>
           <span
             className={`rounded-full ${post.visibility === "Public" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"} px-2 py-0.5`}
           >
@@ -304,10 +301,10 @@ const EditPostModal = ({
         {/* car summary */}
         <div className="flex items-center gap-3 border-b border-gray-100 bg-gray-50 px-6 py-3">
           <div className="relative h-12 w-16 shrink-0 overflow-hidden rounded-lg bg-gray-200">
-            {post.carDto?.images?.[0]?.url ? (
+            {post.carImages?.[0]?.url ? (
               <Image
-                src={post.carDto.images[0].url}
-                alt={post.carDto.title}
+                src={post.carImages[0].url}
+                alt="Car image"
                 fill
                 className="object-cover"
               />
@@ -319,11 +316,9 @@ const EditPostModal = ({
           </div>
           <div className="min-w-0">
             <p className="line-clamp-1 text-sm font-semibold text-gray-900">
-              {post.carDto?.title}
+              {post.caption}
             </p>
-            <p className="text-xs text-gray-400">
-              {post.carDto?.make} {post.carDto?.model} · {post.carDto?.year}
-            </p>
+            <p className="text-xs text-gray-400">{post.visibility}</p>
           </div>
         </div>
 
