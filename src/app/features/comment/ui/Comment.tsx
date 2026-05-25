@@ -214,7 +214,7 @@ export const Comment = ({ comment, level }: ICommnetsProps) => {
         const wrapper =
           level > 0 ? (
             <motion.div
-              key={i}
+              key={i.toString()}
               variants={replyItemVariants}
               className="relative"
             >
@@ -226,7 +226,7 @@ export const Comment = ({ comment, level }: ICommnetsProps) => {
               {commentBody}
             </motion.div>
           ) : (
-            <div key={i} className="relative">
+            <div key={i.toString()} className="relative">
               {/* connector from vertical guide to this comment */}
 
               {level > 0 && (

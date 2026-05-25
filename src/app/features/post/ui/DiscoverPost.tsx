@@ -383,7 +383,7 @@ export const CarouselImages = ({ images }: ICarouselPostImageProps) => {
       >
         {images?.map((image, i) => (
           <Image
-            key={i}
+            key={i.toString()}
             ref={imageRef}
             src={image.url}
             alt={image.carId}
