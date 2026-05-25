@@ -7,7 +7,7 @@ export class DealerInventoryPage {
     return this.page.getByTestId("dealer-dashboard-header").first();
   }
   get addVehicleButton() {
-    return this.page.getByTestId("add-vehicle-button");
+    return this.page.getByTestId("add-vehicle-button").first();
   }
   get statCards() {
     return this.page.getByTestId("stat-card");

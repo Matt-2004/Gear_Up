@@ -18,6 +18,14 @@ export async function signInAction(
     return res;
   } catch (error: unknown) {
     const err = error as MainResponse<null>;
+    if (err.status === 404) {
+      return {
+        isSuccess: err.isSuccess,
+        message: "Oops, we couldn't find your user. Try again!",
+        data: null,
+        status: 404,
+      };
+    }
     if (err.status === 403) {
       const res = await postFetch<null>(
         `/api/v1/auth/resend-verification-email?email=${usernameOrEmail}`,

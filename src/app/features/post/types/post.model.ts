@@ -1,4 +1,7 @@
-import { CarDetailModel } from "../../car/types/car.model";
+export interface CarImagesModel {
+  url: string;
+  carId: string;
+}
 
 export interface PostModel {
   id: string;
@@ -7,7 +10,8 @@ export interface PostModel {
   authorUsername: string;
   authorProfileImage: string;
   visibility: string;
-  carDto: CarDetailModel | null;
+  carId: string;
+  carImages: CarImagesModel[];
   createdAt: string;
   updatedAt: string;
   likeCount: number;
