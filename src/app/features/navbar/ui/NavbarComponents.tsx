@@ -13,7 +13,7 @@ export function NavbarContainer({ children }: { children: ReactNode }) {
         "sticky top-0 z-50 w-full transition-all duration-300",
         scrolled
           ? "border-b border-gray-200/60 bg-white/80 shadow-lg shadow-gray-200/20 backdrop-blur-xl"
-          : "border-b border-transparent bg-white/95",
+          : "border-b border-transparent bg-white",
       )}
     >
       <div className="w-full px-4">
