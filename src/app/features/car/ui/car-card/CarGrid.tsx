@@ -1,50 +1,49 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+// import { useQuery } from "@tanstack/react-query";
 import { CarCard } from "./CarCard";
-import { getAllCars } from "@/app/shared/utils/API/CarAPI";
-import { carMapper } from "../../types/car.mapper";
+// import { getAllCars } from "@/app/shared/utils/API/CarAPI";
+// import { carMapper } from "../../types/car.mapper";
 import { SkeletonCard } from "@/app/shared/ui/Skeleton";
 import SectionErrorBoundary from "@/app/shared/ui/SectionErrorBoundary";
 import EmptyState from "@/app/shared/ui/EmptyState";
 import { Car } from "lucide-react";
-import mockVehicles, { toCarModel } from "@/data/mockVehicles";
+import { mockVehicles } from "@/app/shared/mock/mockVehicles";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ArrowRight } from "lucide-react";
 
-const FALLBACK_CARS = mockVehicles.slice(0, 8).map(toCarModel);
+const CARS = mockVehicles.slice(0, 8);
 
 export function CarGrid() {
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["featured-cars"],
-    queryFn: async () => {
-      const res = await getAllCars(null);
-      return res.data.items.map(carMapper);
-    },
-    staleTime: 5 * 60 * 1000,
-    retry: 1,
-  });
+  // const { data, isLoading, isError, error } = useQuery({
+  //   queryKey: ["featured-cars"],
+  //   queryFn: async () => {
+  //     const res = await getAllCars(null);
+  //     return res.data.items.map(carMapper);
+  //   },
+  //   staleTime: 5 * 60 * 1000,
+  //   retry: 1,
+  // });
 
-  // Silently log errors — never show error UI to the user
-  useEffect(() => {
-    if (isError && error) {
-      console.log("[CarGrid] API unavailable, falling back to demo data:", (error as Error).message);
-    }
-  }, [isError, error]);
+  // useEffect(() => {
+  //   if (isError && error) {
+  //     console.log("[CarGrid] API unavailable, falling back to demo data:", (error as Error).message);
+  //   }
+  // }, [isError, error]);
 
-  const cars = data ?? [];
-  const featuredCars = cars
-    .filter((car) => car.status?.toLowerCase() === "approved")
-    .slice(0, 8);
+  // const cars = data ?? [];
+  // const featuredCars = cars
+  //   .filter((car) => car.status?.toLowerCase() === "approved")
+  //   .slice(0, 8);
 
   const [showAll, setShowAll] = useState(false);
 
-  // If API returns data, use it. Otherwise (error or empty), use fallback.
-  const allCars = featuredCars.length > 0 ? featuredCars : FALLBACK_CARS;
+  // const allCars = featuredCars.length > 0 ? featuredCars : FALLBACK_CARS;
+  const allCars = CARS;
   const displayCars = showAll ? allCars : allCars.slice(0, 4);
   const hasMore = allCars.length > 4;
-  const isUsingFallback = featuredCars.length === 0;
+  const isLoading = false;
 
   return (
     <section
@@ -74,17 +73,6 @@ export function CarGrid() {
           </p>
         </motion.div>
 
-        {/* Fallback indicator */}
-        {isUsingFallback && !isLoading && (
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="mb-6 text-center text-xs text-zinc-500"
-          >
-            Showing demo listings — real inventory is on the way.
-          </motion.p>
-        )}
-
         <SectionErrorBoundary>
           {/* Loading — skeleton grid */}
           {isLoading && (
@@ -95,7 +83,7 @@ export function CarGrid() {
             </div>
           )}
 
-          {/* Empty (only if not loading and truly no data at all) */}
+          {/* Empty */}
           {!isLoading && displayCars.length === 0 && (
             <EmptyState
               icon={<Car className="h-6 w-6" />}
@@ -105,7 +93,7 @@ export function CarGrid() {
             />
           )}
 
-          {/* Results / Fallback */}
+          {/* Results */}
           {!isLoading && displayCars.length > 0 && (
             <>
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

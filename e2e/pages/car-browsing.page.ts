@@ -18,7 +18,7 @@ export class LandingPage {
   }
 
   async clickViewDetails(index: number) {
-    await this.page.getByTestId("view-details").nth(index).click();
+    await this.page.getByTestId("car-card").nth(index).click();
   }
 }
 

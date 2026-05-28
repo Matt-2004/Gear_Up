@@ -30,11 +30,11 @@ export default function CarError({ error, reset }: ErrorProps) {
         </div>
 
         <h1 className="text-lg font-semibold text-zinc-900">
-          We&apos;re having trouble loading this car
+          Something went wrong
         </h1>
         <p className="mt-2 text-sm leading-relaxed text-zinc-500">
-          It may have been removed or there was a connection problem. Please try
-          again in a moment.
+          This listing may have been removed or there was a connection issue. Give
+          it another try.
         </p>
 
         <div className="mt-6 flex items-center justify-center gap-3">
@@ -43,7 +43,7 @@ export default function CarError({ error, reset }: ErrorProps) {
             className="inline-flex items-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-50"
           >
             <Search className="h-4 w-4" />
-            Browse cars
+            Browse Inventory
           </Link>
           <button
             type="button"
@@ -56,7 +56,7 @@ export default function CarError({ error, reset }: ErrorProps) {
             ) : (
               <RefreshCcw className="h-4 w-4" />
             )}
-            {isRetrying ? "Retrying..." : "Try again"}
+            {isRetrying ? "Retrying..." : "Retry"}
           </button>
         </div>
       </div>
