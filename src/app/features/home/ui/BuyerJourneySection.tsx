@@ -46,7 +46,11 @@ const cardVariants = {
   visible: (i: number) => ({
     opacity: 1,
     x: 0,
-    transition: { duration: 0.4, delay: i * 0.12, ease: [0.25, 0.46, 0.45, 0.94] as const },
+    transition: {
+      duration: 0.4,
+      delay: i * 0.12,
+      ease: [0.25, 0.46, 0.45, 0.94] as const,
+    },
   }),
 };
 
@@ -54,7 +58,9 @@ export default function HowGearUpWorksSection() {
   return (
     <section
       className="relative flex w-full justify-center overflow-hidden py-20 md:py-28"
-      style={{ background: "linear-gradient(180deg, #0a0f05 0%, #061E09 100%)" }}
+      style={{
+        background: "linear-gradient(180deg, #0a0f05 0%, #061E09 100%)",
+      }}
     >
       <div className="pointer-events-none absolute left-0 top-0 h-80 w-80 rounded-full bg-primary-600/[0.03] blur-3xl" />
       <div className="pointer-events-none absolute bottom-0 right-0 h-96 w-96 rounded-full bg-emerald-600/[0.03] blur-3xl" />
@@ -107,8 +113,12 @@ export default function HowGearUpWorksSection() {
                   </motion.div>
 
                   {/* Connector stub from center to card */}
-                  <div className={`absolute top-1/2 -translate-y-1/2 h-px w-12 bg-zinc-700 ${isLeft ? "right-1/2 mr-[26px]" : "left-1/2 ml-[26px]"}`}>
-                    <div className={`absolute top-1/2 -translate-y-1/2 h-2 w-2 rounded-full bg-primary-500 ${isLeft ? "left-0" : "right-0"}`} />
+                  <div
+                    className={`absolute top-1/2 -translate-y-1/2 h-px w-12 bg-zinc-700 ${isLeft ? "right-1/2 mr-[26px]" : "left-1/2 ml-[26px]"}`}
+                  >
+                    <div
+                      className={`absolute top-1/2 -translate-y-1/2 h-2 w-2 rounded-full bg-primary-500 ${isLeft ? "left-0" : "right-0"}`}
+                    />
                   </div>
 
                   {/* Card */}
@@ -120,7 +130,9 @@ export default function HowGearUpWorksSection() {
                     viewport={{ once: true, margin: "-80px" }}
                     className={`flex w-[calc(50%-56px)] ${isLeft ? "mr-auto justify-end" : "ml-auto justify-start"}`}
                   >
-                    <div className={`flex w-full max-w-[480px] overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.04)] transition-shadow duration-300 hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] ${isLeft ? "flex-row" : "flex-row-reverse"}`}>
+                    <div
+                      className={`flex w-full max-w-[480px] overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.04)] transition-shadow duration-300 hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] ${isLeft ? "flex-row" : "flex-row-reverse"}`}
+                    >
                       {/* Text side */}
                       <div className="flex flex-1 flex-col justify-center px-6 py-6">
                         <p className="text-xs font-semibold uppercase tracking-wider text-primary-600">
@@ -129,13 +141,13 @@ export default function HowGearUpWorksSection() {
                         <h3 className="mt-1 text-lg font-bold text-gray-900">
                           {step.title}
                         </h3>
-                        <p className="mt-2 text-sm leading-relaxed text-gray-600">
+                        <p className="mt-2 text-sm leading-5 tracking-wide text-gray-600">
                           {step.description}
                         </p>
                       </div>
 
                       {/* Image side */}
-                      <div className="relative flex h-44 w-44 shrink-0 items-center justify-center bg-gray-50 lg:h-48 lg:w-48">
+                      <div className="relative flex h-44 w-44 shrink-0 items-center justify-center bg-white lg:h-48 lg:w-48">
                         <Image
                           src={step.image}
                           alt={step.title}

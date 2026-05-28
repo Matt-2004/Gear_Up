@@ -125,8 +125,8 @@ I worked as the **frontend developer** responsible for:
 
 ### Testing
 
-- Unit and integration tests with Jest and React Testing Library (220+ tests)
-- E2E tests with Playwright for critical user flows (43+ tests)
+- Unit and integration tests with Jest and React Testing Library (290+ tests)
+- E2E tests with Playwright for critical user flows (57+ tests)
 - Page Object Model pattern for maintainable E2E selectors
 - Mock backend server for isolated, repeatable E2E test runs
 - CI pipeline with automated Jest and Playwright test execution
@@ -248,7 +248,7 @@ npm run test:e2e:ui          # interactive debug mode
 npx playwright show-report   # view HTML report
 ```
 
-E2E tests cover auth flows (sign up, sign in, reset password, email verification), car browsing/search/detail, and appointment booking — 43 tests across 8 spec files. A mock backend server provides controlled API responses for fast, repeatable runs. See [TESTING.md](./TESTING.md) for full details.
+E2E tests cover auth flows (sign up, sign in, reset password, email verification), car browsing/search/detail, appointment booking, and car detail page interactions — 57 tests across 9 spec files. A mock backend server provides controlled API responses for fast, repeatable runs. See [TESTING.md](./TESTING.md) for full details.
 
 ### Testing Tools
 
@@ -273,6 +273,8 @@ Recent updates reflected in the codebase include:
 - Drag-and-drop file upload for car images
 - Dealer public profile page with listings grid
 - Styled confirmation modals replacing native `window.confirm()` dialogs
+- Car detail page redesigned — cinematic gallery, dark gradient theme, radial card lighting, improved UX writing, and full accessibility pass
+- CarGrid and car detail page using mock data for stable demo/portfolio presentation
 - CarGrid refactored to client-side data fetching with React Query
 - AxiosClient hardened — concurrent refresh dedup, cookie mutation safety, FormData auto-detection
 - TypeScript type checking (`npm run typecheck`) in CI pipeline

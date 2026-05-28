@@ -113,7 +113,7 @@ Interactive elements in production components use `data-testid` attributes for s
 
 ## Current Test Coverage
 
-### Unit Tests (Jest) — 261 tests
+### Unit Tests (Jest) — 292 tests
 
 - ✅ Auth components (sign-in, sign-up, reset password, email validation)
 - ✅ Auth hooks and server actions (useSignIn, useSignUp, useResetPassword, signInAction, etc.)
@@ -122,8 +122,10 @@ Interactive elements in production components use `data-testid` attributes for s
 - ✅ Dealer car dashboard integration
 - ✅ Appointment hooks (useAppointmentActions, useAppointmentReviews)
 - ✅ KYC registration context (KycFormContext — step validation, localStorage, API submission)
+- ✅ Car detail page components (CarSidebar, CarSpecifications, CarDescription, CarImageGallery)
+- ✅ Car detail page integration (full page composition, More Car Options, cross-car rendering)
 
-### E2E Tests (Playwright) — 43 tests passing
+### E2E Tests (Playwright) — 57 tests passing
 
 | Feature               | Spec File                             | Tests |
 | --------------------- | ------------------------------------- | ----- |
@@ -132,6 +134,7 @@ Interactive elements in production components use `data-testid` attributes for s
 | Email Validation      | `e2e/auth/email-verification.spec.ts` | 5     |
 | Reset Password        | `e2e/auth/reset-password.spec.ts`     | 5     |
 | Car Browsing & Search | `e2e/cars/browsing.spec.ts`           | 14    |
+| Car Detail            | `e2e/cars/detail.spec.ts`             | 14    |
 | Appointment Booking   | `e2e/cars/appointment.spec.ts`        | 4     |
 | Admin Login           | `e2e/admin/admin.spec.ts`             | 1     |
 
@@ -237,9 +240,9 @@ PUSH / PR to main
 | -------------- | -------------------------------------------- | ------------------------------------------------------------------------------- | ----------------------------------------------------- |
 | **Type check** | `npm run typecheck`                          | TypeScript compilation — catches type errors, missing exports, invalid props    | Blocks pipeline                                       |
 | **Lint**       | `npm run lint`                               | ESLint — enforces code style, catches unused vars, hook violations              | Blocks pipeline                                       |
-| **Unit tests** | `npm test -- --ci --coverage --maxWorkers=2` | Jest (260+ tests) — component rendering, hooks, utilities, auth actions         | Blocks pipeline; coverage report uploaded as artifact |
+| **Unit tests** | `npm test -- --ci --coverage --maxWorkers=2` | Jest (290+ tests) — component rendering, hooks, utilities, auth actions         | Blocks pipeline; coverage report uploaded as artifact |
 | **Build**      | `npm run build`                              | Production `next build` — verifies the app compiles with no route/config errors | Blocks pipeline                                       |
-| **E2E tests**  | `npm run test:e2e`                           | Playwright (43+ tests) — full browser flows against mock backend                | Blocks pipeline; HTML report uploaded as artifact     |
+| **E2E tests**  | `npm run test:e2e`                           | Playwright (57+ tests) — full browser flows against mock backend                | Blocks pipeline; HTML report uploaded as artifact     |
 
 ### Triggers
 

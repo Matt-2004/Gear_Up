@@ -1,201 +1,125 @@
 "use client";
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import CarImage from "../../../../shared/ui/Image";
 import { CarDetailModel } from "../../types/car.model";
 
 interface CarImageGalleryProps {
   car: CarDetailModel;
-  selectedImage: number;
-  onSelectImage: (index: number) => void;
-  onNextImage: () => void;
-  onPrevImage: () => void;
 }
 
-export default function CarImageGallery({
-  car,
-  selectedImage,
-  onSelectImage,
-  onNextImage,
-  onPrevImage,
-}: CarImageGalleryProps) {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [currentIndex, setCurrentIndex] = useState<number>(selectedImage);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const programmaticScrollRef = useRef(false);
+export default function CarImageGallery({ car }: CarImageGalleryProps) {
+  const [selected, setSelected] = useState(0);
+  const [imgLoaded, setImgLoaded] = useState(false);
 
-  const parseImages = useCallback((value: CarDetailModel["images"]) => {
-    if (Array.isArray(value)) {
-      return value.map((img) => (typeof img === "string" ? { url: img } : img));
-    }
+  const images = useMemo(() => {
+    if (!Array.isArray(car.images)) return [];
+    return car.images.map((img) =>
+      typeof img === "string" ? { url: img } : img,
+    );
+  }, [car.images]);
 
-    if (typeof value === "string") {
-      try {
-        const parsed = JSON.parse(value);
-        if (Array.isArray(parsed)) {
-          return parsed.map((img) =>
-            typeof img === "string" ? { url: img } : img,
-          );
-        }
-      } catch {
-        return [];
-      }
-    }
+  const prev = useCallback(() => {
+    setSelected((s) => (s - 1 + images.length) % images.length);
+    setImgLoaded(false);
+  }, [images.length]);
 
-    return [];
-  }, []);
+  const next = useCallback(() => {
+    setSelected((s) => (s + 1) % images.length);
+    setImgLoaded(false);
+  }, [images.length]);
 
-  const images = useMemo(
-    () => parseImages(car.images),
-    [car.images, parseImages],
-  );
-
-  const scrollToIndex = useCallback((index: number) => {
-    if (!scrollRef.current) return;
-    programmaticScrollRef.current = true;
-    scrollRef.current.scrollTo({
-      left: index * scrollRef.current.clientWidth,
-      behavior: "smooth",
-    });
-    window.setTimeout(() => {
-      programmaticScrollRef.current = false;
-    }, 400);
-  }, []);
-
-  const startAutoScroll = useCallback(() => {
-    // Clear existing interval if any
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-    }
-
-    // Start new interval
-    intervalRef.current = setInterval(() => {
-      if (!scrollRef.current || images.length === 0) return;
-      const container = scrollRef.current;
-      const maxScroll = container.scrollWidth - container.clientWidth;
-
-      // If at the end, scroll back to start, otherwise scroll next
-      if (container.scrollLeft >= maxScroll - 10) {
-        onSelectImage(0);
-      } else {
-        onNextImage();
-      }
-    }, 6000);
-  }, [images.length, onNextImage, onSelectImage]);
-
-  // Track current index based on scroll position
-  useEffect(() => {
-    const container = scrollRef.current;
-    if (!container) return;
-
-    const handleScroll = () => {
-      const index = Math.round(container.scrollLeft / container.clientWidth);
-      setCurrentIndex(index);
-      if (!programmaticScrollRef.current) {
-        onSelectImage(index);
-      }
-    };
-
-    container.addEventListener("scroll", handleScroll);
-    return () => container.removeEventListener("scroll", handleScroll);
-  }, [onSelectImage]);
-
-  useEffect(() => {
-    setCurrentIndex(selectedImage);
-    scrollToIndex(selectedImage);
-  }, [scrollToIndex, selectedImage]);
-
-  // Auto-scroll every 3 seconds
-  useEffect(() => {
-    startAutoScroll();
-
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-  }, [startAutoScroll]);
+  if (images.length === 0) {
+    return (
+      <div className="flex aspect-[16/9] items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-sm text-zinc-200">
+        No photos yet
+      </div>
+    );
+  }
 
   return (
-    <div className="overflow-hidden">
-      <div className="relative rounded-2xl overflow-hidden">
-        {images.length === 0 ? (
-          <div className="flex h-125 items-center justify-center bg-gray-100 text-gray-500 lg:h-175">
-            No images available
-          </div>
-        ) : (
+    <div className="space-y-4">
+      {/* Hero Image */}
+      <div className="relative overflow-hidden rounded-2xl bg-white/[0.03]">
+        {/* Skeleton */}
+        {!imgLoaded && (
+          <div className="absolute inset-0 z-10 animate-pulse bg-white/[0.06]" />
+        )}
+
+        <div className="relative aspect-[16/9]">
+          <CarImage
+            src={images[selected].url}
+            alt={`${car.make} ${car.model}`}
+            width={1600}
+            height={900}
+            className="h-full w-full object-cover transition-opacity duration-150"
+            sizes="(max-width: 1280px) 100vw, 1200px"
+            onLoad={() => setImgLoaded(true)}
+            priority
+          />
+        </div>
+
+        {/* Gradient overlays for depth */}
+        <div className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-inset ring-black/5" />
+        <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-t from-black/20 to-transparent" />
+
+        {/* Counter badge */}
+        <div
+          data-testid="gallery-counter"
+          className="absolute bottom-4 right-4 rounded-full bg-black/50 px-3.5 py-1.5 text-xs font-medium text-white backdrop-blur-md"
+        >
+          {selected + 1} / {images.length}
+        </div>
+
+        {/* Prev / Next */}
+        {images.length > 1 && (
           <>
-            <div
-              ref={scrollRef}
-              className="flex snap-x snap-mandatory items-center overflow-x-scroll scroll-smooth"
-              style={{ scrollbarWidth: "none" }}
-            >
-              {images.map((img: { url: string }, idx: number) => (
-                <CarImage
-                  key={idx}
-                  src={img.url}
-                  alt={`${car.make} ${car.model}`}
-                  height={1400}
-                  width={1400}
-                  className="block h-125 lg:h-175 min-w-full snap-start object-cover"
-                />
-              ))}
-            </div>
-
-            <div data-testid="gallery-counter" className="absolute top-4 right-4  rounded-full bg-black/60 px-3 py-1 text-sm font-medium text-white backdrop-blur-sm">
-              {currentIndex + 1} / {images.length}
-            </div>
-
-            {currentIndex !== 0 && (
+            {selected > 0 && (
               <button
-                onClick={() => {
-                  onPrevImage();
-                  startAutoScroll();
-                }}
+                onClick={prev}
                 data-testid="gallery-prev"
                 aria-label="Previous image"
-                className="hover:bg-primary-500 absolute top-1/2 left-4 -translate-y-1/2 rounded-full bg-white/95 p-2.5 shadow-lg transition-all hover:scale-110 hover:text-white"
+                className="absolute left-4 top-1/2 -translate-y-1/2 cursor-pointer rounded-full bg-white/90 p-2.5 text-gray-700 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:shadow-xl hover:scale-105 active:scale-95"
               >
-                <ChevronLeft className="h-6 w-6" />
+                <ChevronLeft className="h-5 w-5" />
               </button>
             )}
-
-            {currentIndex < images.length - 1 && (
+            {selected < images.length - 1 && (
               <button
-                onClick={() => {
-                  onNextImage();
-                  startAutoScroll();
-                }}
+                onClick={next}
                 data-testid="gallery-next"
                 aria-label="Next image"
-                className="hover:bg-primary-500 absolute top-1/2 right-4 -translate-y-1/2 rounded-full bg-white/95 p-2.5 shadow-lg transition-all hover:scale-110 hover:text-white"
+                className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer rounded-full bg-white/90 p-2.5 text-gray-700 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:shadow-xl hover:scale-105 active:scale-95"
               >
-                <ChevronRight className="h-6 w-6" />
+                <ChevronRight className="h-5 w-5" />
               </button>
             )}
           </>
         )}
       </div>
 
-      {images.length > 0 && (
-        <div className="grid grid-cols-3 gap-3 p-4">
-          {images.map((img: { url: string }, idx: number) => (
+      {/* Thumbnail Strip */}
+      {images.length > 1 && (
+        <div className="flex gap-3 overflow-x-auto pb-1 hide-scrollbar">
+          {images.map((img, idx) => (
             <button
               key={idx}
               onClick={() => {
-                onSelectImage(idx);
-                scrollToIndex(idx);
-                // Reset interval when clicking thumbnail
-                startAutoScroll();
+                setSelected(idx);
+                setImgLoaded(false);
               }}
-              className={`aspect-video overflow-hidden rounded-lg transition-all ${currentIndex === idx ? "scale-105" : ""}`}
+              className={`relative shrink-0 w-24 h-16 cursor-pointer overflow-hidden rounded-lg transition-all duration-150 ${
+                idx === selected
+                  ? "ring-2 ring-primary-500 ring-offset-1 scale-105"
+                  : "opacity-60 hover:opacity-100 hover:scale-105"
+              }`}
             >
               <CarImage
-                width={200}
-                height={200}
                 src={img.url}
                 alt=""
+                width={160}
+                height={107}
                 className="h-full w-full object-cover"
               />
             </button>

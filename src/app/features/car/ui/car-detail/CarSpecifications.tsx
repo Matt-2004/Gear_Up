@@ -5,50 +5,48 @@ interface CarSpecificationsProps {
   car: CarDetailModel;
 }
 
-export default function CarSpecifications({ car }: CarSpecificationsProps) {
-  const specs = [
-    {
-      icon: Gauge,
-      label: "Mileage",
-      value: `${car.mileage.toLocaleString()} KM`,
-    },
-    {
-      icon: Fuel,
-      label: "Fuel",
-      value: car.fuel,
-    },
-    {
-      icon: Cog,
-      label: "Transmission",
-      value: car.transmission,
-    },
-    {
-      icon: Calendar,
-      label: "Year",
-      value: car.year.toString(),
-    },
-  ];
+const specs = (car: CarDetailModel) => [
+  {
+    icon: Gauge,
+    label: "Mileage",
+    value: `${car.mileage.toLocaleString()} km`,
+  },
+  {
+    icon: Fuel,
+    label: "Fuel",
+    value: car.fuel,
+  },
+  {
+    icon: Cog,
+    label: "Transmission",
+    value: car.transmission,
+  },
+  {
+    icon: Calendar,
+    label: "Year",
+    value: car.year.toString(),
+  },
+];
 
+export default function CarSpecifications({ car }: CarSpecificationsProps) {
   return (
-    <div>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {specs.map((spec, index) => (
-          <div
-            key={index}
-            className="flex flex-col items-center py-4 rounded-lg bg-[#FAF8FF] px-4"
-          >
-            <div className="flex items-center gap-2 mb-1 ">
-              <spec.icon className="h-5 w-5 text-primary-600" />
-              <div className="text-sm font-medium text-gray-500">
-                {spec.label}
-              </div>
-            </div>
-            <div className="text-sm font-semibold text-gray-900 leading-tight">
-              {spec.value}
-            </div>
+    <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+      {specs(car).map((spec) => (
+        <div
+          key={spec.label}
+          className="group flex flex-col gap-2 rounded-xl border border-white/[0.08] bg-white/[0.03] p-5 backdrop-blur-sm transition-all duration-150 hover:border-white/[0.15] hover:bg-white/[0.06]"
+        >
+          <div className="flex items-center gap-2">
+            <spec.icon className="h-4 w-4 shrink-0 text-primary-300" />
+            <p className="text-xs font-medium uppercase tracking-wide text-zinc-200">
+              {spec.label}
+            </p>
           </div>
-        ))}
-      </div>
+          <p className="text-sm font-semibold tracking-wider text-white">
+            {spec.value}
+          </p>
+        </div>
+      ))}
     </div>
   );
 }

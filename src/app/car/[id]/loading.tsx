@@ -1,32 +1,60 @@
-import { Skeleton } from "@/app/shared/ui/Skeleton";
+import { clsx } from "clsx";
+
+function P({ className }: { className?: string }) {
+  return (
+    <div
+      className={clsx(
+        "animate-pulse rounded-md bg-white/[0.06]",
+        className,
+      )}
+    />
+  );
+}
 
 export default function CarDetailLoading() {
   return (
-    <div className="min-h-screen bg-white pb-16">
-      <div className="mx-auto max-w-7xl px-4 py-8">
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
-          {/* Main Content Skeleton */}
-          <div className="space-y-12 lg:col-span-2">
-            <Skeleton className="h-125 w-full rounded-2xl lg:h-175" />
-            <div className="flex gap-3">
-              <Skeleton className="aspect-video w-1/3 rounded-lg" />
-              <Skeleton className="aspect-video w-1/3 rounded-lg" />
-              <Skeleton className="aspect-video w-1/3 rounded-lg" />
+    <div
+      className="min-h-screen"
+      style={{
+        background:
+          "linear-gradient(180deg, #000000 0%, #0a0f05 3%, #061E09 50%, #0a0f05 97%, #000000 100%)",
+      }}
+    >
+      {/* Gallery skeleton */}
+      <div className="pb-8 md:pb-12">
+        <div className="mx-auto max-w-7xl px-4 pt-6 md:pt-8 space-y-4">
+          <P className="aspect-[16/9] w-full rounded-2xl" />
+          <div className="flex gap-3">
+            <P className="h-16 w-24 shrink-0 rounded-lg" />
+            <P className="h-16 w-24 shrink-0 rounded-lg" />
+            <P className="h-16 w-24 shrink-0 rounded-lg" />
+          </div>
+        </div>
+      </div>
+
+      {/* Content skeleton */}
+      <div className="mx-auto max-w-7xl px-4 py-12 md:py-20">
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-3 lg:gap-12">
+          <div className="space-y-16 lg:col-span-2">
+            <div className="space-y-6">
+              <P className="h-5 w-24 rounded-full" />
+              <P className="h-8 w-56 rounded-lg" />
+              <P className="h-32 w-full rounded-2xl" />
             </div>
-            <div className="space-y-3">
-              <Skeleton className="h-6 w-40" />
-              <Skeleton className="h-32 w-full" />
-            </div>
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-              <Skeleton className="h-20 rounded-lg" />
-              <Skeleton className="h-20 rounded-lg" />
-              <Skeleton className="h-20 rounded-lg" />
-              <Skeleton className="h-20 rounded-lg" />
+            <div className="space-y-6">
+              <P className="h-5 w-28 rounded-full" />
+              <P className="h-8 w-64 rounded-lg" />
+              <P className="h-4 w-48 rounded" />
+              <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+                <P className="h-28 rounded-xl" />
+                <P className="h-28 rounded-xl" />
+                <P className="h-28 rounded-xl" />
+                <P className="h-28 rounded-xl" />
+              </div>
             </div>
           </div>
-          {/* Sidebar Skeleton */}
-          <div className="space-y-4 lg:col-span-1">
-            <Skeleton className="h-64 w-full rounded-2xl" />
+          <div className="lg:col-span-1">
+            <P className="sticky top-24 h-96 w-full rounded-2xl" />
           </div>
         </div>
       </div>

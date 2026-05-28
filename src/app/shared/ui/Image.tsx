@@ -1,7 +1,7 @@
 "use client";
 
 import Image, { ImageProps } from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface CarImageProps extends Omit<ImageProps, "src"> {
   src: string;
@@ -13,10 +13,13 @@ const CarImage = ({
   width,
   height,
   className = "",
-
   ...props
 }: CarImageProps) => {
   const [imgSrc, setImageSrc] = useState(src);
+
+  useEffect(() => {
+    setImageSrc(src);
+  }, [src]);
 
   return (
     <Image
