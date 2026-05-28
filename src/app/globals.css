@@ -40,8 +40,8 @@
   --color-background: var(--background);
   --color-primary: var(--main-color);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-dm-sans);
-  --font-serif: var(--font-dm-serif-display);
+  --font-sans: var(--font-roboto);
+  --font-serif: var(--font-montserrat);
   --color-primary-background: var(--primary-background);
   --color-input-background: var(--input-bg);
   --color-input-border: var(--input-border);
@@ -58,44 +58,33 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-/* @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-} */
-
 body {
   background: #f5f5f5;
   z-index: 0;
 }
 
-/* Suppress the Next.js development error overlay so custom error.tsx UI is visible */
+/* Hide Next.js dev error overlay so custom error.tsx is visible */
 nextjs-portal {
   display: none;
 }
 
-/* Global focus ring for all interactive elements */
+/* Global focus ring */
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
 [tabindex]:focus-visible {
-  outline: 2px solid #3B6D11;
+  outline: 2px solid #3b6d11;
   outline-offset: 2px;
 }
 
 .hide-scrollbar {
-  /* For Internet Explorer and Edge */
   -ms-overflow-style: none;
-  /* For Firefox */
   scrollbar-width: none;
-  /* Ensure scrolling is still possible if content overflows */
   overflow: auto;
 }
 
-/* For Chrome, Safari, and Opera */
 .hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -106,4 +95,28 @@ textarea:focus-visible,
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* Smooth page-wide scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Premium selection color */
+::selection {
+  background-color: rgba(52, 95, 34, 0.2);
+  color: #1a2e11;
+}
+
+/* Section transition helpers */
+.section-dark {
+  background-color: #0a0a0b;
+}
+
+.section-light {
+  background-color: #ffffff;
+}
+
+.section-muted {
+  background-color: #f8f9f7;
 }

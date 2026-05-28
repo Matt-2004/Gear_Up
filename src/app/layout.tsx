@@ -6,21 +6,21 @@ import ReactQueryProvider from "@/app/shared/provider/ReactQueryProvider";
 import ToastProvider from "@/app/features/toast/provider/ToastProvider";
 import SectionErrorBoundary from "@/app/shared/ui/SectionErrorBoundary";
 import type { Metadata } from "next";
-import { DM_Sans, DM_Serif_Display } from "next/font/google";
+import { Montserrat, Roboto } from "next/font/google";
 import { ReactNode } from "react";
 import "./globals.css";
 
-const dmSans = DM_Sans({
+const montserrat = Montserrat({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-dm-sans",
+  weight: ["600", "700", "800"],
+  variable: "--font-montserrat",
   display: "swap",
 });
 
-const dmSerifDisplay = DM_Serif_Display({
+const roboto = Roboto({
   subsets: ["latin"],
-  weight: "400",
-  variable: "--font-dm-serif-display",
+  weight: ["400", "500"],
+  variable: "--font-roboto",
   display: "swap",
 });
 
@@ -87,7 +87,7 @@ export default async function RootLayout({
   children: ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${dmSans.variable} ${dmSerifDisplay.variable}`}>
+    <html lang="en" className={`${montserrat.variable} ${roboto.variable}`}>
       <body className="antialiased font-sans">
         <ToastProvider>
           <ReactQueryProvider>

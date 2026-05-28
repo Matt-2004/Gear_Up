@@ -49,7 +49,7 @@ export default function NavbarSearch() {
       {/* Expanded */}
       {expanded && (
         <form onSubmit={handleSubmit} className="relative">
-          <div className="flex items-center rounded-xl border border-gray-200 bg-gray-50 shadow-sm">
+          <div className="flex items-center rounded-xl border border-gray-200 bg-gray-50 shadow-sm transition-all focus-within:border-primary-500 focus-within:ring-2 focus-within:ring-primary-500/20">
             <Search className="ml-3 h-4 w-4 shrink-0 text-gray-400" />
             <input
               ref={inputRef}
@@ -60,7 +60,7 @@ export default function NavbarSearch() {
                 if (suggestions.length > 0) setShowSuggestions(true);
               }}
               placeholder="Search make, model, or year..."
-              className="h-10 flex-1 bg-transparent px-2.5 text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:outline-none focus:ring-0"
+              className="h-10 flex-1 bg-transparent px-2.5 text-sm text-gray-900 placeholder:text-gray-400 outline-none!"
             />
             {query && (
               <button

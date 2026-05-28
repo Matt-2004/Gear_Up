@@ -71,9 +71,9 @@ describe("SellMyCarCTA", () => {
     expect(ctaLink).toHaveAttribute("href", "/profile/dealer/register?step=1");
   });
 
-  it("renders hero image with accessible alt text", () => {
+  it("renders within a dark section wrapper", () => {
     render(<SellMyCarCTA />);
 
-    expect(screen.getByAltText(/sell your car/i)).toBeInTheDocument();
+    expect(screen.getByText(/list your vehicle/i)).toBeInTheDocument();
   });
 });

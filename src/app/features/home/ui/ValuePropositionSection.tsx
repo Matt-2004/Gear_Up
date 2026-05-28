@@ -1,4 +1,7 @@
+"use client";
+
 import { BadgeCheck, ShieldCheck, CalendarDays, CreditCard } from "lucide-react";
+import { motion } from "framer-motion";
 
 const features = [
   {
@@ -27,41 +30,74 @@ const features = [
   },
 ];
 
+const containerVariants = {
+  hidden: {},
+  visible: {
+    transition: { staggerChildren: 0.1 },
+  },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] as const },
+  },
+};
+
 export default function ValuePropositionSection() {
   return (
-    <section className="flex w-full justify-center bg-white py-16 md:py-20">
-      <div className="w-full px-4 lg:w-[90%] xl:w-[75%]">
-        <div className="mb-12 flex flex-col items-center text-center">
-          <span className="mb-2 inline-flex items-center rounded-full bg-primary-50 px-3 py-1 text-xs font-semibold tracking-wide text-primary-700">
+    <section className="relative flex w-full justify-center bg-white py-16 md:py-24 overflow-hidden">
+      {/* Subtle top gradient */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
+
+      <div className="relative z-10 w-full px-4 lg:w-[90%] xl:w-[75%]">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="mb-14 flex flex-col items-center text-center"
+        >
+          <span className="mb-3 inline-flex items-center rounded-full border border-primary-200 bg-primary-50 px-3 py-1 text-xs font-semibold tracking-wide text-primary-700">
             Why Choose GearUp
           </span>
-          <h2 className="text-2xl font-bold text-gray-900 md:text-3xl">
+          <h2 className="font-serif text-3xl font-bold text-gray-900 md:text-4xl">
             Built for Trust, Speed, and Ease
           </h2>
-          <p className="mt-2 max-w-lg text-sm text-gray-500">
-            Everything you need to find, book, and buy your next car — all in
-            one place.
+          <p className="mt-3 max-w-lg text-sm text-gray-600 leading-relaxed">
+            Everything you need to find, book, and buy your next car — all in one
+            place.
           </p>
-        </div>
+        </motion.div>
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+          className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4"
+        >
           {features.map(({ title, icon: Icon, description }) => (
-            <div
+            <motion.div
               key={title}
-              className="group rounded-2xl border border-gray-100 bg-gray-50/50 p-6 transition-all duration-300 hover:border-primary-100 hover:bg-white hover:shadow-lg hover:shadow-gray-100"
+              variants={cardVariants}
+              whileHover={{ y: -4 }}
+              className="group relative flex flex-col rounded-2xl border border-gray-100 bg-gray-50/50 p-6 transition-all duration-300 hover:border-primary-100 hover:bg-white hover:shadow-xl hover:shadow-gray-200/50"
             >
-              <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-primary-50 text-primary transition-colors group-hover:bg-primary group-hover:text-white">
+              <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary-50 text-primary-600 transition-all duration-300 group-hover:bg-primary-600 group-hover:text-white group-hover:shadow-lg group-hover:shadow-primary-200">
                 <Icon className="h-5 w-5" />
               </div>
               <h3 className="mb-2 text-base font-semibold text-gray-900">
                 {title}
               </h3>
-              <p className="text-sm leading-relaxed text-gray-500">
+              <p className="text-sm leading-relaxed text-gray-600">
                 {description}
               </p>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
