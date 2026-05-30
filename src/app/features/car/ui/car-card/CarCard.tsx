@@ -34,7 +34,7 @@ export function CarCard({ carItem }: { carItem: CarModel }) {
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
       onClick={handleClick}
-      className="group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-white/[0.08] bg-[radial-gradient(ellipse_at_center,rgba(196,231,175,0.10)_0%,rgba(196,231,175,0.03)_100%)] backdrop-blur-sm transition-all duration-150 hover:-translate-y-1.5 hover:border-white/[0.15] hover:bg-[radial-gradient(ellipse_at_center,rgba(196,231,175,0.14)_0%,rgba(196,231,175,0.05)_100%)]"
+      className="group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-white/8 bg-[radial-gradient(ellipse_at_center,rgba(196,231,175,0.10)_0%,rgba(196,231,175,0.03)_100%)] backdrop-blur-sm transition-all duration-150 hover:-translate-y-1.5 hover:border-white/15 hover:bg-[radial-gradient(ellipse_at_center,rgba(196,231,175,0.14)_0%,rgba(196,231,175,0.05)_100%)]"
       data-testid="car-card"
       role="link"
       tabIndex={0}
@@ -46,9 +46,9 @@ export function CarCard({ carItem }: { carItem: CarModel }) {
       }}
     >
       {/* Image — taller cinematic ratio */}
-      <div className="relative aspect-[4/3] overflow-hidden bg-white/[0.03]">
+      <div className="relative aspect-4/3 overflow-hidden bg-white/3">
         {!imgLoaded && (
-          <div className="absolute inset-0 animate-pulse bg-white/[0.06]" />
+          <div className="absolute inset-0 animate-pulse bg-white/6" />
         )}
         <CarImage
           src={carItem.imageUrl}
@@ -60,7 +60,7 @@ export function CarCard({ carItem }: { carItem: CarModel }) {
           onLoad={() => setImgLoaded(true)}
         />
         {/* Subtle gradient overlay */}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 transition-opacity duration-150 group-hover:opacity-100" />
+        <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/20 to-transparent opacity-0 transition-opacity duration-150 group-hover:opacity-100" />
 
         {/* Condition badge */}
         {details?.condition && (
@@ -91,12 +91,12 @@ export function CarCard({ carItem }: { carItem: CarModel }) {
             <Gauge className="h-3 w-3 text-zinc-500" />
             {formatNumber(carItem.mileage ?? 0)} km
           </span>
-          <span className="text-white/[0.15]">&middot;</span>
+          <span className="text-white/15">&middot;</span>
           <span className="inline-flex items-center gap-1">
             <Cog className="h-3 w-3 text-zinc-500" />
             {transmissionLabel}
           </span>
-          <span className="text-white/[0.15]">&middot;</span>
+          <span className="text-white/15">&middot;</span>
           <span className="inline-flex items-center gap-1">
             <Fuel className="h-3 w-3 text-zinc-500" />
             {details?.fuel ?? "Petrol"}
@@ -104,7 +104,7 @@ export function CarCard({ carItem }: { carItem: CarModel }) {
         </div>
 
         {/* Price + CTA row */}
-        <div className="mt-4 flex items-end justify-between border-t border-white/[0.08] pt-4">
+        <div className="mt-4 flex items-end justify-between border-t border-white/8 pt-4">
           <p
             className="text-lg font-bold text-primary-200 tabular-nums"
             data-testid="car-price"
@@ -112,7 +112,8 @@ export function CarCard({ carItem }: { carItem: CarModel }) {
             ฿{formatNumber(carItem.price)}
           </p>
           <span className="inline-flex items-center gap-1 text-xs font-semibold text-primary-300 transition-colors group-hover:text-primary-200">
-            Details <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+            Details{" "}
+            <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
           </span>
         </div>
       </div>

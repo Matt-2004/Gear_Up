@@ -50,10 +50,12 @@ export default function TrustSafetySection() {
   return (
     <section
       className="relative flex w-full justify-center overflow-hidden py-20 md:py-28"
-      style={{ background: "linear-gradient(180deg, #061E09 0%, #0a0f05 100%)" }}
+      style={{
+        background: "linear-gradient(180deg, #061E09 0%, #0a0f05 100%)",
+      }}
     >
-      <div className="pointer-events-none absolute right-0 top-0 h-96 w-96 rounded-full bg-primary-600/[0.04] blur-3xl" />
-      <div className="pointer-events-none absolute bottom-0 left-0 h-96 w-96 rounded-full bg-emerald-600/[0.03] blur-3xl" />
+      <div className="pointer-events-none absolute right-0 top-0 h-96 w-96 rounded-full bg-primary-600/4 blur-3xl" />
+      <div className="pointer-events-none absolute bottom-0 left-0 h-96 w-96 rounded-full bg-emerald-600/3 blur-3xl" />
 
       <div className="relative z-10 w-full px-4 lg:w-[90%] xl:w-[75%]">
         <motion.div
@@ -63,16 +65,12 @@ export default function TrustSafetySection() {
           transition={{ duration: 0.15 }}
           className="mb-14 flex flex-col items-center text-center"
         >
-          <span className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-4 py-1.5 text-xs font-semibold tracking-wide text-gray-600">
-            <ShieldCheck className="h-3.5 w-3.5" />
-            Trust &amp; Safety
-          </span>
           <h2 className="font-serif text-3xl font-bold text-white md:text-4xl">
             Built on Trust, Backed by Protection
           </h2>
           <p className="mt-3 max-w-lg text-sm leading-relaxed text-zinc-400">
-            Every transaction on GearUp is protected by industry-leading security
-            and verification systems.
+            Every transaction on GearUp is protected by industry-leading
+            security and verification systems.
           </p>
         </motion.div>
 
@@ -89,16 +87,16 @@ export default function TrustSafetySection() {
               key={item.title}
               variants={cardVariants}
               whileHover={{ y: -3 }}
-              className="group flex gap-5 rounded-2xl border border-gray-100 bg-white p-6 transition-all duration-150 hover:border-gray-200 hover:shadow-lg md:p-8"
+              className="group flex flex-col items-center text-center gap-5 rounded-2xl border border-white/8 bg-white/5 p-6 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-white/15 hover:bg-white/10 md:p-8"
             >
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary-50 transition-colors duration-150 group-hover:bg-primary-100">
-                <item.icon className="h-6 w-6 text-primary-600" />
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary-600/20 transition-colors duration-300 group-hover:bg-primary-600/30">
+                <item.icon className="h-6 w-6 text-primary-400" />
               </div>
               <div>
-                <h3 className="text-base font-semibold text-gray-900">
+                <h3 className="text-base tracking-wide font-semibold text-white">
                   {item.title}
                 </h3>
-                <p className="mt-2 text-sm leading-relaxed text-gray-600">
+                <p className="mt-2 text-sm leading-relaxed tracking-wide text-zinc-400">
                   {item.description}
                 </p>
               </div>
@@ -114,12 +112,18 @@ export default function TrustSafetySection() {
           transition={{ duration: 0.15, delay: 0.12 }}
           className="mt-12 flex justify-center"
         >
-          <div className="inline-flex items-center gap-6 rounded-2xl border border-gray-100 bg-white px-6 py-4">
-            <span className="text-xs font-medium text-gray-500">256-bit SSL</span>
-            <span className="h-4 w-px bg-gray-200" />
-            <span className="text-xs font-medium text-gray-500">PCI Compliant</span>
-            <span className="h-4 w-px bg-gray-200" />
-            <span className="text-xs font-medium text-gray-500">GDPR Ready</span>
+          <div className="inline-flex items-center gap-6 rounded-2xl border border-white/8 bg-white/5 px-6 py-4 backdrop-blur-sm">
+            <span className="text-xs font-medium text-zinc-400">
+              256-bit SSL
+            </span>
+            <span className="h-4 w-px bg-white/12" />
+            <span className="text-xs font-medium text-zinc-400">
+              PCI Compliant
+            </span>
+            <span className="h-4 w-px bg-white/12" />
+            <span className="text-xs font-medium text-zinc-400">
+              GDPR Ready
+            </span>
           </div>
         </motion.div>
       </div>

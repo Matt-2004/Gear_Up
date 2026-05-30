@@ -66,10 +66,10 @@ test.describe("Car Detail Page", () => {
   test("specification cards are rendered", async () => {
     // Scope to the specifications section to avoid duplicates
     const section = detail.page.locator("section").filter({ hasText: /Performance & Details/i });
-    await expect(section.getByText("Mileage", { exact: true })).toBeVisible();
-    await expect(section.getByText("Fuel", { exact: true })).toBeVisible();
-    await expect(section.getByText("Transmission", { exact: true })).toBeVisible();
-    await expect(section.getByText("Year", { exact: true })).toBeVisible();
+    await expect(section.getByText("Mileage", { exact: true }).first()).toBeVisible();
+    await expect(section.getByText("Fuel", { exact: true }).first()).toBeVisible();
+    await expect(section.getByText("Transmission", { exact: true }).first()).toBeVisible();
+    await expect(section.getByText("Year", { exact: true }).first()).toBeVisible();
   });
 
   // --- More Car Options ---

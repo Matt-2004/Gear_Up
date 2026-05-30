@@ -107,11 +107,10 @@ export default function HowGearUpWorksSection() {
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.2, delay: i * 0.12 + 0.1 }}
-                    className="absolute left-1/2 z-10 flex h-[52px] w-[52px] -translate-x-1/2 items-center justify-center rounded-full bg-white text-base font-bold text-primary-700 shadow-[0_2px_8px_rgba(0,0,0,0.06)] ring-1 ring-gray-200"
+                    className="absolute left-1/2 z-10 flex h-[52px] w-[52px] -translate-x-1/2 items-center justify-center rounded-full border border-white/10 bg-white/10 text-base font-bold text-white backdrop-blur-sm shadow-[0_2px_8px_rgba(0,0,0,0.15)]"
                   >
                     {step.step}
                   </motion.div>
-
                   {/* Connector stub from center to card */}
                   <div
                     className={`absolute top-1/2 -translate-y-1/2 h-px w-12 bg-zinc-700 ${isLeft ? "right-1/2 mr-[26px]" : "left-1/2 ml-[26px]"}`}
@@ -131,17 +130,17 @@ export default function HowGearUpWorksSection() {
                     className={`flex w-[calc(50%-56px)] ${isLeft ? "mr-auto justify-end" : "ml-auto justify-start"}`}
                   >
                     <div
-                      className={`flex w-full max-w-[480px] overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.04)] transition-shadow duration-300 hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] ${isLeft ? "flex-row" : "flex-row-reverse"}`}
+                      className={`flex w-full max-w-120 overflow-hidden rounded-2xl border border-white/8 bg-white/5 backdrop-blur-sm transition-all duration-300 hover:border-white/15 hover:bg-white/10 ${isLeft ? "flex-row" : "flex-row-reverse"}`}
                     >
                       {/* Text side */}
                       <div className="flex flex-1 flex-col justify-center px-6 py-6">
-                        <p className="text-xs font-semibold uppercase tracking-wider text-primary-600">
+                        <p className="text-xs font-semibold uppercase tracking-wider text-primary-400">
                           Step {step.step}
                         </p>
-                        <h3 className="mt-1 text-lg font-bold text-gray-900">
+                        <h3 className="mt-1 text-lg tracking-wide font-bold text-white">
                           {step.title}
                         </h3>
-                        <p className="mt-2 text-sm leading-5 tracking-wide text-gray-600">
+                        <p className="mt-2 text-sm leading-5 tracking-wide text-zinc-400">
                           {step.description}
                         </p>
                       </div>
@@ -171,7 +170,7 @@ export default function HowGearUpWorksSection() {
           <div className="absolute left-5 top-0 h-full w-px">
             <div className="h-full w-full rounded-full bg-zinc-800" />
             <motion.div
-              className="absolute left-0 top-0 w-px rounded-full bg-gradient-to-b from-primary-500 via-primary-600 to-primary-700"
+              className="absolute left-0 top-0 w-px rounded-full bg-linear-to-b from-primary-500 via-primary-600 to-primary-700"
               initial={{ height: "0%" }}
               whileInView={{ height: "100%" }}
               viewport={{ once: true }}
@@ -190,12 +189,12 @@ export default function HowGearUpWorksSection() {
                 className="relative flex gap-4"
               >
                 <div className="flex shrink-0 flex-col items-center">
-                  <div className="relative z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white text-sm font-bold text-gray-800 shadow-[0_2px_8px_rgba(0,0,0,0.06)] ring-1 ring-gray-200">
+                  <div className="relative z-10 flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/10 text-sm font-bold text-white backdrop-blur-sm shadow-[0_2px_8px_rgba(0,0,0,0.15)]">
                     {step.step}
                   </div>
                 </div>
-                <div className="flex-1 overflow-hidden rounded-2xl border border-gray-100 bg-white">
-                  <div className="relative flex h-36 items-center justify-center bg-gray-50">
+                <div className="flex-1 overflow-hidden rounded-2xl border border-white/8 bg-white/5 backdrop-blur-sm">
+                  <div className="relative flex h-36 items-center justify-center bg-white">
                     <Image
                       src={step.image}
                       alt={step.title}
@@ -207,10 +206,10 @@ export default function HowGearUpWorksSection() {
                     />
                   </div>
                   <div className="px-5 pb-5 pt-4">
-                    <h3 className="text-base font-bold text-gray-900">
+                    <h3 className="text-base font-bold text-white">
                       {step.title}
                     </h3>
-                    <p className="mt-1 text-sm leading-relaxed text-gray-600">
+                    <p className="mt-1 text-sm leading-relaxed text-zinc-400">
                       {step.description}
                     </p>
                   </div>

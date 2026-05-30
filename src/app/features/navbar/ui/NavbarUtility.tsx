@@ -6,12 +6,12 @@ import NavbarNotificationBell from "./NavbarNotificationBell";
 import NavbarUserMenu from "./NavbarUserMenu";
 import NavbarLoginButton from "./NavbarLoginButton";
 
-export default function NavbarUtility() {
+export default function NavbarUtility({ showSearch = true }: { showSearch?: boolean }) {
   const { user } = useUserData();
 
   return (
     <div className="flex shrink-0 items-center gap-1 md:gap-2">
-      <NavbarSearch />
+      {showSearch && <NavbarSearch />}
 
       {user && <NavbarNotificationBell />}
 

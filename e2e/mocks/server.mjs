@@ -178,7 +178,7 @@ const server = http.createServer(async (req, res) => {
 
   // --- Cars: Search ---
   if (method === "GET" && url.pathname === "/api/v1/cars/search") {
-    const query = (url.searchParams.get("query") ?? "").toLowerCase();
+    const query = (url.searchParams.get("query") ?? url.searchParams.get("Query") ?? "").toLowerCase();
     const cursor = url.searchParams.get("cursor") ?? "";
     // Return no results for empty query (error simulation)
     if (query === "error") {
