@@ -8,14 +8,30 @@ import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 
-function AnimatedStat({ value, suffix, label }: { value: number; suffix: string; label: string }) {
+function AnimatedStat({
+  value,
+  suffix,
+  label,
+}: {
+  value: number;
+  suffix: string;
+  label: string;
+}) {
   const [count, setCount] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { obs.disconnect(); animate(); } }, { threshold: 0.5 });
+    const obs = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          obs.disconnect();
+          animate();
+        }
+      },
+      { threshold: 0.5 },
+    );
     obs.observe(el);
     return () => obs.disconnect();
 
@@ -24,13 +40,24 @@ function AnimatedStat({ value, suffix, label }: { value: number; suffix: string;
       const duration = 1000;
       const steps = 30;
       const inc = value / steps;
-      const timer = setInterval(() => { start += inc; if (start >= value) { setCount(value); clearInterval(timer); } else { setCount(Math.floor(start)); } }, duration / steps);
+      const timer = setInterval(() => {
+        start += inc;
+        if (start >= value) {
+          setCount(value);
+          clearInterval(timer);
+        } else {
+          setCount(Math.floor(start));
+        }
+      }, duration / steps);
     }
   }, [value]);
 
   return (
     <div ref={ref}>
-      <p className="text-lg font-bold text-white">{count}{suffix}</p>
+      <p className="text-lg font-bold text-white">
+        {count}
+        {suffix}
+      </p>
       <p className="text-xs text-zinc-500">{label}</p>
     </div>
   );
@@ -53,7 +80,9 @@ export default function SellMyCarCTA() {
   return (
     <section
       className="relative flex w-full justify-center overflow-hidden py-20 md:py-28"
-      style={{ background: "linear-gradient(180deg, #0a0f05 0%, #050802 100%)" }}
+      style={{
+        background: "linear-gradient(180deg, #0a0f05 0%, #050802 100%)",
+      }}
     >
       {/* Green gradient accent */}
       <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[500px] w-[700px] rounded-full bg-primary-600/[0.03] blur-3xl" />
@@ -62,7 +91,10 @@ export default function SellMyCarCTA() {
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.15, ease: [0.25, 0.46, 0.45, 0.94] as const }}
+          transition={{
+            duration: 0.15,
+            ease: [0.25, 0.46, 0.45, 0.94] as const,
+          }}
           className="relative overflow-hidden rounded-3xl "
         >
           {/* Subtle top glow */}
@@ -75,14 +107,15 @@ export default function SellMyCarCTA() {
             </h2>
 
             <p className="max-w-md text-base leading-relaxed text-gray-300">
-              List your vehicle on Thailand&apos;s most trusted automotive marketplace.
-              Reach thousands of verified buyers and close deals in days, not months.
+              List your vehicle on Thailand&apos;s most trusted automotive
+              marketplace. Reach thousands of verified buyers and close deals in
+              days, not months.
             </p>
 
             <Link
               onClick={handleSellCarClick}
               href="/profile/dealer/register?step=1"
-              className="inline-flex items-center gap-2 rounded-xl bg-primary-600 px-7 py-3.5 text-sm font-semibold text-white transition-all duration-150 hover:bg-primary-700 hover:shadow-lg hover:shadow-primary-600/30 active:scale-[0.98]"
+              className="inline-flex items-center gap-2 rounded-xl bg-primary-600 px-7 py-3.5 text-sm font-semibold text-white transition-all duration-150 hover:bg-primary-600/80 active:scale-[0.98]"
             >
               List Your Car
               <ArrowRight className="h-4 w-4" />
@@ -92,8 +125,8 @@ export default function SellMyCarCTA() {
             <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:gap-8">
               <blockquote className="max-w-xs border-l-2 border-primary-600/40 pl-4 text-left">
                 <p className="text-sm leading-relaxed text-zinc-400 italic">
-                  &ldquo;Sold my car in 3 days. The escrow payment gave me peace of
-                  mind and the process was incredibly smooth.&rdquo;
+                  &ldquo;Sold my car in 3 days. The escrow payment gave me peace
+                  of mind and the process was incredibly smooth.&rdquo;
                 </p>
                 <footer className="mt-2 text-xs text-zinc-500">
                   — Khun Somsak, Bangkok
@@ -101,8 +134,8 @@ export default function SellMyCarCTA() {
               </blockquote>
               <blockquote className="max-w-xs border-l-2 border-primary-600/40 pl-4 text-left">
                 <p className="text-sm leading-relaxed text-zinc-400 italic">
-                  &ldquo;Listed my BMW and got 5 serious inquiries within 24 hours.
-                  GearUp made selling effortless.&rdquo;
+                  &ldquo;Listed my BMW and got 5 serious inquiries within 24
+                  hours. GearUp made selling effortless.&rdquo;
                 </p>
                 <footer className="mt-2 text-xs text-zinc-500">
                   — Khun Nattaya, Chiang Mai

@@ -32,7 +32,7 @@ test.describe("Landing Page", () => {
   });
 });
 
-test.describe.skip("Car Search", () => {
+test.describe("Car Search", () => {
   let search: SearchPage;
 
   test.beforeEach(async ({ page }) => {

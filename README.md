@@ -135,22 +135,22 @@ I worked as the **frontend developer** responsible for:
 
 ## Tech Stack
 
-| Category       | Technology                                        |
-| -------------- | ------------------------------------------------- |
-| Framework      | Next.js (App Router)                              |
-| Language       | TypeScript                                        |
-| UI Library     | React                                             |
-| Styling        | Tailwind CSS                                      |
-| Server State   | TanStack React Query                              |
-| Realtime       | SignalR (@microsoft/signalr)                      |
-| HTTP Client    | Axios                                             |
-| Validation     | Zod                                               |
-| Animation      | Framer Motion                                     |
-| Icons          | Lucide React                                      |
-| Virtualization | @tanstack/react-virtual                           |
-| Utilities      | clsx, date-fns                                    |
+| Category       | Technology                                                    |
+| -------------- | ------------------------------------------------------------- |
+| Framework      | Next.js (App Router)                                          |
+| Language       | TypeScript                                                    |
+| UI Library     | React                                                         |
+| Styling        | Tailwind CSS                                                  |
+| Server State   | TanStack React Query                                          |
+| Realtime       | SignalR (@microsoft/signalr)                                  |
+| HTTP Client    | Axios                                                         |
+| Validation     | Zod                                                           |
+| Animation      | Framer Motion                                                 |
+| Icons          | Lucide React                                                  |
+| Virtualization | @tanstack/react-virtual                                       |
+| Utilities      | clsx, date-fns                                                |
 | Testing        | Jest, React Testing Library, Jest DOM, User Event, Playwright |
-| Code Quality   | ESLint, Prettier                                  |
+| Code Quality   | ESLint, Prettier                                              |
 
 ---
 
@@ -286,9 +286,9 @@ Recent updates reflected in the codebase include:
 
 ## Screenshots
 
-### Home Page
+### Landing Page
 
-![Gear Up Home Page](public/readme/home-page.png)
+![Gear Up Landing Page](public/readme/landing-page)
 
 ### Car Search
 

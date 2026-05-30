@@ -53,7 +53,7 @@ const Login = () => {
           <div className="flex h-full bg-transparent sm:bg-gray-50 sm:p-4 md:p-5 lg:p-0">
             <div className="flex h-full w-full flex-col justify-center bg-white p-6 sm:rounded-2xl sm:border sm:border-gray-200/80 sm:p-8 sm:shadow-xl sm:shadow-slate-900/10 lg:rounded-none lg:border-0 lg:border-l lg:border-gray-100 lg:shadow-none lg:p-10">
               <div className="mb-5">
-                <AuthPageCaption>Welcome back 👋</AuthPageCaption>
+                <AuthPageCaption>Welcome back </AuthPageCaption>
                 <h3 className="mt-1 text-sm leading-relaxed text-gray-600">
                   Sign in to continue to your account and pick up where you left
                   off.

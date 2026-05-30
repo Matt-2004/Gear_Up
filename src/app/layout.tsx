@@ -89,13 +89,15 @@ export default async function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${montserrat.variable} ${roboto.variable}`}>
-      <body className="antialiased font-sans">
+      <body className="flex min-h-screen flex-col font-sans antialiased">
         <ToastProvider>
           <ReactQueryProvider>
             <UserDataProvider>
               <NotificationProvider>
                 <ConditionalNavbar />
-                <SectionErrorBoundary>{children}</SectionErrorBoundary>
+                <main className="flex-1">
+                  <SectionErrorBoundary>{children}</SectionErrorBoundary>
+                </main>
                 <GlobalFooter />
               </NotificationProvider>
             </UserDataProvider>

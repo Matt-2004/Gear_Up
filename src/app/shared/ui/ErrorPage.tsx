@@ -21,8 +21,8 @@ export default function ErrorPage({
   error,
   reset,
   icon,
-  iconBg = "bg-gray-100",
-  iconColor = "text-gray-500",
+  iconBg = "bg-red-50",
+  iconColor = "text-red-500",
   title,
   description,
   homeHref = "/",
@@ -41,19 +41,25 @@ export default function ErrorPage({
   };
 
   return (
-    <div className="flex items-center justify-center py-24">
-      <div className="w-full max-w-md rounded-2xl border border-gray-100 bg-white p-8 shadow-[0_1px_3px_rgba(0,0,0,0.03),0_4px_12px_rgba(0,0,0,0.04)] text-center">
-        <div className={`mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl ${iconBg}`}>
-          <div className={iconColor}>{icon}</div>
+    <div className="flex min-h-[60vh] items-center justify-center px-4">
+      <div className="w-full max-w-sm text-center">
+        <div
+          className={`mx-auto mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl ${iconBg}`}
+        >
+          <div className={`${iconColor} [&>svg]:h-8 [&>svg]:w-8`}>{icon}</div>
         </div>
 
-        <h1 className="text-lg font-semibold text-gray-900">{title}</h1>
-        <p className="mt-2 text-sm leading-relaxed text-gray-500">{description}</p>
+        <h1 className="text-xl font-bold tracking-wide text-gray-900">
+          {title}
+        </h1>
+        <p className="mt-2 text-sm leading-relaxed text-gray-500">
+          {description}
+        </p>
 
-        <div className="mt-6 flex items-center justify-center gap-3">
+        <div className="mt-8 flex items-center justify-center gap-3">
           <Link
             href={homeHref}
-            className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50"
+            className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-600 transition-all hover:bg-gray-50 active:scale-[0.98]"
           >
             <Home className="h-4 w-4" />
             {homeLabel}
@@ -62,7 +68,7 @@ export default function ErrorPage({
             type="button"
             onClick={handleRetry}
             disabled={isRetrying}
-            className="inline-flex items-center gap-2 rounded-xl bg-gray-900 px-4 py-2.5 text-sm font-medium text-white transition-all hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex items-center gap-2 rounded-xl bg-primary-700 px-4 py-2.5 text-sm font-semibold text-white transition-all hover:bg-primary-600 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
           >
             {isRetrying ? (
               <Loader2 className="h-4 w-4 animate-spin" />
