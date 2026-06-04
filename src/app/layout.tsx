@@ -9,6 +9,7 @@ import GlobalFooter from "@/app/shared/ui/GlobalFooter";
 import type { Metadata } from "next";
 import { Montserrat, Roboto } from "next/font/google";
 import { ReactNode } from "react";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const montserrat = Montserrat({
@@ -90,6 +91,7 @@ export default async function RootLayout({
   return (
     <html lang="en" className={`${montserrat.variable} ${roboto.variable}`}>
       <body className="flex min-h-screen flex-col font-sans antialiased">
+        <Analytics />
         <ToastProvider>
           <ReactQueryProvider>
             <UserDataProvider>
