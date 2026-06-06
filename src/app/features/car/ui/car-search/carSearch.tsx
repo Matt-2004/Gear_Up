@@ -3,14 +3,7 @@
 import { CarCard } from "@/app/features/car/ui/car-card/CarCard";
 import { CursorResponse } from "@/app/shared/types.ts/cursor-response";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  ArrowLeft,
-  Loader2,
-  RefreshCcw,
-  Search,
-  SlidersHorizontal,
-  X,
-} from "lucide-react";
+import { Loader2, RefreshCcw, Search, X } from "lucide-react";
 import { SkeletonCard } from "@/app/shared/ui/Skeleton";
 import SectionErrorFallback from "@/app/shared/ui/SectionErrorFallback";
 import StaleDataBanner from "@/app/shared/ui/StaleDataBanner";
@@ -44,12 +37,9 @@ export default function CarSearch({
     showSuggestions,
     setShowSuggestions,
     filters,
-    showFilters,
-    setShowFilters,
     activeFilterCount,
     canSearch,
     trimmedQuery,
-    parentRef,
     searchContainerRef,
     allItems,
     hasNextPage,
@@ -65,390 +55,338 @@ export default function CarSearch({
     showResultsState,
     handleSearch,
     handleSuggestionClick,
-    handleGoBack,
+    handleClearInput,
     handleRetry,
+    loadMore,
     clearFilters,
     updateFilter,
   } = useCarSearch({ query, initialData });
 
   return (
-    <div className="min-h-screen bg-zinc-50">
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <div
+      className="relative min-h-screen overflow-hidden"
+      style={{
+        background: "linear-gradient(180deg, #000000 0%, #0a0f05 30%, #080e04 100%)",
+      }}
+    >
+      {/* Decorative green accent orbs */}
+      <div className="pointer-events-none absolute top-0 right-0 h-96 w-96 rounded-full bg-primary-600/[0.04] blur-3xl" />
+      <div className="pointer-events-none absolute bottom-0 left-0 h-64 w-64 rounded-full bg-emerald-600/[0.03] blur-3xl" />
+
+      <div className="relative mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <div className="mb-4 flex items-center gap-4">
-            <motion.button
-              type="button"
-              onClick={handleGoBack}
-              whileTap={{ scale: 0.96 }}
-              className="group inline-flex shrink-0 items-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-sm font-medium text-zinc-600 transition-all hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-900"
-              aria-label="Go back"
-            >
-              <ArrowLeft className="h-4 w-4 text-zinc-400 transition-colors group-hover:text-zinc-700" />
-              <span className="hidden sm:inline">Back</span>
-            </motion.button>
-
-            <div>
-              <h1 className="text-2xl font-bold tracking-tight text-zinc-900 sm:text-3xl">
-                Browse Cars
-              </h1>
-              <p className="mt-0.5 text-sm text-zinc-500">
-                Find your perfect vehicle from thousands of listings
-              </p>
-            </div>
+          <div>
+            <h1 className="font-serif text-2xl font-bold tracking-tight text-white sm:text-3xl">
+              Browse Cars
+            </h1>
+            <p className="mt-0.5 text-sm text-zinc-400">
+              Find your perfect vehicle from thousands of listings
+            </p>
           </div>
 
           {/* Search Form */}
-          <form onSubmit={handleSearch}>
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-              {/* Search Input */}
-              <div ref={searchContainerRef} className="relative flex-1">
-                <div className="group relative">
-                  <Search className="pointer-events-none absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-zinc-400 transition-colors group-focus-within:text-primary" />
+          <form onSubmit={handleSearch} className="mt-6">
+            <div
+              ref={searchContainerRef}
+              className="group relative flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-2 transition-all"
+            >
+              <Search className="ml-3 h-5 w-5 shrink-0 text-zinc-500" />
 
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    data-testid="search-input"
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onFocus={() => {
-                      if (suggestions.length > 0) setShowSuggestions(true);
-                    }}
-                    onKeyDown={(event) => {
-                      if (event.key === "Escape") {
-                        setShowSuggestions(false);
-                        (event.target as HTMLInputElement).blur();
-                      }
-                    }}
-                    placeholder="Search by make, model, or keyword..."
-                    aria-label="Search cars"
-                    aria-controls={suggestionsId}
-                    className="w-full rounded-xl border border-zinc-200 bg-white py-3 pl-11 pr-10 text-sm text-zinc-900 shadow-[0_1px_3px_rgba(0,0,0,0.03)] transition-all placeholder:text-zinc-400 hover:border-zinc-300 focus:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/10"
-                  />
+              <input
+                type="text"
+                value={searchQuery}
+                data-testid="search-input"
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => {
+                  if (suggestions.length > 0) setShowSuggestions(true);
+                }}
+                onKeyDown={(event) => {
+                  if (event.key === "Escape") {
+                    setShowSuggestions(false);
+                    (event.target as HTMLInputElement).blur();
+                  }
+                }}
+                placeholder="Search by make, model, or keyword..."
+                aria-label="Search cars"
+                aria-controls={suggestionsId}
+                className="flex-1 bg-transparent py-3 text-sm text-white placeholder:text-zinc-500 outline-none focus-visible:!outline-none"
+              />
 
-                  {searchQuery && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSearchQuery("");
-                        setShowSuggestions(false);
-                      }}
-                      aria-label="Clear search"
-                      data-testid="clear-search"
-                      className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600"
-                    >
-                      <X className="h-3.5 w-3.5" />
-                    </button>
-                  )}
-                </div>
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={handleClearInput}
+                  aria-label="Clear search"
+                  data-testid="clear-search"
+                  className="shrink-0 rounded-full p-1.5 text-zinc-500 transition-colors hover:bg-white/10 hover:text-white"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              )}
 
-                {/* Suggestions Dropdown */}
-                <AnimatePresence>
-                  {showSuggestions && suggestions.length > 0 && (
-                    <motion.div
-                      key="search-suggestions"
-                      initial={{ opacity: 0, y: -8, scale: 0.98 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: -8, scale: 0.98 }}
-                      transition={{ duration: 0.16, ease: "easeOut" }}
-                      className="absolute z-50 mt-2 max-h-72 w-full overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-[0_8px_30px_rgba(0,0,0,0.08)]"
-                      role="listbox"
-                      id={suggestionsId}
-                    >
-                      <div className="border-b border-zinc-100 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-zinc-400">
-                        Suggestions
-                      </div>
-
-                      <div className="max-h-60 overflow-y-auto p-1">
-                        {suggestions.map((suggestion) => (
-                          <motion.button
-                            key={suggestion}
-                            type="submit"
-                            onClick={() => handleSuggestionClick(suggestion)}
-                            whileHover={{ x: 3 }}
-                            role="option"
-                            aria-selected={suggestion === searchQuery}
-                            className="flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left transition-colors hover:bg-zinc-50"
-                          >
-                            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-zinc-100">
-                              <Search className="h-4 w-4 text-zinc-500" />
-                            </span>
-                            <span className="min-w-0 flex-1">
-                              <span className="block truncate text-sm font-medium text-zinc-900">
-                                {suggestion}
-                              </span>
-                              <span className="block text-xs text-zinc-500">
-                                Search this car model
-                              </span>
-                            </span>
-                          </motion.button>
-                        ))}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-
-              {/* Search Button */}
               <motion.button
                 type="submit"
                 disabled={!canSearch}
                 data-testid="search-button"
                 whileHover={canSearch ? { scale: 1.02 } : undefined}
                 whileTap={canSearch ? { scale: 0.97 } : undefined}
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-white shadow-[0_1px_3px_rgba(0,0,0,0.08)] transition-all hover:bg-primary-600 hover:shadow-[0_2px_6px_rgba(0,0,0,0.12)] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+                className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-primary-600 px-6 py-3 text-sm font-semibold text-white shadow-[0_1px_3px_rgba(0,0,0,0.2)] transition-all hover:bg-primary-500 hover:shadow-[0_2px_8px_rgba(94,168,58,0.3)] disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <Search className="h-4 w-4" />
                 Search
               </motion.button>
+
+              {/* Suggestions Dropdown */}
+              <AnimatePresence>
+                {showSuggestions && suggestions.length > 0 && (
+                  <motion.div
+                    key="search-suggestions"
+                    initial={{ opacity: 0, y: -8, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -8, scale: 0.98 }}
+                    transition={{ duration: 0.16, ease: "easeOut" }}
+                    className="absolute left-0 top-full z-[100] mt-2 max-h-72 w-full overflow-hidden rounded-xl border border-white/10 bg-zinc-900 shadow-2xl backdrop-blur-xl"
+                    role="listbox"
+                    id={suggestionsId}
+                  >
+                    <div className="border-b border-white/5 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-zinc-500">
+                      Suggestions
+                    </div>
+
+                    <div className="max-h-60 overflow-y-auto p-1">
+                      {suggestions.map((suggestion) => (
+                        <motion.button
+                          key={suggestion}
+                          type="submit"
+                          onClick={() => handleSuggestionClick(suggestion)}
+                          whileHover={{ x: 3 }}
+                          role="option"
+                          aria-selected={suggestion === searchQuery}
+                          className="flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left transition-colors hover:bg-white/5"
+                        >
+                          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/5">
+                            <Search className="h-4 w-4 text-zinc-500" />
+                          </span>
+                          <span className="min-w-0 flex-1">
+                            <span className="block truncate text-sm font-medium text-white">
+                              {suggestion}
+                            </span>
+                            <span className="block text-xs text-zinc-400">
+                              Search this car model
+                            </span>
+                          </span>
+                        </motion.button>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </form>
-
-          {/* Filter Bar */}
-          <FilterBar
-            filters={filters}
-            showFilters={showFilters}
-            setShowFilters={setShowFilters}
-            activeFilterCount={activeFilterCount}
-            updateFilter={updateFilter}
-            clearFilters={clearFilters}
-          />
         </div>
 
-        {/* States */}
-        {showStartState && (
-          <SearchFallback
-            icon={<Search className="h-8 w-8 text-primary" />}
-            iconClassName="bg-primary-50"
-            title="Start Your Search"
-            description="Enter a car make, model, or keyword to find your perfect vehicle."
-            helperText="Try searching for brands like Toyota, Honda, or BMW"
-            data-testid="start-state"
-          />
-        )}
+        {/* Main content: sidebar filters + results */}
+        <div className="flex gap-6">
+          {/* Left sidebar — Filters */}
+          <aside className="w-56 shrink-0">
+            <div className="sticky top-8 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-5">
+              <h3 className="text-sm font-semibold text-white">Filters</h3>
 
-        {showLoadingState && (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <SkeletonCard key={i} />
-            ))}
-          </div>
-        )}
+              <div className="mt-4 space-y-4">
+                <FilterSelect
+                  label="Price Range"
+                  value={filters.price}
+                  onChange={(v) => updateFilter("price", v)}
+                  options={PRICE_RANGES.map((r) => ({
+                    value: r.label,
+                    label: r.label,
+                  }))}
+                />
+                <FilterSelect
+                  label="Color"
+                  value={filters.color}
+                  onChange={(v) => updateFilter("color", v)}
+                  options={COLOR_OPTIONS}
+                />
+                <FilterSelect
+                  label="Sort By"
+                  value={filters.sortBy}
+                  onChange={(v) => updateFilter("sortBy", v)}
+                  options={SORT_BY_OPTIONS}
+                />
+                <FilterSelect
+                  label="Sort Order"
+                  value={filters.sortOrder}
+                  onChange={(v) => updateFilter("sortOrder", v)}
+                  options={SORT_ORDER_OPTIONS}
+                />
+              </div>
 
-        {/* Error — no existing data to fall back on */}
-        {showErrorState && !hasItems && (
-          <SectionErrorFallback
-            onRetry={handleRetry}
-            isRetrying={isRefetching}
-          />
-        )}
-
-        {/* Stale data banner — error but we have existing results */}
-        {showErrorState && hasItems && (
-          <div className="mb-6">
-            <StaleDataBanner
-              onRefresh={handleRetry}
-              isRefreshing={isRefetching}
-            />
-          </div>
-        )}
-
-        {showEmptyState && (
-          <SearchFallback
-            icon={<Search className="h-8 w-8 text-zinc-400" />}
-            iconClassName="bg-zinc-100"
-            title="No Cars Found"
-            description={`We couldn't find any cars matching "${trimmedQuery}". Try a different keyword or adjust your filters.`}
-            data-testid="no-results"
-            action={
-              activeFilterCount > 0 ? (
+              {activeFilterCount > 0 && (
                 <button
                   type="button"
                   onClick={clearFilters}
-                  className="rounded-xl border border-zinc-200 bg-white px-6 py-2.5 text-sm font-semibold text-zinc-700 transition-all hover:bg-zinc-50"
+                  className="mt-4 text-xs font-medium text-zinc-500 transition-colors hover:text-white"
                 >
-                  Clear Filters
+                  Clear all filters
                 </button>
-              ) : undefined
-            }
-          />
-        )}
+              )}
+            </div>
+          </aside>
 
-        {showResultsState && (
-          <div data-testid="search-results">
-            <div
-              ref={parentRef}
-              className="h-[calc(100vh-300px)] overflow-auto"
-            >
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {allItems.map((car, index) => (
-                  <div key={car.id ?? index} data-index={index}>
-                    <CarCard carItem={car} />
-                  </div>
+          {/* Right — Results */}
+          <div className="min-w-0 flex-1">
+            {/* Active filter chips */}
+            {activeFilterCount > 0 && showResultsState && (
+              <div className="mb-4 flex flex-wrap items-center gap-2">
+                {Object.entries(filters)
+                  .filter(([, value]) => value)
+                  .map(([key, value]) => (
+                    <span
+                      key={key}
+                      className="inline-flex shrink-0 items-center gap-1 rounded-lg bg-white/10 px-2.5 py-1.5 text-xs font-medium text-zinc-200"
+                    >
+                      {value}
+                      <button
+                        type="button"
+                        onClick={() =>
+                          updateFilter(
+                            key as "price" | "color" | "sortBy" | "sortOrder",
+                            "",
+                          )
+                        }
+                        className="ml-0.5 rounded-full p-0.5 text-zinc-500 hover:bg-white/10 hover:text-white"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </span>
+                  ))}
+                <button
+                  type="button"
+                  onClick={clearFilters}
+                  className="text-xs font-medium text-zinc-500 transition-colors hover:text-white"
+                >
+                  Clear all
+                </button>
+              </div>
+            )}
+
+            {showStartState && (
+              <SearchFallback
+                icon={<Search className="h-8 w-8 text-primary-400" />}
+                iconClassName="bg-primary-500/15"
+                badge="Ready to Search"
+                title="Start Your Search"
+                description="Enter a car make, model, or keyword to find your perfect vehicle."
+                helperText="Try searching for brands like Toyota, Honda, or BMW"
+                data-testid="start-state"
+              />
+            )}
+
+            {showLoadingState && (
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <SkeletonCard key={i} />
                 ))}
+              </div>
+            )}
 
-                {isFetchingNextPage && (
-                  <div className="col-span-full flex items-center justify-center py-8">
-                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                  </div>
-                )}
+            {/* Error — no existing data */}
+            {showErrorState && !hasItems && (
+              <SectionErrorFallback
+                onRetry={handleRetry}
+                isRetrying={isRefetching}
+              />
+            )}
 
-                {isError && hasItems && hasNextPage && (
-                  <div className="col-span-full flex items-center justify-center py-6">
+            {/* Stale data banner */}
+            {showErrorState && hasItems && (
+              <div className="mb-6">
+                <StaleDataBanner
+                  onRefresh={handleRetry}
+                  isRefreshing={isRefetching}
+                />
+              </div>
+            )}
+
+            {showEmptyState && (
+              <SearchFallback
+                icon={<Search className="h-8 w-8 text-zinc-500" />}
+                iconClassName="bg-white/5"
+                title="No Cars Found"
+                description={`We couldn't find any cars matching "${trimmedQuery}". Try a different keyword or adjust your filters.`}
+                data-testid="no-results"
+                action={
+                  activeFilterCount > 0 ? (
+                    <button
+                      type="button"
+                      onClick={clearFilters}
+                      className="rounded-xl border border-white/10 bg-white/5 px-6 py-2.5 text-sm font-semibold text-white/80 backdrop-blur-sm transition-all hover:bg-white/10 hover:text-white"
+                    >
+                      Clear Filters
+                    </button>
+                  ) : undefined
+                }
+              />
+            )}
+
+            {showResultsState && (
+              <div data-testid="search-results">
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                  {allItems.map((car, index) => (
+                    <div key={car.id ?? index} data-index={index}>
+                      <CarCard carItem={car} />
+                    </div>
+                  ))}
+                </div>
+
+                {/* Pagination / Load More */}
+                <div className="mt-8 flex items-center justify-center">
+                  {isFetchingNextPage && (
+                    <Loader2 className="h-6 w-6 animate-spin text-primary-400" />
+                  )}
+
+                  {hasNextPage && !isFetchingNextPage && (
+                    <button
+                      type="button"
+                      onClick={loadMore}
+                      className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-6 py-3 text-sm font-medium text-white/80 backdrop-blur-sm transition-all hover:bg-white/10 hover:text-white"
+                    >
+                      Load More Results
+                    </button>
+                  )}
+
+                  {!hasNextPage && allItems.length > 0 && !isFetchingNextPage && (
+                    <p className="text-sm text-zinc-600">
+                      You have reached the end of the results.
+                    </p>
+                  )}
+                </div>
+
+                {/* Retry on error while loading more */}
+                {isError && hasItems && hasNextPage && !isFetchingNextPage && (
+                  <div className="mt-4 flex items-center justify-center">
                     <button
                       type="button"
                       onClick={handleRetry}
                       disabled={isRefetching}
-                      className="inline-flex items-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-60"
+                      className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-zinc-400 backdrop-blur-sm transition-colors hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
                     >
                       {isRefetching ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
                       ) : (
                         <RefreshCcw className="h-4 w-4" />
                       )}
-                      {isRefetching
-                        ? "Retrying..."
-                        : "Failed to load more — tap to retry"}
+                      {isRefetching ? "Retrying..." : "Failed to load more — tap to retry"}
                     </button>
                   </div>
                 )}
-
-                {!hasNextPage && allItems.length > 0 && (
-                  <div className="col-span-full py-8 text-center text-sm text-zinc-400">
-                    You have reached the end of the results.
-                  </div>
-                )}
               </div>
-            </div>
+            )}
           </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function FilterBar({
-  filters,
-  showFilters,
-  setShowFilters,
-  activeFilterCount,
-  updateFilter,
-  clearFilters,
-}: {
-  filters: { price: string; color: string; sortBy: string; sortOrder: string };
-  showFilters: boolean;
-  setShowFilters: (v: boolean) => void;
-  activeFilterCount: number;
-  updateFilter: (
-    key: "price" | "color" | "sortBy" | "sortOrder",
-    value: string,
-  ) => void;
-  clearFilters: () => void;
-}) {
-  return (
-    <div className="mt-4">
-      <div className="flex items-center gap-2">
-        <button
-          type="button"
-          onClick={() => setShowFilters(!showFilters)}
-          className={`inline-flex items-center gap-1.5 rounded-xl border px-3.5 py-2 text-sm font-medium transition-all ${
-            showFilters || activeFilterCount > 0
-              ? "border-primary/30 bg-primary-50 text-primary"
-              : "border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300 hover:bg-zinc-50"
-          }`}
-        >
-          <SlidersHorizontal className="h-4 w-4" />
-          Filters
-          {activeFilterCount > 0 && (
-            <span className="ml-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white">
-              {activeFilterCount}
-            </span>
-          )}
-        </button>
-
-        <div className="flex flex-1 items-center gap-2 overflow-x-auto hide-scrollbar">
-          <AnimatePresence>
-            {Object.entries(filters)
-              .filter(([, value]) => value)
-              .map(([key, value]) => (
-                <motion.span
-                  key={key}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  className="inline-flex shrink-0 items-center gap-1 rounded-lg bg-zinc-100 px-2.5 py-1.5 text-xs font-medium text-zinc-700"
-                >
-                  {value}
-                  <button
-                    type="button"
-                    onClick={() =>
-                      updateFilter(
-                        key as "price" | "color" | "sortBy" | "sortOrder",
-                        "",
-                      )
-                    }
-                    className="ml-0.5 rounded-full p-0.5 text-zinc-400 hover:bg-zinc-200 hover:text-zinc-600"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
-                </motion.span>
-              ))}
-          </AnimatePresence>
-
-          {activeFilterCount > 0 && (
-            <button
-              type="button"
-              onClick={clearFilters}
-              className="shrink-0 text-xs font-medium text-zinc-400 hover:text-zinc-600 transition-colors"
-            >
-              Clear all
-            </button>
-          )}
         </div>
       </div>
-
-      {/* Filter Dropdowns */}
-      <AnimatePresence>
-        {showFilters && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-            className="overflow-hidden"
-          >
-            <div className="mt-3 grid grid-cols-2 gap-3 rounded-xl border border-zinc-200 bg-white p-4 shadow-[0_2px_12px_rgba(0,0,0,0.04)] sm:grid-cols-4">
-              <FilterSelect
-                label="Price Range"
-                value={filters.price}
-                onChange={(v) => updateFilter("price", v)}
-                options={PRICE_RANGES.map((r) => ({
-                  value: r.label,
-                  label: r.label,
-                }))}
-              />
-              <FilterSelect
-                label="Color"
-                value={filters.color}
-                onChange={(v) => updateFilter("color", v)}
-                options={COLOR_OPTIONS}
-              />
-              <FilterSelect
-                label="Sort By"
-                value={filters.sortBy}
-                onChange={(v) => updateFilter("sortBy", v)}
-                options={SORT_BY_OPTIONS}
-              />
-              <FilterSelect
-                label="Sort Order"
-                value={filters.sortOrder}
-                onChange={(v) => updateFilter("sortOrder", v)}
-                options={SORT_ORDER_OPTIONS}
-              />
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }

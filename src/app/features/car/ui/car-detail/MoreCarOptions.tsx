@@ -1,9 +1,11 @@
 "use client";
 
 import { CarCard } from "@/app/features/car/ui/car-card/CarCard";
-import { mockVehicles } from "@/app/shared/mock/mockVehicles";
+import { getAllCars } from "@/app/shared/utils/API/CarAPI";
+import { carMapper } from "@/app/features/car/types/car.mapper";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 
 interface MoreCarOptionsProps {
@@ -11,9 +13,19 @@ interface MoreCarOptionsProps {
 }
 
 export default function MoreCarOptions({ currentCarId }: MoreCarOptionsProps) {
+  const { data } = useQuery({
+    queryKey: ["more-car-options"],
+    queryFn: async () => {
+      const res = await getAllCars(null);
+      return res.data.items.map(carMapper);
+    },
+    staleTime: 5 * 60 * 1000,
+    retry: 1,
+  });
+
   const related = useMemo(
-    () => mockVehicles.filter((car) => car.id !== currentCarId).slice(0, 4),
-    [currentCarId],
+    () => (data ?? []).filter((car) => car.id !== currentCarId).slice(0, 4),
+    [data, currentCarId],
   );
 
   if (related.length === 0) return null;

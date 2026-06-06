@@ -1,130 +1,249 @@
 "use client";
 
-import { ShieldCheck, FileCheck, Users, Eye } from "lucide-react";
 import { motion } from "framer-motion";
 
-const TRUST_ITEMS = [
+// ─── Data ────────────────────────────────────────────────────────────────
+
+const METRICS = [
+  { value: "12,000+", label: "Verified Vehicles" },
+  { value: "4,500+", label: "Successful Transactions" },
+  { value: "98.7%", label: "Customer Satisfaction" },
+  { value: "24h", label: "Average Response Time" },
+];
+
+const PROTECTION_CARDS = [
   {
-    icon: FileCheck,
+    badge: "VERIFIED",
     title: "Verified Listings & Dealers",
-    description:
-      "Every vehicle passes a 150-point inspection before listing. All dealers undergo identity verification and background checks — so you browse with total confidence.",
+    points: [
+      "150-point vehicle inspection",
+      "Identity-verified dealerships",
+      "Background verification completed",
+    ],
   },
   {
-    icon: ShieldCheck,
-    title: "Secure Escrow Payments",
-    description:
-      "Your payment is held safely in escrow until you confirm the car matches the listing. End-to-end encrypted transactions protect every deal.",
+    badge: "SECURE",
+    title: "Escrow Payment Protection",
+    points: [
+      "Funds held securely until approval",
+      "End-to-end encrypted transactions",
+      "Fraud monitoring system",
+    ],
   },
   {
-    icon: Users,
+    badge: "PROTECTED",
     title: "Buyer Protection Guarantee",
-    description:
-      "7-day return window on all certified vehicles. If the car isn't what you expected, we'll make it right. We stand behind every transaction on our platform.",
+    points: [
+      "7-day return policy",
+      "Dispute resolution support",
+      "Purchase protection coverage",
+    ],
   },
   {
-    icon: Eye,
-    title: "Full Transparency & Financing",
-    description:
-      "Complete vehicle history, ownership records, and pricing insights for every listing. Get pre-approved in minutes through our trusted lending partners with competitive rates.",
+    badge: "TRANSPARENT",
+    title: "Full Vehicle Transparency",
+    points: [
+      "Ownership history",
+      "Service records",
+      "Market pricing insights",
+      "Financing options available",
+    ],
   },
 ];
 
-const containerVariants = {
-  hidden: {},
-  visible: {
-    transition: { staggerChildren: 0.08 },
-  },
-};
+const PROTECTION_STEPS = [
+  "Dealer Verification",
+  "Vehicle Inspection",
+  "Test Drive",
+  "Secure Escrow Payment",
+  "Ownership Transfer",
+];
 
-const cardVariants = {
-  hidden: { opacity: 0, y: 24 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.15, ease: [0.25, 0.46, 0.45, 0.94] as const },
+const REVIEWS = [
+  {
+    text: "Sold my car in 3 days. The escrow system gave me real peace of mind.",
+    author: "Tanawat, Bangkok",
   },
-};
+  {
+    text: "The inspection report was incredibly detailed. Knew exactly what I was buying.",
+    author: "Sarah, Chiang Mai",
+  },
+  {
+    text: "Finally a marketplace where both buyers and sellers are protected. Game changer.",
+    author: "Michael, Phuket",
+  },
+];
+
+// ─── Component ──────────────────────────────────────────────────────────
 
 export default function TrustSafetySection() {
   return (
     <section
-      className="relative flex w-full justify-center overflow-hidden py-20 md:py-28"
+      className="relative flex w-full justify-center overflow-hidden pb-20 md:pb-28 pt-0"
       style={{
         background: "linear-gradient(180deg, #061E09 0%, #0a0f05 100%)",
       }}
     >
-      <div className="pointer-events-none absolute right-0 top-0 h-96 w-96 rounded-full bg-primary-600/4 blur-3xl" />
-      <div className="pointer-events-none absolute bottom-0 left-0 h-96 w-96 rounded-full bg-emerald-600/3 blur-3xl" />
+      {/* Subtle ambient orbs */}
+      <div className="pointer-events-none absolute right-0 top-0 h-72 w-72 rounded-full bg-primary-600/3 blur-3xl" />
+      <div className="pointer-events-none absolute bottom-0 left-0 h-72 w-72 rounded-full bg-emerald-600/2 blur-3xl" />
 
       <div className="relative z-10 w-full px-4 lg:w-[90%] xl:w-[75%]">
+        {/* ── Section Header ── */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.15 }}
-          className="mb-14 flex flex-col items-center text-center"
+          transition={{ duration: 0.3 }}
+          className="mb-12 flex flex-col items-center text-center"
         >
-          <h2 className="font-serif text-3xl font-bold text-white md:text-4xl">
+          <h2 className="font-serif text-3xl font-bold tracking-tight text-white md:text-4xl">
             Built on Trust, Backed by Protection
           </h2>
-          <p className="mt-3 max-w-lg text-sm leading-relaxed text-zinc-400">
-            Every transaction on GearUp is protected by industry-leading
-            security and verification systems.
+          <p className="mt-4 max-w-xl text-sm leading-relaxed text-zinc-400">
+            Every transaction is protected through dealer verification, vehicle
+            inspection, secure payments, and buyer safeguards.
           </p>
         </motion.div>
 
-        {/* 2x2 Trust Grid */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-50px" }}
-          className="mx-auto grid max-w-4xl grid-cols-1 gap-4 md:grid-cols-2"
-        >
-          {TRUST_ITEMS.map((item) => (
-            <motion.div
-              key={item.title}
-              variants={cardVariants}
-              whileHover={{ y: -3 }}
-              className="group flex flex-col items-center text-center gap-5 rounded-2xl border border-white/8 bg-white/5 p-6 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-white/15 hover:bg-white/10 md:p-8"
-            >
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary-600/20 transition-colors duration-300 group-hover:bg-primary-600/30">
-                <item.icon className="h-6 w-6 text-primary-400" />
-              </div>
-              <div>
-                <h3 className="text-base tracking-wide font-semibold text-white">
-                  {item.title}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed tracking-wide text-zinc-400">
-                  {item.description}
-                </p>
-              </div>
-            </motion.div>
+        {/* ── Trust Metrics ── */}
+        <div className="mb-14 grid grid-cols-2 gap-6 md:grid-cols-4">
+          {METRICS.map((metric) => (
+            <div key={metric.label} className="text-center">
+              <p className="font-serif text-3xl font-bold tabular-nums tracking-tight text-white md:text-4xl">
+                {metric.value}
+              </p>
+              <p className="mt-1.5 text-xs font-medium uppercase tracking-widest text-zinc-500">
+                {metric.label}
+              </p>
+            </div>
           ))}
-        </motion.div>
+        </div>
 
-        {/* Bottom compliance bar */}
+        {/* ── Protection Cards ── */}
+        <div className="mb-14 grid gap-4 sm:grid-cols-2">
+          {PROTECTION_CARDS.map((card) => (
+            <div
+              key={card.title}
+              className="rounded-2xl border border-white/8 bg-white/3 p-6 transition-colors duration-300 hover:border-white/12 md:p-7"
+            >
+              {/* Small trust badge */}
+              <span className="inline-flex items-center gap-1 rounded-full border border-primary-500/20 bg-primary-500/10 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-primary-400">
+                ✓ {card.badge}
+              </span>
+
+              <h3 className="mt-4 text-base font-semibold tracking-wide text-white">
+                {card.title}
+              </h3>
+
+              <ul className="mt-3 space-y-1.5">
+                {card.points.map((point) => (
+                  <li
+                    key={point}
+                    className="flex items-center gap-2 text-sm leading-relaxed text-zinc-400"
+                  >
+                    <span className="block h-1 w-1 shrink-0 rounded-full bg-zinc-600" />
+                    {point}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        {/* ── How It Works ── */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.15, delay: 0.12 }}
-          className="mt-12 flex justify-center"
+          transition={{ duration: 0.3 }}
+          className="mb-20"
         >
-          <div className="inline-flex items-center gap-6 rounded-2xl border border-white/8 bg-white/5 px-6 py-4 backdrop-blur-sm">
-            <span className="text-xs font-medium text-zinc-400">
-              256-bit SSL
-            </span>
-            <span className="h-4 w-px bg-white/12" />
-            <span className="text-xs font-medium text-zinc-400">
-              PCI Compliant
-            </span>
-            <span className="h-4 w-px bg-white/12" />
-            <span className="text-xs font-medium text-zinc-400">
-              GDPR Ready
-            </span>
+          <h3 className="mb-6 text-center font-serif text-2xl font-bold text-white">
+            How Your Purchase Is Protected
+          </h3>
+
+          <div className="mx-auto flex max-w-3xl flex-wrap items-center justify-center gap-x-3 gap-y-4">
+            {PROTECTION_STEPS.map((step, i) => (
+              <div key={step} className="flex items-center gap-3">
+                <div className="flex items-center gap-2 rounded-full border border-white/8 bg-white/3 px-4 py-2">
+                  <span className="text-[10px] font-bold text-zinc-600 tabular-nums">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span className="text-sm font-medium text-zinc-300">
+                    {step}
+                  </span>
+                </div>
+                {i < PROTECTION_STEPS.length - 1 && (
+                  <span className="hidden text-zinc-700 sm:block">→</span>
+                )}
+              </div>
+            ))}
           </div>
+        </motion.div>
+
+        {/* ── Social Proof ── */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.3, delay: 0.1 }}
+          className="mb-20"
+        >
+          {/* Rating */}
+          <div className="mb-10 flex flex-col items-center text-center">
+            <div className="flex items-center gap-1 text-amber-400">
+              {"★★★★★"}
+            </div>
+            <p className="mt-2 font-serif text-2xl font-bold text-white">
+              4.8/5
+            </p>
+            <p className="mt-1 text-sm text-zinc-400">
+              Trusted by thousands of buyers and sellers across Thailand
+            </p>
+          </div>
+
+          {/* Review snippets */}
+          <div className="grid gap-4 sm:grid-cols-3">
+            {REVIEWS.map((review) => (
+              <div
+                key={review.author}
+                className="rounded-xl border border-white/5 bg-white/2 p-5"
+              >
+                <p className="text-sm leading-relaxed text-zinc-400">
+                  &ldquo;{review.text}&rdquo;
+                </p>
+                <p className="mt-3 text-xs font-medium text-zinc-500">
+                  — {review.author}
+                </p>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* ── Certification Bar ── */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.3, delay: 0.15 }}
+          className="flex flex-wrap items-center justify-center gap-5 rounded-xl border border-white/5 bg-white/2 px-6 py-4"
+        >
+          <span className="text-xs font-medium text-zinc-500">
+            256-bit SSL Encryption
+          </span>
+          <span className="hidden h-4 w-px bg-white/8 sm:block" />
+          <span className="text-xs font-medium text-zinc-500">
+            PCI-Compliant Payments
+          </span>
+          <span className="hidden h-4 w-px bg-white/8 sm:block" />
+          <span className="text-xs font-medium text-zinc-500">
+            Identity Verified Dealers
+          </span>
+          <span className="hidden h-4 w-px bg-white/8 sm:block" />
+          <span className="text-xs font-medium text-zinc-500">
+            Buyer Protection Policy
+          </span>
         </motion.div>
       </div>
     </section>

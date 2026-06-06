@@ -7,13 +7,14 @@ import { PRIMARY_NAVBAR_LINKS } from "../constants";
 import { useUserData } from "../context/UserDataContext";
 
 const DISCOVER_LINK = { id: "discover", label: "Discover", href: "/post/discover" };
+const APPOINTMENTS_LINK = { id: "appointments", label: "Appointments", href: "/profile/user/appointments" };
 
 export default function NavbarTabs() {
   const { user } = useUserData();
   const pathname = usePathname();
 
   const links = user
-    ? [...PRIMARY_NAVBAR_LINKS, DISCOVER_LINK]
+    ? [...PRIMARY_NAVBAR_LINKS, DISCOVER_LINK, APPOINTMENTS_LINK]
     : PRIMARY_NAVBAR_LINKS;
 
   return (

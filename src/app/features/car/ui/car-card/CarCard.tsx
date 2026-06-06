@@ -7,12 +7,10 @@ import { useRouter } from "next/navigation";
 import { Gauge, Cog, Fuel, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { useCallback, useState } from "react";
-import { mockCarDetails } from "@/app/shared/mock/mockCarDetails";
 
 export function CarCard({ carItem }: { carItem: CarModel }) {
   const router = useRouter();
   const [imgLoaded, setImgLoaded] = useState(false);
-  const details = mockCarDetails[carItem.id];
 
   const transmissionLabel =
     carItem.transmission === "Automatic"
@@ -62,12 +60,6 @@ export function CarCard({ carItem }: { carItem: CarModel }) {
         {/* Subtle gradient overlay */}
         <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/20 to-transparent opacity-0 transition-opacity duration-150 group-hover:opacity-100" />
 
-        {/* Condition badge */}
-        {details?.condition && (
-          <span className="absolute left-3 top-3 rounded-full bg-black/50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-zinc-200 backdrop-blur-sm">
-            {details.condition}
-          </span>
-        )}
       </div>
 
       {/* Content */}
@@ -99,7 +91,7 @@ export function CarCard({ carItem }: { carItem: CarModel }) {
           <span className="text-white/15">&middot;</span>
           <span className="inline-flex items-center gap-1">
             <Fuel className="h-3 w-3 text-zinc-500" />
-            {details?.fuel ?? "Petrol"}
+            {"Petrol"}
           </span>
         </div>
 

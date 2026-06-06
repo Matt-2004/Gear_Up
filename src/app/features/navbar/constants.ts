@@ -1,7 +1,6 @@
 import {
   CarFront,
   Home,
-  Newspaper,
   Search,
   type LucideIcon,
 } from "lucide-react";
@@ -12,7 +11,6 @@ import type { NavbarLink } from "./types";
 export const PRIMARY_NAVBAR_LINKS: NavbarLink[] = [
   { id: "home", label: "Home", href: "/" },
   { id: "browse", label: "Browse Cars", href: "/car/search" },
-  { id: "about", label: "About", href: "/about" },
 ];
 
 export const SECONDARY_MOBILE_LINKS = [
@@ -26,7 +24,6 @@ export const MOBILE_LINK_ICONS: Record<string, LucideIcon> = {
   home: Home,
   browse: Search,
   sell: CarFront,
-  about: Newspaper,
 };
 
 // ─── Search ────────────────────────────────────────────────────────────────
@@ -40,7 +37,10 @@ export const NAVBAR_HIDDEN_ROUTES = [
   "/auth/register",
   "/auth/forgot-password",
   "/auth/reset-password",
+  "/auth/email/reset-password",
+  "/auth/password/reset",
   "/profile/admin",
+  "/profile/admin/login",
 ] as const;
 
 // ─── Scroll ────────────────────────────────────────────────────────────────
