@@ -1,6 +1,5 @@
 "use client";
 
-import { usePathname } from "next/navigation";
 import NavbarUtility from "@/app/features/navbar/ui/NavbarUtility";
 import NavbarBrand from "./NavbarBrand";
 import { NavbarContainer } from "./NavbarComponents";
@@ -8,11 +7,8 @@ import NavbarTabs from "./NavbarTabs";
 import { useUserData } from "../context/UserDataContext";
 
 export default function Navbar() {
-  const pathname = usePathname();
   const { user } = useUserData();
-  const isLanding = pathname === "/";
-  const isBrowse = pathname.startsWith("/car/search");
-  const hideTabsAndSearch = isLanding || (isBrowse && !user);
+  const hideTabsAndSearch = !user;
 
   return (
     <NavbarContainer>

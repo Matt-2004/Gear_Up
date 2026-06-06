@@ -31,14 +31,10 @@ export default defineConfig({
       timeout: 10_000,
     },
     {
-      command: "npm run dev",
+      command: "NEXT_Backend_URL=http://localhost:5555 npm run dev",
       url: "http://localhost:3000",
       reuseExistingServer: !process.env.CI,
       timeout: 60_000,
-      env: {
-        ...process.env,
-        NEXT_Backend_URL: "http://localhost:5555",
-      },
     },
   ],
 });

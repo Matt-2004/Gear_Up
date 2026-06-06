@@ -113,48 +113,75 @@ const server = http.createServer(async (req, res) => {
   }
 
   // --- Cars: build mock car items ---
-  const mockCars = Array.from({ length: 6 }, (_, i) => ({
+  const mockCars = Array.from({ length: 12 }, (_, i) => ({
     id: `car-${i + 1}`,
     thumbnailUrl: `https://picsum.photos/seed/car${i + 1}/640/360`,
     title: `Mock Car ${i + 1} - Great Condition`,
-    make: ["Toyota", "Honda", "BMW", "Tesla", "Ford", "Mazda"][i],
-    model: ["Camry", "Civic", "X5", "Model 3", "Mustang", "CX-5"][i],
+    make: ["Toyota", "Honda", "Tesla", "BMW", "Ford", "Mazda", "Hyundai", "Mercedes-Benz", "Audi", "Lexus", "Nissan", "Subaru"][i],
+    model: ["Camry", "Civic", "Model 3", "X5", "Mustang", "CX-5", "Tucson", "C-Class", "A4", "RX", "Altima", "Outback"][i],
     transmissionType: i % 2 === 0 ? "Automatic" : "Manual",
-    carValidationStatus: i < 3 ? "Approved" : "Pending",
+    carValidationStatus: i < 6 ? "Approved" : "Pending",
     mileage: 10000 + i * 15000,
     seatingCapacity: 4 + (i % 2) * 2,
     price: 500000 + i * 200000,
-    color: ["Black", "White", "Silver", "Blue", "Red", "Gray"][i],
+    color: ["Black", "White", "Silver", "Blue", "Red", "Gray", "Green", "Yellow", "Purple", "Orange", "Brown", "Beige"][i],
     createdAt: new Date().toISOString(),
   }));
 
-  const mockCarDetail = (id) => ({
-    name: `Dealer for ${id}`,
-    dealerId: "dealer-1",
-    id,
-    title: `Mock Car Detail - ${id}`,
-    description: "This is a detailed description of the mock car. Well maintained and in excellent condition.",
-    model: "Camry",
-    make: "Toyota",
-    year: 2023,
-    price: 850000,
-    color: "Black",
-    mileage: 15000,
-    seatingCapacity: 5,
-    engineCapacity: 2.5,
-    carImages: [
-      { id: "img-1", carId: id, url: "https://picsum.photos/seed/detail1/800/450" },
-      { id: "img-2", carId: id, url: "https://picsum.photos/seed/detail2/800/450" },
-      { id: "img-3", carId: id, url: "https://picsum.photos/seed/detail3/800/450" },
-    ],
-    fuelType: "Petrol",
-    carCondition: "Used",
-    transmissionType: "Automatic",
-    carStatus: "Approved",
-    carValidationStatus: "Approved",
-    vin: "1HGBH41JXMN109186",
-    licensePlate: "ABC-1234",
-  });
+  // Per-ID car detail data (matches IDs used in e2e tests: car-001, car-002, etc.)
+  const carDetailData = {
+    "car-001": { make: "Toyota", model: "Camry", year: 2024, price: 31999, color: "Pearl White", mileage: 5200, fuelType: "Petrol", carCondition: "New" },
+    "car-002": { make: "Honda", model: "Civic", year: 2023, price: 26800, color: "Blazing Orange Pearl", mileage: 18400, fuelType: "Petrol", carCondition: "Used" },
+    "car-003": { make: "Tesla", model: "Model 3", year: 2024, price: 47999, color: "Deep Blue Metallic", mileage: 3100, fuelType: "Electric", carCondition: "New" },
+    "car-004": { make: "BMW", model: "X5", year: 2022, price: 45500, color: "Mineral White", mileage: 36200, fuelType: "Diesel", carCondition: "Used" },
+    "car-005": { make: "Ford", model: "Mustang", year: 2023, price: 43900, color: "Race Red", mileage: 12100, fuelType: "Petrol", carCondition: "Used" },
+    "car-006": { make: "Mazda", model: "CX-5", year: 2024, price: 28900, color: "Gray", mileage: 8500, fuelType: "Diesel", carCondition: "New" },
+  };
+
+  // Normalize car ID — map short IDs (car-1) to detail IDs (car-001)
+  function normalizeCarId(id) {
+    // If it already matches car-NNN format, return as-is
+    if (/^car-\d{3,}$/.test(id)) return id;
+    // car-N → car-00N
+    const match = id.match(/^car-(\d+)$/);
+    if (match) {
+      const num = parseInt(match[1], 10);
+      return `car-${String(num).padStart(3, '0')}`;
+    }
+    return id;
+  }
+
+  const mockCarDetail = (id) => {
+    const normalized = normalizeCarId(id);
+    const detail = carDetailData[normalized] || carDetailData["car-001"];
+    return {
+      name: `Dealer for ${id}`,
+      dealerId: "dealer-1",
+      id,
+      title: `${detail.year} ${detail.make} ${detail.model} — ${detail.carCondition}, Well Maintained`,
+      description: "This is a detailed description of the mock car. Well maintained and in excellent condition. Low mileage, single owner, all service records available.",
+      model: detail.model,
+      make: detail.make,
+      year: detail.year,
+      price: detail.price,
+      color: detail.color,
+      mileage: detail.mileage,
+      seatingCapacity: 5,
+      engineCapacity: 2.5,
+      carImages: [
+        { id: "img-1", carId: id, url: "https://picsum.photos/seed/detail1/800/450" },
+        { id: "img-2", carId: id, url: "https://picsum.photos/seed/detail2/800/450" },
+        { id: "img-3", carId: id, url: "https://picsum.photos/seed/detail3/800/450" },
+      ],
+      fuelType: detail.fuelType,
+      carCondition: detail.carCondition,
+      transmissionType: "Automatic",
+      carStatus: "Approved",
+      carValidationStatus: "Approved",
+      vin: "1HGBH41JXMN109186",
+      licensePlate: "ABC-1234",
+    };
+  };
 
   // --- Cars: List (landing page) ---
   if (method === "GET" && url.pathname === "/api/v1/cars") {

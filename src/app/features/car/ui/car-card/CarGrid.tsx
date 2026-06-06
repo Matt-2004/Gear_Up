@@ -1,49 +1,33 @@
 "use client";
 
-// import { useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { CarCard } from "./CarCard";
-// import { getAllCars } from "@/app/shared/utils/API/CarAPI";
-// import { carMapper } from "../../types/car.mapper";
+import { getAllCars } from "@/app/shared/utils/API/CarAPI";
+import { carMapper } from "../../types/car.mapper";
 import { SkeletonCard } from "@/app/shared/ui/Skeleton";
 import SectionErrorBoundary from "@/app/shared/ui/SectionErrorBoundary";
 import EmptyState from "@/app/shared/ui/EmptyState";
 import { Car } from "lucide-react";
-import { mockVehicles } from "@/app/shared/mock/mockVehicles";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { ArrowRight } from "lucide-react";
 
-const CARS = mockVehicles.slice(0, 8);
-
 export function CarGrid() {
-  // const { data, isLoading, isError, error } = useQuery({
-  //   queryKey: ["featured-cars"],
-  //   queryFn: async () => {
-  //     const res = await getAllCars(null);
-  //     return res.data.items.map(carMapper);
-  //   },
-  //   staleTime: 5 * 60 * 1000,
-  //   retry: 1,
-  // });
-
-  // useEffect(() => {
-  //   if (isError && error) {
-  //     console.log("[CarGrid] API unavailable, falling back to demo data:", (error as Error).message);
-  //   }
-  // }, [isError, error]);
-
-  // const cars = data ?? [];
-  // const featuredCars = cars
-  //   .filter((car) => car.status?.toLowerCase() === "approved")
-  //   .slice(0, 8);
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ["featured-cars"],
+    queryFn: async () => {
+      const res = await getAllCars(null);
+      return res.data.items.map(carMapper);
+    },
+    staleTime: 5 * 60 * 1000,
+    retry: 1,
+  });
 
   const [showAll, setShowAll] = useState(false);
 
-  // const allCars = featuredCars.length > 0 ? featuredCars : FALLBACK_CARS;
-  const allCars = CARS;
+  const allCars = data?.filter((car) => car.status?.toLowerCase() === "approved") ?? [];
   const displayCars = showAll ? allCars : allCars.slice(0, 4);
   const hasMore = allCars.length > 4;
-  const isLoading = false;
 
   return (
     <section
@@ -83,8 +67,18 @@ export function CarGrid() {
             </div>
           )}
 
+          {/* Error — fallback to empty */}
+          {isError && (
+            <EmptyState
+              icon={<Car className="h-6 w-6" />}
+              title="Unable to load cars"
+              description={error?.message ?? "Check back later for new listings."}
+              data-testid="car-grid-error"
+            />
+          )}
+
           {/* Empty */}
-          {!isLoading && displayCars.length === 0 && (
+          {!isLoading && !isError && displayCars.length === 0 && (
             <EmptyState
               icon={<Car className="h-6 w-6" />}
               title="No cars available"
@@ -94,7 +88,7 @@ export function CarGrid() {
           )}
 
           {/* Results */}
-          {!isLoading && displayCars.length > 0 && (
+          {!isLoading && !isError && displayCars.length > 0 && (
             <>
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {displayCars.map((car) => (

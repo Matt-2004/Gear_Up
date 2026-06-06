@@ -16,25 +16,39 @@ export function SkeletonText({ className }: SkeletonProps) {
   return <Skeleton className={clsx("h-4", className)} />;
 }
 
+/** Skeleton matching CarCard dark theme and layout */
 export function SkeletonCard() {
   return (
-    <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white">
-      <Skeleton className="aspect-[16/10] w-full rounded-none" />
+    <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-white/8 bg-white/[0.03] backdrop-blur-sm">
+      {/* Image area — matches CarCard aspect-4/3 */}
+      <div className="relative aspect-4/3 overflow-hidden bg-white/5">
+        <Skeleton className="absolute inset-0 rounded-none bg-white/[0.06]" />
+        {/* Condition badge placeholder */}
+        <Skeleton className="absolute left-3 top-3 h-5 w-16 rounded-full bg-white/10" />
+      </div>
+
+      {/* Content — matches CarCard p-5 */}
       <div className="flex flex-1 flex-col p-5">
-        {/* Title + Price row */}
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0 flex-1 space-y-2">
-            <Skeleton className="h-10 w-full rounded-md" />
-            <Skeleton className="h-5 w-28 rounded-md" />
-          </div>
-          <Skeleton className="h-5 w-16 shrink-0 rounded-md" />
+        {/* Make + Model label */}
+        <Skeleton className="h-3 w-24 rounded-sm bg-white/10" />
+
+        {/* Title — two lines matching line-clamp-2 */}
+        <div className="mt-1.5 space-y-1.5">
+          <Skeleton className="h-4 w-full rounded-sm bg-white/10" />
+          <Skeleton className="h-4 w-2/3 rounded-sm bg-white/10" />
         </div>
-        {/* Specs grid — 2x2 pushed to bottom */}
-        <div className="mt-auto grid grid-cols-2 gap-2 pt-4">
-          <Skeleton className="h-9 w-full rounded-lg" />
-          <Skeleton className="h-9 w-full rounded-lg" />
-          <Skeleton className="h-9 w-full rounded-lg" />
-          <Skeleton className="h-9 w-full rounded-lg" />
+
+        {/* Specs row — 3 items matching mileage / transmission / fuel */}
+        <div className="mt-4 flex items-center gap-3">
+          <Skeleton className="h-3.5 w-16 rounded-sm bg-white/10" />
+          <Skeleton className="h-3.5 w-12 rounded-sm bg-white/10" />
+          <Skeleton className="h-3.5 w-14 rounded-sm bg-white/10" />
+        </div>
+
+        {/* Price + CTA row with divider */}
+        <div className="mt-4 flex items-end justify-between border-t border-white/8 pt-4">
+          <Skeleton className="h-6 w-28 rounded-sm bg-white/10" />
+          <Skeleton className="h-4 w-14 rounded-sm bg-white/10" />
         </div>
       </div>
     </div>

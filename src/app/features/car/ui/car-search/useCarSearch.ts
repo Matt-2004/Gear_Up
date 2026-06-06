@@ -25,7 +25,6 @@ export function useCarSearch({ query, initialData }: UseCarSearchParams) {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
-  const parentRef = useRef<HTMLDivElement>(null);
   const searchContainerRef = useRef<HTMLDivElement>(null);
 
   const trimmedQuery = query.trim();
@@ -36,8 +35,6 @@ export function useCarSearch({ query, initialData }: UseCarSearchParams) {
     sortBy: urlParams.get("sortBy") ?? "",
     sortOrder: urlParams.get("sortOrder") ?? "",
   });
-
-  const [showFilters, setShowFilters] = useState(false);
 
   const activeFilterCount = Object.values(filters).filter(Boolean).length;
   const canSearch = searchQuery.trim().length > 0 || activeFilterCount > 0;
@@ -141,6 +138,10 @@ export function useCarSearch({ query, initialData }: UseCarSearchParams) {
 
     enabled: Boolean(trimmedQuery || activeFilterCount > 0),
 
+    // Keep SSR data fresh — prevents client refetch from immediately
+    // overwriting server-rendered results with empty API responses.
+    staleTime: 5 * 60 * 1000,
+
     initialData:
       trimmedQuery && !activeFilterCount
         ? {
@@ -204,26 +205,6 @@ export function useCarSearch({ query, initialData }: UseCarSearchParams) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Infinite scroll
-  useEffect(() => {
-    const scrollElement = parentRef.current;
-    if (!scrollElement) return;
-
-    const handleScroll = () => {
-      const { scrollTop, scrollHeight, clientHeight } = scrollElement;
-      if (
-        scrollTop + clientHeight >= scrollHeight * 0.8 &&
-        hasNextPage &&
-        !isFetchingNextPage
-      ) {
-        fetchNextPage();
-      }
-    };
-
-    scrollElement.addEventListener("scroll", handleScroll);
-    return () => scrollElement.removeEventListener("scroll", handleScroll);
-  }, [hasNextPage, fetchNextPage, isFetchingNextPage]);
-
   // Handlers
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -239,11 +220,37 @@ export function useCarSearch({ query, initialData }: UseCarSearchParams) {
     router.push(buildUrl(suggestion));
   };
 
-  const handleGoBack = () => router.back();
+  const handleClearInput = () => {
+    setSearchQuery("");
+    setShowSuggestions(false);
+    // Immediately update URL — strip query param, keep any active filters
+    const params = new URLSearchParams();
+    if (filters.price) params.set("price", filters.price);
+    if (filters.color) params.set("color", filters.color);
+    if (filters.sortBy) params.set("sortBy", filters.sortBy);
+    if (filters.sortOrder) params.set("sortOrder", filters.sortOrder);
+    const paramString = params.toString();
+    router.replace(
+      paramString ? `/car/search?${paramString}` : "/car/search",
+      { scroll: false },
+    );
+  };
+
   const handleRetry = () => refetch();
+  const loadMore = () => fetchNextPage();
 
   const clearFilters = () => {
     setFilters({ price: "", color: "", sortBy: "", sortOrder: "" });
+    // Immediately update URL — buildUrl would return "" when query is empty,
+    // so the normal sync effect skips the URL update.
+    const params = new URLSearchParams();
+    if (trimmedQuery) params.set("query", trimmedQuery);
+    router.replace(
+      trimmedQuery
+        ? `/car/search?${params.toString()}`
+        : "/car/search",
+      { scroll: false },
+    );
   };
 
   const updateFilter = (key: keyof typeof filters, value: string) => {
@@ -267,14 +274,11 @@ export function useCarSearch({ query, initialData }: UseCarSearchParams) {
     showSuggestions,
     setShowSuggestions,
     filters,
-    showFilters,
-    setShowFilters,
     activeFilterCount,
     canSearch,
     trimmedQuery,
 
     // Refs
-    parentRef,
     searchContainerRef,
 
     // Query results
@@ -300,8 +304,9 @@ export function useCarSearch({ query, initialData }: UseCarSearchParams) {
     // Handlers
     handleSearch,
     handleSuggestionClick,
-    handleGoBack,
+    handleClearInput,
     handleRetry,
+    loadMore,
     clearFilters,
     updateFilter,
   };

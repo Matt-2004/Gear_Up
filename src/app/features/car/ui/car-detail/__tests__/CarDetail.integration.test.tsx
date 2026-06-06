@@ -6,6 +6,72 @@ import { mockCarDetails } from "@/app/shared/mock/mockCarDetails";
 // ---------------------------------------------------------------------------
 // Mocks
 // ---------------------------------------------------------------------------
+
+// MoreCarOptions uses useQuery from @tanstack/react-query, but this test
+// suite doesn't provide a QueryClientProvider. Mock useQuery to return
+// enough data so MoreCarOptions renders car cards.
+const mockMoreCars = [
+  {
+    id: "car-002",
+    imageUrl: "/carImages/1.jpg",
+    title: "2023 Honda Civic Si",
+    make: "Honda",
+    model: "Civic",
+    transmission: "Manual",
+    status: "Approved",
+    mileage: 18400,
+    seats: 5,
+    price: 26800,
+    color: "Orange",
+    createdAt: new Date(),
+  },
+  {
+    id: "car-003",
+    imageUrl: "/carImages/2.jpg",
+    title: "2024 Tesla Model 3 Long Range",
+    make: "Tesla",
+    model: "Model 3",
+    transmission: "Automatic",
+    status: "Approved",
+    mileage: 3100,
+    seats: 5,
+    price: 47999,
+    color: "Blue",
+    createdAt: new Date(),
+  },
+  {
+    id: "car-004",
+    imageUrl: "/carImages/3.jpg",
+    title: "2022 BMW X5",
+    make: "BMW",
+    model: "X5",
+    transmission: "Automatic",
+    status: "Approved",
+    mileage: 36200,
+    seats: 5,
+    price: 45500,
+    color: "White",
+    createdAt: new Date(),
+  },
+  {
+    id: "car-005",
+    imageUrl: "/carImages/4.jpg",
+    title: "2023 Ford Mustang GT",
+    make: "Ford",
+    model: "Mustang",
+    transmission: "Manual",
+    status: "Approved",
+    mileage: 12100,
+    seats: 4,
+    price: 43900,
+    color: "Red",
+    createdAt: new Date(),
+  },
+];
+
+jest.mock("@tanstack/react-query", () => ({
+  useQuery: jest.fn().mockReturnValue({ data: mockMoreCars }),
+}));
 jest.mock("next/image", () => ({
   __esModule: true,
   default: (props: Record<string, unknown>) =>
