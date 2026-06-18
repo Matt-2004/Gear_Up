@@ -101,7 +101,7 @@ const Login = () => {
                 id="body"
                 className="flex w-full flex-col gap-4
                   [&_label]:!text-[#A5A5A5]
-                  [&_input]:!bg-[#1A221A]
+                  [&_input]:bg-[#1A221A]!
                   [&_input]:!text-white
                   [&_input]:!border-gray-600
                   [&_input]:!placeholder-[#8A8A8A]
