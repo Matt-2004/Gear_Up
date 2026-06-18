@@ -7,7 +7,7 @@ import {
 } from "@/app/features/auth/types/auth.types";
 import { IAdminUpdateStatus } from "@/app/features/profiles/dealer/types/kyc.types";
 import { CreateMessageDTO } from "@/app/features/messaging/types/message.types";
-import { BACKEND_API_URL, DEFAULT_API_URL } from "@/app/shared/utils/config";
+import { BACKEND_API_URL } from "@/app/shared/utils/config";
 import { getServerAccessToken } from "@/app/shared/utils/AuthUtils/tokenUtils";
 import axios from "axios";
 import { SubmitVehicle } from "@/app/features/profiles/dealer/context/AddNewCarContext";
