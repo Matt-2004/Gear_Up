@@ -14,13 +14,14 @@ import { SubmitVehicle } from "@/app/features/profiles/dealer/context/AddNewCarC
 import { EmailValidationRequest } from "@/app/features/auth/emailValidation/types/email-validation-request";
 import { SignUpDTO } from "@/app/features/auth/signUp/types/sign-up-dto";
 import { MainResponse } from "@/app/shared/types.ts/main-response";
-// Note: keep sync helpers (e.g., normalizeError) in non-server modules.
 import { normalizeError } from "./axios-error";
 import { CreatePostDTO } from "@/app/features/post/types/post.dto";
 import { AddCommentDTO } from "@/app/features/comment/types/comment.dto";
 import { IReviewSubmissionDTO } from "@/app/features/review/types/review.dto";
 import { createAppointmentDTO } from "@/app/features/appointments/types/appointment.dto";
 import { cookies } from "next/headers";
+import { Tokens } from "@/app/features/auth/signIn/types/sign-in-response";
+import { token_integration } from "../AuthUtils/CookieIntegration";
 
 export const api = axios.create({
   baseURL: BACKEND_API_URL,
@@ -29,18 +30,13 @@ export const api = axios.create({
 
 // ─── Token refresh ───────────────────────────────────────────────────
 
-let refreshPromise: Promise<void> | null = null;
+let refreshPromise: Promise<Tokens> | null = null;
 
-async function refreshAccessToken(
-  refreshToken: string,
-  isProduction: boolean,
-): Promise<void> {
-  const sameSite = isProduction ? ("none" as const) : ("lax" as const);
-
+async function refreshAccessToken(refreshToken: string): Promise<Tokens> {
   const res = await fetch(`${BACKEND_API_URL}/api/v1/auth/refresh`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ refreshToken }),
+    body: JSON.stringify(refreshToken),
   });
 
   if (!res.ok) {
@@ -49,28 +45,14 @@ async function refreshAccessToken(
   }
 
   const data = await res.json();
-  const tokenData = data?.data ?? data;
-  const nextAccessToken: string | undefined = tokenData?.accessToken;
-  const nextRefreshToken: string | undefined = tokenData?.refreshToken;
+  const tokenData: Tokens = data?.data ?? data;
 
-  if (!nextAccessToken || !nextRefreshToken) {
+  if (!tokenData.accessToken || !tokenData.refreshToken) {
     console.error("Token refresh response missing tokens");
     throw new Error("Token refresh failed");
   }
 
-  const cookieStore = await cookies();
-  cookieStore.set("access_token", nextAccessToken, {
-    httpOnly: true,
-    secure: isProduction,
-    sameSite,
-    maxAge: 60 * 5,
-  });
-  cookieStore.set("refresh_token", nextRefreshToken, {
-    httpOnly: true,
-    secure: isProduction,
-    sameSite,
-    maxAge: 60 * 60 * 24 * 7,
-  });
+  return tokenData;
 }
 
 // ─── Retry config ─────────────────────────────────────────────────────
@@ -81,13 +63,17 @@ const RETRY_DELAY_MS = [1000, 2000, 4000];
 
 const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-// ─── Response interceptor: retry on transient failures ───────────────
+// ─── Response interceptor: retry on transient errors only ────────────
+// ⚠️  401 is intentionally NOT handled here — Axios interceptors run
+//     outside Next.js's AsyncLocalStorage context, so cookies().set()
+//     throws "Cookies can only be modified in a Server Action or Route Handler".
+//     The 401 + refresh logic lives inside request() instead.
 
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const config = error.config as
-      | (typeof error.config & { _retry?: boolean; _retryCount?: number })
+      | (typeof error.config & { _retryCount?: number })
       | undefined;
 
     if (!config) return Promise.reject(error);
@@ -106,73 +92,6 @@ api.interceptors.response.use(
       config._retryCount = retryCount + 1;
       await delay(RETRY_DELAY_MS[retryCount] ?? 4000);
       return api.request(config);
-    }
-
-    return Promise.reject(error);
-  },
-);
-
-// ─── Response interceptor: 401 token refresh ─────────────────────────
-
-api.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const originalRequest = error.config as
-      | (typeof error.config & { _retry?: boolean })
-      | undefined;
-    const isProduction = process.env.NODE_ENV === "production";
-
-    if (
-      error.response?.status === 401 &&
-      originalRequest &&
-      !originalRequest._retry
-    ) {
-      const cookieStore = await cookies();
-      const refreshToken = cookieStore.get("refresh_token")?.value;
-
-      if (!refreshToken) {
-        // No token to refresh — just reject. Don't try to delete cookies
-        // here: this may run in a server component where cookie writes
-        // are forbidden.
-        return Promise.reject(error);
-      }
-
-      originalRequest._retry = true;
-
-      try {
-        // Deduplicate concurrent refresh attempts
-        if (!refreshPromise) {
-          refreshPromise = refreshAccessToken(refreshToken, isProduction);
-        }
-        await refreshPromise;
-        refreshPromise = null;
-
-        // Read the fresh token from a new cookie store snapshot
-        const freshCookieStore = await cookies();
-        const nextAccessToken = freshCookieStore.get("access_token")?.value;
-
-        if (nextAccessToken) {
-          originalRequest.headers = {
-            ...(originalRequest.headers ?? {}),
-            Authorization: `Bearer ${nextAccessToken}`,
-          };
-          return api.request(originalRequest);
-        }
-      } catch {
-        refreshPromise = null;
-        // Cookie deletion may fail if this interceptor runs inside a
-        // server component (server components can read cookies but not
-        // write them). Swallow the error — the expired tokens are harmless.
-        try {
-          const cleanupStore = await cookies();
-          cleanupStore.delete("access_token");
-          cleanupStore.delete("refresh_token");
-          cleanupStore.delete("user_data");
-        } catch {
-          // not a server-action context — ignore
-        }
-        return Promise.reject(error);
-      }
     }
 
     return Promise.reject(error);
@@ -202,29 +121,83 @@ function isFormData(data: unknown): data is FormData {
   return typeof FormData !== "undefined" && data instanceof FormData;
 }
 
+// ─── Core request (called directly from Server Actions) ──────────────
+// Because this runs within the Server Action call stack, Next.js's
+// AsyncLocalStorage context is intact — cookies().set() works here.
+
 async function request<TResponse>(
   method: "get" | "post" | "put" | "patch" | "delete",
   url: string,
   data?: unknown,
   forceJsonContentType = false,
 ): Promise<TResponse> {
+  const hasBody = data !== undefined && data !== null;
+  const useJsonHeader = forceJsonContentType || (hasBody && !isFormData(data));
+
   try {
-    // FormData → let the browser set the multipart boundary.
-    // Non-FormData with data → needs Content-Type: application/json.
-    const hasBody = data !== undefined && data !== null;
-    const useJsonHeader =
-      forceJsonContentType || (hasBody && !isFormData(data));
     const response = await api.request<TResponse>({
       method,
       url,
       data,
       headers: await buildAuthHeaders(useJsonHeader),
     });
+
     return response.data;
   } catch (error: unknown) {
+    // ─── 401: refresh + retry, right here in the Server Action context ──
+    if (axios.isAxiosError(error) && error.response?.status === 401) {
+      try {
+        const cookieStore = await cookies();
+        const storedRefreshToken = cookieStore.get("refresh_token")?.value;
+
+        if (!storedRefreshToken) {
+          throw error; // No refresh token — propagate the 401
+        }
+
+        // Deduplicate concurrent refresh calls
+        if (!refreshPromise) {
+          refreshPromise = refreshAccessToken(storedRefreshToken);
+        }
+
+        const tokens = await refreshPromise;
+        console.log("Token refresh successful:", tokens);
+        refreshPromise = null;
+
+        // ✅ Safe here: we're still on the Server Action call stack
+        // await fetch(`${DEFAULT_API_URL}/api/token/refresh`, {
+        //   method: "POST",
+        //   headers: { "Content-Type": "application/json" },
+        //   body: JSON.stringify(tokens),
+        // });
+
+        await token_integration(tokens, true); // Update cookies with new tokens
+
+        // Retry the original request with the fresh access token
+        const retried = await api.request<TResponse>({
+          method,
+          url,
+          data,
+          headers: {
+            ...(useJsonHeader ? { "Content-Type": "application/json" } : {}),
+            Authorization: `Bearer ${tokens.accessToken}`,
+          },
+        });
+
+        return retried.data;
+      } catch (refreshError) {
+        refreshPromise = null;
+        throw normalizeError(
+          refreshError,
+          `Token refresh → ${method.toUpperCase()} ${url}`,
+        );
+      }
+    }
+
     throw normalizeError(error, `${method.toUpperCase()} ${url}`);
   }
 }
+
+// ─── Public fetch helpers ─────────────────────────────────────────────
 
 export async function getFetch<T>(url: string): Promise<T> {
   return request<T>("get", url);
